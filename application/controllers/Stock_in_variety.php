@@ -328,6 +328,14 @@ class Stock_in_variety extends Root_Controller
         {
             $data = $this->input->post('item');
             $this->db->trans_start();  //DB Transaction Handle START
+            if(isset($this->permissions['action3']) && ($this->permissions['action3']==1))
+            {
+                $data['date_stock_in'] = System_helper::get_time($data['date_stock_in']);
+            }
+            else
+            {
+                $data['date_stock_in']=time();
+            }
             if($id>0)
             {
                 $result_stock=Query_helper::get_info($this->config->item('table_sms_stock_in_variety'),'*',array('id='.$id),1);
@@ -369,12 +377,10 @@ class Stock_in_variety extends Root_Controller
             }
             else
             {
-                $data['date_stock_in'] = System_helper::get_time($data['date_stock_in']);
                 $data['status'] = $this->config->item('system_status_active');
                 $data['user_created'] = $user->user_id;
                 $data['date_created'] = time();
                 Query_helper::add($this->config->item('table_sms_stock_in_variety'),$data);
-
                 $result=Query_helper::get_info($this->config->item('table_sms_stock_summary_variety'),'*',array('variety_id ='.$data['variety_id'],'pack_size_id ='.$data['pack_size_id'],'warehouse_id ='.$data['warehouse_id']),1);
                 if($result)
                 {
