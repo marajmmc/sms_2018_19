@@ -4,14 +4,16 @@ $CI=& get_instance();
 $action_buttons=array();
 if(isset($CI->permissions['action1']) && ($CI->permissions['action1']==1))
 {
-    $action_buttons[]=array(
+    $action_buttons[]=array
+    (
         'label'=>$CI->lang->line('ACTION_NEW'),
         'href'=>site_url($CI->controller_url.'/index/add')
     );
 }
 if(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1))
 {
-    $action_buttons[]=array(
+    $action_buttons[]=array
+    (
         'type'=>'button',
         'label'=>$CI->lang->line('ACTION_EDIT'),
         'class'=>'button_jqx_action',
@@ -47,10 +49,10 @@ if(isset($CI->permissions['action5']) && ($CI->permissions['action5']==1))
         'data-title'=>"Download"
     );
 }
-$action_buttons[]=array(
+$action_buttons[]=array
+(
     'label'=>$CI->lang->line("ACTION_REFRESH"),
     'href'=>site_url($CI->controller_url.'/index/list')
-
 );
 $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 ?>
@@ -86,9 +88,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
     $(document).ready(function ()
     {
         system_preset({controller:'<?php echo $CI->router->class; ?>'});
-
         var url = "<?php echo base_url($CI->controller_url.'/index/get_items');?>";
-
         // prepare the data
         var source =
         {
@@ -126,7 +126,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 selectionmode: 'singlerow',
                 altrows: true,
                 autoheight: true,
-                columns: [
+                columns:
+                [
                     { text: '<?php echo $CI->lang->line('ID'); ?>', dataField: 'id',width:'75',hidden:true},
                     { text: '<?php echo $CI->lang->line('LABEL_DATE_STOCK_IN'); ?>', dataField: 'date_stock_in',width:'120'},
                     { text: '<?php echo $CI->lang->line('LABEL_CROP_NAME'); ?>', dataField: 'crop_name',width:'200',hidden:true},

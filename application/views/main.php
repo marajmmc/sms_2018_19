@@ -45,7 +45,7 @@ foreach($results as $result)
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>SMS</title>
+        <title>Stock Management System (SMS) V 2.0.1.18.19.1</title>
         <link rel="icon" type="image/ico" href="http://malikseeds.com/favicon.ico"/>
         <meta charset="utf-8">
         <link rel="stylesheet" href="<?php echo base_url('css/bootstrap.min.css');?>">
@@ -133,7 +133,10 @@ foreach($results as $result)
         </div>
         <footer class="hidden-print navbar-fixed-bottom">
             <div>
-                &copy; & All Rights Reserved by Malikseeds.
+                All Rights Reserved & &copy; Copyright 2017 by A.R. Malik Seeds (Pvt.) Ltd. Design & Developed by :
+                <a href="http://disb.solutions/" target="_blank" class="external">
+                    <img src="<?php echo base_url()?>images/logo_disb.png" alt="DISB Logo" style="width: 50px"/>
+                </a>
             </div>
             <div class="clearfix"></div>
         </footer>

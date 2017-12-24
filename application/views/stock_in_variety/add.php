@@ -151,7 +151,19 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_STOCK_IN');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <input type="text" name="item[date_stock_in]" id="date_stock_in" class="form-control datepicker" value="<?php echo System_helper::display_date($item['date_stock_in']);?>"/>
+                <?php
+                    if(isset($CI->permissions['action3']) && ($CI->permissions['action3']==1))
+                {
+                    ?>
+                    <input type="text" name="item[date_stock_in]" id="date_stock_in" class="form-control datepicker" value="<?php echo System_helper::display_date($item['date_stock_in']);?>"/>
+                <?php
+                }
+                else
+                {
+                   echo System_helper::display_date($item['date_stock_in']);
+                }
+                ?>
+
             </div>
         </div>
 

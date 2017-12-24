@@ -24,7 +24,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 |
 */
 //$config['base_url'] = 'http://180.234.223.205/sms_2017_10';
-$config['base_url'] = 'http://127.0.0.1/sms_2018_19';
+$config['base_url'] = 'http://localhost/sms_2018_19/';
 
 /*
 |--------------------------------------------------------------------------
