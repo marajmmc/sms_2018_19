@@ -249,3 +249,6 @@ $lang['LABEL_STOCK_OUT_PURPOSE_SHORT'] = 'Short Inventory';
 $lang['LABEL_STOCK_OUT_PURPOSE_RND'] = 'R&D Purpose';
 $lang['LABEL_STOCK_OUT_PURPOSE_SAMPLE'] = 'Sample Purpose';
 $lang['LABEL_STOCK_OUT_PURPOSE_DEMONSTRATION'] = 'Demonstration';
+
+$lang['LABEL_STOCK_IN_PURPOSE_IN'] = 'Stock In';
+$lang['LABEL_STOCK_IN_EXCESS'] = 'Excess';
