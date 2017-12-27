@@ -164,13 +164,14 @@ class Stock_in_variety extends Root_Controller
         {
             $this->db->trans_begin(); //DB Transaction Handle START
             $items=$this->input->post('items');
-
+            /*--Start-- Minimum variety entry checking*/
             if(!$items)
             {
                 $ajax['status']=false;
                 $ajax['system_message']='At least one variety need to stock in.';
                 $this->json_return($ajax);
             }
+            /*--End-- Minimum variety entry checking*/
 
             /* --Start-- for checking incomplete entry (add more row)*/
             foreach($items as $item)
