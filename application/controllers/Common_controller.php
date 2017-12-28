@@ -33,24 +33,14 @@ class Common_controller extends Root_Controller
         {
             $html_container_id=$this->input->post('html_container_id');
         }
-        $result=Query_helper::get_info($this->config->item('table_sms_stock_summary_variety'),'current_stock',array('variety_id ='.$variety_id,'pack_size_id ='.$pack_size_id,'warehouse_id ='.$warehouse_id),1);
-        if(!$result)
+        $result=System_helper::get_variety_stock(array($variety_id));
+        $stock_current=0;
+        if(isset($result[$variety_id][$pack_size_id][$warehouse_id]))
         {
-            $result['current_stock']='Not Found';
+            $stock_current=$result[$variety_id][$pack_size_id][$warehouse_id]['current_stock'];
         }
-        else
-        {
-            if($pack_size_id>0)
-            {
-                $result['current_stock']=$result['current_stock'].' packet';
-            }
-            else
-            {
-                $result['current_stock']=$result['current_stock'].' kg';
-            }
-        }
-        $ajax['system_content'][]=array("id"=>$html_container_id,"html"=>$result['current_stock'],true);
         $ajax['status']=true;
+        $ajax['system_content'][]=array("id"=>$html_container_id,"html"=>$stock_current);
         $this->json_return($ajax);
     }
 }

@@ -81,4 +81,20 @@ class System_helper
         $data['date_created_string']=System_helper::display_date($time);
         $CI->db->insert($CI->config->item('table_system_history_hack'), $data);
     }
+    public static function get_variety_stock($variety_ids=array())
+    {
+        $CI =& get_instance();
+        $CI->db->from($CI->config->item('table_sms_stock_summary_variety'));
+        if(sizeof($variety_ids)>0)
+        {
+            $CI->db->where_in('variety_id',$variety_ids);
+        }
+        $results=$CI->db->get()->result_array();
+        $stocks=array();
+        foreach($results as $result)
+        {
+            $stocks[$result['variety_id']][$result['pack_size_id']][$result['warehouse_id']]=$result;
+        }
+        return $stocks;
+    }
 }

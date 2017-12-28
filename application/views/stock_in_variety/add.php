@@ -356,7 +356,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             var variety_id=$('#variety_id_'+active_id).val();
             var pack_size_id=$('#pack_size_id_'+active_id).val();
             var warehouse_id=$('#warehouse_id_'+active_id).val();
-            if(variety_id>0 && pack_size_id!="" && warehouse_id>0)
+            if(variety_id>0 && pack_size_id!='' && warehouse_id>0)
             {
                 $.ajax({
                     url: "<?php echo site_url('common_controller/get_current_stock'); ?>",
