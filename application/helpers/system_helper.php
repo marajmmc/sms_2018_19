@@ -97,4 +97,8 @@ class System_helper
         }
         return $stocks;
     }
+    public static function get_generated_id($prefix, $increment_id)
+    {
+        return $prefix.str_pad($increment_id,5,0,STR_PAD_LEFT);
+    }
 }

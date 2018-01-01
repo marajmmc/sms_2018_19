@@ -102,7 +102,8 @@ class Stock_out_variety extends Root_Controller
             }
 
             $item['date_stock_out']=System_helper::display_date($item['date_stock_out']);
-            
+            $item['generated_id']=System_helper::get_generated_id($this->config->item('system_id_prefix_stock_out'),$item['id']);
+
             if($item['purpose']==$this->config->item('system_purpose_variety_sample'))
             {
                 $item['purpose']=$this->lang->line('LABEL_STOCK_OUT_PURPOSE_SAMPLE');
