@@ -33,3 +33,5 @@ $config['system_id_prefix_transfer_warehouse_to_outlet']='TS'; // Sales
 $config['system_id_prefix_transfer_outlet_to_warehouse']='TR'; // Sales Return
 $config['system_id_prefix_transfer_outlet_to_outlet']='TO';
 
+//Convert Quantity
+$config['system_convert_to_kg']='KG';

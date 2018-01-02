@@ -192,18 +192,25 @@ class Stock_in_variety extends Root_Controller
             {
                 $pack_size[$pack['value']]=$pack['text'];
             }
-            $data['quantity_total']=0;
+            $pack_quantity=array();
             foreach($items as $item)
             {
                 if($item['pack_size_id']!=0)
                 {
-                    $data['quantity_total']+=(($pack_size[$item['pack_size_id']])*($item['quantity'])/1000);
-
+                    if(isset($pack_quantity[$pack_size[$item['pack_size_id']]]))
+                    {
+                        $pack_quantity[$pack_size[$item['pack_size_id']]]+=$item['quantity'];
+                    }else
+                    {
+                        $pack_quantity[$pack_size[$item['pack_size_id']]]=$item['quantity'];
+                    }
                 }else
                 {
-                    $data['quantity_total']+=$item['quantity'];
+                    $pack_quantity[$item['pack_size_id']]=$item['quantity'];
                 }
             }
+            // In convert_quantity method type will be in KG or in which packet want to show (such as 10)
+            $data['quantity_total']=System_helper::convert_quantity($type=$this->config->item('system_convert_to_kg'),$pack_quantity);
             /* --End-- for counting total quantity of stock in*/
 
             /* --Start-- Item saving (In three table consequently)*/
