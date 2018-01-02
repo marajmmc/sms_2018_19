@@ -26,6 +26,10 @@ class Stock_in_variety extends Root_Controller
         {
             $this->system_add();
         }
+        elseif($action=="edit")
+        {
+            $this->system_edit($id);
+        }
         elseif($action=='save')
         {
             $this->system_save();
@@ -110,6 +114,50 @@ class Stock_in_variety extends Root_Controller
             {
                 $ajax['system_message']=$this->message;
             }
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+    }
+    private function system_edit($id)
+    {
+        if(isset($this->permissions['action2']) && ($this->permissions['action2']==1))
+        {
+            if($id>0)
+            {
+                $item_id=$id;
+            }
+            else
+            {
+                $item_id=$this->input->post('id');
+            }
+            $this->db->select('stock_in.*');
+            $this->db->select('variety.name variety_name');
+            $this->db->select('v_pack_size.name pack_size_name');
+            $this->db->select('ware_house.name ware_house_name');
+            //$this->db->select('pack.name pack_name');
+           // $this->db->select('warehouse.name warehouse_name');
+           // $this->db->select('summary.current_stock');
+            $this->db->from($this->config->item('table_sms_stock_in_variety').' stock_in');
+            $this->db->join($this->config->item('table_sms_stock_in_variety_details').' stock_in_details','stock_in_details.stock_in_id = stock_in.id','INNER');
+
+            $this->db->join($this->config->item('table_login_setup_classification_varieties').' variety','variety.id = stock_in_details.variety_id','INNER');
+            $this->db->join($this->config->item('table_login_setup_classification_vpack_size').' v_pack_size','v_pack_size.id = stock_in_details.pack_size_id','INNER');
+            $this->db->join($this->config->item('table_login_basic_setup_warehouse').' ware_house','ware_house.id = stock_in_details.warehouse_id','INNER');
+
+//            $this->db->join($this->config->item('table_login_setup_classification_crop_types').' type','type.id = variety.crop_type_id','INNER');
+//            $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = type.crop_id','INNER');
+//            $this->db->join($this->config->item('table_login_setup_classification_vpack_size').' pack','pack.id = stock_in.pack_size_id','LEFT');
+//            $this->db->join($this->config->item('table_login_basic_setup_warehouse').' warehouse','warehouse.id = stock_in.warehouse_id','INNER');
+//            $this->db->join($this->config->item('table_sms_stock_summary_variety').' summary','summary.variety_id = stock_in.variety_id AND summary.pack_size_id = stock_in.pack_size_id AND summary.warehouse_id = stock_in.warehouse_id','INNER');
+            $this->db->where('stock_in.id',$item_id);
+            $data['item']=$this->db->get()->result_array();
+            print_r($data['item']);
+            exit;
             $this->json_return($ajax);
         }
         else
