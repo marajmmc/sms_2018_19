@@ -73,17 +73,6 @@ class Stock_out_variety extends Root_Controller
     {
         $items=array();
         $this->db->select('stock_out.*');
-        /*$this->db->select('variety.name variety_name');
-        $this->db->select('type.name crop_type_name');
-        $this->db->select('crop.name crop_name');
-        $this->db->select('pack.name pack_name');
-        $this->db->select('warehouse.name warehouse_name');
-        $this->db->from($this->config->item('table_sms_stock_out_variety').' stock_out');
-        $this->db->join($this->config->item('table_login_setup_classification_varieties').' variety','variety.id = stock_out.variety_id','INNER');
-        $this->db->join($this->config->item('table_login_setup_classification_crop_types').' type','type.id = variety.crop_type_id','INNER');
-        $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = type.crop_id','INNER');
-        $this->db->join($this->config->item('table_login_setup_classification_vpack_size').' pack','pack.id = stock_out.pack_size_id','LEFT');
-        $this->db->join($this->config->item('table_login_basic_setup_warehouse').' warehouse','warehouse.id = stock_out.warehouse_id','INNER');*/
         $this->db->from($this->config->item('table_sms_stock_out_variety').' stock_out');
         $this->db->where('stock_out.status',$this->config->item('system_status_active'));
         $this->db->order_by('stock_out.date_stock_out','DESC');
@@ -91,17 +80,6 @@ class Stock_out_variety extends Root_Controller
         $items=$this->db->get()->result_array();
         foreach($items as &$item)
         {
-            /*if(!$item['pack_name'])
-            {
-                $item['pack_name']='Bulk';
-                $item['quantity']=number_format($item['quantity'],3).' kg';
-            }
-            else
-            {
-                $item['pack_name']=$item['pack_name'].' gm';
-                $item['quantity']=$item['quantity'].' packet';
-            }*/
-
             $item['date_stock_out']=System_helper::display_date($item['date_stock_out']);
             $item['generated_id']=System_helper::get_generated_id($this->config->item('system_id_prefix_stock_out'),$item['id']);
 
@@ -476,19 +454,9 @@ class Stock_out_variety extends Root_Controller
             if(!$items)
             {
                 $ajax['status']=false;
-                $ajax['system_message']='At least one variety need to stock out.';
+                $ajax['system_message']='Please minimum one variety needed & press add more button. Please try again.';
                 $this->json_return($ajax);
             }
-            
-            $data['date_stock_out']=System_helper::get_time($data['date_stock_out']);
-            $data['user_created']=$user->user_id;
-            $data['date_created']=$time;
-            $data['status']=$this->config->item('system_status_active');
-
-            $data_summary=array();
-            $purpose=$data['purpose'];
-            $data_summary['date_updated']=$time;
-            $data_summary['user_updated']=$user->user_id;
 
             foreach($items as $item)
             {
@@ -499,6 +467,17 @@ class Stock_out_variety extends Root_Controller
                     $this->json_return($ajax);
                 }
             }
+
+            $data['date_stock_out']=System_helper::get_time($data['date_stock_out']);
+            $data['user_created']=$user->user_id;
+            $data['date_created']=$time;
+            $data['status']=$this->config->item('system_status_active');
+            $data_summary=array();
+            $purpose=$data['purpose'];
+
+            Query_helper::add($this->config->item('table_sms_stock_out_variety'),$data);
+            $data_summary['date_updated']=$time;
+            $data_summary['user_updated']=$user->user_id;
             foreach($items as $item)
             {
                 $result=Query_helper::get_info($this->config->item('table_sms_stock_summary_variety'),'current_stock',array('variety_id ='.$item['variety_id'],'pack_size_id ='.$item['pack_size_id'],'warehouse_id ='.$item['warehouse_id']),1);
@@ -525,6 +504,7 @@ class Stock_out_variety extends Root_Controller
                 $data_summary['current_stock']=$current_stock;
                 Query_helper::update($this->config->item('table_sms_stock_summary_variety'),$data_summary,array('variety_id='.$data['variety_id'],'pack_size_id='.$data['pack_size_id'],'warehouse_id='.$data['warehouse_id']));
             }
+
             if($this->db->trans_status() === FALSE)
             {
                 $this->db->trans_rollback();
