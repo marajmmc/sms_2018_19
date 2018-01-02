@@ -49,7 +49,8 @@ if(isset($CI->permissions['action4']) && ($CI->permissions['action4']==1))
 }
 if(isset($CI->permissions['action5']) && ($CI->permissions['action5']==1))
 {
-    $action_buttons[]=array(
+    $action_buttons[]=array
+    (
         'type'=>'button',
         'label'=>$CI->lang->line("ACTION_DOWNLOAD"),
         'class'=>'button_action_download',
@@ -62,7 +63,7 @@ $action_buttons[]=array(
 
 );
 $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
-//echo System_helper::get_generated_id('IN',100);
+//echo System_helper::get_generated_id('IN',1);
 ?>
 
 <div class="row widget">
@@ -80,15 +81,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             <div class="col-xs-12" style="margin-bottom: 20px;">
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column" checked value="id"><?php echo $CI->lang->line('ID'); ?></label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column" checked value="date_stock_out"><?php echo $CI->lang->line('LABEL_DATE_STOCK_OUT'); ?></label>
-                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column" value="crop_name"><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></label>
-                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column" value="crop_type_name"><?php echo $CI->lang->line('LABEL_CROP_TYPE'); ?></label>
-                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column" checked value="variety_name"><?php echo $CI->lang->line('LABEL_VARIETY'); ?></label>
-                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column" checked value="warehouse_name"><?php echo $CI->lang->line('LABEL_WAREHOUSE'); ?></label>
-                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column" checked value="pack_name">Pack Size</label>
-                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column" checked value="quantity"><?php echo $CI->lang->line('LABEL_QUANTITY'); ?></label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column" checked value="purpose"><?php echo $CI->lang->line('LABEL_PURPOSE'); ?></label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column" checked value="quantity_total"><?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL'); ?></label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column" checked value="remarks"><?php echo $CI->lang->line('LABEL_REMARKS'); ?></label>
-                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column" checked value="status"><?php echo $CI->lang->line('STATUS'); ?></label>
             </div>
         </div>
         <?php
@@ -114,15 +109,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 { name: 'id', type: 'int' },
                 { name: 'generated_id', type: 'string' },
                 { name: 'date_stock_out', type: 'string' },
-                { name: 'crop_name', type: 'string' },
-                { name: 'crop_type_name', type: 'string' },
-                { name: 'variety_name', type: 'string' },
-                { name: 'warehouse_name', type: 'string' },
-                { name: 'pack_name', type: 'string' },
-                { name: 'quantity', type: 'string' },
                 { name: 'purpose', type: 'string' },
-                { name: 'remarks', type: 'string' },
-                { name: 'status', type: 'string' }
+                { name: 'quantity_total', type: 'string' },
+                { name: 'remarks', type: 'string' }
             ],
             id: 'id',
             url: url
@@ -150,15 +139,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     { text: '<?php echo $CI->lang->line('ID'); ?>', dataField: 'id',width:'75',hidden:true},
                     { text: '<?php echo $CI->lang->line('#'); ?>', dataField: 'generated_id',width:'75',hidden:false},
                     { text: '<?php echo $CI->lang->line('LABEL_DATE_STOCK_OUT'); ?>', dataField: 'date_stock_out',width:'120'},
-                    { text: '<?php echo $CI->lang->line('LABEL_CROP_NAME'); ?>', dataField: 'crop_name',width:'200',hidden:true},
-                    { text: '<?php echo $CI->lang->line('LABEL_CROP_TYPE'); ?>', dataField: 'crop_type_name',width:'200',hidden:true},
-                    { text: '<?php echo $CI->lang->line('LABEL_VARIETY'); ?>', dataField: 'variety_name',width:'200'},
-                    { text: '<?php echo $CI->lang->line('LABEL_WAREHOUSE'); ?>', dataField: 'warehouse_name',filtertype: 'list',width:'175'},
-                    { text: 'Pack Size', dataField: 'pack_name',filtertype: 'list',width:'110'},
-                    { text: '<?php echo $CI->lang->line('LABEL_QUANTITY'); ?>', dataField: 'quantity',width:'175'},
                     { text: '<?php echo $CI->lang->line('LABEL_PURPOSE'); ?>', dataField: 'purpose',width:'150',filtertype: 'list'},
-                    { text: '<?php echo $CI->lang->line('LABEL_REMARKS'); ?>', dataField: 'remarks',width:'200'},
-                    { text: '<?php echo $CI->lang->line('STATUS'); ?>', dataField: 'status',filtertype: 'list',width:'140',cellsalign: 'right'}
+                    { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL'); ?>', dataField: 'quantity_total',width:'175'},
+                    { text: '<?php echo $CI->lang->line('LABEL_REMARKS'); ?>', dataField: 'remarks',width:'200'}
                 ]
             });
     });

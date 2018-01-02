@@ -73,7 +73,7 @@ class Stock_out_variety extends Root_Controller
     {
         $items=array();
         $this->db->select('stock_out.*');
-        $this->db->select('variety.name variety_name');
+        /*$this->db->select('variety.name variety_name');
         $this->db->select('type.name crop_type_name');
         $this->db->select('crop.name crop_name');
         $this->db->select('pack.name pack_name');
@@ -83,14 +83,15 @@ class Stock_out_variety extends Root_Controller
         $this->db->join($this->config->item('table_login_setup_classification_crop_types').' type','type.id = variety.crop_type_id','INNER');
         $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = type.crop_id','INNER');
         $this->db->join($this->config->item('table_login_setup_classification_vpack_size').' pack','pack.id = stock_out.pack_size_id','LEFT');
-        $this->db->join($this->config->item('table_login_basic_setup_warehouse').' warehouse','warehouse.id = stock_out.warehouse_id','INNER');
+        $this->db->join($this->config->item('table_login_basic_setup_warehouse').' warehouse','warehouse.id = stock_out.warehouse_id','INNER');*/
+        $this->db->from($this->config->item('table_sms_stock_out_variety').' stock_out');
         $this->db->where('stock_out.status',$this->config->item('system_status_active'));
         $this->db->order_by('stock_out.date_stock_out','DESC');
         $this->db->order_by('stock_out.id','DESC');
         $items=$this->db->get()->result_array();
         foreach($items as &$item)
         {
-            if(!$item['pack_name'])
+            /*if(!$item['pack_name'])
             {
                 $item['pack_name']='Bulk';
                 $item['quantity']=number_format($item['quantity'],3).' kg';
@@ -99,7 +100,7 @@ class Stock_out_variety extends Root_Controller
             {
                 $item['pack_name']=$item['pack_name'].' gm';
                 $item['quantity']=$item['quantity'].' packet';
-            }
+            }*/
 
             $item['date_stock_out']=System_helper::display_date($item['date_stock_out']);
             $item['generated_id']=System_helper::get_generated_id($this->config->item('system_id_prefix_stock_out'),$item['id']);
