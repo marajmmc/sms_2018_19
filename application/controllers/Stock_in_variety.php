@@ -106,7 +106,7 @@ class Stock_in_variety extends Root_Controller
             $data['warehouses']=Query_helper::get_info($this->config->item('table_login_basic_setup_warehouse'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $data['packs']=Query_helper::get_info($this->config->item('table_login_setup_classification_vpack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $data['divisions']=Query_helper::get_info($this->config->item('table_login_setup_location_divisions'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
-
+            $data['stock_in_varieties']=array();
             $ajax['system_page_url']=site_url($this->controller_url."/index/add");
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/add",$data,true));
@@ -135,29 +135,39 @@ class Stock_in_variety extends Root_Controller
             {
                 $item_id=$this->input->post('id');
             }
+            $data['item']=Query_helper::get_info($this->config->item('table_sms_stock_in_variety'),'*',array('id ='.$item_id),1);
+
             $this->db->select('stock_in.*');
+            $this->db->select('type.name crop_type_name');
+            $this->db->select('crop.name crop_name');
             $this->db->select('variety.name variety_name');
             $this->db->select('v_pack_size.name pack_size_name');
             $this->db->select('ware_house.name ware_house_name');
-            //$this->db->select('pack.name pack_name');
-           // $this->db->select('warehouse.name warehouse_name');
-           // $this->db->select('summary.current_stock');
+            $this->db->select('stock_in_details.variety_id, stock_in_details.pack_size_id, stock_in_details.warehouse_id, stock_in_details.quantity');
             $this->db->from($this->config->item('table_sms_stock_in_variety').' stock_in');
             $this->db->join($this->config->item('table_sms_stock_in_variety_details').' stock_in_details','stock_in_details.stock_in_id = stock_in.id','INNER');
-
             $this->db->join($this->config->item('table_login_setup_classification_varieties').' variety','variety.id = stock_in_details.variety_id','INNER');
-            $this->db->join($this->config->item('table_login_setup_classification_vpack_size').' v_pack_size','v_pack_size.id = stock_in_details.pack_size_id','INNER');
+            $this->db->join($this->config->item('table_login_setup_classification_vpack_size').' v_pack_size','v_pack_size.id = stock_in_details.pack_size_id','LEFT');
             $this->db->join($this->config->item('table_login_basic_setup_warehouse').' ware_house','ware_house.id = stock_in_details.warehouse_id','INNER');
-
-//            $this->db->join($this->config->item('table_login_setup_classification_crop_types').' type','type.id = variety.crop_type_id','INNER');
-//            $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = type.crop_id','INNER');
-//            $this->db->join($this->config->item('table_login_setup_classification_vpack_size').' pack','pack.id = stock_in.pack_size_id','LEFT');
-//            $this->db->join($this->config->item('table_login_basic_setup_warehouse').' warehouse','warehouse.id = stock_in.warehouse_id','INNER');
-//            $this->db->join($this->config->item('table_sms_stock_summary_variety').' summary','summary.variety_id = stock_in.variety_id AND summary.pack_size_id = stock_in.pack_size_id AND summary.warehouse_id = stock_in.warehouse_id','INNER');
+            $this->db->join($this->config->item('table_login_setup_classification_crop_types').' type','type.id = variety.crop_type_id','INNER');
+            $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = type.crop_id','INNER');
             $this->db->where('stock_in.id',$item_id);
-            $data['item']=$this->db->get()->result_array();
-            print_r($data['item']);
-            exit;
+            $this->db->where('stock_in_details.revision',1);
+            $data['stock_in_varieties']=$this->db->get()->result_array();
+            $data['crops']=Query_helper::get_info($this->config->item('table_login_setup_classification_crops'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
+            $data['crop_types']=array();
+            $data['varieties']=array();
+            $data['warehouses']=Query_helper::get_info($this->config->item('table_login_basic_setup_warehouse'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
+            $data['packs']=Query_helper::get_info($this->config->item('table_login_setup_classification_vpack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
+            $data['divisions']=Query_helper::get_info($this->config->item('table_login_setup_location_divisions'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
+            $data['title']="Edit Stock In";
+            $ajax['status']=true;
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/add",$data,true));
+            if($this->message)
+            {
+                $ajax['system_message']=$this->message;
+            }
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/edit/'.$item_id);
             $this->json_return($ajax);
         }
         else
@@ -180,7 +190,7 @@ class Stock_in_variety extends Root_Controller
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->json_return($ajax);
             }
-            if(!$this->check_validation_edit())
+            if(!$this->check_validation_add())
             {
                 $ajax['status']=false;
                 $ajax['system_message']=$this->message;
@@ -202,16 +212,169 @@ class Stock_in_variety extends Root_Controller
                 $this->json_return($ajax);
             }
         }
+        $items=$this->input->post('items');
+        /* --Start-- for checking incomplete entry (add more row)*/
+        foreach($items as $item)
+        {
+            if($item['variety_id']==0 || $item['pack_size_id']<0 || $item['warehouse_id']==0 || $item['quantity']=='')
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='Unfinished stock in entry.';
+                $this->json_return($ajax);
+            }
+        }
+        /* --End-- for checking incomplete entry (add more row)*/
 
-        $data = $this->input->post('item');
+        /* --Start-- for counting total quantity of stock in*/
+        $pack_size=array();
+        $packs=Query_helper::get_info($this->config->item('table_login_setup_classification_vpack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
+        foreach($packs as $pack)
+        {
+            $pack_size[$pack['value']]=$pack['text'];
+        }
+        $quantity_total=0;
+        foreach($items as $item)
+        {
+            if($item['pack_size_id']!=0)
+            {
+                $quantity_total+=(($pack_size[$item['pack_size_id']])*($item['quantity'])/1000);
+
+            }else
+            {
+                $quantity_total+=$item['quantity'];
+            }
+        }
+        /* --End-- for counting total quantity of stock in*/
+        $this->db->trans_start();  //DB Transaction Handle START
+        $item_head = $this->input->post('item');
         if($id>0)
         {
+            $data=array();
+            /* --Start-- Item saving (In three table consequently)*/
+            $data['date_stock_in']=System_helper::get_time($item_head['date_stock_in']);
+            $data['quantity_total']=$quantity_total;
+            $data['user_updated']=$user->user_id;
+            $data['date_updated']=$time;
+            $data['status']=$this->config->item('system_status_active');
+            Query_helper::update($this->config->item('table_sms_stock_in_variety'),$data,array('id='.$id));
 
+            /*Getting Old details data of selected row in which revision 1 exist*/
+
+            $results=Query_helper::get_info($this->config->item('table_sms_stock_in_variety_details'),'*',array('stock_in_id ='.$id,'revision ='.'1'));
+            $old_items=array();
+            foreach($results as $result)
+            {
+                $old_items[$result['variety_id']][$result['pack_size_id']][$result['warehouse_id']]=$result;
+            }
+            foreach($items as $item)
+            {
+                if(isset($old_items[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]))
+                {
+                    if($old_items[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]['quantity']!=$item['quantity'])
+                    {
+                        $data_details=array();
+                        $data_details_old=array();
+                        $this->db->where('stock_in_id',$id);
+                        $this->db->where('variety_id',$item['variety_id']);
+                        $this->db->where('pack_size_id',$item['pack_size_id']);
+                        $this->db->where('warehouse_id',$item['warehouse_id']);
+                        $this->db->set('revision', 'revision+1', FALSE);
+                        $data_details_old['date_updated'] = $time;
+                        $data_details_old['user_updated'] = $user->user_id;
+                        $this->db->update($this->config->item('table_sms_stock_in_variety_details'),$data_details_old);
+                        $data_details['stock_in_id']=$id;
+                        $data_details['variety_id']=$item['variety_id'];
+                        $data_details['pack_size_id']=$item['pack_size_id'];
+                        $data_details['warehouse_id']=$item['warehouse_id'];
+                        $data_details['quantity']=$item['quantity'];
+                        $data_details['revision']=1;
+                        $data_details['user_created']=$user->user_id;
+                        $data_details['date_created']=$time;
+                        Query_helper::add($this->config->item('table_sms_stock_in_variety_details'),$data_details);
+                    }
+                }else
+                {
+                    $data_details=array();
+                    $data_details['stock_in_id']=$id;
+                    $data_details['variety_id']=$item['variety_id'];
+                    $data_details['pack_size_id']=$item['pack_size_id'];
+                    $data_details['warehouse_id']=$item['warehouse_id'];
+                    $data_details['quantity']=$item['quantity'];
+                    $data_details['revision']=1;
+                    $data_details['user_created']=$user->user_id;
+                    $data_details['date_created']=$time;
+                    Query_helper::add($this->config->item('table_sms_stock_in_variety_details'),$data_details);
+                }
+
+                $result=Query_helper::get_info($this->config->item('table_sms_stock_summary_variety'),'*',array('variety_id ='.$item['variety_id'],'pack_size_id ='.$item['pack_size_id'],'warehouse_id ='.$item['warehouse_id']),1);
+                $s_data=array(); //it will be for summary data
+                // For getting previous quantity amount to update in_stock and in_excess column
+                $old_quantity=$this->input->post('old_quantity');
+                if($result)
+                {
+                    if($item_head['purpose']==$this->config->item('system_purpose_variety_stock_in'))
+                    {
+                        if($item['quantity']>$old_quantity[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']])
+                        {
+                            $s_data['in_stock']=$result['in_stock']+($item['quantity']-$old_quantity[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]);
+                        }elseif($item['quantity']<$old_quantity[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']])
+                        {
+                            $s_data['in_stock']=$result['in_stock']-($old_quantity[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]-$item['quantity']);
+                        }
+                    }
+                    elseif($item_head['purpose']==$this->config->item('system_purpose_variety_excess'))
+                    {
+                        if($item['quantity']>$old_quantity[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']])
+                        {
+                            $s_data['in_excess']=$result['in_excess']+($item['quantity']-$old_quantity[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]);
+                        }elseif($item['quantity']<$old_quantity[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']])
+                        {
+                            $s_data['in_excess']=$result['in_excess']-($old_quantity[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]-$item['quantity']);
+                        }
+                    }
+                    if($item['quantity']>$old_quantity[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']])
+                    {
+                        $s_data['current_stock']=$result['current_stock']+($item['quantity']-$old_quantity[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]);
+                    }elseif($item['quantity']<$old_quantity[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']])
+                    {
+                        $invalid_quantity_check=($old_quantity[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]-$item['quantity']);
+                        if($invalid_quantity_check>$result['current_stock'])
+                        {
+                            $ajax['status']=false;
+                            $ajax['system_message']='Please You are trying to input invalid quantity.';
+                            $this->json_return($ajax);
+                        }else
+                        {
+                            $s_data['current_stock']=$result['current_stock']-($old_quantity[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]-$item['quantity']);
+                        }
+                    }
+                    $s_data['date_updated'] = $time;
+                    $s_data['user_updated'] = $user->user_id;
+                    Query_helper::update($this->config->item('table_sms_stock_summary_variety'),$s_data,array('id='.$result['id']));
+                }
+                else
+                {
+                    $s_data['variety_id'] = $item['variety_id'];
+                    $s_data['pack_size_id'] = $item['pack_size_id'];
+                    $s_data['warehouse_id'] = $item['warehouse_id'];
+                    if($item_head['purpose']==$this->config->item('system_purpose_variety_stock_in'))
+                    {
+                        $s_data['in_stock']=$item['quantity'];
+                    }
+                    elseif($item_head['purpose']==$this->config->item('system_purpose_variety_excess'))
+                    {
+                        $s_data['in_excess']=$item['quantity'];
+                    }
+                    $s_data['current_stock'] = $item['quantity'];
+                    $s_data['date_updated'] = $time;
+                    $s_data['user_updated'] = $user->user_id;
+                    Query_helper::add($this->config->item('table_sms_stock_summary_variety'),$s_data);
+                }
+            }
+            /* --End-- Item saving (In three table consequently)*/
         }
         else
         {
-            $this->db->trans_begin(); //DB Transaction Handle START
-            $items=$this->input->post('items');
             /*--Start-- Minimum variety entry checking*/
             if(!$items)
             {
@@ -220,55 +383,17 @@ class Stock_in_variety extends Root_Controller
                 $this->json_return($ajax);
             }
             /*--End-- Minimum variety entry checking*/
-
-            /* --Start-- for checking incomplete entry (add more row)*/
-            foreach($items as $item)
-            {
-                if($item['variety_id']==0 || $item['pack_size_id']<0 || $item['warehouse_id']==0 || $item['quantity']=='')
-                {
-                    $ajax['status']=false;
-                    $ajax['system_message']='Unfinished stock in entry.';
-                    $this->json_return($ajax);
-                }
-            }
-            /* --End-- for checking incomplete entry (add more row)*/
-
-            /* --Start-- for counting total quantity of stock in*/
-            $pack_size=array();
-            $packs=Query_helper::get_info($this->config->item('table_login_setup_classification_vpack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
-            foreach($packs as $pack)
-            {
-                $pack_size[$pack['value']]=$pack['text'];
-            }
-            $pack_quantity=array();
-            foreach($items as $item)
-            {
-                if($item['pack_size_id']!=0)
-                {
-                    if(isset($pack_quantity[$pack_size[$item['pack_size_id']]]))
-                    {
-                        $pack_quantity[$pack_size[$item['pack_size_id']]]+=$item['quantity'];
-                    }else
-                    {
-                        $pack_quantity[$pack_size[$item['pack_size_id']]]=$item['quantity'];
-                    }
-                }else
-                {
-                    $pack_quantity[$item['pack_size_id']]=$item['quantity'];
-                }
-            }
-            // In convert_quantity method type will be in KG or in which packet want to show (such as 10)
-            $data['quantity_total']=System_helper::convert_quantity($type=$this->config->item('system_convert_to_kg'),$pack_quantity);
-            /* --End-- for counting total quantity of stock in*/
-
             /* --Start-- Item saving (In three table consequently)*/
-            $data['date_stock_in']=System_helper::get_time($data['date_stock_in']);
+            $data=array();
+            $data['date_stock_in']=System_helper::get_time($item_head['date_stock_in']);
+            $data['quantity_total']=$quantity_total;
             $data['user_created']=$user->user_id;
             $data['date_created']=$time;
             $data['status']=$this->config->item('system_status_active');
             $item_id=Query_helper::add($this->config->item('table_sms_stock_in_variety'),$data);
             foreach($items as $item)
             {
+                $data_details=array();
                 $data_details['stock_in_id']=$item_id;
                 $data_details['variety_id']=$item['variety_id'];
                 $data_details['pack_size_id']=$item['pack_size_id'];
@@ -277,14 +402,14 @@ class Stock_in_variety extends Root_Controller
                 $data_details['user_created']=$user->user_id;
                 $data_details['date_created']=$time;
                 Query_helper::add($this->config->item('table_sms_stock_in_variety_details'),$data_details);
-                $result=Query_helper::get_info($this->config->item('table_sms_stock_summary_variety'),'*',array('variety_id ='.$data_details['variety_id'],'pack_size_id ='.$data_details['pack_size_id'],'warehouse_id ='.$data_details['warehouse_id']),1);
+                $result=Query_helper::get_info($this->config->item('table_sms_stock_summary_variety'),'*',array('variety_id ='.$item['variety_id'],'pack_size_id ='.$item['pack_size_id'],'warehouse_id ='.$item['warehouse_id']),1);
                 if($result)
                 {
-                    if($data['purpose']==$this->config->item('system_purpose_variety_stock_in'))
+                    if($item_head['purpose']==$this->config->item('system_purpose_variety_stock_in'))
                     {
                         $s_data['in_stock']=$data_details['quantity']+$result['in_stock'];
                     }
-                    elseif($data['purpose']==$this->config->item('system_purpose_variety_excess'))
+                    elseif($item_head['purpose']==$this->config->item('system_purpose_variety_excess'))
                     {
                         $s_data['in_excess']=$data_details['quantity']+$result['in_excess'];
                     }
@@ -298,11 +423,11 @@ class Stock_in_variety extends Root_Controller
                     $s_data['variety_id'] = $data_details['variety_id'];
                     $s_data['pack_size_id'] = $data_details['pack_size_id'];
                     $s_data['warehouse_id'] = $data_details['warehouse_id'];
-                    if($data['purpose']==$this->config->item('system_purpose_variety_stock_in'))
+                    if($item_head['purpose']==$this->config->item('system_purpose_variety_stock_in'))
                     {
                         $s_data['in_stock']=$data_details['quantity'];
                     }
-                    elseif($data['purpose']==$this->config->item('system_purpose_variety_excess'))
+                    elseif($item_head['purpose']==$this->config->item('system_purpose_variety_excess'))
                     {
                         $s_data['in_excess']=$data_details['quantity'];
                     }
@@ -313,29 +438,29 @@ class Stock_in_variety extends Root_Controller
                 }
             }
             /* --End-- Item saving (In three table consequently)*/
+        }
+        $this->db->trans_complete();   //DB Transaction Handle END
+        if($this->db->trans_status() === FALSE)
+        {
+            $this->db->trans_rollback();
 
-            if($this->db->trans_status() === FALSE)
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("MSG_SAVED_FAIL");
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $this->db->trans_commit();
+
+            $save_and_new=$this->input->post('system_save_new_status');
+            $this->message=$this->lang->line("MSG_SAVED_SUCCESS");
+            if($save_and_new==1)
             {
-                $this->db->trans_rollback();
-
-                $ajax['status']=false;
-                $ajax['system_message']=$this->lang->line("MSG_SAVED_FAIL");
-                $this->json_return($ajax);
+                $this->system_add();
             }
             else
             {
-                $this->db->trans_commit();
-
-                $save_and_new=$this->input->post('system_save_new_status');
-                $this->message=$this->lang->line("MSG_SAVED_SUCCESS");
-                if($save_and_new==1)
-                {
-                    $this->system_add();
-                }
-                else
-                {
-                    $this->system_list();
-                }
+                $this->system_list();
             }
         }
     }

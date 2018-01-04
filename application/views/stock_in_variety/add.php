@@ -68,8 +68,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             <div class="col-sm-4 col-xs-8">
                 <select id="purpose" name="item[purpose]" class="form-control">
                     <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                    <option value="<?php echo $CI->config->item('system_purpose_variety_stock_in');?>"><?php echo $this->lang->line('LABEL_STOCK_IN');?></option>
-                    <option value="<?php echo $CI->config->item('system_purpose_variety_excess');?>"><?php echo $this->lang->line('LABEL_EXCESS');?></option>
+                    <option value="<?php echo $CI->config->item('system_purpose_variety_stock_in');?>" <?php if(isset($item['purpose'])){if($item['purpose']==$CI->config->item('system_purpose_variety_stock_in')){echo "selected";}}?>><?php echo $this->lang->line('LABEL_STOCK_IN');?></option>
+                    <option value="<?php echo $CI->config->item('system_purpose_variety_excess');?>" <?php if(isset($item['purpose'])){if($item['purpose']==$CI->config->item('system_purpose_variety_excess')){echo "selected";}}?>><?php echo $this->lang->line('LABEL_EXCESS');?></option>
                 </select>
             </div>
         </div>
@@ -97,6 +97,45 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 </tr>
                 </thead>
                 <tbody>
+                    <?php
+                    foreach($stock_in_varieties as $index=>$si_variety)
+                    {
+                        ?>
+                        <tr>
+                            <td>
+                                <label><?php echo $si_variety['crop_name']; ?></label>
+                            </td>
+                            <td>
+                                <label><?php echo $si_variety['crop_type_name']; ?></label>
+                            </td>
+                            <td>
+                                <label><?php echo $si_variety['variety_name']; ?></label>
+                                <input type="hidden"  id="variety_id<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][variety_id]" value="<?php echo $si_variety['variety_id']; ?>" />
+                            </td>
+                            <td>
+                                <label><?php echo $si_variety['pack_size_name']; ?></label>
+                                <input type="hidden" id="pack_size_id<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][pack_size_id]" value="<?php echo $si_variety['pack_size_id']; ?>" />
+
+                            </td>
+                            <td class="text-right">
+                                <label><?php echo $si_variety['ware_house_name']; ?></label>
+                                <input type="hidden" id="warehouse_id<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][warehouse_id]" value="<?php echo $si_variety['warehouse_id']; ?>" />
+                            </td>
+                            <td class="text-right">
+                                <label><?php $current_stock=System_helper::get_variety_stock(array($si_variety['variety_id'])); if(isset($current_stock)){echo $current_stock[$si_variety['variety_id']][$si_variety['pack_size_id']][$si_variety['warehouse_id']]['current_stock'];}else{echo 0;}?></label>
+                            </td>
+                            <td class="text-right">
+                                <input type="text" id="quantity<?php echo $index+1;?>" value="<?php echo $si_variety['quantity']; ?>" class="form-control text-right quantity" data-current-id="<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][quantity]">
+                                <input type="hidden" value="<?php echo $si_variety['quantity']; ?>" name="old_quantity[<?php echo $si_variety['variety_id']?>][<?php echo $si_variety['pack_size_id']?>][<?php echo $si_variety['warehouse_id']?>]">
+                            </td>
+
+<!--                            <td>-->
+<!--                                <button class="btn btn-danger system_button_add_delete" type="button">--><?php //echo $CI->lang->line('DELETE'); ?><!--</button>-->
+<!--                            </td>-->
+                        </tr>
+                    <?php
+                    }
+                    ?>
                 </tbody>
 
             </table>
@@ -106,7 +145,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
             </div>
             <div class="col-xs-4">
-                <button type="button" class="btn btn-warning system_button_add_more" data-current-id="0"><?php echo $CI->lang->line('LABEL_ADD_MORE');?></button>
+                <button type="button" class="btn btn-warning system_button_add_more" data-current-id="<?php echo sizeof($stock_in_varieties);?>"><?php echo $CI->lang->line('LABEL_ADD_MORE');?></button>
             </div>
             <div class="col-xs-4">
 
