@@ -89,6 +89,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             dataType: "json",
             dataFields: [
                 { name: 'id', type: 'int' },
+                { name: 'generated_id', type: 'string' },
                 { name: 'date_stock_in', type: 'string' },
                 { name: 'quantity_total', type: 'string' },
                 { name: 'purpose', type: 'string' },
@@ -116,6 +117,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 autoheight: true,
                 columns: [
                     { text: '<?php echo $CI->lang->line('ID'); ?>', dataField: 'id',width:'75',hidden:true},
+                    { text: '<?php echo $CI->lang->line('SI ID'); ?>', dataField: 'generated_id',width:'75',hidden:false},
                     { text: '<?php echo $CI->lang->line('LABEL_DATE_STOCK_IN'); ?>', filtertype: 'list',dataField: 'date_stock_in',width:'120'},
                     { text: '<?php echo $CI->lang->line('LABEL_QUANTITY'); ?>', dataField: 'quantity_total'},
                     { text: '<?php echo $CI->lang->line('LABEL_PURPOSE'); ?>', dataField: 'purpose',filtertype: 'list'},
