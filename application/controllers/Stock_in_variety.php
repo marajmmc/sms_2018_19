@@ -218,58 +218,68 @@ class Stock_in_variety extends Root_Controller
             }
         }
         $items=$this->input->post('items');
-        /* --Start-- for checking incomplete entry (add more row)*/
-        foreach($items as $item)
+        if(isset($items))
         {
-            if($item['variety_id']==0 || $item['pack_size_id']<0 || $item['warehouse_id']==0 || $item['quantity']=='')
+            /* --Start-- for checking incomplete entry (add more row)*/
+            foreach($items as $item)
             {
-                $ajax['status']=false;
-                $ajax['system_message']='Unfinished stock in entry.';
-                $this->json_return($ajax);
+                if($item['variety_id']==0 || $item['pack_size_id']<0 || $item['warehouse_id']==0 || $item['quantity']=='')
+                {
+                    $ajax['status']=false;
+                    $ajax['system_message']='Unfinished stock in entry.';
+                    $this->json_return($ajax);
+                }
             }
-        }
-        /* --End-- for checking incomplete entry (add more row)*/
+            /* --End-- for checking incomplete entry (add more row)*/
 
-        /* --Start-- Duplicate Entry Checking*/
-        $duplicate_entry_checker=array();
-        foreach($items as $item)
-        {
-            if(isset($duplicate_entry_checker[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]))
+            /* --Start-- Duplicate Entry Checking*/
+            $duplicate_entry_checker=array();
+            foreach($items as $item)
             {
-                $duplicate_entry_checker[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]=false;
-            }else
-            {
-                $duplicate_entry_checker[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]=true;
+                if(isset($duplicate_entry_checker[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]))
+                {
+                    $duplicate_entry_checker[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]=false;
+                }else
+                {
+                    $duplicate_entry_checker[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]=true;
+                }
+                if($duplicate_entry_checker[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]==false)
+                {
+                    $ajax['status']=false;
+                    $ajax['system_message']='Please You are trying to entry duplicate variety.';
+                    $this->json_return($ajax);
+                }
             }
-            if($duplicate_entry_checker[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]==false)
-            {
-                $ajax['status']=false;
-                $ajax['system_message']='Please You are trying to entry duplicate variety.';
-                $this->json_return($ajax);
-            }
-        }
-        /* --End-- Duplicate Entry Checking*/
+            /* --End-- Duplicate Entry Checking*/
 
-        /* --Start-- for counting total quantity of stock in*/
-        $pack_size=array();
-        $packs=Query_helper::get_info($this->config->item('table_login_setup_classification_vpack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
-        foreach($packs as $pack)
-        {
-            $pack_size[$pack['value']]=$pack['text'];
-        }
-        $quantity_total=0;
-        foreach($items as $item)
-        {
-            if($item['pack_size_id']!=0)
+            /* --Start-- for counting total quantity of stock in*/
+            $pack_size=array();
+            $packs=Query_helper::get_info($this->config->item('table_login_setup_classification_vpack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
+            foreach($packs as $pack)
             {
-                $quantity_total+=(($pack_size[$item['pack_size_id']])*($item['quantity'])/1000);
-
-            }else
-            {
-                $quantity_total+=$item['quantity'];
+                $pack_size[$pack['value']]=$pack['text'];
             }
+            $quantity_total=0;
+            foreach($items as $item)
+            {
+                if($item['pack_size_id']!=0)
+                {
+                    $quantity_total+=(($pack_size[$item['pack_size_id']])*($item['quantity'])/1000);
+
+                }else
+                {
+                    $quantity_total+=$item['quantity'];
+                }
+            }
+            /* --End-- for counting total quantity of stock in*/
+        }else
+        {
+            /*--Start-- Minimum variety entry checking*/
+            $ajax['status']=false;
+            $ajax['system_message']='At least one variety need to stock in.';
+            $this->json_return($ajax);
+            /*--End-- Minimum variety entry checking*/
         }
-        /* --End-- for counting total quantity of stock in*/
         $this->db->trans_start();  //DB Transaction Handle START
         $item_head = $this->input->post('item');
         if($id>0)
@@ -429,14 +439,6 @@ class Stock_in_variety extends Root_Controller
         }
         else
         {
-            /*--Start-- Minimum variety entry checking*/
-            if(!$items)
-            {
-                $ajax['status']=false;
-                $ajax['system_message']='At least one variety need to stock in.';
-                $this->json_return($ajax);
-            }
-            /*--End-- Minimum variety entry checking*/
             /* --Start-- Item saving (In three table consequently)*/
             $data=array();
             $data['date_stock_in']=System_helper::get_time($item_head['date_stock_in']);
