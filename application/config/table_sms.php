@@ -7,4 +7,5 @@ $config['table_sms_template'] = 'arm_sms_2018_19.sms_template';
 $config['table_sms_stock_in_variety'] = 'arm_sms_2018_19.sms_stock_in_variety';
 $config['table_sms_stock_in_variety_details'] = 'arm_sms_2018_19.sms_stock_in_variety_details';
 $config['table_sms_stock_out_variety'] = 'arm_sms_2018_19.sms_stock_out_variety';
+$config['table_sms_stock_out_variety_details'] = 'arm_sms_2018_19.sms_stock_out_variety_details';
 $config['table_sms_stock_summary_variety'] = 'arm_sms_2018_19.sms_stock_summary_variety';

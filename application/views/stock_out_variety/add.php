@@ -50,81 +50,144 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             <div class="col-xs-4">
                 <label for="purpose" class="control-label pull-right"><?php echo $this->lang->line('LABEL_PURPOSE'); ?><span style="color:#FF0000">*</span></label>
             </div>
-            <div class="col-sm-4 col-xs-8">
-                <select id="purpose" name="item[purpose]" class="form-control">
-                    <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                    <option value="<?php echo $CI->config->item('system_purpose_variety_short_inventory'); ?>"><?php echo $CI->lang->line('LABEL_STOCK_OUT_PURPOSE_SHORT');?></option>
-                    <option value="<?php echo $CI->config->item('system_purpose_variety_rnd'); ?>"><?php echo $CI->lang->line('LABEL_STOCK_OUT_PURPOSE_RND');?></option>
-                    <option value="<?php echo $CI->config->item('system_purpose_variety_sample'); ?>"><?php echo $CI->lang->line('LABEL_STOCK_OUT_PURPOSE_SAMPLE');?></option>
-                    <option value="<?php echo $CI->config->item('system_purpose_variety_demonstration'); ?>"><?php echo $CI->lang->line('LABEL_STOCK_OUT_PURPOSE_DEMONSTRATION');?></option>
-                </select>
-            </div>
+            <?php if($item['purpose']){?>
+                <div class="col-sm-4 col-xs-8">
+                    <label class="control-label">
+                        <?php
+                            if($item['purpose']==$CI->config->item('system_purpose_variety_short_inventory'))
+                            {
+                                echo $this->lang->line('LABEL_STOCK_OUT_PURPOSE_SHORT');
+                            }
+                            elseif($item['purpose']==$CI->config->item('system_purpose_variety_rnd'))
+                            {
+                                echo $this->lang->line('LABEL_STOCK_OUT_PURPOSE_RND');
+                            }
+                            elseif($item['purpose']==$CI->config->item('system_purpose_variety_sample'))
+                            {
+                                echo $this->lang->line('LABEL_STOCK_OUT_PURPOSE_SAMPLE');
+                            }
+                            elseif($item['purpose']==$CI->config->item('system_purpose_variety_demonstration'))
+                            {
+                                echo $this->lang->line('LABEL_STOCK_OUT_PURPOSE_DEMONSTRATION');
+                            }
+                        ?>
+                    </label>
+                    <input type="hidden" name="item[purpose]" value="<?php echo $item['purpose'];?>">
+                </div>
+            <?php } else{?>
+                <div class="col-sm-4 col-xs-8">
+                    <select id="purpose" name="item[purpose]" class="form-control">
+                        <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                        <option value="<?php echo $CI->config->item('system_purpose_variety_short_inventory');?>" <?php if(isset($item['purpose'])){if($item['purpose']==$CI->config->item('system_purpose_variety_short_inventory')){echo "selected";}}?>><?php echo $this->lang->line('LABEL_STOCK_OUT_PURPOSE_SHORT');?></option>
+                        <option value="<?php echo $CI->config->item('system_purpose_variety_rnd');?>" <?php if(isset($item['purpose'])){if($item['purpose']==$CI->config->item('system_purpose_variety_rnd')){echo "selected";}}?>><?php echo $this->lang->line('LABEL_STOCK_OUT_PURPOSE_RND');?></option>
+                        <option value="<?php echo $CI->config->item('system_purpose_variety_sample');?>" <?php if(isset($item['purpose'])){if($item['purpose']==$CI->config->item('system_purpose_variety_sample')){echo "selected";}}?>><?php echo $this->lang->line('LABEL_STOCK_OUT_PURPOSE_SAMPLE');?></option>
+                        <option value="<?php echo $CI->config->item('system_purpose_variety_demonstration');?>" <?php if(isset($item['purpose'])){if($item['purpose']==$CI->config->item('system_purpose_variety_demonstration')){echo "selected";}}?>><?php echo $this->lang->line('LABEL_STOCK_OUT_PURPOSE_DEMONSTRATION');?></option>
+                    </select>
+                </div>
+            <?php } ?>
         </div>
 
-        <div style="display: none;" class="row show-grid" id="division_id_container">
+        <div style="<?php if(!($item['division_id'])){echo 'display:none';} ?>" class="row show-grid" id="division_id_container">
             <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DIVISION_NAME');?></label>
             </div>
-            <div class="col-sm-4 col-xs-8">
-                <select id="division_id" class="form-control">
-                    <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                    <?php
-                    foreach($divisions as $division)
-                    {?>
-                        <option value="<?php echo $division['value']?>"><?php echo $division['text'];?></option>
-                    <?php
-                    }
-                    ?>
-                </select>
-            </div>
+            <?php if(($item['division_id'])){?>
+                <div class="col-sm-4 col-xs-8">
+                    <label class="control-label"><?php echo $item['division_name'];?></label>
+                </div>
+            <?php }else{?>
+                <div class="col-sm-4 col-xs-8">
+                    <select id="division_id" class="form-control">
+                        <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                        <?php
+                        foreach($divisions as $division)
+                        {?>
+                            <option value="<?php echo $division['value']?>" <?php if($division['value']==$item['division_id']){ echo "selected";}?>><?php echo $division['text'];?></option>
+                        <?php
+                        }
+                        ?>
+                    </select>
+                </div>
+            <?php } ?>
         </div>
-        <div style="display: none;" class="row show-grid" id="zone_id_container">
+        <div style="<?php if(!($item['zone_id'])){echo 'display:none';} ?>" class="row show-grid" id="zone_id_container">
             <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ZONE_NAME');?></label>
             </div>
-            <div class="col-sm-4 col-xs-8">
-                <select id="zone_id" class="form-control">
-                    <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                </select>
-            </div>
+            <?php if(($item['zone_id'])){?>
+                <div class="col-sm-4 col-xs-8">
+                    <label class="control-label"><?php echo $item['zone_name'];?></label>
+                </div>
+            <?php }else{?>
+                <div class="col-sm-4 col-xs-8">
+                    <select id="zone_id" class="form-control">
+                        <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                    </select>
+                </div>
+            <?php } ?>
         </div>
-        <div style="display: none;" class="row show-grid" id="territory_id_container">
+        <div style="<?php if(!($item['territory_id'])){echo 'display:none';} ?>" class="row show-grid" id="territory_id_container">
             <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TERRITORY_NAME');?></label>
             </div>
-            <div class="col-sm-4 col-xs-8">
-                <select id="territory_id" class="form-control">
-                    <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                </select>
-            </div>
+            <?php if(($item['territory_id'])){?>
+                <div class="col-sm-4 col-xs-8">
+                    <label class="control-label"><?php echo $item['territory_name'];?></label>
+                </div>
+            <?php }else{?>
+                <div class="col-sm-4 col-xs-8">
+                    <select id="territory_id" class="form-control">
+                        <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                    </select>
+                </div>
+            <?php } ?>
+
         </div>
-        <div style="display: none;" class="row show-grid" id="district_id_container">
+        <div style="<?php if(!($item['district_id'])){echo 'display:none';} ?>" class="row show-grid" id="district_id_container">
             <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DISTRICT_NAME');?></label>
             </div>
-            <div class="col-sm-4 col-xs-8">
-                <select id="district_id" class="form-control">
-                    <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                </select>
-            </div>
+            <?php if(($item['district_id'])){?>
+                <div class="col-sm-4 col-xs-8">
+                    <label class="control-label"><?php echo $item['district_name'];?></label>
+                </div>
+            <?php }else{?>
+                <div class="col-sm-4 col-xs-8">
+                    <select id="district_id" class="form-control">
+                        <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                    </select>
+                </div>
+            <?php } ?>
         </div>
-        <div style="display: none;" class="row show-grid" id="customer_id_container">
+        <div style="<?php if(!($item['customer_id'])){echo 'display:none';} ?>" class="row show-grid" id="customer_id_container">
             <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CUSTOMER_NAME');?></label>
             </div>
-            <div class="col-sm-4 col-xs-8">
-                <select id="customer_id" name="item[customer_id]" class="form-control">
-                    <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                </select>
-            </div>
+            <?php if(($item['customer_id'])){?>
+                <div class="col-sm-4 col-xs-8">
+                    <label class="control-label"><?php echo $item['customers_name'];?></label>
+                </div>
+            <?php }else{?>
+                <div class="col-sm-4 col-xs-8">
+                    <select id="customer_id" name="item[customer_id]" class="form-control">
+                        <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                    </select>
+                </div>
+            <?php } ?>
         </div>
-        <div class="row show-grid" style="display: none;" id="customer_name_container">
+        <div class="row show-grid" style="<?php if(!($item['customer_name'])){echo 'display:none';} ?>" id="customer_name_container">
             <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_CUSTOMER_NAME');?></label>
             </div>
-            <div class="col-sm-4 col-xs-8">
-                <input type="text" name="item[customer_name]" id="customer_name" class="form-control" value=""/>
-            </div>
+            <?php if($item['customer_name']){?>
+                <div class="col-sm-4 col-xs-8">
+                    <label class="control-label"><?php echo $item['customer_name'];?></label>
+                </div>
+            <?php } else{?>
+                <div class="col-sm-4 col-xs-8">
+                    <input type="text" name="item[customer_name]" id="customer_name" class="form-control" value="<?php echo $item['customer_name']?>"/>
+                </div>
+            <?php }?>
         </div>
 
         <div style="" class="row show-grid">
@@ -151,6 +214,45 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     </tr>
                 </thead>
                 <tbody>
+                <?php
+                foreach($stock_out_varieties as $index=>$so_variety)
+                {
+                    ?>
+                    <tr>
+                        <td>
+                            <label><?php echo $so_variety['crop_name']; ?></label>
+                        </td>
+                        <td>
+                            <label><?php echo $so_variety['crop_type_name']; ?></label>
+                        </td>
+                        <td>
+                            <label><?php echo $so_variety['variety_name']; ?></label>
+                            <input type="hidden"  id="variety_id<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][variety_id]" value="<?php echo $so_variety['variety_id']; ?>" />
+                        </td>
+                        <td>
+                            <label><?php echo $so_variety['pack_size_name']; ?></label>
+                            <input type="hidden" id="pack_size_id<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][pack_size_id]" value="<?php echo $so_variety['pack_size_id']; ?>" />
+
+                        </td>
+                        <td class="text-right">
+                            <label><?php echo $so_variety['ware_house_name']; ?></label>
+                            <input type="hidden" id="warehouse_id<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][warehouse_id]" value="<?php echo $so_variety['warehouse_id']; ?>" />
+                        </td>
+                        <td class="text-right">
+                            <label><?php $current_stock=System_helper::get_variety_stock(array($so_variety['variety_id'])); if(isset($current_stock)){echo $current_stock[$so_variety['variety_id']][$so_variety['pack_size_id']][$so_variety['warehouse_id']]['current_stock'];}else{echo 0;}?></label>
+                        </td>
+                        <td class="text-right">
+                            <input type="text" id="quantity<?php echo $index+1;?>" value="<?php echo $so_variety['quantity']; ?>" class="form-control text-right quantity" data-current-id="<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][quantity]">
+                            <input type="hidden" value="<?php echo $so_variety['quantity']; ?>" name="old_quantity[<?php echo $so_variety['variety_id']?>][<?php echo $so_variety['pack_size_id']?>][<?php echo $so_variety['warehouse_id']?>]">
+                        </td>
+
+                        <!--                            <td>-->
+                        <!--                                <button class="btn btn-danger system_button_add_delete" type="button">--><?php //echo $CI->lang->line('DELETE'); ?><!--</button>-->
+                        <!--                            </td>-->
+                    </tr>
+                <?php
+                }
+                ?>
                 </tbody>
             </table>
         </div>
@@ -159,7 +261,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
             </div>
             <div class="col-xs-4">
-                <button type="button" class="btn btn-warning system_button_add_more" data-current-id="0"><?php echo $CI->lang->line('LABEL_ADD_MORE');?></button>
+                <button type="button" class="btn btn-warning system_button_add_more" data-current-id="<?php echo sizeof($stock_out_varieties);?>"><?php echo $CI->lang->line('LABEL_ADD_MORE');?></button>
             </div>
             <div class="col-xs-4">
 
