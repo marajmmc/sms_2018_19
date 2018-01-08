@@ -324,7 +324,7 @@ class Stock_out_variety extends Root_Controller
                         {
                             if($old_quantity[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]>$item['quantity'])
                             {
-                                $valid_quantity_checker=$result['current_stock']-($old_quantity[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]-$item['quantity']);
+                                $valid_quantity_checker=$result['current_stock']+($old_quantity[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]-$item['quantity']);
                             }
                             if($old_quantity[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]<$item['quantity'])
                             {
