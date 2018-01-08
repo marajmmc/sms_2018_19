@@ -223,12 +223,18 @@ $lang['MSG_QC_EDIT_WARNING'] = 'If currency price, packing or direct cost change
 
 //LC
 $lang['LABEL_MONTH'] = 'Month';
-$lang['LABEL_CONSIGNMENT_NAME']='Consignment name';
+$lang['LABEL_CONSIGNMENT_NAME']='Consignment File Number';
 $lang['LABEL_CURRENCY_NAME']='Currency';
+$lang['LABEL_TOTAL_CURRENCY']='Total Currency';
+$lang['LABEL_TOTAL_TAKA']='Total Taka';
+$lang['LABEL_OTHER_COST_CURRENCY']='Others Cost Currency';
+$lang['LABEL_OTHER_COST_TAKA']='Others Cost Taka';
 $lang['LABEL_LC_NUMBER']='LC Number';
-$lang['LABEL_DATE_EXPECTED']='Expected Date';
+$lang['LABEL_DATE_EXPECTED']='Expected Shipment Date';
 $lang['LABEL_QUANTITY_KG_PACK']='Quantity (packet / Kg)';
 $lang['LABEL_PACK_SIZE']='Pack Size';
+$lang['LABEL_EXPANSE_STATUS']='Expanse Status';
+$lang['LABEL_RELEASE_STATUS']='Release Status';
 $lang['LABEL_RECEIVED_STATUS']='Received Status';
 $lang['LABEL_CLOSED_STATUS']='Closed Status';
 
