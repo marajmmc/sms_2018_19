@@ -187,7 +187,15 @@ if(!(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)) && 
                 <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_OTHER_COST_CURRENCY');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <input type="text" name="item[other_cost_currency]" id="other_cost_currency" class="form-control" value="<?php echo $item['other_cost_currency'];?>"<?php echo $disabled; ?>/>
+                <input type="text" name="item[other_cost_currency]" id="other_cost_currency" class="form-control float_type_positive" value="<?php echo $item['other_cost_currency'];?>"<?php echo $disabled; ?>/>
+            </div>
+        </div>
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS');?> </label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <textarea name="item[remarks]" id="remarks" class="form-control" <?php echo $disabled; ?>><?php echo $item['remarks'];?></textarea>
             </div>
         </div>
         <!--<div class="row show-grid">
@@ -411,9 +419,9 @@ if(!(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)) && 
             <td class="text-right">
                 <input type="text" class="form-control float_type_positive price" value=""/>
             </td>
-            <td class="text-right">
+            <!--<td class="text-right">
                 <label class="control-label total_price">0.00</label>
-            </td>
+            </td>-->
             <td>
                 <button type="button" class="btn btn-danger system_button_add_delete"><?php echo $CI->lang->line('DELETE'); ?></button>
             </td>
