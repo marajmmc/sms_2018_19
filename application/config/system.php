@@ -35,3 +35,11 @@ $config['system_id_prefix_transfer_outlet_to_outlet']='TO';
 
 //Convert Quantity
 $config['system_convert_to_kg']='KG';
+
+//LC
+$config['system_status_expense_pending']='PENDING';
+$config['system_status_expense_complete']='COMPLETE';
+$config['system_status_release_pending']='PENDING';
+$config['system_status_release_complete']='COMPLETE';
+$config['system_status_receive_pending']='PENDING';
+$config['system_status_receive_complete']='COMPLETE';
