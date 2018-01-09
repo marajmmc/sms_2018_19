@@ -242,8 +242,10 @@ if(!(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)) && 
                             <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_VARIETY'); ?></th>
                             <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
                             <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_QUANTITY_KG_PACK'); ?></th>
+                            <th style="min-width: 100px;">KG</th>
                             <th style="min-width: 100px;">Unit Price (Currency)</th>
-                            <!--<th style="min-width: 150px;">Total Price (Tk.)</th>-->
+                            <th style="min-width: 150px;">Total Price (Currency)</th>
+                            <th>&nbsp;</th>
                         </tr>
                     </thead>
                     <tbody id="items_old_container">
@@ -324,6 +326,9 @@ if(!(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)) && 
                                     }
                                     ?>
                                 </td>
+                                <td class="text-right">
+                                    <label class="control-label total_price" id="total_price_id_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>"><?php echo number_format($value['amount_price_total_order'],2); ?></label>
+                                </td>
                                 <td>
                                     <?php
                                     if(!(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)))
@@ -341,9 +346,9 @@ if(!(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)) && 
                                     }
                                     ?>
                                 </td>
-                                <!--<td class="text-right">
-                                    <label class="control-label total_price" id="total_price_id_<?php /*echo $index+1;*/?>" data-current-id="<?php /*echo $index+1;*/?>"><?php /*echo number_format($value['amount_price_total_order'],2); */?></label>
-                                </td>-->
+                                <td class="text-right">
+                                    <label class="control-label total_price" id="total_price_id_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>"><?php echo number_format($value['amount_price_total_order'],2); ?></label>
+                                </td>
                                 <td>
                                     <?php
                                         if(isset($CI->permissions['action3']) && ($CI->permissions['action3']==1))
@@ -402,12 +407,12 @@ if(!(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)) && 
             <td>
                 <select class="form-control quantity_type">
                     <option value="-1"><?php echo $this->lang->line('SELECT'); ?></option>
-                    <option value="0">Bulk</option>
+                    <option value="0" data-pack-size-name="0">Bulk</option>
                     <?php
                         foreach($packs as $pack)
                         {
                             ?>
-                            <option value="<?php echo $pack['value']?>"><?php echo $pack['text'];?></option>
+                            <option value="<?php echo $pack['value']?>" data-pack-size-name="<?php echo $pack['text'];?>"><?php echo $pack['text'];?></option>
                             <?php
                         }
                     ?>
@@ -417,11 +422,14 @@ if(!(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)) && 
                 <input type="text" class="form-control float_type_positive quantity" value=""/>
             </td>
             <td class="text-right">
+                <label class="control-label total_quantity_kg">0.00</label>
+            </td>
+            <td class="text-right">
                 <input type="text" class="form-control float_type_positive price" value=""/>
             </td>
-            <!--<td class="text-right">
+            <td class="text-right">
                 <label class="control-label total_price">0.00</label>
-            </td>-->
+            </td>
             <td>
                 <button type="button" class="btn btn-danger system_button_add_delete"><?php echo $CI->lang->line('DELETE'); ?></button>
             </td>
@@ -494,26 +502,26 @@ if(!(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)) && 
             });
         });
 
-        $(document).off("input","#rate");
-        $(document).on("input","#rate",function()
-        {
-            <?php
-            if(!(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)) && $item['id']>0)
-            {
-                ?>
-                return;
-                <?php
-            }
-            ?>
-            $('.total_price').each(function(index,element)
-            {
-                if($(element).attr('id'))
-                {
-                    var data_current_id=$(element).attr('data-current-id');
-                    calculate_total(data_current_id);
-                }
-            });
-        });
+        <!--        $(document).off("input","#rate");-->
+        <!--        $(document).on("input","#rate",function()-->
+        <!--        {-->
+        <!--            --><?php
+        //            if(!(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)) && $item['id']>0)
+        //            {
+        //                ?>
+        <!--                return;-->
+        <!--                --><?php
+        //            }
+        //            ?>
+        <!--            $('.total_price').each(function(index,element)-->
+        <!--            {-->
+        <!--                if($(element).attr('id'))-->
+        <!--                {-->
+        <!--                    var data_current_id=$(element).attr('data-current-id');-->
+        <!--                    calculate_total(data_current_id);-->
+        <!--                }-->
+        <!--            });-->
+        <!--        });-->
 
         $(document).off('change','#principal_id');
         $(document).on("change","#principal_id",function()
@@ -587,6 +595,10 @@ if(!(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)) && 
             $(content_id+' .quantity').attr('data-current-id',current_id);
             $(content_id+' .quantity').attr('name','varieties['+current_id+'][quantity_order]');
 
+            $(content_id+' .total_quantity_kg').attr('id','total_quantity_kg_'+current_id);
+            $(content_id+' .total_quantity_kg').attr('data-current-id',current_id);
+            //$(content_id+' .total_quantity_kg').attr('name','varieties['+current_id+'][quantity_order]');
+
             $(content_id+' .price').attr('id','price_id_'+current_id);
             $(content_id+' .price').attr('data-current-id',current_id);
             $(content_id+' .price').attr('name','varieties['+current_id+'][price_currency]');
@@ -596,10 +608,10 @@ if(!(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)) && 
             $(content_id+' .total_price').attr('name','varieties['+current_id+'][amount_price_total_order]');
             var html=$(content_id).html();
             $("#items_old_container").append(html);
-            $(content_id+' .quantity_type').removeAttr('id');
+            /*$(content_id+' .quantity_type').removeAttr('id');
             $(content_id+' .quantity').removeAttr('id');
             $(content_id+' .price').removeAttr('id');
-            $(content_id+' .total_price').removeAttr('id');
+            $(content_id+' .total_price').removeAttr('id');*/
         });
 
         $(document).off('click','.system_button_add_delete');
@@ -610,6 +622,18 @@ if(!(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)) && 
 
         $(document).off("input", ".price");
         $(document).off("input", ".quantity");
+        $(document).off("input", ".quantity_type");
+
+
+
+
+        $(document).on("change",".quantity_type",function()
+        {
+            var current_id = $(this).attr("data-current-id");
+            $("#quantity_id_"+current_id).val('')
+            $("#price_id_"+current_id).val('')
+            $("#price_id_"+current_id).val('')
+        });
         $(document).on("input",".price",function()
         {
             var current_id = $(this).attr("data-current-id");
@@ -617,8 +641,14 @@ if(!(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)) && 
         });
         $(document).on("input",".quantity",function()
         {
-            var current_id = $(this).attr("data-current-id");
-            calculate_total(current_id);
+            /*var current_id = $(this).attr("data-current-id");
+            calculate_total(current_id);*/
+            var current_id = $(this).attr("data-current-id")
+
+            //console.log($('option:selected', $("#quantity_type_id_"+current_id)))
+
+            var pack_size=parseFloat($('option:selected', $("#quantity_type_id_"+current_id)).attr('data-pack-size-name'))
+            alert(pack_size);
         });
         $('#items_old').html($('#items_old_container').html());
     });

@@ -89,7 +89,7 @@ class Lc_open extends Root_Controller
             $item['price_total_currency']=$result['price_total_currency'];
             $item['other_cost_currency']=$result['other_cost_currency'];
             $item['status']=$result['status'];
-            $item['status_expanse']=$result['status_expanse'];
+            $item['status_expense']=$result['status_expense'];
             $items[]=$item;
         }
         $this->json_return($items);
@@ -438,7 +438,6 @@ class Lc_open extends Root_Controller
                             {
                                 $price_total_currency+=($variety['quantity_order']*$variety['price_currency']);
                             }
-
                         }
                     }
                     $data['user_created'] = $user->user_id;

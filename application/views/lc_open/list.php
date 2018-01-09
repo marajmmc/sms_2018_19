@@ -95,7 +95,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 { name: 'price_total_currency', type: 'string' },
                 { name: 'other_cost_currency', type: 'string' },
                 { name: 'status', type: 'string' },
-                { name: 'status_expanse', type: 'string' }
+                { name: 'status_expense', type: 'string' }
             ],
             id: 'id',
             url: url
@@ -132,7 +132,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     { text: '<?php echo $CI->lang->line('LABEL_TOTAL_CURRENCY'); ?>', dataField: 'price_total_currency'},
                     { text: '<?php echo $CI->lang->line('LABEL_OTHER_COST_CURRENCY'); ?>', dataField: 'other_cost_currency'},
                     { text: '<?php echo $CI->lang->line('STATUS'); ?>', dataField: 'status',cellsalign: 'right',filtertype: 'list'},
-                    { text: '<?php echo $CI->lang->line('LABEL_EXPANSE_STATUS'); ?>', dataField: 'status_expanse',cellsalign: 'right',filtertype: 'list'}
+                    { text: '<?php echo $CI->lang->line('LABEL_EXPANSE_STATUS'); ?>', dataField: 'status_expense',cellsalign: 'right',filtertype: 'list'}
                 ]
             });
     });
