@@ -175,7 +175,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 </div>
             <?php } ?>
         </div>
-        <div class="row show-grid" style="<?php if(!($item['customer_name'])){echo 'display:none';} ?>" id="customer_name_container">
+        <div class="row show-grid" style="<?php if(!($item['customer_name']) || $item['customers_name']){echo 'display:none';} ?>" id="customer_name_container">
             <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_CUSTOMER_NAME');?></label>
             </div>
@@ -242,13 +242,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                             <label><?php $current_stock=System_helper::get_variety_stock(array($so_variety['variety_id'])); if(isset($current_stock)){echo $current_stock[$so_variety['variety_id']][$so_variety['pack_size_id']][$so_variety['warehouse_id']]['current_stock'];}else{echo 0;}?></label>
                         </td>
                         <td class="text-right">
-                            <input type="text" id="quantity<?php echo $index+1;?>" value="<?php echo $so_variety['quantity']; ?>" class="form-control text-right quantity" data-current-id="<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][quantity]">
+                            <input type="text" id="quantity<?php echo $index+1;?>" value="<?php echo $so_variety['quantity']; ?>" class="form-control text-right float_type_positive quantity" data-current-id="<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][quantity]">
                             <input type="hidden" value="<?php echo $so_variety['quantity']; ?>" name="old_quantity[<?php echo $so_variety['variety_id']?>][<?php echo $so_variety['pack_size_id']?>][<?php echo $so_variety['warehouse_id']?>]">
                         </td>
-
-                        <!--                            <td>-->
-                        <!--                                <button class="btn btn-danger system_button_add_delete" type="button">--><?php //echo $CI->lang->line('DELETE'); ?><!--</button>-->
-                        <!--                            </td>-->
                     </tr>
                 <?php
                 }

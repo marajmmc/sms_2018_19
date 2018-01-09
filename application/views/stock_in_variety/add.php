@@ -125,13 +125,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                                 <label><?php $current_stock=System_helper::get_variety_stock(array($si_variety['variety_id'])); if(isset($current_stock)){echo $current_stock[$si_variety['variety_id']][$si_variety['pack_size_id']][$si_variety['warehouse_id']]['current_stock'];}else{echo 0;}?></label>
                             </td>
                             <td class="text-right">
-                                <input type="text" id="quantity<?php echo $index+1;?>" value="<?php echo $si_variety['quantity']; ?>" class="form-control text-right quantity" data-current-id="<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][quantity]">
+                                <input type="text" id="quantity<?php echo $index+1;?>" value="<?php echo $si_variety['quantity']; ?>" class="form-control text-right float_type_positive quantity" data-current-id="<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][quantity]">
                                 <input type="hidden" value="<?php echo $si_variety['quantity']; ?>" name="old_quantity[<?php echo $si_variety['variety_id']?>][<?php echo $si_variety['pack_size_id']?>][<?php echo $si_variety['warehouse_id']?>]">
                             </td>
-
-<!--                            <td>-->
-<!--                                <button class="btn btn-danger system_button_add_delete" type="button">--><?php //echo $CI->lang->line('DELETE'); ?><!--</button>-->
-<!--                            </td>-->
                         </tr>
                     <?php
                     }
