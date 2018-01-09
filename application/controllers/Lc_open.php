@@ -35,16 +35,57 @@ class Lc_open extends Root_Controller
         {
             $this->system_save();
         }
+        elseif($action=="set_preference")
+        {
+            $this->system_set_preference();
+        }
+        elseif($action=="save_preference")
+        {
+            $this->system_save_preference();
+        }
         else
         {
             $this->system_list();
         }
     }
-
     private function system_list()
     {
         if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
         {
+            $user = User_helper::get_user();
+            $result=Query_helper::get_info($this->config->item('table_login_setup_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
+            $data['items']['id']= 1;
+            $data['items']['fiscal_year_name']= 1;
+            $data['items']['month_name']= 1;
+            $data['items']['date_opening']= 1;
+            $data['items']['date_expected']= 1;
+            $data['items']['principal_name']= 1;
+            $data['items']['currency_name']= 1;
+            $data['items']['lc_number']= 1;
+            $data['items']['consignment_name']= 1;
+            $data['items']['price_total_currency']= 1;
+            $data['items']['other_cost_currency']= 1;
+            $data['items']['status_expense']= 1;
+            $data['items']['status_release']= 1;
+            if($result)
+            {
+                if($result['preferences']!=null)
+                {
+                    $data['preferences']=json_decode($result['preferences'],true);
+                    foreach($data['items'] as $key=>$value)
+                    {
+                        if(isset($data['preferences'][$key]))
+                        {
+                            $data['items'][$key]=$value;
+                        }
+                        else
+                        {
+                            $data['items'][$key]=0;
+                        }
+                    }
+                }
+            }
+
             $data['title']="LC List";
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/list",$data,true));
@@ -67,7 +108,9 @@ class Lc_open extends Root_Controller
         $this->db->select('lc.*');
         $this->db->select('fy.name fiscal_year_name');
         $this->db->select('principal.name principal_name');
+        $this->db->select('sc.name currency_name');
         $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.id = lc.year_id','INNER');
+        $this->db->join($this->config->item('table_sms_setup_currency').' sc','sc.id = lc.currency_id','INNER');
         $this->db->join($this->config->item('table_login_basic_setup_principal').' principal','principal.id = lc.principal_id','INNER');
         $this->db->order_by('lc.year_id','DESC');
         $this->db->order_by('lc.id','DESC');
@@ -83,18 +126,17 @@ class Lc_open extends Root_Controller
             $item['date_opening']=System_helper::display_date($result['date_opening']);
             $item['date_expected']=System_helper::display_date($result['date_expected']);
             $item['principal_name']=$result['principal_name'];
-            $item['currency_name']='a';//$result['principal_name'];
+            $item['currency_name']=$result['currency_name'];
             $item['lc_number']=$result['lc_number'];
             $item['consignment_name']=$result['consignment_name'];
             $item['price_total_currency']=$result['price_total_currency'];
             $item['other_cost_currency']=$result['other_cost_currency'];
-            $item['status']=$result['status'];
             $item['status_expense']=$result['status_expense'];
+            $item['status_release']=$result['status_release'];
             $items[]=$item;
         }
         $this->json_return($items);
     }
-
     private function system_add()
     {
         if(isset($this->permissions['action1'])&&($this->permissions['action1']==1))
@@ -162,10 +204,10 @@ class Lc_open extends Root_Controller
             if(!$data['item'])
             {
                 $ajax['status']=false;
-                $ajax['system_message']='Invalid Try';
+                $ajax['system_message']='Invalid LC - Data Not Found. Please Try Again.';
                 $this->json_return($ajax);
             }
-            if($data['item']['status_received']==$this->config->item('system_status_yes'))
+            /*if($data['item']['status_received']==$this->config->item('system_status_yes'))
             {
                 if(!(isset($this->permissions['action3'])&&($this->permissions['action3']==1)))
                 {
@@ -173,29 +215,25 @@ class Lc_open extends Root_Controller
                     $ajax['system_message']='Already product received, you can not edit this LC';
                     $this->json_return($ajax);
                 }
-            }
+            }*/
 
-            $data['items']=Query_helper::get_info($this->config->item('table_sms_lc_open_details'),'*',array('lc_id='.$item_id,'revision=1'));
+            $data['items']=Query_helper::get_info($this->config->item('table_sms_lc_details'),'*',array('lc_id='.$item_id));
             //print_r($data['items']);exit;
 
             $data['fiscal_years']=Query_helper::get_info($this->config->item('table_login_basic_setup_fiscal_year'),array('id value','name text','date_start','date_end'),array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('id ASC'));
-
             $data['currencies']=Query_helper::get_info($this->config->item('table_sms_setup_currency'),array('id value','name text','amount_rate_budget'),array('status !="'.$this->config->item('system_status_delete').'"'),0,0,array('ordering'));
             $data['currency_rates']=array();
             foreach($data['currencies'] as $rate)
             {
                 $data['currency_rates'][$rate['value']]=$rate['amount_rate_budget'];
             }
-
             $data['principals']=Query_helper::get_info($this->config->item('table_login_basic_setup_principal'),array('id value','name text'),array('status !="'.$this->config->item('system_status_delete').'"'),0,0,array('ordering'));
-
             $results=Query_helper::get_info($this->config->item('table_login_setup_classification_vpack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('id ASC'));
             $data['packs']=array();
             foreach($results as $result)
             {
                 $data['packs'][$result['value']]=$result;
             }
-
             $this->db->from($this->config->item('table_login_setup_classification_varieties').' v');
             $this->db->select('v.id value,v.name');
             $this->db->select('vp.name_import text');
@@ -569,5 +607,117 @@ class Lc_open extends Root_Controller
         $ajax['system_content'][]=array("id"=>$html_container_id,"html"=>$this->load->view("dropdown_with_select",$data,true));
 
         $this->json_return($ajax);
+    }
+    private function system_set_preference()
+    {
+        if(isset($this->permissions['action0']) && ($this->permissions['action0']==1))
+        {
+            $user = User_helper::get_user();
+            $result=Query_helper::get_info($this->config->item('table_login_setup_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
+            $data['items']['id']= 1;
+            $data['items']['fiscal_year_name']= 1;
+            $data['items']['month_name']= 1;
+            $data['items']['date_opening']= 1;
+            $data['items']['date_expected']= 1;
+            $data['items']['principal_name']= 1;
+            $data['items']['currency_name']= 1;
+            $data['items']['lc_number']= 1;
+            $data['items']['consignment_name']= 1;
+            $data['items']['price_total_currency']= 1;
+            $data['items']['other_cost_currency']= 1;
+            $data['items']['status_expense']= 1;
+            $data['items']['status_release']= 1;
+            if($result)
+            {
+                if($result['preferences']!=null)
+                {
+                    $data['preferences']=json_decode($result['preferences'],true);
+                    foreach($data['items'] as $key=>$value)
+                    {
+                        if(isset($data['preferences'][$key]))
+                        {
+                            $data['items'][$key]=$value;
+                        }
+                        else
+                        {
+                            $data['items'][$key]=0;
+                        }
+                    }
+                }
+            }
+
+            $data['title']="Set Preference";
+            $ajax['status']=true;
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/preference",$data,true));
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/set_preference');
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+    }
+    private function system_save_preference()
+    {
+        $items=array();
+        if($this->input->post('item'))
+        {
+            $items=$this->input->post('item');
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("MSG_PLEASE_SELECT_ANY_ONE");
+            $this->json_return($ajax);
+            die();
+        }
+
+        $user = User_helper::get_user();
+        if(!(isset($this->permissions['action0']) && ($this->permissions['action0']==1)))
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+            die();
+        }
+        else
+        {
+            $time=time();
+            $this->db->trans_start();  //DB Transaction Handle START
+
+            $result=Query_helper::get_info($this->config->item('table_login_setup_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
+            if($result)
+            {
+                $data['user_updated']=$user->user_id;
+                $data['date_updated']=$time;
+                $data['preferences']=json_encode($items);
+                Query_helper::update($this->config->item('table_login_setup_user_preference'),$data,array('id='.$result['id']),false);
+            }
+            else
+            {
+                $data['user_id']=$user->user_id;
+                $data['controller']=$this->controller_url;
+                $data['method']='list';
+                $data['user_created']=$user->user_id;
+                $data['date_created']=$time;
+                $data['preferences']=json_encode($items);
+                Query_helper::add($this->config->item('table_login_setup_user_preference'),$data,false);
+            }
+
+            $this->db->trans_complete();   //DB Transaction Handle END
+            if ($this->db->trans_status() === TRUE)
+            {
+                $this->message=$this->lang->line("MSG_SAVED_SUCCESS");
+                $this->system_list();
+            }
+            else
+            {
+                $ajax['status']=false;
+                $ajax['system_message']=$this->lang->line("MSG_SAVED_FAIL");
+                $this->json_return($ajax);
+            }
+        }
     }
 }

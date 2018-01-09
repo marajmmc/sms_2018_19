@@ -327,7 +327,7 @@ if(!(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)) && 
                                     ?>
                                 </td>
                                 <td class="text-right">
-                                    <label class="control-label total_price" id="total_price_id_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>"><?php echo number_format($value['amount_price_total_order'],2); ?></label>
+                                    <label class="control-label total_price" id="total_quantity_id_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>"><?php echo number_format($value['price_currency'],2); ?></label>
                                 </td>
                                 <td>
                                     <?php
@@ -347,7 +347,7 @@ if(!(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)) && 
                                     ?>
                                 </td>
                                 <td class="text-right">
-                                    <label class="control-label total_price" id="total_price_id_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>"><?php echo number_format($value['amount_price_total_order'],2); ?></label>
+                                    <label class="control-label total_price" id="total_price_id_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>"><?php echo number_format($value['price_currency'],2); ?></label>
                                 </td>
                                 <td>
                                     <?php
@@ -625,31 +625,73 @@ if(!(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)) && 
         $(document).off("input", ".quantity_type");
 
 
-
-
+        //////// onchange Pack Size empty relative field.
         $(document).on("change",".quantity_type",function()
         {
             var current_id = $(this).attr("data-current-id");
             $("#quantity_id_"+current_id).val('')
+            $("#total_quantity_kg_"+current_id).html('')
             $("#price_id_"+current_id).val('')
-            $("#price_id_"+current_id).val('')
+            $("#total_price_id_"+current_id).html('')
+
+            $("#total_quantity_kg_"+current_id).html('0.00')
+            $("#total_price_id_"+current_id).html('0.00')
         });
+
+        //////// conversion with KG from GM without bulk.
+        $(document).on("input",".quantity",function()
+        {
+            var current_id = $(this).attr("data-current-id");
+            var total_quantity=0;
+            $("#total_quantity_kg_"+current_id).html('');
+            $("#total_price_id_"+current_id).html('');
+            $("#total_quantity_kg_"+current_id).html('0.00')
+            $("#total_price_id_"+current_id).html('0.00')
+            if($("#quantity_type_id_"+current_id).val()=='-1')
+            {
+                alert('Please select pack size.');
+                $(this).val('');
+                return false;
+            }
+            var pack_size=parseFloat($('option:selected', $("#quantity_type_id_"+current_id)).attr('data-pack-size-name'))
+            if(pack_size==0)
+            {
+                total_quantity=parseFloat($(this).val())
+            }
+            else
+            {
+                total_quantity=parseFloat((pack_size*$(this).val())/1000)
+            }
+            $("#total_quantity_kg_"+current_id).html(number_format(total_quantity,2))
+        });
+
+        //////// calculate total price currency.
         $(document).on("input",".price",function()
         {
             var current_id = $(this).attr("data-current-id");
-            calculate_total(current_id);
-        });
-        $(document).on("input",".quantity",function()
-        {
-            /*var current_id = $(this).attr("data-current-id");
-            calculate_total(current_id);*/
-            var current_id = $(this).attr("data-current-id")
+            var quantity=parseFloat($("#quantity_id_"+current_id).val());
+            var total_price=0;
+            $("#total_price_id_"+current_id).html('')
+            $("#total_price_id_"+current_id).html('0.00')
+            if($("#quantity_type_id_"+current_id).val()=='-1' || $("#quantity_id_"+current_id).val()=='')
+            {
+                alert('Please select pack size and input quantity');
+                $(this).val('');
+                return false;
+            }
+            /*if($("#quantity_type_id_"+current_id).val()=='0')
+            {
+                total_price=parseFloat($(this).val())
+            }
+            else
+            {
+                total_price=parseFloat(quantity*$(this).val())
+            }*/
+            total_price=parseFloat(quantity*$(this).val())
+            $("#total_price_id_"+current_id).html(total_price)
 
-            //console.log($('option:selected', $("#quantity_type_id_"+current_id)))
-
-            var pack_size=parseFloat($('option:selected', $("#quantity_type_id_"+current_id)).attr('data-pack-size-name'))
-            alert(pack_size);
         });
+
         $('#items_old').html($('#items_old_container').html());
     });
 </script>
