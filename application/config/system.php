@@ -8,9 +8,9 @@ $config['system_max_actions']=7;
 
 $config['system_status_yes']='Yes';
 $config['system_status_no']='No';
-$config['system_status_active']='Active';
-$config['system_status_inactive']='In-Active';
-$config['system_status_delete']='Deleted';
+$config['system_status_active']='ACTIVE';
+$config['system_status_inactive']='IN-ACTIVE';
+$config['system_status_delete']='DELETED';
 $config['system_status_pending']='PENDING';
 $config['system_status_complete']='COMPLETE';
 

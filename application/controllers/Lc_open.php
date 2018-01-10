@@ -322,7 +322,7 @@ class Lc_open extends Root_Controller
                     $currency_rate=$result['amount_currency_rate'];
                 }
 
-                if($result && $result['status_release']==$this->config->item('system_status_yes'))
+                if($result && $result['status_release']==$this->config->item('system_status_pending'))
                 {
                     if(isset($this->permissions['action3'])&&($this->permissions['action3']==1))
                     {
