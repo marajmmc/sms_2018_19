@@ -33,10 +33,11 @@ if(isset($CI->permissions['action1']) && ($CI->permissions['action1']==1))
 $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
 $disabled='';
-if(!(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)) && $item['id']>0)
+/*if(!(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)) && $item['id']>0)
 {
     $disabled=' disabled';
-}
+}*/
+
 ?>
 <form id="save_form" action="<?php echo site_url($CI->controller_url.'/index/save');?>" method="post">
     <input type="hidden" id="id" name="id" value="<?php echo $item['id']; ?>" />
@@ -54,39 +55,52 @@ if(!(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)) && 
                 <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_FISCAL_YEAR');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <select id="year_id" class="form-control" name="item[year_id]"<?php echo $disabled; ?>>
-                    <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                    <?php
-                    if(isset($item['year_id']))
-                    {
-                        foreach($fiscal_years as $year)
-                        {
-                            ?>
-                            <option value="<?php echo $year['value']?>"<?php if($item['year_id']==$year['value']) {echo 'selected';} ?>><?php echo $year['text'];?></option>
-                            <?php
-                        }
-                    }
-                    else
-                    {
-                        $time=time();
-                        $selected='';
-                        foreach($fiscal_years as $year)
-                        {
-                            if($time>=$year['date_start'] && $time<=$year['date_end'])
-                            {
-                                $selected=' selected';
-                            }
-                            ?>
-                            <option value="<?php echo $year['value']?>"<?php echo $selected; ?>><?php echo $year['text'];?></option>
-                            <?php
-                            if($selected)
-                            {
-                                $selected='';
-                            }
-                        }
-                    }
+                <?php
+                if($item['id']>0)
+                {
                     ?>
-                </select>
+                    <label class="control-label"><?php echo $fiscal_years['text']?></label>
+                <?php
+                }
+                else
+                {
+                    ?>
+                    <select id="year_id" class="form-control" name="item[year_id]"<?php echo $disabled; ?>>
+                        <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                        <?php
+                        if(isset($item['year_id']))
+                        {
+                            foreach($fiscal_years as $year)
+                            {
+                                ?>
+                                <option value="<?php echo $year['value']?>"<?php if($item['year_id']==$year['value']) {echo 'selected';} ?>><?php echo $year['text'];?></option>
+                            <?php
+                            }
+                        }
+                        else
+                        {
+                            $time=time();
+                            $selected='';
+                            foreach($fiscal_years as $year)
+                            {
+                                if($time>=$year['date_start'] && $time<=$year['date_end'])
+                                {
+                                    $selected=' selected';
+                                }
+                                ?>
+                                <option value="<?php echo $year['value']?>"<?php echo $selected; ?>><?php echo $year['text'];?></option>
+                                <?php
+                                if($selected)
+                                {
+                                    $selected='';
+                                }
+                            }
+                        }
+                        ?>
+                    </select>
+                    <?php
+                }
+                ?>
             </div>
         </div>
         <div class="row show-grid">
@@ -94,17 +108,30 @@ if(!(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)) && 
                 <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_MONTH');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <select id="month_id" class="form-control" name="item[month_id]"<?php echo $disabled; ?>>
-                    <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                    <?php
-                    for($i=1;$i<13;$i++)
-                    {
-                        ?>
-                        <option value="<?php echo $i;?>" <?php if($i==$item['month_id']){echo 'selected';} ?>><?php echo date("F", mktime(0, 0, 0,  $i,1, 2000));?></option>
-                    <?php
-                    }
+                <?php
+                if($item['id']>0)
+                {
                     ?>
-                </select>
+                    <label class="control-label"><?php echo date("F", mktime(0, 0, 0,  $item['month_id'],1, 2000));?></label>
+                <?php
+                }
+                else
+                {
+                    ?>
+                    <select id="month_id" class="form-control" name="item[month_id]" >
+                        <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                        <?php
+                        for($i=1;$i<13;$i++)
+                        {
+                            ?>
+                            <option value="<?php echo $i;?>" <?php if($i==$item['month_id']){echo 'selected';} ?>><?php echo date("F", mktime(0, 0, 0,  $i,1, 2000));?></option>
+                        <?php
+                        }
+                        ?>
+                    </select>
+                <?php
+                }
+                ?>
             </div>
         </div>
         <div class="row show-grid">
@@ -112,15 +139,20 @@ if(!(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)) && 
                 <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_OPENING');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <input type="text" name="item[date_opening]" id="date_opening" class="form-control datepicker date_large" value="<?php echo System_helper::display_date($item['date_opening']);?>"<?php echo $disabled; ?>/>
-            </div>
-        </div>
-        <div class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_EXPECTED');?><span style="color:#FF0000">*</span></label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <input type="text" name="item[date_expected]" id="date_expected" class="form-control datepicker date_large" value="<?php echo System_helper::display_date($item['date_expected']);?>"<?php echo $disabled; ?>/>
+                <?php
+                if($item['id']>0)
+                {
+                    ?>
+                    <label class="control-label"><?php echo System_helper::display_date($item['date_opening']);?></label>
+                <?php
+                }
+                else
+                {
+                    ?>
+                    <input type="text" name="item[date_opening]" id="date_opening" class="form-control datepicker date_large" value="<?php echo System_helper::display_date($item['date_opening']);?>" />
+                <?php
+                }
+                ?>
             </div>
         </div>
         <div class="row show-grid">
@@ -128,17 +160,39 @@ if(!(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)) && 
                 <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_PRINCIPAL_NAME');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <select id="principal_id" name="item[principal_id]" class="form-control"<?php echo $disabled; ?>>
-                    <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                    <?php
-                    foreach($principals as $principal)
-                    {
-                        ?>
-                        <option value="<?php echo $principal['value']?>" <?php if(($principal['value']==$item['principal_id'])){ echo "selected";}?>><?php echo $principal['text'];?></option>
-                        <?php
-                    }
+                <?php
+                if($item['id']>0)
+                {
                     ?>
-                </select>
+                    <label class="control-label"><?php echo $principals['text'];?></label>
+                <?php
+                }
+                else
+                {
+                    ?>
+                    <select id="principal_id" name="item[principal_id]" class="form-control" >
+                        <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                        <?php
+                        foreach($principals as $principal)
+                        {
+                            ?>
+                            <option value="<?php echo $principal['value']?>" <?php if(($principal['value']==$item['principal_id'])){ echo "selected";}?>><?php echo $principal['text'];?></option>
+                        <?php
+                        }
+                        ?>
+                    </select>
+                <?php
+                }
+                ?>
+
+            </div>
+        </div>
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_EXPECTED');?><span style="color:#FF0000">*</span></label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <input type="text" name="item[date_expected]" id="date_expected" class="form-control datepicker date_large" value="<?php echo System_helper::display_date($item['date_expected']);?>" />
             </div>
         </div>
         <div class="row show-grid">
@@ -256,9 +310,10 @@ if(!(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)) && 
                             <tr>
                                 <td>
                                     <?php
-                                    if(!(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)))
+                                    if($item['id']>0)
                                     {
                                         ?>
+                                        <input type="hidden" name="varieties[<?php echo $index+1;?>][lc_detail_id]" value="<?php echo $value['id']; ?>" />
                                         <label><?php echo $varieties[$value['variety_id']]['text']; ?></label>
                                         <input type="hidden" name="varieties[<?php echo $index+1;?>][variety_id]" value="<?php echo $value['variety_id']; ?>">
                                         <?php
@@ -283,11 +338,11 @@ if(!(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)) && 
                                 </td>
                                 <td>
                                     <?php
-                                    if(!(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)))
+                                    if($item['id']>0)
                                     {
                                         ?>
                                         <label><?php if($value['quantity_type_id']==0){echo 'Bulk';}else{echo $packs[$value['quantity_type_id']]['text'];} ?></label>
-                                        <input type="hidden" name="varieties[<?php echo $index+1;?>][quantity_type_id]" value="<?php echo $value['quantity_type_id']; ?>">
+                                        <input type="hidden" name="varieties[<?php echo $index+1;?>][quantity_type_id]" value="<?php echo $value['quantity_type_id']; ?>" class="quantity_type">
                                         <?php
                                     }
                                     else
@@ -310,44 +365,31 @@ if(!(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)) && 
                                     ?>
                                 </td>
                                 <td>
-                                    <?php
-                                    if(!(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)))
-                                    {
-                                        ?>
-                                        <label><?php if($value['quantity_type_id']==0){echo number_format($value['quantity_order'],3);}else{echo $value['quantity_order'];}  ?></label>
-                                        <input type="hidden" value="<?php echo $value['quantity_order']; ?>" name="varieties[<?php echo $index+1;?>][quantity_order]">
-                                        <?php
-                                    }
-                                    else
-                                    {
-                                        ?>
-                                        <input type="text" value="<?php echo $value['quantity_order']; ?>" class="form-control float_type_positive quantity" id="quantity_id_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>" name="varieties[<?php echo $index+1;?>][quantity_order]">
-                                        <?php
-                                    }
-                                    ?>
+                                    <input type="text" value="<?php echo $value['quantity_order']; ?>" class="form-control float_type_positive quantity" id="quantity_id_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>" name="varieties[<?php echo $index+1;?>][quantity_order]">
+                                    <input type="hidden" value="<?php echo $value['quantity_order']; ?>" class="form-control" id="old_quantity_id_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>" name="varieties[<?php echo $index+1;?>][old_quantity_order]">
                                 </td>
                                 <td class="text-right">
-                                    <label class="control-label total_price" id="total_quantity_id_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>"><?php echo number_format($value['price_currency'],2); ?></label>
+                                    <label class="control-label total_price" id="total_quantity_id_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>">
+                                        <?php
+                                            if($packs[$value['quantity_type_id']]['text']==0)
+                                            {
+                                                echo number_format(($value['price_currency']/1000),2);
+                                            }
+                                            else
+                                            {
+                                                echo number_format((($packs[$value['quantity_type_id']]['text']*$value['quantity_order'])/1000),2);
+                                            }
+                                        ?>
+                                    </label>
                                 </td>
                                 <td>
-                                    <?php
-                                    if(!(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)))
-                                    {
-                                        ?>
-                                        <label><?php echo $value['price_currency']; ?></label>
-                                        <input type="hidden" value="<?php echo $value['price_currency']; ?>" name="varieties[<?php echo $index+1;?>][price_currency]">
-                                        <?php
-                                    }
-                                    else
-                                    {
-                                        ?>
-                                        <input type="text" value="<?php echo $value['price_currency']; ?>" class="form-control float_type_positive price" id="price_id_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>" name="varieties[<?php echo $index+1;?>][price_currency]">
-                                        <?php
-                                    }
-                                    ?>
+                                    <input type="text" value="<?php echo $value['price_currency']; ?>" class="form-control float_type_positive price" id="price_id_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>" name="varieties[<?php echo $index+1;?>][price_currency]">
+                                    <input type="hidden" value="<?php echo $value['price_currency']; ?>" class="form-control" id="price_id_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>" name="varieties[<?php echo $index+1;?>][old_price_currency]">
                                 </td>
                                 <td class="text-right">
-                                    <label class="control-label total_price" id="total_price_id_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>"><?php echo number_format($value['price_currency'],2); ?></label>
+                                    <label class="control-label total_price" id="total_price_id_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>">
+                                        <?php echo number_format(($value['quantity_order']*$value['price_currency']),2); ?>
+                                    </label>
                                 </td>
                                 <td>
                                     <?php
@@ -387,6 +429,7 @@ if(!(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)) && 
         <tbody>
         <tr>
             <td>
+                <input type="hidden" class="lc_detail_id" id="lc_detail_id" value="0" />
                 <select class="form-control variety" id="varieties_container">
                     <?php
                         if($item['id']>0)
@@ -440,7 +483,7 @@ if(!(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)) && 
 </div>
 
 <script type="text/javascript">
-    function calculate_total(id)
+    /*function calculate_total(id)
     {
         var price=parseFloat($("#price_id_"+id).val());
         var quantity=parseFloat($("#quantity_id_"+id).val());
@@ -460,7 +503,7 @@ if(!(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)) && 
         }
         total_price=quantity*price*currency_rate;
         $("#total_price_id_"+id).html(number_format(total_price,2,'.',','));
-    }
+    }*/
 
     jQuery(document).ready(function()
     {
@@ -470,36 +513,36 @@ if(!(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)) && 
 <!--        var currencies=JSON.parse('--><?php //echo json_encode($currency_rates);?><!--');-->
         $(".date_large").datepicker({dateFormat : display_date_format,changeMonth: true,changeYear: true,yearRange: "2015:+2"});
         
-        $(document).off("change", "#currency_id");
-        $(document).on("change","#currency_id",function()
-        {
-            <?php
-            if(!(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)) && $item['id']>0)
-            {
-                ?>
-                return;
-                <?php
-            }
-            ?>
-            var currency_id = $('#currency_id').val();
-            if(currency_id>0)
-            {
-                $("#rate").val(currencies[currency_id]);
-            }
-            else
-            {
-                $("#rate").val('');
-            }
-
-            $('.total_price').each(function(index,element)
-            {
-                if($(element).attr('id'))
-                {
-                    var data_current_id=$(element).attr('data-current-id');
-                    calculate_total(data_current_id);
-                }
-            });
-        });
+        <!--        $(document).off("change", "#currency_id");-->
+        <!--        $(document).on("change","#currency_id",function()-->
+        <!--        {-->
+        <!--            --><?php
+        //            if(!(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)) && $item['id']>0)
+        //            {
+        //                ?>
+        <!--                return;-->
+        <!--                --><?php
+        //            }
+        //            ?>
+        <!--            var currency_id = $('#currency_id').val();-->
+        <!--            if(currency_id>0)-->
+        <!--            {-->
+        <!--                $("#rate").val(currencies[currency_id]);-->
+        <!--            }-->
+        <!--            else-->
+        <!--            {-->
+        <!--                $("#rate").val('');-->
+        <!--            }-->
+        <!---->
+        <!--            $('.total_price').each(function(index,element)-->
+        <!--            {-->
+        <!--                if($(element).attr('id'))-->
+        <!--                {-->
+        <!--                    var data_current_id=$(element).attr('data-current-id');-->
+        <!--                    calculate_total(data_current_id);-->
+        <!--                }-->
+        <!--            });-->
+        <!--        });-->
 
         <!--        $(document).off("input","#rate");-->
         <!--        $(document).on("input","#rate",function()-->
@@ -584,6 +627,7 @@ if(!(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)) && 
             $(this).attr('data-current-id',current_id);
             var content_id='#system_content_add_more table tbody';
 
+            $(content_id+' .lc_detail_id').attr('name','varieties['+current_id+'][lc_detail_id]');
             $(content_id+' .variety').attr('name','varieties['+current_id+'][variety_id]');
 
             $(content_id+' .quantity_type').attr('id','quantity_type_id_'+current_id);

@@ -207,6 +207,9 @@ class Lc_open extends Root_Controller
                 $ajax['system_message']='Invalid LC - Data Not Found. Please Try Again.';
                 $this->json_return($ajax);
             }
+
+            $fiscal_year_id=isset($data['item']['year_id'])?$data['item']['year_id']:'';
+            $principal_id=isset($data['item']['principal_id'])?$data['item']['principal_id']:'';
             /*if($data['item']['status_received']==$this->config->item('system_status_yes'))
             {
                 if(!(isset($this->permissions['action3'])&&($this->permissions['action3']==1)))
@@ -220,14 +223,14 @@ class Lc_open extends Root_Controller
             $data['items']=Query_helper::get_info($this->config->item('table_sms_lc_details'),'*',array('lc_id='.$item_id));
             //print_r($data['items']);exit;
 
-            $data['fiscal_years']=Query_helper::get_info($this->config->item('table_login_basic_setup_fiscal_year'),array('id value','name text','date_start','date_end'),array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('id ASC'));
+            $data['fiscal_years']=Query_helper::get_info($this->config->item('table_login_basic_setup_fiscal_year'),array('id value','name text','date_start','date_end'),array("id=$fiscal_year_id",'status ="'.$this->config->item('system_status_active').'"'),1,0,array('id ASC'));
             $data['currencies']=Query_helper::get_info($this->config->item('table_sms_setup_currency'),array('id value','name text','amount_rate_budget'),array('status !="'.$this->config->item('system_status_delete').'"'),0,0,array('ordering'));
             /*$data['currency_rates']=array();
             foreach($data['currencies'] as $rate)
             {
                 $data['currency_rates'][$rate['value']]=$rate['amount_rate_budget'];
             }*/
-            $data['principals']=Query_helper::get_info($this->config->item('table_login_basic_setup_principal'),array('id value','name text'),array('status !="'.$this->config->item('system_status_delete').'"'),0,0,array('ordering'));
+            $data['principals']=Query_helper::get_info($this->config->item('table_login_basic_setup_principal'),array('id value','name text'),array("id=$principal_id",'status !="'.$this->config->item('system_status_delete').'"'),1,0,array('ordering'));
 
             $results=Query_helper::get_info($this->config->item('table_login_setup_classification_vpack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('id ASC'));
             $data['packs']=array();
@@ -271,266 +274,203 @@ class Lc_open extends Root_Controller
     {
         $id = $this->input->post("id");
         $user = User_helper::get_user();
-        if(!(isset($this->permissions['action1'])&&($this->permissions['action1']==1) || isset($this->permissions['action2'])&&($this->permissions['action2']==1) || isset($this->permissions['action3'])&&($this->permissions['action3']==1)))
+        if($id>0)
         {
-            $ajax['status']=false;
-            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
-            $this->json_return($ajax);
-            die();
-        }
-        else
-        {
-            $time=time();
-            $data=$this->input->post('item');
-            if($data)
-            {
-                $data['date_opening']=System_helper::get_time($data['date_opening']);
-                $data['date_expected']=System_helper::get_time($data['date_expected']);
-            }
-            $varieties=$this->input->post('varieties');
-            if($varieties)
-            {
-                if(!$this->check_validation_for_varieties())
-                {
-                    $ajax['status']=false;
-                    $ajax['system_message']=$this->message;
-                    $this->json_return($ajax);
-                    die();
-                }
-            }
-
-            $this->db->trans_start();  //DB Transaction Handle START
-
-            if($id>0)
-            {
-                $this->db->from($this->config->item('table_sms_lc_open').' lc');
-                $this->db->select('lc.*');
-                $this->db->select('lc_details.*');
-                $this->db->join($this->config->item('table_sms_lc_details').' lc_details','lc_details.lc_id = lc.id AND lc_details.revision = 1','LEFT');
-                $this->db->where('lc.id',$id);
-                $this->db->where('lc.status',$this->config->item('system_status_active'));
-                $result=$this->db->get()->row_array();
-                if(!$result)
-                {
-                    $ajax['status']=false;
-                    $ajax['system_message']='Invalid Try';
-                    $this->json_return($ajax);
-                    die();
-                }
-                else
-                {
-                    $currency_rate=$result['amount_currency_rate'];
-                }
-
-                if($result && $result['status_release']==$this->config->item('system_status_pending'))
-                {
-                    if(isset($this->permissions['action3'])&&($this->permissions['action3']==1))
-                    {
-                        if(!$this->check_validation())
-                        {
-                            $ajax['status']=false;
-                            $ajax['system_message']=$this->message;
-                            $this->json_return($ajax);
-                        }
-                        $data['date_updated']=$time;
-                        $data['user_updated']=$user->user_id;
-                        Query_helper::update($this->config->item('table_sms_lc_open'),$data,array('id='.$id));
-                        //varieties
-                        /*$revision_history_data=array();
-                        $revision_history_data['date_updated']=$time;
-                        $revision_history_data['user_updated']=$user->user_id;
-                        Query_helper::update($this->config->item('table_sms_lc_details'),$revision_history_data,array('lc_id='.$id));*/
-
-                        $this->db->where('lc_id',$id);
-                        $this->db->set('revision', 'revision+1', FALSE);
-                        $revision_history_data['date_updated']=$time;
-                        $revision_history_data['user_updated']=$user->user_id;
-                        $this->db->update($this->config->item('table_sms_lc_details'),$revision_history_data);
-
-                        foreach($varieties as $v)
-                        {
-                            $v_data=array();
-                            $v_data['lc_id']=$id;
-                            $v_data['variety_id']=$v['variety_id'];
-                            $v_data['quantity_type_id']=$v['quantity_type_id'];
-                            $v_data['quantity_order']=$v['quantity_order'];
-                            $v_data['price_currency']=$v['price_currency'];
-                            /*$v_data['amount_price_total_order']=$v['quantity_order']*$v['amount_price_order']*$data['amount_currency_rate'];*/
-                            $v_data['revision']=1;
-                            $v_data['date_created'] = $time;
-                            $v_data['user_created'] = $user->user_id;
-                            Query_helper::add($this->config->item('table_sms_lc_open_details'),$v_data);
-                        }
-                    }
-                    else
-                    {
-                        $ajax['status']=false;
-                        $ajax['system_message']='You can not edit this LC';
-                        $this->json_return($ajax);
-                        die();
-                    }
-                }
-                else
-                {
-                    if(!(isset($this->permissions['action2']) && ($this->permissions['action2']==1)) && !(isset($this->permissions['action3']) && ($this->permissions['action3']==1)) && isset($this->permissions['action1']) && ($this->permissions['action1']==1))
-                    {
-                        //varieties
-
-                        $revision_history_data=array();
-                        $revision_history_data['date_updated']=$time;
-                        $revision_history_data['user_updated']=$user->user_id;
-                        Query_helper::update($this->config->item('table_sms_lc_open_details'),$revision_history_data,array('revision=1','lc_id='.$id));
-
-                        $this->db->where('lc_id',$id);
-                        $this->db->set('revision', 'revision+1', FALSE);
-                        $this->db->update($this->config->item('table_sms_lc_open_details'));
-                        if($varieties)
-                        {
-                            foreach($varieties as $v)
-                            {
-                                $v_data=array();
-                                $v_data['lc_id']=$id;
-                                $v_data['variety_id']=$v['variety_id'];
-                                $v_data['quantity_type_id']=$v['quantity_type_id'];
-                                $v_data['quantity_order']=$v['quantity_order'];
-                                $v_data['amount_price_order']=$v['amount_price_order'];
-                                $v_data['amount_price_total_order']=$v['quantity_order']*$v['amount_price_order']*$currency_rate;
-                                $v_data['revision']=1;
-                                $v_data['date_created'] = $time;
-                                $v_data['user_created'] = $user->user_id;
-                                Query_helper::add($this->config->item('table_sms_lc_open_details'),$v_data);
-                            }
-                        }
-                    }
-                    if(isset($this->permissions['action2'])&&($this->permissions['action2']==1) || isset($this->permissions['action3'])&&($this->permissions['action3']==1))
-                    {
-                        if(!$this->check_validation())
-                        {
-                            $ajax['status']=false;
-                            $ajax['system_message']=$this->message;
-                            $this->json_return($ajax);
-                            die();
-                        }
-                        $data['date_updated']=$time;
-                        $data['user_updated']=$user->user_id;
-                        Query_helper::update($this->config->item('table_sms_lc_open'),$data,array('id='.$id));
-                        //varieties
-
-                        $revision_history_data=array();
-                        $revision_history_data['date_updated']=$time;
-                        $revision_history_data['user_updated']=$user->user_id;
-                        Query_helper::update($this->config->item('table_sms_lc_open_details'),$revision_history_data,array('revision=1','lc_id='.$id));
-
-                        $this->db->where('lc_id',$id);
-                        $this->db->set('revision', 'revision+1', FALSE);
-                        $this->db->update($this->config->item('table_sms_lc_open_details'));
-                        if($varieties)
-                        {
-                            foreach($varieties as $v)
-                            {
-                                $v_data=array();
-                                $v_data['lc_id']=$id;
-                                $v_data['variety_id']=$v['variety_id'];
-                                $v_data['quantity_type_id']=$v['quantity_type_id'];
-                                $v_data['quantity_order']=$v['quantity_order'];
-                                $v_data['amount_price_order']=$v['amount_price_order'];
-                                $v_data['amount_price_total_order']=$v['quantity_order']*$v['amount_price_order']*$data['amount_currency_rate'];
-                                $v_data['revision']=1;
-                                $v_data['date_created'] = $time;
-                                $v_data['user_created'] = $user->user_id;
-                                Query_helper::add($this->config->item('table_sms_lc_open_details'),$v_data);
-                            }
-                        }
-                    }
-                }
-            }
-            else
-            {
-                if(!$this->check_validation())
-                {
-                    $ajax['status']=false;
-                    $ajax['system_message']=$this->message;
-                    $this->json_return($ajax);
-                }
-                if(isset($this->permissions['action1'])&&($this->permissions['action1']==1))
-                {
-                    $price_total_currency=0;
-                    if($varieties)
-                    {
-                        foreach($varieties as $variety)
-                        {
-                            /*if(isset($data_pack_size[$variety['quantity_type_id']]))
-                            {
-
-                            }*/
-                            if($variety['quantity_type_id']==0)
-                            {
-                                $price_total_currency+=$variety['price_currency'];
-                            }
-                            else
-                            {
-                                $price_total_currency+=($variety['quantity_order']*$variety['price_currency']);
-                            }
-                        }
-                    }
-                    $data['user_created'] = $user->user_id;
-                    $data['date_created'] = time();
-                    $data['status'] = $this->config->item('system_status_active');
-                    $data['price_total_currency'] = $price_total_currency;
-                    $data['price_total_taka'] = 0;
-                    $data['other_cost_taka'] = 0;
-                    $lc_id=Query_helper::add($this->config->item('table_sms_lc_open'),$data);
-                    //varieties
-                    if($varieties)
-                    {
-                        foreach($varieties as $v)
-                        {
-                            $v_data=array();
-                            $v_data['lc_id']=$lc_id;
-                            $v_data['variety_id']=$v['variety_id'];
-                            $v_data['quantity_type_id']=$v['quantity_type_id'];
-                            $v_data['quantity_order']=$v['quantity_order'];
-                            $v_data['price_currency']=$v['price_currency'];
-                            //$v_data['amount_price_total_order']=$v['quantity_order']*$v['amount_price_order']*$data['amount_currency_rate'];
-                            $v_data['revision']=1;
-                            $v_data['date_created'] = $time;
-                            $v_data['user_created'] = $user->user_id;
-                            Query_helper::add($this->config->item('table_sms_lc_details'),$v_data);
-                        }
-                    }
-                }
-            }
-
-            $this->db->trans_complete();   //DB Transaction Handle END
-            if ($this->db->trans_status() === TRUE)
-            {
-                $save_and_new=$this->input->post('system_save_new_status');
-                $this->message=$this->lang->line("MSG_SAVED_SUCCESS");
-                if($save_and_new==1)
-                {
-                    $this->system_add();
-                }
-                else
-                {
-                    $this->system_list();
-                }
-            }
-            else
+            if(!(isset($this->permissions['action2']) && ($this->permissions['action2']==1)))
             {
                 $ajax['status']=false;
-                $ajax['system_message']=$this->lang->line("MSG_SAVED_FAIL");
+                $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->json_return($ajax);
             }
         }
+        else
+        {
+            if(!(isset($this->permissions['action1']) && ($this->permissions['action1']==1)))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+                $this->json_return($ajax);
+            }
+        }
+
+        $time=time();
+        $data=$this->input->post('item');
+        $varieties=$this->input->post('varieties');
+        if($varieties)
+        {
+            if(!$this->check_validation_for_varieties())
+            {
+                $ajax['status']=false;
+                $ajax['system_message']=$this->message;
+                $this->json_return($ajax);
+                die();
+            }
+        }
+
+        $this->db->trans_start();  //DB Transaction Handle START
+
+        if($id>0)
+        {
+            if(!$this->check_validation())
+            {
+                $ajax['status']=false;
+                $ajax['system_message']=$this->message;
+                $this->json_return($ajax);
+            }
+
+            $this->db->from($this->config->item('table_sms_lc_open').' lc');
+            $this->db->select('lc.*');
+            $this->db->select('lc_details.*');
+            $this->db->join($this->config->item('table_sms_lc_details').' lc_details','lc_details.lc_id = lc.id','LEFT');
+            $this->db->where('lc.id',$id);
+            $this->db->where('lc.status',$this->config->item('system_status_active'));
+            $result=$this->db->get()->row_array();
+            if(!$result)
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='Invalid LC - LC Number Not Found.Please Try Again.';
+                $this->json_return($ajax);
+                die();
+            }
+            if($result['status_release']==$this->config->item('system_status_complete'))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='You Are Not Modify LC Because LC Release Completed. Please Try Again.';
+                $this->json_return($ajax);
+                die();
+            }
+            $data['date_expected']=System_helper::get_time($data['date_expected']);
+            $data['date_updated']=$time;
+            $data['user_updated']=$user->user_id;
+            $this->db->set('revision', 'revision+1', FALSE);
+            Query_helper::update($this->config->item('table_sms_lc_open'),$data,array('id='.$id));
+            foreach($varieties as $v)
+            {
+                if($v['lc_detail_id']>0)
+                {
+                    if($v['old_quantity_order']!=$v['old_quantity_order'] && $v['old_price_currency']!=$v['price_currency'])
+                    {
+                        $v_data=array();
+                        $v_data['lc_id']=$id;
+                        $v_data['variety_id']=$v['variety_id'];
+                        $v_data['quantity_type_id']=$v['quantity_type_id'];
+                        $v_data['quantity_order']=$v['quantity_order'];
+                        $v_data['price_currency']=$v['price_currency'];
+                        $v_data['date_updated'] = $time;
+                        $v_data['user_updated'] = $user->user_id;
+                        $this->db->set('revision', 'revision+1', FALSE);
+                        Query_helper::update($this->config->item('table_sms_lc_open_details'),$v_data, array('id='.$v['lc_detail_id']));
+                    }
+                }
+                else
+                {
+                    $v_data=array();
+                    $v_data['lc_id']=$id;
+                    $v_data['variety_id']=$v['variety_id'];
+                    $v_data['quantity_type_id']=$v['quantity_type_id'];
+                    $v_data['quantity_order']=$v['quantity_order'];
+                    $v_data['price_currency']=$v['price_currency'];
+                    /*$v_data['amount_price_total_order']=$v['quantity_order']*$v['amount_price_order']*$data['amount_currency_rate'];*/
+                    $v_data['revision']=1;
+                    $v_data['date_created'] = $time;
+                    $v_data['user_created'] = $user->user_id;
+                    Query_helper::add($this->config->item('table_sms_lc_open_details'),$v_data);
+                }
+            }
+        }
+        else
+        {
+            if(!$this->check_validation())
+            {
+                $ajax['status']=false;
+                $ajax['system_message']=$this->message;
+                $this->json_return($ajax);
+            }
+            if(isset($this->permissions['action1'])&&($this->permissions['action1']==1))
+            {
+                $price_total_currency=0;
+                if($varieties)
+                {
+                    foreach($varieties as $variety)
+                    {
+                        /*if(isset($data_pack_size[$variety['quantity_type_id']]))
+                        {
+
+                        }*/
+                        if($variety['quantity_type_id']==0)
+                        {
+                            $price_total_currency+=$variety['price_currency'];
+                        }
+                        else
+                        {
+                            $price_total_currency+=($variety['quantity_order']*$variety['price_currency']);
+                        }
+                    }
+                }
+                $data['date_opening']=System_helper::get_time($data['date_opening']);
+                $data['user_created'] = $user->user_id;
+                $data['date_created'] = time();
+                $data['status'] = $this->config->item('system_status_active');
+                $data['price_total_currency'] = $price_total_currency;
+                $data['price_total_taka'] = 0;
+                $data['other_cost_taka'] = 0;
+                $lc_id=Query_helper::add($this->config->item('table_sms_lc_open'),$data);
+                //varieties
+                if($varieties)
+                {
+                    foreach($varieties as $v)
+                    {
+                        $v_data=array();
+                        $v_data['lc_id']=$lc_id;
+                        $v_data['variety_id']=$v['variety_id'];
+                        $v_data['quantity_type_id']=$v['quantity_type_id'];
+                        $v_data['quantity_order']=$v['quantity_order'];
+                        $v_data['price_currency']=$v['price_currency'];
+                        //$v_data['amount_price_total_order']=$v['quantity_order']*$v['amount_price_order']*$data['amount_currency_rate'];
+                        $v_data['revision']=1;
+                        $v_data['date_created'] = $time;
+                        $v_data['user_created'] = $user->user_id;
+                        Query_helper::add($this->config->item('table_sms_lc_details'),$v_data);
+                    }
+                }
+            }
+        }
+
+        $this->db->trans_complete();   //DB Transaction Handle END
+        if ($this->db->trans_status() === TRUE)
+        {
+            $save_and_new=$this->input->post('system_save_new_status');
+            $this->message=$this->lang->line("MSG_SAVED_SUCCESS");
+            if($save_and_new==1)
+            {
+                $this->system_add();
+            }
+            else
+            {
+                $this->system_list();
+            }
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("MSG_SAVED_FAIL");
+            $this->json_return($ajax);
+        }
+
     }
     private function check_validation()
     {
         $this->load->library('form_validation');
-        $this->form_validation->set_rules('item[year_id]',$this->lang->line('LABEL_FISCAL_YEAR'),'required');
-        $this->form_validation->set_rules('item[month_id]',$this->lang->line('LABEL_MONTH'),'required');
-        $this->form_validation->set_rules('item[date_opening]',$this->lang->line('LABEL_DATE_OPENING'),'required');
+        $id = $this->input->post("id");
+        if($id==0)
+        {
+            $this->form_validation->set_rules('item[year_id]',$this->lang->line('LABEL_FISCAL_YEAR'),'required');
+            $this->form_validation->set_rules('item[month_id]',$this->lang->line('LABEL_MONTH'),'required');
+            $this->form_validation->set_rules('item[date_opening]',$this->lang->line('LABEL_DATE_OPENING'),'required');
+            $this->form_validation->set_rules('item[principal_id]',$this->lang->line('LABEL_PRINCIPAL_NAME'),'required');
+        }
+
         $this->form_validation->set_rules('item[date_expected]',$this->lang->line('LABEL_DATE_EXPECTED'),'required');
-        $this->form_validation->set_rules('item[principal_id]',$this->lang->line('LABEL_PRINCIPAL_NAME'),'required');
         $this->form_validation->set_rules('item[lc_number]',$this->lang->line('LABEL_LC_NUMBER'),'required');
         $this->form_validation->set_rules('item[currency_id]',$this->lang->line('LABEL_CURRENCY_NAME'),'required');
         $this->form_validation->set_rules('item[consignment_name]',$this->lang->line('LABEL_CONSIGNMENT_NAME'),'required');
