@@ -222,18 +222,21 @@ class Lc_open extends Root_Controller
 
             $data['fiscal_years']=Query_helper::get_info($this->config->item('table_login_basic_setup_fiscal_year'),array('id value','name text','date_start','date_end'),array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('id ASC'));
             $data['currencies']=Query_helper::get_info($this->config->item('table_sms_setup_currency'),array('id value','name text','amount_rate_budget'),array('status !="'.$this->config->item('system_status_delete').'"'),0,0,array('ordering'));
-            $data['currency_rates']=array();
+            /*$data['currency_rates']=array();
             foreach($data['currencies'] as $rate)
             {
                 $data['currency_rates'][$rate['value']]=$rate['amount_rate_budget'];
-            }
+            }*/
             $data['principals']=Query_helper::get_info($this->config->item('table_login_basic_setup_principal'),array('id value','name text'),array('status !="'.$this->config->item('system_status_delete').'"'),0,0,array('ordering'));
+
             $results=Query_helper::get_info($this->config->item('table_login_setup_classification_vpack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('id ASC'));
             $data['packs']=array();
             foreach($results as $result)
             {
                 $data['packs'][$result['value']]=$result;
             }
+
+            /*get armalik variety*/
             $this->db->from($this->config->item('table_login_setup_classification_varieties').' v');
             $this->db->select('v.id value,v.name');
             $this->db->select('vp.name_import text');
@@ -296,17 +299,6 @@ class Lc_open extends Root_Controller
                 }
             }
 
-            /*$pack_sizes=Query_helper::get_info($this->config->item('table_login_setup_classification_vpack_size'),array('id','name'),array('status !="'.$this->config->item('system_status_delete').'"'),0,0,array());
-            $data_pack_size=array();
-            foreach($pack_sizes as $pack_size)
-            {
-                $data_pack_size[$pack_size['id']]['pack_size_id']=$pack_size['id'];
-                $data_pack_size[$pack_size['id']]['pack_size_name']=$pack_size['name'];
-            }
-            echo "<pre>";
-            print_r($data_pack_size);
-            echo "</pre>";
-            die();*/
             $this->db->trans_start();  //DB Transaction Handle START
 
             if($id>0)
@@ -329,7 +321,8 @@ class Lc_open extends Root_Controller
                 {
                     $currency_rate=$result['amount_currency_rate'];
                 }
-                if($result && $result['status_received']==$this->config->item('system_status_yes'))
+
+                if($result && $result['status_release']==$this->config->item('system_status_yes'))
                 {
                     if(isset($this->permissions['action3'])&&($this->permissions['action3']==1))
                     {
@@ -343,14 +336,16 @@ class Lc_open extends Root_Controller
                         $data['user_updated']=$user->user_id;
                         Query_helper::update($this->config->item('table_sms_lc_open'),$data,array('id='.$id));
                         //varieties
-                        $revision_history_data=array();
+                        /*$revision_history_data=array();
                         $revision_history_data['date_updated']=$time;
                         $revision_history_data['user_updated']=$user->user_id;
-                        Query_helper::update($this->config->item('table_sms_lc_details'),$revision_history_data,array('revision=1','lc_id='.$id));
+                        Query_helper::update($this->config->item('table_sms_lc_details'),$revision_history_data,array('lc_id='.$id));*/
 
                         $this->db->where('lc_id',$id);
                         $this->db->set('revision', 'revision+1', FALSE);
-                        $this->db->update($this->config->item('table_sms_lc_details'));
+                        $revision_history_data['date_updated']=$time;
+                        $revision_history_data['user_updated']=$user->user_id;
+                        $this->db->update($this->config->item('table_sms_lc_details'),$revision_history_data);
 
                         foreach($varieties as $v)
                         {
@@ -359,8 +354,8 @@ class Lc_open extends Root_Controller
                             $v_data['variety_id']=$v['variety_id'];
                             $v_data['quantity_type_id']=$v['quantity_type_id'];
                             $v_data['quantity_order']=$v['quantity_order'];
-                            $v_data['amount_price_order']=$v['amount_price_order'];
-                            $v_data['amount_price_total_order']=$v['quantity_order']*$v['amount_price_order']*$data['amount_currency_rate'];
+                            $v_data['price_currency']=$v['price_currency'];
+                            /*$v_data['amount_price_total_order']=$v['quantity_order']*$v['amount_price_order']*$data['amount_currency_rate'];*/
                             $v_data['revision']=1;
                             $v_data['date_created'] = $time;
                             $v_data['user_created'] = $user->user_id;
@@ -602,7 +597,6 @@ class Lc_open extends Root_Controller
         $this->db->where('v.whose','ARM');
         $this->db->order_by('v.ordering ASC');
         $data['items']=$this->db->get()->result_array();
-        
         $ajax['status']=true;
         $ajax['system_content'][]=array("id"=>$html_container_id,"html"=>$this->load->view("dropdown_with_select",$data,true));
 

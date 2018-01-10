@@ -436,8 +436,7 @@ if(!(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)) && 
         </tr>
         </tbody>
     </table>
-    <div id="items_old">
-    </div>
+    <div id="items_old"></div>
 </div>
 
 <script type="text/javascript">
@@ -468,7 +467,7 @@ if(!(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)) && 
         system_preset({controller:'<?php echo $CI->router->class; ?>'});
 
         var principal_id_old=<?php echo $item['principal_id']; ?>;
-        var currencies=JSON.parse('<?php echo json_encode($currency_rates);?>');
+<!--        var currencies=JSON.parse('--><?php //echo json_encode($currency_rates);?><!--');-->
         $(".date_large").datepicker({dateFormat : display_date_format,changeMonth: true,changeYear: true,yearRange: "2015:+2"});
         
         $(document).off("change", "#currency_id");
@@ -644,9 +643,11 @@ if(!(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)) && 
             var current_id = $(this).attr("data-current-id");
             var total_quantity=0;
             $("#total_quantity_kg_"+current_id).html('');
-            $("#total_price_id_"+current_id).html('');
             $("#total_quantity_kg_"+current_id).html('0.00')
+            $("#total_price_id_"+current_id).html('');
             $("#total_price_id_"+current_id).html('0.00')
+            $("#price_id_"+current_id).val('')
+            $("#price_id_"+current_id).val('0.00')
             if($("#quantity_type_id_"+current_id).val()=='-1')
             {
                 alert('Please select pack size.');
