@@ -363,8 +363,8 @@ class Lc_open extends Root_Controller
                         unset($v_data['revision']);
                         unset($v_data['date_updated']);
                         unset($v_data['user_updated']);
-                        $v_data['reference_id'] = $v['lc_detail_id'];
-                        Query_helper::add($this->config->item('table_sms_lc_detail_histories'),$v_data);
+                        $v_data['lc_detail_id'] = $v['lc_detail_id'];
+                        Query_helper::add($this->config->item('table_sms_lc_detail_revisions'),$v_data);
                     }
                 }
                 else
@@ -379,10 +379,10 @@ class Lc_open extends Root_Controller
                     $v_data['revision']=1;
                     $v_data['date_created'] = $time;
                     $v_data['user_created'] = $user->user_id;
-                    $reference_id=Query_helper::add($this->config->item('table_sms_lc_details'),$v_data);
+                    $lc_detail_id=Query_helper::add($this->config->item('table_sms_lc_details'),$v_data);
                     unset($v_data['revision']);
-                    $v_data['reference_id'] = $reference_id;
-                    Query_helper::add($this->config->item('table_sms_lc_detail_histories'),$v_data);
+                    $v_data['lc_detail_id'] = $lc_detail_id;
+                    Query_helper::add($this->config->item('table_sms_lc_detail_revisions'),$v_data);
                 }
             }
         }
@@ -439,10 +439,10 @@ class Lc_open extends Root_Controller
                         $v_data['revision']=1;
                         $v_data['date_created'] = $time;
                         $v_data['user_created'] = $user->user_id;
-                        $reference_id=Query_helper::add($this->config->item('table_sms_lc_details'),$v_data);
+                        $lc_detail_id=Query_helper::add($this->config->item('table_sms_lc_details'),$v_data);
                         unset($v_data['revision']);
-                        $v_data['reference_id'] = $reference_id;
-                        Query_helper::add($this->config->item('table_sms_lc_detail_histories'),$v_data);
+                        $v_data['lc_detail_id'] = $lc_detail_id;
+                        Query_helper::add($this->config->item('table_sms_lc_detail_revisions'),$v_data);
                     }
                 }
             }
