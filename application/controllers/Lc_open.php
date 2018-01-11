@@ -339,11 +339,8 @@ class Lc_open extends Root_Controller
                 $this->json_return($ajax);
                 die();
             }
-            $data['date_expected']=System_helper::get_time($data['date_expected']);
-            $data['date_updated']=$time;
-            $data['user_updated']=$user->user_id;
-            $this->db->set('revision', 'revision+1', FALSE);
-            Query_helper::update($this->config->item('table_sms_lc_open'),$data,array('id='.$id));
+
+            $price_total_currency=0;
             foreach($varieties as $v)
             {
                 if($v['lc_detail_id']>0)
@@ -385,6 +382,22 @@ class Lc_open extends Root_Controller
                     Query_helper::add($this->config->item('table_sms_lc_detail_revisions'),$v_data);
                 }
             }
+
+            /*if($v['quantity_type_id']==0)
+            {
+                $price_total_currency+=$v['price_currency'];
+            }
+            else
+            {
+                $price_total_currency+=($v['quantity_order']*$v['price_currency']);
+            }*/
+            $price_total_currency+=$v['price_currency'];
+            $data['date_expected']=System_helper::get_time($data['date_expected']);
+            $data['price_total_currency']=$price_total_currency;
+            $data['date_updated']=$time;
+            $data['user_updated']=$user->user_id;
+            $this->db->set('revision', 'revision+1', FALSE);
+            Query_helper::update($this->config->item('table_sms_lc_open'),$data,array('id='.$id));
         }
         else
         {
@@ -401,18 +414,15 @@ class Lc_open extends Root_Controller
                 {
                     foreach($varieties as $variety)
                     {
-                        /*if(isset($data_pack_size[$variety['quantity_type_id']]))
-                        {
-
-                        }*/
-                        if($variety['quantity_type_id']==0)
+                        /*if($variety['quantity_type_id']==0)
                         {
                             $price_total_currency+=$variety['price_currency'];
                         }
                         else
                         {
                             $price_total_currency+=($variety['quantity_order']*$variety['price_currency']);
-                        }
+                        }*/
+                        $price_total_currency+=$variety['price_currency'];
                     }
                 }
                 $data['date_expected']=System_helper::get_time($data['date_expected']);
@@ -468,8 +478,8 @@ class Lc_open extends Root_Controller
             $ajax['system_message']=$this->lang->line("MSG_SAVED_FAIL");
             $this->json_return($ajax);
         }
-
     }
+
     private function check_validation()
     {
         $this->load->library('form_validation');
@@ -519,7 +529,7 @@ class Lc_open extends Root_Controller
             $status_duplicate_variety=false;
             foreach($varieties as $variety)
             {
-                if(!(($variety['variety_id']>0)&& ($variety['quantity_type_id']>=0)&& ($variety['quantity_order']>0)&& ($variety['price_currency']>0)))
+                if(!(($variety['variety_id']>0) && ($variety['quantity_type_id']>=0) && ($variety['quantity_order']>0) && ($variety['price_currency']>0)))
                 {
                     $this->message='Please properly data insert (variety info). Try again.';
                     return false;
