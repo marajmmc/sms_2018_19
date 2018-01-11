@@ -241,12 +241,10 @@ $lang['LABEL_EXPENSE_STATUS']='Expense Status';
 $lang['LABEL_RELEASE_STATUS']='Release Status';
 $lang['LABEL_RECEIVED_STATUS']='Received Status';
 $lang['LABEL_CLOSED_STATUS']='Closed Status';
-$lang['LABEL_LC_STATUS_EXPENSE_PENDING']='Pending';
-$lang['LABEL_LC_STATUS_EXPENSE_COMPLETE']='Completed';
-$lang['LABEL_LC_STATUS_RELEASE_PENDING']='Pending';
-$lang['LABEL_LC_STATUS_RELEASE_COMPLETE']='Completed';
-$lang['LABEL_LC_STATUS_RECEIVE_PENDING']='Pending';
-$lang['LABEL_LC_STATUS_RECEIVE_COMPLETE']='Completed';
+$lang['LABEL_LC_STATUS_PENDING']='Pending';
+$lang['LABEL_LC_STATUS_COMPLETE']='Completed';
+$lang['LABEL_TOTAL_KG']='Total KG';
+$lang['LABEL_TOTAL_CURRENCY']='Total Currency';
 //crop classification
 $lang['LABEL_CROP_NAME']='Crop';
 $lang['LABEL_CROP_TYPE']='Crop Type';
