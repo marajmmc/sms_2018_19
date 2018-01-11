@@ -357,6 +357,7 @@ class Lc_open extends Root_Controller
                         $v_data['user_updated'] = $user->user_id;
                         $this->db->set('revision', 'revision+1', FALSE);
                         Query_helper::update($this->config->item('table_sms_lc_details'),$v_data, array('id='.$v['lc_detail_id']));
+                        unset($v_data['lc_id']);
                         unset($v_data['revision']);
                         unset($v_data['date_updated']);
                         unset($v_data['user_updated']);
@@ -377,6 +378,7 @@ class Lc_open extends Root_Controller
                     $v_data['date_created'] = $time;
                     $v_data['user_created'] = $user->user_id;
                     $lc_detail_id=Query_helper::add($this->config->item('table_sms_lc_details'),$v_data);
+                    unset($v_data['lc_id']);
                     unset($v_data['revision']);
                     $v_data['lc_detail_id'] = $lc_detail_id;
                     Query_helper::add($this->config->item('table_sms_lc_detail_revisions'),$v_data);
@@ -450,6 +452,7 @@ class Lc_open extends Root_Controller
                         $v_data['date_created'] = $time;
                         $v_data['user_created'] = $user->user_id;
                         $lc_detail_id=Query_helper::add($this->config->item('table_sms_lc_details'),$v_data);
+                        unset($v_data['lc_id']);
                         unset($v_data['revision']);
                         $v_data['lc_detail_id'] = $lc_detail_id;
                         Query_helper::add($this->config->item('table_sms_lc_detail_revisions'),$v_data);
