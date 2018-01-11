@@ -75,17 +75,17 @@ class Lc_expense extends Root_Controller
             $item['date_opening']=System_helper::display_date($item['date_opening']);
             $item['date_expected']=System_helper::display_date($item['date_expected']);
             $item['currency_name']='';//$result['principal_name'];
-            if($item['status_expense']==$this->config->item('system_status_expense_pending'))
+            if($item['status_expense']==$this->config->item('system_status_pending'))
             {
                 $item['status']=$this->lang->line('LABEL_LC_STATUS_EXPENSE_PENDING');
-            }elseif($item['status_expense']==$this->config->item('system_status_expense_complete'))
+            }elseif($item['status_expense']==$this->config->item('system_status_complete'))
             {
                 $item['status']=$this->lang->line('LABEL_LC_STATUS_EXPENSE_COMPLETE');
             }
-            if($item['status_expense']==$this->config->item('system_status_expense_pending'))
+            if($item['status_expense']==$this->config->item('system_status_pending'))
             {
                 $item['status_expense']=$this->lang->line('LABEL_LC_STATUS_EXPENSE_PENDING');
-            }elseif($item['status_expense']==$this->config->item('system_status_expense_complete'))
+            }elseif($item['status_expense']==$this->config->item('system_status_complete'))
             {
                 $item['status_expense']=$this->lang->line('LABEL_LC_STATUS_EXPENSE_COMPLETE');
             }
@@ -105,6 +105,8 @@ class Lc_expense extends Root_Controller
             {
                 $item_id=$this->input->post('id');
             }
+//            echo $item_id;
+//            exit;
             $this->db->select('lc_open.*');
             $this->db->select('year.name year_name');
             $this->db->select('principal.name principal_name');
@@ -117,6 +119,8 @@ class Lc_expense extends Root_Controller
             $this->db->where('lc_open.status',$this->config->item('system_status_active'));
             $data['item']=$this->db->get()->row_array();
             $data['item']['month_name']=date("F", mktime(0, 0, 0,$data['item']['month_id'],1, 2000));
+//            print_r($data['item']);
+//            exit;
 
             $this->db->select('lc_details.*');
             $this->db->select('variety.name variety_name');
@@ -149,6 +153,8 @@ class Lc_expense extends Root_Controller
             {
                 $direct_cost_items_old[$result['cost_item_id']]=$result['amount'];
             }
+//            print_r($direct_cost_items_old);
+//            exit;
             foreach($items_cost as &$item_cost)
             {
                 if(isset($direct_cost_items_old[$item_cost['id']]))
@@ -160,6 +166,9 @@ class Lc_expense extends Root_Controller
                 }
             }
             $data['items_cost']=$items_cost;
+            $data['lc_id']=$item_id;
+//            print_r($data['items_cost']);
+//            exit;
             $data['title']="Add Expense For LC".$data['item']['lc_number'];
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/expense",$data,true));

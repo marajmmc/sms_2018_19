@@ -166,7 +166,7 @@ if(!(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)) && 
         </div>
 </div>
 <form id="save_form" action="<?php echo site_url($CI->controller_url.'/index/save');?>" method="post">
-    <input type="hidden" id="id" name="lc_id" value="<?php echo $item['id']; ?>" />
+    <input type="hidden" id="id" name="lc_id" value="<?php echo $lc_id; ?>" />
     <div class="row show-grid">
         <div class="col-xs-6">
             <label class="control-label pull-right"><span style="font-size: 16px">Expense Item</span></label>

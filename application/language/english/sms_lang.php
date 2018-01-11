@@ -31,6 +31,10 @@ $lang['ACTION_ASSIGN_GROUP_ROLE'] = 'Assign Group Role';
 $lang['ACTION_ASSIGN_USER_GROUP'] = 'Assign User Group';
 $lang['ACTION_SET_PACKING_COST'] = 'Set Packing Cost';
 
+//Action buttons for LC
+$lang['ACTION_EXPENSE'] = 'Expense';
+
+
 //****MODULE TASK//
 
 $lang['LABEL_PARENT'] = 'Parent';
