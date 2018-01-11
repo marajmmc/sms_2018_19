@@ -13,6 +13,7 @@ $config['table_sms_stock_summary_variety'] = 'arm_sms_2018_19.sms_stock_summary_
 // LC
 $config['table_sms_lc_open'] = 'arm_sms_2018_19.sms_lc_open';
 $config['table_sms_lc_details'] = 'arm_sms_2018_19.sms_lc_details';
+$config['table_sms_lc_detail_histories'] = 'arm_sms_2018_19.sms_lc_detail_histories';
 
 // Setup
 $config['table_sms_setup_currency'] = 'arm_bms_2017_08.bms_setup_currency';

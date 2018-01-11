@@ -65,7 +65,7 @@ $disabled='';
                 else
                 {
                     ?>
-                    <select id="year_id" class="form-control" name="item[year_id]"<?php echo $disabled; ?>>
+                    <select id="year_id" class="form-control" name="item[year_id]">
                         <option value=""><?php echo $this->lang->line('SELECT');?></option>
                         <?php
                         if(isset($item['year_id']))
@@ -200,7 +200,7 @@ $disabled='';
                 <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_LC_NUMBER');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <input type="text" name="item[lc_number]" id="lc_number" class="form-control" value="<?php echo $item['lc_number'];?>"<?php echo $disabled; ?>/>
+                <input type="text" name="item[lc_number]" id="lc_number" class="form-control" value="<?php echo $item['lc_number'];?>"/>
             </div>
         </div>
         <div class="row show-grid">
@@ -208,7 +208,7 @@ $disabled='';
                 <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_CURRENCY_NAME');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <select id="currency_id" name="item[currency_id]" class="form-control"<?php echo $disabled; ?>>
+                <select id="currency_id" name="item[currency_id]" class="form-control">
                     <option value=""><?php echo $this->lang->line('SELECT');?></option>
                     <?php
                     foreach($currencies as $currency)
@@ -225,23 +225,15 @@ $disabled='';
                 <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_CONSIGNMENT_NAME');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <textarea name="item[consignment_name]" id="consignment_name" class="form-control" <?php echo $disabled; ?>><?php echo $item['consignment_name'];?></textarea>
+                <textarea name="item[consignment_name]" id="consignment_name" class="form-control" ><?php echo $item['consignment_name'];?></textarea>
             </div>
         </div>
-        <!--<div class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right"><?php /*echo $this->lang->line('LABEL_TOTAL_CURRENCY');*/?><span style="color:#FF0000">*</span></label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <input type="text" name="item[price_total_currency]" id="price_total_currency" class="form-control" value="<?php /*echo $item['price_total_currency'];*/?>"<?php /*echo $disabled; */?>/>
-            </div>
-        </div>-->
         <div class="row show-grid">
             <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_OTHER_COST_CURRENCY');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <input type="text" name="item[other_cost_currency]" id="other_cost_currency" class="form-control float_type_positive" value="<?php echo $item['other_cost_currency'];?>"<?php echo $disabled; ?>/>
+                <input type="text" name="item[other_cost_currency]" id="other_cost_currency" class="form-control float_type_positive" value="<?php echo $item['other_cost_currency'];?>"/>
             </div>
         </div>
         <div class="row show-grid">
@@ -249,7 +241,7 @@ $disabled='';
                 <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS');?> </label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <textarea name="item[remarks]" id="remarks" class="form-control" <?php echo $disabled; ?>><?php echo $item['remarks'];?></textarea>
+                <textarea name="item[remarks]" id="remarks" class="form-control" ><?php echo $item['remarks'];?></textarea>
             </div>
         </div>
         <!--<div class="row show-grid">
@@ -371,9 +363,9 @@ $disabled='';
                                 <td class="text-right">
                                     <label class="control-label total_price" id="total_quantity_id_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>">
                                         <?php
-                                            if($packs[$value['quantity_type_id']]['text']==0)
+                                            if($value['quantity_type_id']==0)
                                             {
-                                                echo number_format(($value['price_currency']/1000),2);
+                                                echo number_format(($value['quantity_order']/1000),2);
                                             }
                                             else
                                             {

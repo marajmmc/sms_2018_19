@@ -348,7 +348,7 @@ class Lc_open extends Root_Controller
             {
                 if($v['lc_detail_id']>0)
                 {
-                    if($v['old_quantity_order']!=$v['old_quantity_order'] && $v['old_price_currency']!=$v['price_currency'])
+                    if($v['old_quantity_order']!=$v['quantity_order'] && $v['old_price_currency']!=$v['price_currency'])
                     {
                         $v_data=array();
                         $v_data['lc_id']=$id;
@@ -359,7 +359,12 @@ class Lc_open extends Root_Controller
                         $v_data['date_updated'] = $time;
                         $v_data['user_updated'] = $user->user_id;
                         $this->db->set('revision', 'revision+1', FALSE);
-                        Query_helper::update($this->config->item('table_sms_lc_open_details'),$v_data, array('id='.$v['lc_detail_id']));
+                        Query_helper::update($this->config->item('table_sms_lc_details'),$v_data, array('id='.$v['lc_detail_id']));
+                        unset($v_data['revision']);
+                        unset($v_data['date_updated']);
+                        unset($v_data['user_updated']);
+                        $v_data['reference_id'] = $v['lc_detail_id'];
+                        Query_helper::add($this->config->item('table_sms_lc_detail_histories'),$v_data);
                     }
                 }
                 else
@@ -374,7 +379,10 @@ class Lc_open extends Root_Controller
                     $v_data['revision']=1;
                     $v_data['date_created'] = $time;
                     $v_data['user_created'] = $user->user_id;
-                    Query_helper::add($this->config->item('table_sms_lc_open_details'),$v_data);
+                    $reference_id=Query_helper::add($this->config->item('table_sms_lc_details'),$v_data);
+                    unset($v_data['revision']);
+                    $v_data['reference_id'] = $reference_id;
+                    Query_helper::add($this->config->item('table_sms_lc_detail_histories'),$v_data);
                 }
             }
         }
@@ -407,6 +415,7 @@ class Lc_open extends Root_Controller
                         }
                     }
                 }
+                $data['date_expected']=System_helper::get_time($data['date_expected']);
                 $data['date_opening']=System_helper::get_time($data['date_opening']);
                 $data['user_created'] = $user->user_id;
                 $data['date_created'] = time();
@@ -430,7 +439,10 @@ class Lc_open extends Root_Controller
                         $v_data['revision']=1;
                         $v_data['date_created'] = $time;
                         $v_data['user_created'] = $user->user_id;
-                        Query_helper::add($this->config->item('table_sms_lc_details'),$v_data);
+                        $reference_id=Query_helper::add($this->config->item('table_sms_lc_details'),$v_data);
+                        unset($v_data['revision']);
+                        $v_data['reference_id'] = $reference_id;
+                        Query_helper::add($this->config->item('table_sms_lc_detail_histories'),$v_data);
                     }
                 }
             }
@@ -462,14 +474,24 @@ class Lc_open extends Root_Controller
     {
         $this->load->library('form_validation');
         $id = $this->input->post("id");
+        $item = $this->input->post("item");
         if($id==0)
         {
             $this->form_validation->set_rules('item[year_id]',$this->lang->line('LABEL_FISCAL_YEAR'),'required');
             $this->form_validation->set_rules('item[month_id]',$this->lang->line('LABEL_MONTH'),'required');
             $this->form_validation->set_rules('item[date_opening]',$this->lang->line('LABEL_DATE_OPENING'),'required');
             $this->form_validation->set_rules('item[principal_id]',$this->lang->line('LABEL_PRINCIPAL_NAME'),'required');
+            if(!isset($item['date_opening']) || !strtotime($item['date_opening']))
+            {
+                $this->message='LC opening date is not correct. Please Try again.';
+                return false;
+            }
         }
-
+        if(!isset($item['date_expected']) || !strtotime($item['date_expected']))
+        {
+            $this->message='LC expected date is not correct. Please Try again.';
+            return false;
+        }
         $this->form_validation->set_rules('item[date_expected]',$this->lang->line('LABEL_DATE_EXPECTED'),'required');
         $this->form_validation->set_rules('item[lc_number]',$this->lang->line('LABEL_LC_NUMBER'),'required');
         $this->form_validation->set_rules('item[currency_id]',$this->lang->line('LABEL_CURRENCY_NAME'),'required');
