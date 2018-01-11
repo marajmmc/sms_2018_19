@@ -343,6 +343,18 @@ class Lc_open extends Root_Controller
             $price_total_currency=0;
             foreach($varieties as $v)
             {
+                /*if($v['quantity_type_id']==0)
+                {
+                    $price_total_currency+=$v['price_currency'];
+                }
+                else
+                {
+                    $price_total_currency+=($v['quantity_order']*$v['price_currency']);
+                }*/
+                $price_total_currency+=($v['quantity_order']*$v['price_currency']);
+            }
+            foreach($varieties as $v)
+            {
                 if($v['lc_detail_id']>0)
                 {
                     if($v['old_quantity_order']!=$v['quantity_order'] && $v['old_price_currency']!=$v['price_currency'])
@@ -385,15 +397,6 @@ class Lc_open extends Root_Controller
                 }
             }
 
-            /*if($v['quantity_type_id']==0)
-            {
-                $price_total_currency+=$v['price_currency'];
-            }
-            else
-            {
-                $price_total_currency+=($v['quantity_order']*$v['price_currency']);
-            }*/
-            $price_total_currency+=$v['price_currency'];
             $data['date_expected']=System_helper::get_time($data['date_expected']);
             $data['price_total_currency']=$price_total_currency;
             $data['date_updated']=$time;
@@ -424,7 +427,7 @@ class Lc_open extends Root_Controller
                         {
                             $price_total_currency+=($variety['quantity_order']*$variety['price_currency']);
                         }*/
-                        $price_total_currency+=$variety['price_currency'];
+                        $price_total_currency+=($variety['quantity_order']*$variety['price_currency']);
                     }
                 }
                 $data['date_expected']=System_helper::get_time($data['date_expected']);

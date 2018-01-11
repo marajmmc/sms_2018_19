@@ -398,6 +398,11 @@ $disabled='';
                         }
                     ?>
                     </tbody>
+                    <tfoot>
+                    <tr>
+                        <th colspan="2" class="text-right"><?php echo $this->lang->line('TOTAL')?></th>
+                    </tr>
+                    </tfoot>
                 </table>
             </div>
             <div class="row show-grid">
