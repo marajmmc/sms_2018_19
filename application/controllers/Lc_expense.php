@@ -78,20 +78,7 @@ class Lc_expense extends Root_Controller
             $item['month_name']=$this->lang->line("LABEL_MONTH_$item[month_id]");
             $item['date_opening']=System_helper::display_date($item['date_opening']);
             $item['date_expected']=System_helper::display_date($item['date_expected']);
-            if($item['status_expense']==$this->config->item('system_status_pending'))
-            {
-                $item['status']=$this->lang->line('LABEL_LC_STATUS_PENDING');
-            }elseif($item['status_expense']==$this->config->item('system_status_complete'))
-            {
-                $item['status']=$this->lang->line('LABEL_LC_STATUS_COMPLETE');
-            }
-            if($item['status_expense']==$this->config->item('system_status_pending'))
-            {
-                $item['status_expense']=$this->lang->line('LABEL_LC_STATUS_PENDING');
-            }elseif($item['status_expense']==$this->config->item('system_status_complete'))
-            {
-                $item['status_expense']=$this->lang->line('LABEL_LC_STATUS_COMPLETE');
-            }
+
         }
         $this->json_return($items);
     }
