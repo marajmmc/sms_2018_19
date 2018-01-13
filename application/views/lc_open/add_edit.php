@@ -296,8 +296,26 @@ $disabled='';
                     </thead>
                     <tbody id="items_old_container">
                     <?php
+                        $total_kg='0.00';
+                        $total_currency='0.00';
                         foreach($items as $index=>$value)
                         {
+                            $item_per_kg='0.00';
+                            $item_per_currency='0.00';
+                            if($item['id']>0)
+                            {
+                                if($value['quantity_type_id']==0)
+                                {
+                                    $item_per_kg = number_format(($value['quantity_order']/1000),2);
+                                }
+                                else
+                                {
+                                    $item_per_kg = number_format((($packs[$value['quantity_type_id']]['text']*$value['quantity_order'])/1000),2);
+                                }
+                                $item_per_currency=number_format(($value['quantity_order']*$value['price_currency']),2);
+                                $total_kg+=$item_per_kg;
+                                $total_currency+=($value['quantity_order']*$value['price_currency']);
+                            }
                             ?>
                             <tr>
                                 <td>
@@ -357,20 +375,13 @@ $disabled='';
                                     ?>
                                 </td>
                                 <td>
-                                    <input type="text" value="<?php echo $value['quantity_order']; ?>" class="form-control float_type_positive quantity" id="quantity_id_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>" name="varieties[<?php echo $index+1;?>][quantity_order]">
+                                    <input type="text" value="<?php echo $value['quantity_order']; ?>" class="form-control float_type_positive quantity order_quantity_total" id="quantity_id_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>" name="varieties[<?php echo $index+1;?>][quantity_order]">
                                     <input type="hidden" value="<?php echo $value['quantity_order']; ?>" class="form-control" id="old_quantity_id_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>" name="varieties[<?php echo $index+1;?>][old_quantity_order]">
                                 </td>
                                 <td class="text-right">
                                     <label class="control-label total_price" id="total_quantity_id_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>">
                                         <?php
-                                            if($value['quantity_type_id']==0)
-                                            {
-                                                echo number_format(($value['quantity_order']/1000),2);
-                                            }
-                                            else
-                                            {
-                                                echo number_format((($packs[$value['quantity_type_id']]['text']*$value['quantity_order'])/1000),2);
-                                            }
+                                            echo $item_per_kg;
                                         ?>
                                     </label>
                                 </td>
@@ -380,7 +391,7 @@ $disabled='';
                                 </td>
                                 <td class="text-right">
                                     <label class="control-label total_price" id="total_price_id_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>">
-                                        <?php echo number_format(($value['quantity_order']*$value['price_currency']),2); ?>
+                                        <?php echo $item_per_currency; ?>
                                     </label>
                                 </td>
                                 <td>
@@ -400,7 +411,11 @@ $disabled='';
                     </tbody>
                     <tfoot>
                     <tr>
-                        <th colspan="2" class="text-right"><?php echo $this->lang->line('TOTAL')?></th>
+                        <th colspan="3" class="text-right"><?php echo $this->lang->line('TOTAL_KG')?></th>
+                        <th class="text-right"><label class="control-label" id="lbl_quantity_kg_grand_total"><?php echo $total_kg;?></label></th>
+                        <th class="text-right"><?php echo $this->lang->line('TOTAL_CURRENCY')?></th>
+                        <th class="text-right"><label class="control-label" id="lbl_price_grand_total"><?php echo number_format($total_currency,2);?></label></th>
+                        <th class="text-right"></th>
                     </tr>
                     </tfoot>
                 </table>
@@ -480,88 +495,64 @@ $disabled='';
 </div>
 
 <script type="text/javascript">
-    /*function calculate_total(id)
+    function calculate_total()
     {
-        var price=parseFloat($("#price_id_"+id).val());
-        var quantity=parseFloat($("#quantity_id_"+id).val());
-        var currency_rate=$('#rate').val();
+        $("#lbl_quantity_kg_grand_total").html('')
+        $("#lbl_price_grand_total").html('')
 
-        if(isNaN(price))
+        var quantity_kg_grand_total=0;
+        var price_currency_grand_total=0;
+        /*var lbl_quantity_kg_grand_total='0.00';
+        var lbl_price_grand_total='0.00';*/
+        //var get_current_id='';
+        var id='';
+        console.log($('.order_quantity_total').length)
+        $('.order_quantity_total').each(function(index,element)
         {
-            price=0;
-        }
-        if(isNaN(quantity))
-        {
-            quantity=0;
-        }
-        if(isNaN(currency_rate))
-        {
-            currency_rate=0;
-        }
-        total_price=quantity*price*currency_rate;
-        $("#total_price_id_"+id).html(number_format(total_price,2,'.',','));
-    }*/
+            id = $(element).attr('data-current-id');
+            var price=parseFloat($("#price_id_"+id).val());
+            var quantity=parseFloat($("#quantity_id_"+id).val());
+            console.log(element)
+            //var currency_rate=$('#rate').val();
 
+            if(isNaN(price))
+            {
+                price=0;
+            }
+            if(isNaN(quantity))
+            {
+                quantity=0;
+            }
+
+            var total_quantity='0.00';
+            var pack_size=parseFloat($('option:selected', $("#quantity_type_id_"+id)).attr('data-pack-size-name'))
+            if(pack_size==0)
+            {
+                total_quantity=parseFloat($("#quantity_id_"+id).val())
+            }
+            else
+            {
+                total_quantity=parseFloat((pack_size*$("#quantity_id_"+id).val())/1000)
+            }
+            quantity_kg_grand_total+=total_quantity;
+            $("#total_quantity_kg_"+id).html(number_format(total_quantity,2));
+
+            var total_price=quantity*price;
+            price_currency_grand_total+=total_price;
+            $("#total_price_id_"+id).html(number_format(total_price,2,'.',','));
+
+        });
+        $("#lbl_quantity_kg_grand_total").html(quantity_kg_grand_total)
+        $("#lbl_price_grand_total").html(price_currency_grand_total)
+    }
     jQuery(document).ready(function()
     {
         system_preset({controller:'<?php echo $CI->router->class; ?>'});
 
         var principal_id_old=<?php echo $item['principal_id']; ?>;
-<!--        var currencies=JSON.parse('--><?php //echo json_encode($currency_rates);?><!--');-->
         $(".date_large").datepicker({dateFormat : display_date_format,changeMonth: true,changeYear: true,yearRange: "2015:+2"});
-        
-        <!--        $(document).off("change", "#currency_id");-->
-        <!--        $(document).on("change","#currency_id",function()-->
-        <!--        {-->
-        <!--            --><?php
-        //            if(!(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)) && $item['id']>0)
-        //            {
-        //                ?>
-        <!--                return;-->
-        <!--                --><?php
-        //            }
-        //            ?>
-        <!--            var currency_id = $('#currency_id').val();-->
-        <!--            if(currency_id>0)-->
-        <!--            {-->
-        <!--                $("#rate").val(currencies[currency_id]);-->
-        <!--            }-->
-        <!--            else-->
-        <!--            {-->
-        <!--                $("#rate").val('');-->
-        <!--            }-->
-        <!---->
-        <!--            $('.total_price').each(function(index,element)-->
-        <!--            {-->
-        <!--                if($(element).attr('id'))-->
-        <!--                {-->
-        <!--                    var data_current_id=$(element).attr('data-current-id');-->
-        <!--                    calculate_total(data_current_id);-->
-        <!--                }-->
-        <!--            });-->
-        <!--        });-->
 
-        <!--        $(document).off("input","#rate");-->
-        <!--        $(document).on("input","#rate",function()-->
-        <!--        {-->
-        <!--            --><?php
-        //            if(!(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)) && $item['id']>0)
-        //            {
-        //                ?>
-        <!--                return;-->
-        <!--                --><?php
-        //            }
-        //            ?>
-        <!--            $('.total_price').each(function(index,element)-->
-        <!--            {-->
-        <!--                if($(element).attr('id'))-->
-        <!--                {-->
-        <!--                    var data_current_id=$(element).attr('data-current-id');-->
-        <!--                    calculate_total(data_current_id);-->
-        <!--                }-->
-        <!--            });-->
-        <!--        });-->
-
+        $(document).off('blur','.order_quantity_total');
         $(document).off('change','#principal_id');
         $(document).on("change","#principal_id",function()
         {
@@ -631,6 +622,7 @@ $disabled='';
             $(content_id+' .quantity_type').attr('data-current-id',current_id);
             $(content_id+' .quantity_type').attr('name','varieties['+current_id+'][quantity_type_id]');
 
+            $(content_id+' .quantity').addClass('order_quantity_total');
             $(content_id+' .quantity').attr('id','quantity_id_'+current_id);
             $(content_id+' .quantity').attr('data-current-id',current_id);
             $(content_id+' .quantity').attr('name','varieties['+current_id+'][quantity_order]');
@@ -648,10 +640,7 @@ $disabled='';
             $(content_id+' .total_price').attr('name','varieties['+current_id+'][amount_price_total_order]');
             var html=$(content_id).html();
             $("#items_old_container").append(html);
-            /*$(content_id+' .quantity_type').removeAttr('id');
-            $(content_id+' .quantity').removeAttr('id');
-            $(content_id+' .price').removeAttr('id');
-            $(content_id+' .total_price').removeAttr('id');*/
+
         });
 
         $(document).off('click','.system_button_add_delete');
@@ -661,12 +650,13 @@ $disabled='';
         });
 
         $(document).off("input", ".price");
+        $(document).off("blur", ".order_quantity_total");
         $(document).off("input", ".quantity");
         $(document).off("input", ".quantity_type");
 
 
         //////// onchange Pack Size empty relative field.
-        $(document).on("change",".quantity_type",function()
+        /*$(document).on("change",".quantity_type",function()
         {
             var current_id = $(this).attr("data-current-id");
             $("#quantity_id_"+current_id).val('')
@@ -676,12 +666,12 @@ $disabled='';
 
             $("#total_quantity_kg_"+current_id).html('0.00')
             $("#total_price_id_"+current_id).html('0.00')
-        });
+        });*/
 
         //////// conversion with KG from GM without bulk.
-        $(document).on("input",".quantity",function()
+        /*$(document).on("input",".quantity_order",function()
         {
-            var current_id = $(this).attr("data-current-id");
+            *//*var current_id = $(this).attr("data-current-id");
             var total_quantity=0;
             $("#total_quantity_kg_"+current_id).html('');
             $("#total_quantity_kg_"+current_id).html('0.00')
@@ -694,23 +684,16 @@ $disabled='';
                 alert('Please select pack size.');
                 $(this).val('');
                 return false;
-            }
-            var pack_size=parseFloat($('option:selected', $("#quantity_type_id_"+current_id)).attr('data-pack-size-name'))
-            if(pack_size==0)
-            {
-                total_quantity=parseFloat($(this).val())
-            }
-            else
-            {
-                total_quantity=parseFloat((pack_size*$(this).val())/1000)
-            }
-            $("#total_quantity_kg_"+current_id).html(number_format(total_quantity,2))
-        });
+            }*//*
+            *//*var current_id = $(this).attr("data-current-id");
+            calculate_total(current_id);*//*
+
+        });*/
 
         //////// calculate total price currency.
         $(document).on("input",".price",function()
         {
-            var current_id = $(this).attr("data-current-id");
+            /*var current_id = $(this).attr("data-current-id");
             var quantity=parseFloat($("#quantity_id_"+current_id).val());
             var total_price=0;
             $("#total_price_id_"+current_id).html('')
@@ -721,19 +704,36 @@ $disabled='';
                 $(this).val('');
                 return false;
             }
-            /*if($("#quantity_type_id_"+current_id).val()=='0')
-            {
-                total_price=parseFloat($(this).val())
-            }
-            else
-            {
-                total_price=parseFloat(quantity*$(this).val())
-            }*/
             total_price=parseFloat(quantity*$(this).val())
-            $("#total_price_id_"+current_id).html(total_price)
+            $("#total_price_id_"+current_id).html(total_price)*/
+            calculate_total();
 
         });
 
         $('#items_old').html($('#items_old_container').html());
     });
+    $(document).ready(function()
+    {
+        $(document).off('input','.order_quantity_total');
+        $(document).on("blur",".order_quantity_total",function()
+        {
+            /*var current_id = $(this).attr("data-current-id");
+             var total_quantity=0;
+             $("#total_quantity_kg_"+current_id).html('');
+             $("#total_quantity_kg_"+current_id).html('0.00')
+             $("#total_price_id_"+current_id).html('');
+             $("#total_price_id_"+current_id).html('0.00')
+             $("#price_id_"+current_id).val('')
+             $("#price_id_"+current_id).val('0.00')
+             if($("#quantity_type_id_"+current_id).val()=='-1')
+             {
+             alert('Please select pack size.');
+             $(this).val('');
+             return false;
+             }*/
+            /*var current_id = $(this).attr("data-current-id");*/
+             calculate_total();
+
+        });
+    })
 </script>

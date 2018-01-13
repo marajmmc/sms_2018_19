@@ -10,7 +10,7 @@ class Lc_open extends Root_Controller
         parent::__construct();
         $this->message="";
         $this->permissions=User_helper::get_permission('Lc_open');
-        $this->controller_url='Lc_open';
+        $this->controller_url='lc_open';
     }
 
     public function index($action="list",$id=0)
