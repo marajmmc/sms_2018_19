@@ -583,7 +583,7 @@ $disabled='';
                                 if($(element).attr('id'))
                                 {
                                     var data_current_id=$(element).attr('data-current-id');
-                                    calculate_total(data_current_id);
+                                    //calculate_total(data_current_id);
                                 }
                             });
                         }
@@ -706,7 +706,7 @@ $disabled='';
             }
             total_price=parseFloat(quantity*$(this).val())
             $("#total_price_id_"+current_id).html(total_price)*/
-            calculate_total();
+            //calculate_total();
 
         });
 
