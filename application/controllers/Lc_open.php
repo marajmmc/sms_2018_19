@@ -162,18 +162,18 @@ class Lc_open extends Root_Controller
             $data['items']=array();
 
             $data['currencies']=Query_helper::get_info($this->config->item('table_sms_setup_currency'),array('id value','name text','amount_rate_budget'),array('status !="'.$this->config->item('system_status_delete').'"'),0,0,array('ordering'));
-            $data['currency_rates']=array();
+            /*$data['currency_rates']=array();
             foreach($data['currencies'] as $rate)
             {
                 $data['currency_rates'][$rate['value']]=$rate['amount_rate_budget'];
-            }
+            }*/
 
             $data['principals']=Query_helper::get_info($this->config->item('table_login_basic_setup_principal'),array('id value','name text'),array('status !="'.$this->config->item('system_status_delete').'"'),0,0,array('ordering'));
 
             $data['packs']=Query_helper::get_info($this->config->item('table_login_setup_classification_vpack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('id ASC'));
 
             $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/add_edit",$data,true));
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/add",$data,true));
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
@@ -256,7 +256,7 @@ class Lc_open extends Root_Controller
 
             $data['title']="Edit LC (".$data['item']['lc_number'].')';
             $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/add_edit",$data,true));
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/edit",$data,true));
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
@@ -485,7 +485,6 @@ class Lc_open extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
     private function check_validation()
     {
         $this->load->library('form_validation');

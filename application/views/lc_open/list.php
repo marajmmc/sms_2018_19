@@ -154,8 +154,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 { name: 'consignment_name', type: 'string' },
                 { name: 'price_total_currency', type: 'string' },
                 { name: 'other_cost_currency', type: 'string' },
-                { name: 'status_expense', type: 'string' },
-                { name: 'status_release', type: 'string' }
+                { name: 'status_release', type: 'string' },
+                { name: 'status_expense', type: 'string' }
             ],
             id: 'id',
             url: url
@@ -191,8 +191,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     { text: '<?php echo $CI->lang->line('LABEL_CONSIGNMENT_NAME'); ?>', dataField: 'consignment_name', hidden: <?php echo $items['consignment_name']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_TOTAL_CURRENCY'); ?>', dataField: 'price_total_currency', width:50, hidden: <?php echo $items['price_total_currency']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_OTHER_COST_CURRENCY'); ?>', dataField: 'other_cost_currency', width:50, hidden: <?php echo $items['other_cost_currency']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('STATUS'); ?>', dataField: 'status_expense',cellsalign: 'center',filtertype: 'list', width:80, hidden: <?php echo $items['status_expense']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_RELEASE_STATUS'); ?>', dataField: 'status_release',cellsalign: 'center',filtertype: 'list', width:80, hidden: <?php echo $items['status_release']?0:1;?>}
+                    { text: '<?php echo $CI->lang->line('LABEL_RELEASE_STATUS'); ?>', dataField: 'status_release',cellsalign: 'center',filtertype: 'list', width:80, hidden: <?php echo $items['status_release']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('STATUS'); ?>', dataField: 'status_expense',cellsalign: 'center',filtertype: 'list', width:80, hidden: <?php echo $items['status_expense']?0:1;?>}
                 ]
             });
     });

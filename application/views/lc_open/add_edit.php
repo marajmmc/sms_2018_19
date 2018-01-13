@@ -294,7 +294,7 @@ $disabled='';
                             <th>&nbsp;</th>
                         </tr>
                     </thead>
-                    <tbody id="items_old_container">
+                    <tbody id="items_container">
                     <?php
                         $total_kg='0.00';
                         $total_currency='0.00';
@@ -506,13 +506,13 @@ $disabled='';
         var lbl_price_grand_total='0.00';*/
         //var get_current_id='';
         var id='';
-        console.log($('.order_quantity_total').length)
-        $('.order_quantity_total').each(function(index,element)
+        console.log($('#items_container .order_quantity_total').length)
+        $('#items_container .order_quantity_total').each(function(index,element)
         {
             id = $(element).attr('data-current-id');
             var price=parseFloat($("#price_id_"+id).val());
             var quantity=parseFloat($("#quantity_id_"+id).val());
-            console.log(element)
+            /*console.log(element)*/
             //var currency_rate=$('#rate').val();
 
             if(isNaN(price))
@@ -547,12 +547,13 @@ $disabled='';
     }
     jQuery(document).ready(function()
     {
+        calculate_total();
         system_preset({controller:'<?php echo $CI->router->class; ?>'});
 
         var principal_id_old=<?php echo $item['principal_id']; ?>;
         $(".date_large").datepicker({dateFormat : display_date_format,changeMonth: true,changeYear: true,yearRange: "2015:+2"});
 
-        $(document).off('blur','.order_quantity_total');
+        $(document).off('input','#items_container .order_quantity_total');
         $(document).off('change','#principal_id');
         $(document).on("change","#principal_id",function()
         {
@@ -564,7 +565,7 @@ $disabled='';
                 <?php
             }
             ?>
-            $('#items_old_container').html('');
+            //$('#items_container').html('');
             var principal_id = $('#principal_id').val();
             if(principal_id>0)
             {
@@ -577,7 +578,7 @@ $disabled='';
                     {
                         if(principal_id==principal_id_old && <?php if($item['id']>0){echo 'true';}else{echo 'false';} ?>)
                         {
-                            $('#items_old_container').html($('#items_old').html());
+                            //$('#items_container').html($('#items_old').html());
                             $('.total_price').each(function(index,element)
                             {
                                 if($(element).attr('id'))
@@ -597,7 +598,7 @@ $disabled='';
             }
             else
             {
-                $('#items_old_container').html('');
+                //$('#items_container').html('');
                 $('#varieties_container').html('');
             }
         });
@@ -639,7 +640,7 @@ $disabled='';
             $(content_id+' .total_price').attr('data-current-id',current_id);
             $(content_id+' .total_price').attr('name','varieties['+current_id+'][amount_price_total_order]');
             var html=$(content_id).html();
-            $("#items_old_container").append(html);
+            $("#items_container").append(html);
 
         });
 
@@ -706,11 +707,10 @@ $disabled='';
             }
             total_price=parseFloat(quantity*$(this).val())
             $("#total_price_id_"+current_id).html(total_price)*/
-            //calculate_total();
+            calculate_total();
 
         });
-
-        $('#items_old').html($('#items_old_container').html());
+        //$('#items_old').html($('#items_container').html());
     });
     $(document).ready(function()
     {
@@ -733,7 +733,6 @@ $disabled='';
              }*/
             /*var current_id = $(this).attr("data-current-id");*/
              calculate_total();
-
         });
     })
 </script>
