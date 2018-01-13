@@ -84,7 +84,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 <script type="text/javascript">
     $(document).ready(function ()
     {
-        system_preset({controller:'<?php echo $CI->router->class; ?>'});
+
+        //$(document).off("click", "#button_jqx_load_more");
 
         var url = "<?php echo base_url($CI->controller_url.'/index/get_items');?>";
 
@@ -101,6 +102,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 { name: 'remarks', type: 'string' }
             ],
             id: 'id',
+            type: 'POST',
             url: url
         };
 
@@ -115,11 +117,13 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 sortable: true,
                 showfilterrow: true,
                 columnsresize: true,
-                pagesize:50,
+                pagesize:2,
                 pagesizeoptions: ['20', '50', '100', '200','300','500'],
                 selectionmode: 'singlerow',
                 altrows: true,
                 autoheight: true,
+                enablebrowserselection:true,
+                columnsreorder: true,
                 columns: [
                     { text: '<?php echo $CI->lang->line('ID'); ?>', dataField: 'id',width:'75',hidden:true},
                     { text: '<?php echo $CI->lang->line('SI ID'); ?>', dataField: 'generated_id',width:'75',hidden:false},
