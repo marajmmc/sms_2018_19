@@ -41,7 +41,7 @@ class Lc_expense extends Root_Controller
     {
         if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
         {
-            $data['title']="LC List";
+            $data['title']="LC List For Expense";
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/list",$data,true));
             if($this->message)
@@ -64,30 +64,33 @@ class Lc_expense extends Root_Controller
         $this->db->select('lc.*');
         $this->db->select('fy.name fiscal_year_name');
         $this->db->select('principal.name principal_name');
+        $this->db->select('currency.name currency_name');
         $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.id = lc.year_id','INNER');
         $this->db->join($this->config->item('table_login_basic_setup_principal').' principal','principal.id = lc.principal_id','INNER');
+        $this->db->join($this->config->item('table_sms_setup_currency').' currency','currency.id = lc.currency_id','INNER');
         $this->db->order_by('lc.year_id','DESC');
         $this->db->order_by('lc.id','DESC');
         $items=$this->db->get()->result_array();
+//        print_r($items);
+//        exit;
         foreach($items as &$item)
         {
             $item['month_name']=$this->lang->line("LABEL_MONTH_$item[month_id]");
             $item['date_opening']=System_helper::display_date($item['date_opening']);
             $item['date_expected']=System_helper::display_date($item['date_expected']);
-            $item['currency_name']='';
             if($item['status_expense']==$this->config->item('system_status_pending'))
             {
-                $item['status']=$this->lang->line('LABEL_LC_STATUS_EXPENSE_PENDING');
+                $item['status']=$this->lang->line('LABEL_LC_STATUS_PENDING');
             }elseif($item['status_expense']==$this->config->item('system_status_complete'))
             {
-                $item['status']=$this->lang->line('LABEL_LC_STATUS_EXPENSE_COMPLETE');
+                $item['status']=$this->lang->line('LABEL_LC_STATUS_COMPLETE');
             }
             if($item['status_expense']==$this->config->item('system_status_pending'))
             {
-                $item['status_expense']=$this->lang->line('LABEL_LC_STATUS_EXPENSE_PENDING');
+                $item['status_expense']=$this->lang->line('LABEL_LC_STATUS_PENDING');
             }elseif($item['status_expense']==$this->config->item('system_status_complete'))
             {
-                $item['status_expense']=$this->lang->line('LABEL_LC_STATUS_EXPENSE_COMPLETE');
+                $item['status_expense']=$this->lang->line('LABEL_LC_STATUS_COMPLETE');
             }
         }
         $this->json_return($items);
@@ -125,6 +128,8 @@ class Lc_expense extends Root_Controller
             $this->db->join($this->config->item('table_login_setup_classification_vpack_size').' pack_size','pack_size.id = lc_details.quantity_type_id','LEFT');
             $this->db->where('lc_details.lc_id',$item_id);
             $items=$this->db->get()->result_array();
+//            print_r($items);
+//            exit;
             foreach($items as &$item)
             {
                 if($item['quantity_type_id']!=0)
@@ -133,6 +138,7 @@ class Lc_expense extends Root_Controller
                 }else
                 {
                     $item['total_quantity_in_kg']=$item['quantity_order'];
+                    $item['pack_size_name']='Bulk';
                 }
                 $item['total_price_in_currency']=($item['total_quantity_in_kg']*$item['price_currency']);
             }

@@ -33,6 +33,7 @@ $lang['ACTION_SET_PACKING_COST'] = 'Set Packing Cost';
 
 //Action buttons for LC
 $lang['ACTION_EXPENSE'] = 'Expense';
+$lang['ACTION_RECEIVE'] = 'Receive';
 
 
 //****MODULE TASK//
