@@ -176,6 +176,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                             $item_per_currency=number_format(($value['quantity_order']*$value['price_currency']),3);
                             $total_kg+=$item_per_kg;
                             $total_currency+=($value['quantity_order']*$value['price_currency']);
+
+                            //if()
+
                             ?>
                             <tr>
                                 <td>
@@ -200,8 +203,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                                     <label class="pull-right"><?php echo $item_per_currency?></label>
                                 </td>
                                 <td>
-                                    <input type="text" value="<?php echo $value['quantity_order']; ?>" class="form-control float_type_positive quantity order_quantity_total" id="quantity_id_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>" name="varieties[<?php echo $index+1;?>][quantity_order]">
-                                    <input type="hidden" value="<?php echo $value['quantity_order']; ?>" class="form-control" id="old_quantity_id_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>" name="varieties[<?php echo $index+1;?>][old_quantity_order]">
+                                    <input type="text" value="<?php echo $value['quantity_release']; ?>" class="form-control float_type_positive quantity release_quantity_total" id="quantity_id_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>" name="varieties[<?php echo $index+1;?>][quantity_release]">
+                                    <input type="hidden" value="<?php echo $value['quantity_release']; ?>" class="form-control" id="old_quantity_id_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>" name="varieties[<?php echo $index+1;?>][old_quantity_release]">
                                 </td>
                                 <td class="text-right">
                                     <label class="control-label total_price" id="total_quantity_kg_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>">

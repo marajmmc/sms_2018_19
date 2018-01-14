@@ -210,6 +210,9 @@ $disabled='';
                         <th class="text-right"><label class="control-label" id="lbl_price_grand_total">0.000</label></th>
                         <th class="text-right"></th>
                     </tr>
+                    <tr>
+                        <th colspan="3" class="text-right"><?php echo $this->lang->line('LABEL_GRAND_TOTAL')?></th>
+                    </tr>
                     </tfoot>
                 </table>
             </div>
