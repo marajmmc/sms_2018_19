@@ -49,7 +49,11 @@ $action_buttons[]=array(
     'label'=>$CI->lang->line("ACTION_REFRESH"),
     'href'=>site_url($CI->controller_url.'/index/list')
 );
-
+$action_buttons[]=array(
+    'type'=>'button',
+    'label'=>$CI->lang->line("ACTION_LOAD_MORE"),
+    'id'=>'button_jqx_load_more'
+);
 $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 ?>
 
