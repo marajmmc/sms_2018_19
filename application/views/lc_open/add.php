@@ -169,7 +169,7 @@ $disabled='';
                 <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_OTHER_COST_CURRENCY');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <input type="text" name="item[other_cost_currency]" id="other_cost_currency" class="form-control float_type_positive" value=""/>
+                <input type="text" name="item[other_cost_currency]" id="other_cost_currency" class="form-control float_type_positive other_cost_currency" value=""/>
             </div>
         </div>
         <div class="row show-grid">
@@ -211,7 +211,9 @@ $disabled='';
                         <th class="text-right"></th>
                     </tr>
                     <tr>
-                        <th colspan="3" class="text-right"><?php echo $this->lang->line('LABEL_GRAND_TOTAL')?></th>
+                        <th colspan="5" class="text-right"><?php echo $this->lang->line('LABEL_GRAND_TOTAL_CURRENCY')?></th>
+                        <th class="text-right"><label class="control-label" id="lbl_price_grand_total_currency">0.000</label></th>
+                        <th>&nbsp;</th>
                     </tr>
                     </tfoot>
                 </table>
@@ -282,14 +284,16 @@ $disabled='';
     {
         $("#lbl_quantity_kg_grand_total").html('0.000')
         $("#lbl_price_grand_total").html('0.000')
-
+        $("#lbl_price_grand_total_currency").html('0.000')
+        var other_cost_currency=parseFloat($("#other_cost_currency").val());
+        if(isNaN(other_cost_currency))
+        {
+            other_cost_currency=0;
+        }
         var quantity_kg_grand_total=0;
         var price_currency_grand_total=0;
-        /*var lbl_quantity_kg_grand_total='0.00';
-        var lbl_price_grand_total='0.00';*/
-        //var get_current_id='';
         var id='';
-        //console.log($('#items_container .order_quantity_total').length)
+
         $('#items_container .order_quantity_total').each(function(index,element)
         {
             id = $(element).attr('data-current-id');
@@ -332,8 +336,10 @@ $disabled='';
 
 
         });
+        var price_other_cost_currency_grand_total=(price_currency_grand_total+other_cost_currency);
         $("#lbl_quantity_kg_grand_total").html(number_format(quantity_kg_grand_total,3))
         $("#lbl_price_grand_total").html(number_format(price_currency_grand_total,3))
+        $("#lbl_price_grand_total_currency").html(number_format(price_other_cost_currency_grand_total,3))
     }
     jQuery(document).ready(function()
     {
@@ -430,6 +436,7 @@ $disabled='';
         $(document).off("input", ".price");
         $(document).off("input", ".quantity");
         $(document).off("input", ".quantity_type");
+        $(document).off("input", ".other_cost_currency");
 
 
         $(document).off("input", "'#items_container .order_quantity_total'");
@@ -453,12 +460,18 @@ $disabled='';
                 $("#total_quantity_kg_"+current_id).html('0.000');
                 $("#price_id_"+current_id).val('');
                 $("#total_price_id_"+current_id).html('0.000');
+                $("#lbl_price_grand_total_currency").html('0.000');
                 calculate_total();
             }
             else
             {
                 calculate_total();
             }
+        });
+        //////// calculate total price currency with other cost.
+        $(document).on("input",".other_cost_currency",function()
+        {
+            calculate_total();
         });
     });
 </script>

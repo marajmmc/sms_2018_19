@@ -157,6 +157,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <?php
                         $total_kg='0.000';
                         $total_currency='0.000';
+                        $grand_total_currency='0.000';
                         foreach($items as $index=>$value)
                         {
                             $item_per_kg='0.000';
@@ -216,6 +217,14 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <th class="text-right"><?php echo $this->lang->line('LABEL_TOTAL_CURRENCY')?></th>
                         <th class="text-right"><label class="control-label" id="lbl_price_grand_total"><?php echo number_format($total_currency,2);?></label></th>
                         <th class="text-right"></th>
+                    </tr>
+                    <tr>
+                        <th colspan="5" class="text-right"><?php echo $this->lang->line('LABEL_GRAND_TOTAL_CURRENCY')?></th>
+                        <th class="text-right"><label class="control-label" id="lbl_price_grand_total_currency">
+                                <?php
+                                $grand_total_currency=($total_currency+$item['other_cost_currency']);
+                                echo number_format($grand_total_currency,2);?></label></th>
+                        <th>&nbsp;</th>
                     </tr>
                     </tfoot>
                 </table>
@@ -298,14 +307,16 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
     {
         $("#lbl_quantity_kg_grand_total").html('0.000')
         $("#lbl_price_grand_total").html('0.000')
-
+        $("#lbl_price_grand_total_currency").html('0.000')
+        var other_cost_currency=parseFloat($("#other_cost_currency").val());
+        if(isNaN(other_cost_currency))
+        {
+            other_cost_currency=0;
+        }
         var quantity_kg_grand_total=0;
         var price_currency_grand_total=0;
-        /*var lbl_quantity_kg_grand_total='0.00';
-         var lbl_price_grand_total='0.00';*/
-        //var get_current_id='';
         var id='';
-        //console.log($('#items_container .order_quantity_total').length)
+
         $('#items_container .order_quantity_total').each(function(index,element)
         {
             id = $(element).attr('data-current-id');
@@ -348,24 +359,20 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
 
         });
+        var price_other_cost_currency_grand_total=(price_currency_grand_total+other_cost_currency);
         $("#lbl_quantity_kg_grand_total").html(number_format(quantity_kg_grand_total,3))
         $("#lbl_price_grand_total").html(number_format(price_currency_grand_total,3))
+        $("#lbl_price_grand_total_currency").html(number_format(price_other_cost_currency_grand_total,3))
     }
     jQuery(document).ready(function()
     {
         system_preset({controller:'<?php echo $CI->router->class; ?>'});
 
-        var principal_id_old=<?php echo $item['principal_id']; ?>;
         $(".date_large").datepicker({dateFormat : display_date_format,changeMonth: true,changeYear: true,yearRange: "2015:+2"});
 
         $(document).off("click", ".system_button_add_more");
         $(document).on("click", ".system_button_add_more", function(event)
         {
-            if($("#principal_id").val()=="")
-            {
-                alert("Please select principal");
-                return false;
-            }
             var current_id=parseInt($(this).attr('data-current-id'));
             current_id=current_id+1;
             $(this).attr('data-current-id',current_id);
@@ -406,9 +413,10 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         });
 
         $(document).off("input", ".price");
-        $(document).off("blur", ".order_quantity_total");
+        $(document).off("input", ".order_quantity_total");
         $(document).off("input", ".quantity");
         $(document).off("input", ".quantity_type");
+        $(document).off("input", ".other_cost_currency");
 
 
         //////// onchange Pack Size empty relative field.
@@ -445,12 +453,18 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 $("#total_quantity_kg_"+current_id).html('0.000');
                 $("#price_id_"+current_id).val('');
                 $("#total_price_id_"+current_id).html('0.000');
+                $("#lbl_price_grand_total_currency").html('0.000');
                 calculate_total();
             }
             else
             {
                 calculate_total();
             }
+        });
+        //////// calculate total price currency with other cost.
+        $(document).on("input",".other_cost_currency",function()
+        {
+            calculate_total();
         });
     });
 
