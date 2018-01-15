@@ -65,12 +65,26 @@ class Stock_in_variety extends Root_Controller
 
     private function system_get_items()
     {
-        $items=array();
+        $current_records = $this->input->post('total_records');
+        if(!$current_records)
+        {
+            $current_records=0;
+        }
+        $pagesize = $this->input->post('pagesize');
+        if(!$pagesize)
+        {
+            $pagesize=40;
+        }
+        else
+        {
+            $pagesize=$pagesize*2;
+        }
         $this->db->select('stock_in.*');
         $this->db->from($this->config->item('table_sms_stock_in_variety').' stock_in');
         $this->db->where('stock_in.status',$this->config->item('system_status_active'));
         $this->db->order_by('stock_in.date_stock_in','DESC');
         $this->db->order_by('stock_in.id','DESC');
+        $this->db->limit($pagesize,$current_records);
         $items=$this->db->get()->result_array();
         foreach($items as &$item)
         {

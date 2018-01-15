@@ -63,14 +63,11 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label for="purpose" class="control-label pull-right"><?php echo $this->lang->line('LABEL_PURPOSE'); ?><span style="color:#FF0000">*</span></label>
+                <label for="purpose" class="control-label pull-right"><?php echo $this->lang->line('LABEL_PURPOSE'); ?></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <select id="purpose" name="item[purpose]" class="form-control">
-                    <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                    <option value="<?php echo $CI->config->item('system_purpose_variety_stock_in');?>" <?php if(isset($item['purpose'])){if($item['purpose']==$CI->config->item('system_purpose_variety_stock_in')){echo "selected";}}?>><?php echo $this->lang->line('LABEL_STOCK_IN');?></option>
-                    <option value="<?php echo $CI->config->item('system_purpose_variety_excess');?>" <?php if(isset($item['purpose'])){if($item['purpose']==$CI->config->item('system_purpose_variety_excess')){echo "selected";}}?>><?php echo $this->lang->line('LABEL_EXCESS');?></option>
-                </select>
+                <label for="purpose" class="control-label"><?php echo $this->lang->line('PURPOSE_'.$item['purpose']); ?></label>
+                
             </div>
         </div>
         <div style="" class="row show-grid">
