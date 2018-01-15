@@ -214,7 +214,13 @@ class Lc_open extends Root_Controller
             $data['fiscal_years']=Query_helper::get_info($this->config->item('table_login_basic_setup_fiscal_year'),array('id value','name text','date_start','date_end'),array("id=$fiscal_year_id",'status ="'.$this->config->item('system_status_active').'"'),1,0,array('id ASC'));
             $data['currencies']=Query_helper::get_info($this->config->item('table_sms_setup_currency'),array('id value','name text','amount_rate_budget'),array('status !="'.$this->config->item('system_status_delete').'"'),0,0,array('ordering'));
             $data['principals']=Query_helper::get_info($this->config->item('table_login_basic_setup_principal'),array('id value','name text'),array("id=$principal_id",'status !="'.$this->config->item('system_status_delete').'"'),1,0,array('ordering'));
-            $data['packs']=Query_helper::get_info($this->config->item('table_login_setup_classification_vpack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('id ASC'));
+            $result_pack_size=Query_helper::get_info($this->config->item('table_login_setup_classification_vpack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('id ASC'));
+            $data['packs']=array();
+            foreach($result_pack_size as $pack_size)
+            {
+                $data['packs'][$pack_size['value']]['value']=$pack_size['value'];
+                $data['packs'][$pack_size['value']]['text']=$pack_size['text'];
+            }
             $data['items']=Query_helper::get_info($this->config->item('table_sms_lc_details'),'*',array('lc_id='.$item_id, 'quantity_order>0'));
 
             /*get armalik variety*/
@@ -287,8 +293,8 @@ class Lc_open extends Root_Controller
         if($id>0)
         {
 
-            $data['item']=Query_helper::get_info($this->config->item('table_sms_lc_open'),'*',array('id ='.$id),1);
-            if(!$data['item'])
+            $lc_open_result=Query_helper::get_info($this->config->item('table_sms_lc_open'),'*',array('id ='.$id),1);
+            if(!$lc_open_result)
             {
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid LC - Data Not Found. Please Try Again.';
@@ -308,6 +314,7 @@ class Lc_open extends Root_Controller
             {
                 foreach($result as $row)
                 {
+                    $old_varieties[$row['variety_id']][$row['quantity_type_id']]['lc_detail_id']=$row['id'];
                     $old_varieties[$row['variety_id']][$row['quantity_type_id']]['quantity_order']=$row['quantity_order'];
                     $old_varieties[$row['variety_id']][$row['quantity_type_id']]['price_currency']=$row['price_currency'];
                 }
@@ -317,11 +324,12 @@ class Lc_open extends Root_Controller
             foreach($varieties as $variety)
             {
                 $price_total_currency+=($variety['quantity_order']*$variety['price_currency']);
-                if($variety['lc_detail_id']>0)
+                if(isset($old_varieties[$variety['variety_id']][$variety['quantity_type_id']]))
                 {
-                    $old_variety_quantity=isset($old_varieties[$variety['variety_id']][$variety['quantity_type_id']])?$old_varieties[$variety['variety_id']][$variety['quantity_type_id']]['quantity_order']:0;
-                    $old_variety_currency=isset($old_varieties[$variety['variety_id']][$variety['quantity_type_id']])?$old_varieties[$variety['variety_id']][$variety['quantity_type_id']]['price_currency']:0;
-                    if($old_variety_quantity!=$variety['quantity_order'] && $old_variety_currency!=$variety['price_currency'])
+                    $lc_detail_id=$old_varieties[$variety['variety_id']][$variety['quantity_type_id']]['lc_detail_id'];
+                    $old_variety_quantity=$old_varieties[$variety['variety_id']][$variety['quantity_type_id']]['quantity_order'];
+                    $old_variety_currency=$old_varieties[$variety['variety_id']][$variety['quantity_type_id']]['price_currency'];
+                    if(($old_variety_quantity!=$variety['quantity_order']) || ($old_variety_currency!=$variety['price_currency']))
                     {
                         $variety_data=array();
                         $variety_data['lc_id']=$id;
@@ -332,7 +340,7 @@ class Lc_open extends Root_Controller
                         $variety_data['date_updated'] = $time;
                         $variety_data['user_updated'] = $user->user_id;
                         $this->db->set('revision', 'revision+1', FALSE);
-                        Query_helper::update($this->config->item('table_sms_lc_details'),$variety_data, array('id='.$variety['lc_detail_id']));
+                        Query_helper::update($this->config->item('table_sms_lc_details'),$variety_data, array('id='.$lc_detail_id));
                         unset($variety_data['revision']);
                         unset($variety_data['date_updated']);
                         unset($variety_data['user_updated']);
@@ -364,6 +372,7 @@ class Lc_open extends Root_Controller
             $data['user_updated']=$user->user_id;
             $this->db->set('revision', 'revision+1', FALSE);
             Query_helper::update($this->config->item('table_sms_lc_open'),$data,array('id='.$id));
+
         }
         else
         {
@@ -437,7 +446,7 @@ class Lc_open extends Root_Controller
             foreach($varieties as $variety)
             {
                 /// empty checking
-                if(!(($variety['variety_id']>0) && ($variety['quantity_type_id']>=0) && ($variety['quantity_order']>0) && ($variety['price_currency']>0)))
+                if(!(($variety['variety_id']>0) && ($variety['quantity_type_id']>=0) && ($variety['quantity_order']>=0) && ($variety['price_currency']>0)))
                 {
                     $this->message='Please properly data insert (variety info :: '.$variety['variety_id'].'). Try again.';
                     return false;

@@ -207,12 +207,12 @@ $disabled='';
                         <th colspan="3" class="text-right"><?php echo $this->lang->line('LABEL_TOTAL_KG')?></th>
                         <th class="text-right"><label class="control-label" id="lbl_quantity_kg_grand_total">0.000</label></th>
                         <th class="text-right"><?php echo $this->lang->line('LABEL_TOTAL_CURRENCY')?></th>
-                        <th class="text-right"><label class="control-label" id="lbl_price_grand_total">0.000</label></th>
+                        <th class="text-right"><label class="control-label" id="lbl_price_grand_total">0.00</label></th>
                         <th class="text-right"></th>
                     </tr>
                     <tr>
                         <th colspan="5" class="text-right"><?php echo $this->lang->line('LABEL_GRAND_TOTAL_CURRENCY')?></th>
-                        <th class="text-right"><label class="control-label" id="lbl_price_grand_total_currency">0.000</label></th>
+                        <th class="text-right"><label class="control-label" id="lbl_price_grand_total_currency">0.00</label></th>
                         <th>&nbsp;</th>
                     </tr>
                     </tfoot>
@@ -268,7 +268,7 @@ $disabled='';
                 <input type="text" class="form-control float_type_positive price" value=""/>
             </td>
             <td class="text-right">
-                <label class="control-label total_price">0.000</label>
+                <label class="control-label total_price">0.00</label>
             </td>
             <td>
                 <button type="button" class="btn btn-danger system_button_add_delete"><?php echo $CI->lang->line('DELETE'); ?></button>
@@ -276,15 +276,14 @@ $disabled='';
         </tr>
         </tbody>
     </table>
-    <div id="items_old"></div>
 </div>
 
 <script type="text/javascript">
     function calculate_total()
     {
         $("#lbl_quantity_kg_grand_total").html('0.000')
-        $("#lbl_price_grand_total").html('0.000')
-        $("#lbl_price_grand_total_currency").html('0.000')
+        $("#lbl_price_grand_total").html('0.00')
+        $("#lbl_price_grand_total_currency").html('0.00')
         var other_cost_currency=parseFloat($("#other_cost_currency").val());
         if(isNaN(other_cost_currency))
         {
@@ -325,7 +324,7 @@ $disabled='';
 
                 var total_price=quantity*price;
                 price_currency_grand_total+=total_price;
-                $("#total_price_id_"+id).html(number_format(total_price,3,'.',','));
+                $("#total_price_id_"+id).html(number_format(total_price,2,'.',','));
             }
             else
             {
@@ -338,8 +337,8 @@ $disabled='';
         });
         var price_other_cost_currency_grand_total=(price_currency_grand_total+other_cost_currency);
         $("#lbl_quantity_kg_grand_total").html(number_format(quantity_kg_grand_total,3))
-        $("#lbl_price_grand_total").html(number_format(price_currency_grand_total,3))
-        $("#lbl_price_grand_total_currency").html(number_format(price_other_cost_currency_grand_total,3))
+        $("#lbl_price_grand_total").html(number_format(price_currency_grand_total,2))
+        $("#lbl_price_grand_total_currency").html(number_format(price_other_cost_currency_grand_total,2))
     }
     jQuery(document).ready(function()
     {
@@ -431,6 +430,7 @@ $disabled='';
         $(document).on("click", ".system_button_add_delete", function(event)
         {
             $(this).closest('tr').remove();
+            calculate_total();
         });
 
         $(document).off("input", ".price");
@@ -459,8 +459,8 @@ $disabled='';
                 $("#quantity_id_"+current_id).val('');
                 $("#total_quantity_kg_"+current_id).html('0.000');
                 $("#price_id_"+current_id).val('');
-                $("#total_price_id_"+current_id).html('0.000');
-                $("#lbl_price_grand_total_currency").html('0.000');
+                $("#total_price_id_"+current_id).html('0.00');
+                $("#lbl_price_grand_total_currency").html('0.00');
                 calculate_total();
             }
             else

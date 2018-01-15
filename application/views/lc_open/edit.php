@@ -31,7 +31,6 @@ if(isset($CI->permissions['action1']) && ($CI->permissions['action1']==1))
     );
 }
 $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
-
 ?>
 <form id="save_form" action="<?php echo site_url($CI->controller_url.'/index/save');?>" method="post">
     <input type="hidden" id="id" name="id" value="<?php echo $item['id']; ?>" />
@@ -122,7 +121,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_OTHER_COST_CURRENCY');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <input type="text" name="item[other_cost_currency]" id="other_cost_currency" class="form-control float_type_positive" value="<?php echo $item['other_cost_currency'];?>"/>
+                <input type="text" name="item[other_cost_currency]" id="other_cost_currency" class="form-control float_type_positive other_cost_currency" value="<?php echo $item['other_cost_currency'];?>"/>
             </div>
         </div>
         <div class="row show-grid">
@@ -170,7 +169,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                             {
                                 $item_per_kg = number_format((($packs[$value['quantity_type_id']]['text']*$value['quantity_order'])/1000),3);
                             }
-                            $item_per_currency=number_format(($value['quantity_order']*$value['price_currency']),3);
+                            $item_per_currency=number_format(($value['quantity_order']*$value['price_currency']),2);
                             $total_kg+=$item_per_kg;
                             $total_currency+=($value['quantity_order']*$value['price_currency']);
                             ?>
@@ -269,7 +268,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 </select>
             </td>
             <td>
-                <select class="form-control quantity_type">
+                <select class="form-control quantity_type" data-new-pack-size="0">
                     <option value="-1"><?php echo $this->lang->line('SELECT'); ?></option>
                     <option value="0" data-pack-size-name="0">Bulk</option>
                     <?php
@@ -292,7 +291,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <input type="text" class="form-control float_type_positive price" value=""/>
             </td>
             <td class="text-right">
-                <label class="control-label total_price">0.000</label>
+                <label class="control-label total_price">0.00</label>
             </td>
             <td>
                 <button type="button" class="btn btn-danger system_button_add_delete"><?php echo $CI->lang->line('DELETE'); ?></button>
@@ -306,8 +305,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
     function calculate_total()
     {
         $("#lbl_quantity_kg_grand_total").html('0.000')
-        $("#lbl_price_grand_total").html('0.000')
-        $("#lbl_price_grand_total_currency").html('0.000')
+        $("#lbl_price_grand_total").html('0.00')
+        $("#lbl_price_grand_total_currency").html('0.00')
         var other_cost_currency=parseFloat($("#other_cost_currency").val());
         if(isNaN(other_cost_currency))
         {
@@ -335,25 +334,14 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
                 var total_quantity='0.000';
                 var pack_size=parseFloat($("#quantity_type_id_"+id).attr('data-pack-size-name'))
+
+                if($("#quantity_type_id_"+id).attr('data-new-pack-size')==0)
+                {
+                    var pack_size=parseFloat($('option:selected', $("#quantity_type_id_"+id)).attr('data-pack-size-name'))
+                }
                 if(pack_size==0)
                 {
-                    var pack_size_new=parseFloat($('option:selected', $("#quantity_type_id_"+id)).attr('data-pack-size-name'));
-                    if(pack_size_new>=0)
-                    {
-                        if(pack_size_new==0)
-                        {
-                            total_quantity=parseFloat($("#quantity_id_"+id).val())
-                        }
-                        else
-                        {
-                            total_quantity=parseFloat((pack_size_new*$("#quantity_id_"+id).val())/1000)
-                        }
-                    }
-                    else
-                    {
-                        total_quantity=parseFloat($("#quantity_id_"+id).val())
-                    }
-                    /*total_quantity=parseFloat($("#quantity_id_"+id).val())*/
+                    total_quantity=parseFloat($("#quantity_id_"+id).val())
                 }
                 else
                 {
@@ -364,7 +352,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
                 var total_price=quantity*price;
                 price_currency_grand_total+=total_price;
-                $("#total_price_id_"+id).html(number_format(total_price,3,'.',','));
+                $("#total_price_id_"+id).html(number_format(total_price,2,'.',','));
             }
             else
             {
@@ -373,12 +361,11 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 return false;
             }
 
-
         });
         var price_other_cost_currency_grand_total=(price_currency_grand_total+other_cost_currency);
         $("#lbl_quantity_kg_grand_total").html(number_format(quantity_kg_grand_total,3))
-        $("#lbl_price_grand_total").html(number_format(price_currency_grand_total,3))
-        $("#lbl_price_grand_total_currency").html(number_format(price_other_cost_currency_grand_total,3))
+        $("#lbl_price_grand_total").html(number_format(price_currency_grand_total,2))
+        $("#lbl_price_grand_total_currency").html(number_format(price_other_cost_currency_grand_total,2))
     }
     jQuery(document).ready(function()
     {
@@ -394,7 +381,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             $(this).attr('data-current-id',current_id);
             var content_id='#system_content_add_more table tbody';
 
+            $(content_id+' .lc_detail_id').attr('id','lc_detail_id_'+current_id);
             $(content_id+' .lc_detail_id').attr('name','varieties['+current_id+'][lc_detail_id]');
+
             $(content_id+' .variety').attr('name','varieties['+current_id+'][variety_id]');
 
             $(content_id+' .quantity_type').attr('id','quantity_type_id_'+current_id);
@@ -426,6 +415,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         $(document).on("click", ".system_button_add_delete", function(event)
         {
             $(this).closest('tr').remove();
+            calculate_total();
         });
 
         $(document).off("input", ".price");
@@ -468,8 +458,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 $("#quantity_id_"+current_id).val('');
                 $("#total_quantity_kg_"+current_id).html('0.000');
                 $("#price_id_"+current_id).val('');
-                $("#total_price_id_"+current_id).html('0.000');
-                $("#lbl_price_grand_total_currency").html('0.000');
+                $("#total_price_id_"+current_id).html('0.00');
+                $("#lbl_price_grand_total_currency").html('0.00');
                 calculate_total();
             }
             else
