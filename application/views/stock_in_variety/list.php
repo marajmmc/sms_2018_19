@@ -128,7 +128,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     { text: '<?php echo $CI->lang->line('ID'); ?>', dataField: 'id',width:'75',hidden:true},
                     { text: '<?php echo $CI->lang->line('SI ID'); ?>', dataField: 'generated_id',width:'75',hidden:false},
                     { text: '<?php echo $CI->lang->line('LABEL_DATE_STOCK_IN'); ?>', filtertype: 'list',dataField: 'date_stock_in',width:'120'},
-                    { text: '<?php echo $CI->lang->line('LABEL_QUANTITY'); ?>', dataField: 'quantity_total'},
+                    { text: '<?php echo $CI->lang->line('LABEL_QUANTITY'); ?> (KG)', dataField: 'quantity_total'},
                     { text: '<?php echo $CI->lang->line('LABEL_PURPOSE'); ?>', dataField: 'purpose',filtertype: 'list'},
                     { text: '<?php echo $CI->lang->line('LABEL_REMARKS'); ?>', dataField: 'remarks'}
                 ]

@@ -11,6 +11,8 @@ class Stock_in_variety extends Root_Controller
         parent::__construct();
         $this->permissions=User_helper::get_permission('Stock_in_variety');
         $this->controller_url='stock_in_variety';
+        $this->load->helper('barcode_helper');
+        $this->lang->load('purpose');
     }
     public function index($action='list',$id=0)
     {
@@ -73,16 +75,9 @@ class Stock_in_variety extends Root_Controller
         foreach($items as &$item)
         {
             $item['date_stock_in']=System_helper::display_date($item['date_stock_in']);
-            $item['generated_id']='';//Bar($this->config->item('system_id_prefix_stock_in'),$item['id']);
-            if($item['purpose']==$this->config->item('system_purpose_variety_stock_in'))
-            {
-                $item['purpose']=$this->lang->line('LABEL_STOCK_IN_PURPOSE_IN');
-            }
-            elseif($item['purpose']==$this->config->item('system_purpose_variety_excess'))
-            {
-                $item['purpose']=$this->lang->line('LABEL_STOCK_IN_EXCESS');
-            }
-            $item['quantity_total']=$item['quantity_total'].' KG';
+            $item['generated_id']=Barcode_helper::get_barcode_stock_in($item['id']);
+            $item['purpose']=$this->lang->line('PURPOSE_'.$item['purpose']);
+            $item['quantity_total']=$item['quantity_total'];
         }
         $this->json_return($items);
     }
@@ -224,7 +219,7 @@ class Stock_in_variety extends Root_Controller
             $duplicate_entry_checker=array();
             foreach($items as $item)
             {
-                if($item['variety_id']==0 || $item['pack_size_id']<0 || $item['warehouse_id']==0 || $item['quantity']=='')
+                if($item['variety_id']==0 || $item['pack_size_id']<0 || $item['warehouse_id']==0 || $item['quantity']<0)
                 {
                     $ajax['status']=false;
                     $ajax['system_message']='Unfinished stock in entry.';
