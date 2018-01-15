@@ -87,8 +87,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 { name: 'consignment_name', type: 'string' },
                 { name: 'price_total_currency', type: 'string' },
                 { name: 'other_cost_currency', type: 'string' },
-                { name: 'status', type: 'string' },
-                { name: 'status_expense', type: 'string' }
+                { name: 'status_release', type: 'string' },
+                { name: 'status_received', type: 'string' }
             ],
             id: 'id',
             url: url
@@ -122,8 +122,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         { text: '<?php echo $CI->lang->line('LABEL_CURRENCY_NAME'); ?>', dataField: 'currency_name',width:100,filtertype: 'list'},
                         { text: '<?php echo $CI->lang->line('LABEL_LC_NUMBER'); ?>', dataField: 'lc_number',width:100},
                         { text: '<?php echo $CI->lang->line('LABEL_CONSIGNMENT_NAME'); ?>', dataField: 'consignment_name',width:100},
-                        { text: '<?php echo $CI->lang->line('STATUS'); ?>', dataField: 'status',cellsalign: 'left',filtertype: 'list',width:100},
-                        { text: '<?php echo $CI->lang->line('LABEL_EXPENSE_STATUS'); ?>', dataField: 'status_expense',cellsalign: 'left',width:150,filtertype: 'list'}
+                        { text: '<?php echo $CI->lang->line('LABEL_RELEASE_STATUS'); ?>', dataField: 'status_release',cellsalign: 'left',filtertype: 'list',width:100},
+                        { text: '<?php echo $CI->lang->line('LABEL_RECEIVED_STATUS'); ?>', dataField: 'status_received',cellsalign: 'left',width:150,filtertype: 'list'}
                     ]
             });
     });

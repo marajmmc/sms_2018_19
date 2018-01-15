@@ -107,10 +107,11 @@ if(!(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)) && 
             <div class="panel-heading">
                 <h4 class="panel-title">
                     <a class="accordion-toggle external" data-toggle="collapse"  data-target="#collapse" href="#">
-                        Details Of LC <?php echo $item['lc_number']?>
+                        Details Of LC <?php echo $item['lc_number']?> (For receiving quantity)
                     </a>
                 </h4>
             </div>
+            <form id="save_form" action="<?php echo site_url($CI->controller_url.'/index/save');?>" method="post">
             <div id="collapse" class="panel-collapse collapse in">
 
                 <div style="overflow-x: auto;" class="row show-grid">
@@ -138,13 +139,18 @@ if(!(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)) && 
                         {
                             ?>
                             <tr>
-                                <td><label><?php echo $item['variety_name'];?></label></td>
                                 <td>
-                                    <label><?php echo $item['pack_size_name'];?></label>
-                                    <input type="hidden" id="quantity_type_id_<?php echo $index+1?>" data-current-id="<?php echo $index+1;?>" value="<?php echo $item['pack_size_name']; ?>" class="quantity_type_id">
+                                    <label><?php echo $item['variety_name'];?></label>
+                                    <input type="hidden" name="lc_id" value="<?php echo $item['lc_id']; ?>" />
+                                    <input type="hidden" value="<?php echo $item['variety_id']; ?>" name="items[<?php echo $index+1;?>][variety_id]">
                                 </td>
                                 <td>
-                                    <select class="form-control warehouse_id">
+                                    <label><?php echo $item['pack_size_name'];?></label>
+                                    <input type="hidden" value="<?php echo $item['quantity_type_id']; ?>" name="items[<?php echo $index+1;?>][pack_size_id]">
+                                    <input type="hidden" id="quantity_type_id_<?php echo $index+1?>" data-current-id="<?php echo $index+1;?>" value="<?php echo $item['pack_size_name']; ?>">
+                                </td>
+                                <td>
+                                    <select name="items[<?php echo $index+1;?>][ware_house_id]" class="form-control warehouse_id">
                                         <option value=""><?php echo $this->lang->line('SELECT');?></option>
                                         <?php
                                         foreach($warehouses as $warehouse)
@@ -156,10 +162,14 @@ if(!(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)) && 
                                     </select>
 
                                 </td>
-                                <td><label><?php echo $item['quantity_order'];?></label></td>
+                                <td>
+                                    <label><?php echo $item['quantity_order'];?></label>
+                                    <input type="hidden" value="<?php echo $item['quantity_order'];?>" id="actual_quantity_id_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>">
+
+                                </td>
                                 <td><label><?php echo $item['total_quantity_in_kg'];?></label></td>
                                 <td>
-                                    <input type="text" value="" class="form-control float_type_positive quantity" id="quantity_id_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>" name="varieties[<?php echo $index+1;?>][quantity_order]">
+                                    <input type="text" value="" class="form-control float_type_positive quantity_receive" id="quantity_id_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][received_quantity]">
                                 </td>
                                 <td><span id="total_quantity_kg_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>"><label></label></span></td>
 
@@ -171,27 +181,29 @@ if(!(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)) && 
                     </table>
                 </div>
             </div>
+            </form>
         </div>
     </div>
-    <form id="save_form" action="<?php echo site_url($CI->controller_url.'/index/save');?>" method="post">
-        <input type="hidden" id="id" name="lc_id" value="<?php echo $lc_id; ?>" />
-
 </div>
 <div class="clearfix"></div>
-</form>
-
 <script type="text/javascript">
 jQuery(document).ready(function()
 {
     system_preset({controller:'<?php echo $CI->router->class; ?>'});
 
-    $(document).off("input", ".quantity");
-    $(document).off("input", ".quantity_type");
-
+    $(document).off("input", ".quantity_receive");
     //////// conversion with KG from GM without bulk.
-    $(document).on("input",".quantity",function()
+    $(document).on("input",".quantity_receive",function()
     {
+        //alert(received_quantity);
         var current_id = $(this).attr("data-current-id");
+        var received_quantity=parseFloat($(this).val());
+        var actual_quantity=parseFloat($("#actual_quantity_id_"+current_id).val());
+        if(received_quantity>actual_quantity)
+        {
+            alert('You are receiving more than actual quantity');
+            return;
+        }
         var total_quantity=0;
         $("#total_quantity_kg_"+current_id).html('');
         $("#total_quantity_kg_"+current_id).html('0.00');
@@ -205,6 +217,7 @@ jQuery(document).ready(function()
             total_quantity=parseFloat((pack_size*$(this).val())/1000)
         }
         $("#total_quantity_kg_"+current_id).html(number_format(total_quantity,3));
+        //$(this).val('');
     });
 });
 </script>

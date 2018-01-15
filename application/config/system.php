@@ -26,14 +26,3 @@ $config['system_purpose_variety_sample']='OUT_STOCK_SAMPLE';
 
 $config['system_customer_type_outlet_id']=1;
 $config['system_customer_type_customer_id']=2;
-
-// ID Generation Prefix Config
-$config['system_id_prefix_stock_in']='SI';
-$config['system_id_prefix_stock_out']='SO';
-$config['system_id_prefix_transfer_warehouse_to_warehouse']='TW';
-$config['system_id_prefix_transfer_warehouse_to_outlet']='TS'; // Sales
-$config['system_id_prefix_transfer_outlet_to_warehouse']='TR'; // Sales Return
-$config['system_id_prefix_transfer_outlet_to_outlet']='TO';
-
-//Convert Quantity
-$config['system_convert_to_kg']='KG';

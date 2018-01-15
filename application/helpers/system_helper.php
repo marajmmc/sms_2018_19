@@ -97,41 +97,5 @@ class System_helper
         }
         return $stocks;
     }
-    public static function get_generated_id($prefix=null, $increment_id)
-    {
-        return $prefix.str_pad($increment_id,6,0,STR_PAD_LEFT);
-    }
 
-    //// In convert_quantity method type will be in KG or in which packet want to show (such as 10)
-    public static function convert_quantity($type='KG',$pack_quantities=array())
-    {
-        $quantity_total=0;
-        if(is_string($type))
-        {
-            foreach($pack_quantities as $key=>$quantity)
-            {
-                if($key!=0)
-                {
-                    $quantity_total+=(($key*$quantity)/1000);
-
-                }else
-                {
-                    $quantity_total+=$quantity;
-                }
-            }
-        }elseif(is_numeric($type))
-        {
-            foreach($pack_quantities as $key=>$quantity)
-            {
-                if($key==0)
-                {
-                    $quantity_total+=($quantity/$type);
-                }else
-                {
-                    $quantity_total+=$quantity;
-                }
-            }
-        }
-        return $quantity_total;
-    }
 }

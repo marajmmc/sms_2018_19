@@ -68,30 +68,15 @@ class Lc_receive extends Root_Controller
         $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.id = lc.year_id','INNER');
         $this->db->join($this->config->item('table_login_basic_setup_principal').' principal','principal.id = lc.principal_id','INNER');
         $this->db->join($this->config->item('table_sms_setup_currency').' currency','currency.id = lc.currency_id','INNER');
+        $this->db->where('lc.status_release',$this->config->item('system_status_complete'));
         $this->db->order_by('lc.year_id','DESC');
         $this->db->order_by('lc.id','DESC');
         $items=$this->db->get()->result_array();
-//        print_r($items);
-//        exit;
         foreach($items as &$item)
         {
             $item['month_name']=$this->lang->line("LABEL_MONTH_$item[month_id]");
             $item['date_opening']=System_helper::display_date($item['date_opening']);
             $item['date_expected']=System_helper::display_date($item['date_expected']);
-            if($item['status_expense']==$this->config->item('system_status_pending'))
-            {
-                $item['status']=$this->lang->line('LABEL_LC_STATUS_PENDING');
-            }elseif($item['status_expense']==$this->config->item('system_status_complete'))
-            {
-                $item['status']=$this->lang->line('LABEL_LC_STATUS_COMPLETE');
-            }
-            if($item['status_expense']==$this->config->item('system_status_pending'))
-            {
-                $item['status_expense']=$this->lang->line('LABEL_LC_STATUS_PENDING');
-            }elseif($item['status_expense']==$this->config->item('system_status_complete'))
-            {
-                $item['status_expense']=$this->lang->line('LABEL_LC_STATUS_COMPLETE');
-            }
         }
         $this->json_return($items);
     }
@@ -153,7 +138,7 @@ class Lc_receive extends Root_Controller
             {
                 $ajax['system_message']=$this->message;
             }
-            $ajax['system_page_url']=site_url($this->controller_url.'/index/expense/'.$item_id);
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/receive/'.$item_id);
             $this->json_return($ajax);
         }
         else
@@ -166,6 +151,9 @@ class Lc_receive extends Root_Controller
 
     private function system_save()
     {
+        $items=$this->input->post('items');
+        print_r($items);
+        exit;
         $lc_id = $this->input->post("lc_id");
         $user = User_helper::get_user();
         $time = time();

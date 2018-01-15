@@ -73,7 +73,7 @@ class Stock_in_variety extends Root_Controller
         foreach($items as &$item)
         {
             $item['date_stock_in']=System_helper::display_date($item['date_stock_in']);
-            $item['generated_id']=System_helper::get_generated_id($this->config->item('system_id_prefix_stock_in'),$item['id']);
+            $item['generated_id']='';//Bar($this->config->item('system_id_prefix_stock_in'),$item['id']);
             if($item['purpose']==$this->config->item('system_purpose_variety_stock_in'))
             {
                 $item['purpose']=$this->lang->line('LABEL_STOCK_IN_PURPOSE_IN');
@@ -268,7 +268,6 @@ class Stock_in_variety extends Root_Controller
                 }
             }
             /* --End-- for counting total quantity of stock in*/
-
         }
         else
         {
@@ -294,7 +293,7 @@ class Stock_in_variety extends Root_Controller
             Query_helper::update($this->config->item('table_sms_stock_in_variety'),$data,array('id='.$id));
 
             /*Getting Old details data of selected row in which revision 1 exist*/
-
+            /*** it can be used as replace of old input taking*****/
             $results=Query_helper::get_info($this->config->item('table_sms_stock_in_variety_details'),'*',array('stock_in_id ='.$id,'revision ='.'1'));
             $old_items=array();
             foreach($results as $result)
@@ -342,13 +341,14 @@ class Stock_in_variety extends Root_Controller
                     $data_details['date_created']=$time;
                     Query_helper::add($this->config->item('table_sms_stock_in_variety_details'),$data_details);
                 }
-
+                /****** It will be changed.... have to get current stock by variety ids*******/
                 $result=Query_helper::get_info($this->config->item('table_sms_stock_summary_variety'),'*',array('variety_id ='.$item['variety_id'],'pack_size_id ='.$item['pack_size_id'],'warehouse_id ='.$item['warehouse_id']),1);
                 $s_data=array(); //it will be for summary data
                 // For getting previous quantity amount to update in_stock and in_excess column
-                $old_quantity=$this->input->post('old_quantity');
+                $old_quantity=$this->input->post('old_quantity'); /////****** have to ommit... it will come from query
                 if($result)
                 {
+                    ///// ****when old quantity exist then it works...... ***////
                     if($item_head['purpose']==$this->config->item('system_purpose_variety_stock_in'))
                     {
                         if(isset($old_quantity[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]))
@@ -395,6 +395,7 @@ class Stock_in_variety extends Root_Controller
                         }
                         elseif($item['quantity']<$old_quantity[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']])
                         {
+                            /****** From here invalid quantity check will be omitted.... *******/
                             $invalid_quantity_check=($old_quantity[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]-$item['quantity']);
                             if($invalid_quantity_check>$result['current_stock'])
                             {
@@ -419,6 +420,9 @@ class Stock_in_variety extends Root_Controller
                 }
                 else
                 {
+
+                    ///// ****  when old quantity not exist then it works...... ***////
+
                     $s_data['variety_id'] = $item['variety_id'];
                     $s_data['pack_size_id'] = $item['pack_size_id'];
                     $s_data['warehouse_id'] = $item['warehouse_id'];
