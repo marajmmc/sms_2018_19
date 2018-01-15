@@ -337,7 +337,23 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 var pack_size=parseFloat($("#quantity_type_id_"+id).attr('data-pack-size-name'))
                 if(pack_size==0)
                 {
-                    total_quantity=parseFloat($("#quantity_id_"+id).val())
+                    var pack_size_new=parseFloat($('option:selected', $("#quantity_type_id_"+id)).attr('data-pack-size-name'));
+                    if(pack_size_new>=0)
+                    {
+                        if(pack_size_new==0)
+                        {
+                            total_quantity=parseFloat($("#quantity_id_"+id).val())
+                        }
+                        else
+                        {
+                            total_quantity=parseFloat((pack_size_new*$("#quantity_id_"+id).val())/1000)
+                        }
+                    }
+                    else
+                    {
+                        total_quantity=parseFloat($("#quantity_id_"+id).val())
+                    }
+                    /*total_quantity=parseFloat($("#quantity_id_"+id).val())*/
                 }
                 else
                 {
