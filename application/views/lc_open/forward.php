@@ -176,7 +176,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     ?>
                 </table>
             </div>
-
         </div>
     </div>
     <div class="clearfix"></div>

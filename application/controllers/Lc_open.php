@@ -500,7 +500,7 @@ class Lc_open extends Root_Controller
             /*if($data['item']['status_release']==$this->config->item('system_status_complete'))
             {
                 $ajax['status']=false;
-                $ajax['system_message']='You Are Not Modify LC Because LC Release Completed. Please Try Again.';
+                $ajax['system_message']='You Can Not Modify LC Because LC Release Completed. Please Try Again.';
                 $this->json_return($ajax);
                 die();
             }*/
@@ -529,9 +529,6 @@ class Lc_open extends Root_Controller
                     if(($old_variety_quantity!=$variety['quantity_order']) || ($old_variety_currency!=$variety['price_currency']))
                     {
                         $variety_data=array();
-                        $variety_data['lc_id']=$id;
-                        $variety_data['variety_id']=$variety['variety_id'];
-                        $variety_data['quantity_type_id']=$variety['quantity_type_id'];
                         $variety_data['quantity_order']=$variety['quantity_order'];
                         $variety_data['price_currency']=$variety['price_currency'];
                         $variety_data['date_updated'] = $time;
@@ -541,7 +538,10 @@ class Lc_open extends Root_Controller
                         unset($variety_data['revision']);
                         unset($variety_data['date_updated']);
                         unset($variety_data['user_updated']);
-                        $variety_data['lc_detail_id'] = $variety['lc_detail_id'];
+                        $variety_data['lc_id']=$id;
+                        $variety_data['variety_id']=$variety['variety_id'];
+                        $variety_data['quantity_type_id']=$variety['quantity_type_id'];
+                        $variety_data['lc_detail_id'] = $lc_detail_id;
                         Query_helper::add($this->config->item('table_sms_lc_detail_revisions'),$variety_data);
                     }
                 }

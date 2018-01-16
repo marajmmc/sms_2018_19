@@ -59,7 +59,6 @@ class Lc_receive extends Root_Controller
     }
     private function system_get_items()
     {
-        $item=array();
         $this->db->from($this->config->item('table_sms_lc_open').' lc');
         $this->db->select('lc.*');
         $this->db->select('fy.name fiscal_year_name');

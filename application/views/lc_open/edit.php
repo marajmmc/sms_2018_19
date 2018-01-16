@@ -175,7 +175,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                             ?>
                             <tr>
                                 <td>
-                                    <input type="hidden" name="varieties[<?php echo $index+1;?>][lc_detail_id]" value="<?php echo $value['id']; ?>" />
                                     <label><?php echo $varieties[$value['variety_id']]['text']; ?></label>
                                     <input type="hidden" name="varieties[<?php echo $index+1;?>][variety_id]" value="<?php echo $value['variety_id']; ?>">
                                 </td>
@@ -249,7 +248,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         <tbody>
         <tr>
             <td>
-                <input type="hidden" class="lc_detail_id" id="lc_detail_id" value="0" />
                 <select class="form-control variety" id="varieties_container">
                     <?php
                         if($item['id']>0)
@@ -380,9 +378,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             current_id=current_id+1;
             $(this).attr('data-current-id',current_id);
             var content_id='#system_content_add_more table tbody';
-
-            $(content_id+' .lc_detail_id').attr('id','lc_detail_id_'+current_id);
-            $(content_id+' .lc_detail_id').attr('name','varieties['+current_id+'][lc_detail_id]');
 
             $(content_id+' .variety').attr('name','varieties['+current_id+'][variety_id]');
 
