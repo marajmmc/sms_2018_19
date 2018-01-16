@@ -308,6 +308,7 @@ class Stock_in_variety extends Root_Controller
         else
         {
             //Minimum variety entry checking
+            
             $ajax['status']=false;
             $ajax['system_message']='At least one variety need to stock in.';
             $this->json_return($ajax);
