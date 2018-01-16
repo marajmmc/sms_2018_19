@@ -232,11 +232,11 @@ class Stock_in_variety extends Root_Controller
 
         // Getting old quantities and current stocks
         $items=$this->input->post('items');
+        $variety_ids=array();
+        $old_quantities=array();
+        $current_stocks=array();
         if(isset($items))
         {
-            $variety_ids=array();
-            $old_quantities=array();
-            $current_stocks=array();
             foreach($items as $item)
             {
                 $variety_ids[$item['variety_id']]=$item['variety_id'];
@@ -288,7 +288,7 @@ class Stock_in_variety extends Root_Controller
 
         }
 
-        // Checking When Stock out quantity entry exceeded current stock quantity
+        // When Stock in quantity entry (updating time) exceeded current stock quantity
         if($id>0)
         {
             foreach($items as $item)
