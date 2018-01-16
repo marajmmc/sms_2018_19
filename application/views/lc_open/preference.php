@@ -94,16 +94,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <label><input type="checkbox" name="item[other_cost_currency]" <?php if($items['other_cost_currency']){echo 'checked';}?> value="1"><span class="label label-success"><?php echo $CI->lang->line('LABEL_OTHER_COST_CURRENCY'); ?></span></label>
                 </div>
             </div>
-            <div class="col-xs-4">
-                <div class="checkbox">
-                    <label><input type="checkbox" name="item[status_expense]" <?php if($items['status_expense']){echo 'checked';}?> value="1"><span class="label label-success"><?php echo $CI->lang->line('STATUS'); ?></span></label>
-                </div>
-            </div>
-            <div class="col-xs-4">
-                <div class="checkbox">
-                    <label><input type="checkbox" name="item[status_release]" <?php if($items['status_release']){echo 'checked';}?> value="1"><span class="label label-success"><?php echo $CI->lang->line('LABEL_RELEASE_STATUS'); ?></span></label>
-                </div>
-            </div>
         </div>
 
     </div>

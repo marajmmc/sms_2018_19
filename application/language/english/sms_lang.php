@@ -250,6 +250,8 @@ $lang['LABEL_TOTAL_KG']='Total (KG)';
 $lang['LABEL_GRAND_TOTAL_KG']='Grand Total (KG)';
 $lang['LABEL_TOTAL_CURRENCY']='Total (Currency)';
 $lang['LABEL_GRAND_TOTAL_CURRENCY']='Grand Total (Currency)';
+$lang['LABEL_LC_FORWARD']='Forward LC';
+
 //crop classification
 $lang['LABEL_CROP_NAME']='Crop';
 $lang['LABEL_CROP_TYPE']='Crop Type';

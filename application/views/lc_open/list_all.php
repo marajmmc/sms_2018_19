@@ -21,8 +21,8 @@ if(isset($CI->permissions['action1']) && ($CI->permissions['action1']==1))
 if(isset($CI->permissions['action0']) && ($CI->permissions['action0']==1))
 {
     $action_buttons[]=array(
-        'label'=>'All LC',
-        'href'=>site_url($CI->controller_url.'/index/list_all')
+        'label'=>'Pending LC',
+        'href'=>site_url($CI->controller_url.'/index/list')
     );
 }
 if(isset($CI->permissions['action0']) && ($CI->permissions['action0']==1))
@@ -158,7 +158,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
     $(document).ready(function ()
     {
         system_preset({controller:'<?php echo $CI->router->class; ?>'});
-        var url = "<?php echo site_url($CI->controller_url.'/index/get_items');?>";
+        var url = "<?php echo site_url($CI->controller_url.'/index/get_items_all');?>";
 
         // prepare the data
         var source =
@@ -176,7 +176,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 { name: 'consignment_name', type: 'string' },
                 { name: 'price_total_currency', type: 'string' },
                 { name: 'other_cost_currency', type: 'string' },
-                { name: 'status_forward', type: 'string' }
+                { name: 'status_forward', type: 'string' },
+                { name: 'status_release', type: 'string' },
+                { name: 'status_expense', type: 'string' }
             ],
             id: 'id',
             url: url
@@ -193,7 +195,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 sortable: true,
                 showfilterrow: true,
                 columnsresize: true,
-                pagesize:50,
+                pagesize:20,
                 pagesizeoptions: ['20', '50', '100', '200','300','500'],
                 selectionmode: 'singlerow',
                 altrows: true,
@@ -212,7 +214,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     { text: '<?php echo $CI->lang->line('LABEL_CONSIGNMENT_NAME'); ?>', dataField: 'consignment_name', hidden: <?php echo $items['consignment_name']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_TOTAL_CURRENCY'); ?>', dataField: 'price_total_currency', width:50, hidden: <?php echo $items['price_total_currency']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_OTHER_COST_CURRENCY'); ?>', dataField: 'other_cost_currency', width:50, hidden: <?php echo $items['other_cost_currency']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_LC_FORWARD'); ?>', dataField: 'status_forward',cellsalign: 'center',filtertype: 'list', width:80}
+                    { text: '<?php echo $CI->lang->line('LABEL_LC_FORWARD'); ?>', dataField: 'status_forward',cellsalign: 'center',filtertype: 'list', width:80},
+                    { text: '<?php echo $CI->lang->line('LABEL_RELEASE_STATUS'); ?>', dataField: 'status_release',cellsalign: 'center',filtertype: 'list', width:80},
+                    { text: '<?php echo $CI->lang->line('STATUS'); ?>', dataField: 'status_expense',cellsalign: 'center',filtertype: 'list', width:80}
                 ]
             });
     });
