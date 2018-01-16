@@ -145,17 +145,17 @@ class Stock_in_variety extends Root_Controller
             $data['item']=Query_helper::get_info($this->config->item('table_sms_stock_in_variety'),'*',array('status ="'.$this->config->item('system_status_active').'"','id ='.$item_id),1);
             $this->db->from($this->config->item('table_sms_stock_in_variety').' stock_in');
             $this->db->select('stock_in.*');
-            $this->db->select('type.name crop_type_name');
-            $this->db->select('crop.name crop_name');
-            $this->db->select('variety.name variety_name');
-            $this->db->select('v_pack_size.name pack_size_name');
-            $this->db->select('ware_house.name ware_house_name');
             $this->db->select('stock_in_details.variety_id, stock_in_details.pack_size_id, stock_in_details.warehouse_id, stock_in_details.quantity');
             $this->db->join($this->config->item('table_sms_stock_in_variety_details').' stock_in_details','stock_in_details.stock_in_id = stock_in.id','INNER');
+            $this->db->select('variety.name variety_name');
             $this->db->join($this->config->item('table_login_setup_classification_varieties').' variety','variety.id = stock_in_details.variety_id','INNER');
+            $this->db->select('v_pack_size.name pack_size_name');
             $this->db->join($this->config->item('table_login_setup_classification_vpack_size').' v_pack_size','v_pack_size.id = stock_in_details.pack_size_id','LEFT');
+            $this->db->select('ware_house.name ware_house_name');
             $this->db->join($this->config->item('table_login_basic_setup_warehouse').' ware_house','ware_house.id = stock_in_details.warehouse_id','INNER');
+            $this->db->select('type.name crop_type_name');
             $this->db->join($this->config->item('table_login_setup_classification_crop_types').' type','type.id = variety.crop_type_id','INNER');
+            $this->db->select('crop.name crop_name');
             $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = type.crop_id','INNER');
             $this->db->where('stock_in.id',$item_id);
             $this->db->where('stock_in_details.revision',1);
@@ -232,87 +232,85 @@ class Stock_in_variety extends Root_Controller
 
         // Getting old quantities and current stocks
         $items=$this->input->post('items');
-        $variety_ids=array();
-        $old_quantities=array();
-        $current_stocks=array();
-        foreach($items as $item)
-        {
-            $variety_ids[$item['variety_id']]=$item['variety_id'];
-        }
-        $current_stocks=System_helper::get_variety_stock($variety_ids);
-
-        if($id>0)
-        {
-            $old_items=Query_helper::get_info($this->config->item('table_sms_stock_in_variety_details'),'*',array('stock_in_id ='.$id,'revision ='.'1'));
-            foreach($old_items as $old_item)
-            {
-                $old_quantities[$old_item['variety_id']][$old_item['pack_size_id']][$old_item['warehouse_id']]=$old_item['quantity'];
-            }
-        }
-
-        /*--Start-- Validation Checking*/
         if(isset($items))
         {
-            //checking incomplete entry (add more row) & Duplicate Entry Checking
-            $duplicate_entry_checker=array();
+            $variety_ids=array();
+            $old_quantities=array();
+            $current_stocks=array();
             foreach($items as $item)
             {
-                if($item['variety_id']==0 || $item['pack_size_id']<0 || $item['warehouse_id']==0 || $item['quantity']<0)
-                {
-                    $ajax['status']=false;
-                    $ajax['system_message']='Unfinished stock in entry.';
-                    $this->json_return($ajax);
-                }
-
-                if(isset($duplicate_entry_checker[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]))
-                {
-                    $duplicate_entry_checker[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]=false;
-                }
-                else
-                {
-                    $duplicate_entry_checker[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]=true;
-                }
-                if($duplicate_entry_checker[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]==false)
-                {
-                    $ajax['status']=false;
-                    $ajax['system_message']='You are trying to entry duplicate variety.';
-                    $this->json_return($ajax);
-                }
-
+                $variety_ids[$item['variety_id']]=$item['variety_id'];
             }
+            $current_stocks=System_helper::get_variety_stock($variety_ids);
 
-            // Checking When Stock out quantity entry exceeded current stock quantity
             if($id>0)
             {
-                foreach($items as $item)
+                $old_items=Query_helper::get_info($this->config->item('table_sms_stock_in_variety_details'),'*',array('stock_in_id ='.$id,'revision ='.'1'));
+                foreach($old_items as $old_item)
                 {
-                    $current_stock=0;
-                    $variance=0;
-                    if(isset($old_quantities[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]))
-                    {
-                        $old_value=$old_quantities[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']];
-                        if($old_value>$item['quantity'])
-                        {
-                            $variance=$old_value-$item['quantity'];
-                            $current_stock=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]['current_stock'];
-                        }
-                        if($variance>$current_stock)
-                        {
-                            $ajax['status']=false;
-                            $ajax['system_message']='You are trying to update invalid quantity.';
-                            $this->json_return($ajax);
-                        }
-                    }
+                    $old_quantities[$old_item['variety_id']][$old_item['pack_size_id']][$old_item['warehouse_id']]=$old_item['quantity'];
                 }
             }
-        }
-        else
+
+        }else
         {
             //Minimum variety entry checking
-
             $ajax['status']=false;
             $ajax['system_message']='At least one variety need to stock in.';
             $this->json_return($ajax);
+        }
+        /*--Start-- Validation Checking*/
+        //checking incomplete entry (add more row) & Duplicate Entry Checking
+        $duplicate_entry_checker=array();
+        foreach($items as $item)
+        {
+            if($item['variety_id']==0 || $item['pack_size_id']<0 || $item['warehouse_id']==0 || $item['quantity']<0)
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='Unfinished stock in entry.';
+                $this->json_return($ajax);
+            }
+
+            if(isset($duplicate_entry_checker[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]))
+            {
+                $duplicate_entry_checker[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]=false;
+            }
+            else
+            {
+                $duplicate_entry_checker[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]=true;
+            }
+            if($duplicate_entry_checker[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]==false)
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='You are trying to entry duplicate variety.';
+                $this->json_return($ajax);
+            }
+
+        }
+
+        // Checking When Stock out quantity entry exceeded current stock quantity
+        if($id>0)
+        {
+            foreach($items as $item)
+            {
+                $current_stock=0;
+                $variance=0;
+                if(isset($old_quantities[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]))
+                {
+                    $old_value=$old_quantities[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']];
+                    if($old_value>$item['quantity'])
+                    {
+                        $variance=$old_value-$item['quantity'];
+                        $current_stock=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]['current_stock'];
+                    }
+                    if($variance>$current_stock)
+                    {
+                        $ajax['status']=false;
+                        $ajax['system_message']='You are trying to update invalid quantity.';
+                        $this->json_return($ajax);
+                    }
+                }
+            }
         }
         /*--End-- Validation Checking */
 
