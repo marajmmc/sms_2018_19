@@ -11,6 +11,8 @@ class Stock_out_variety extends Root_Controller
         parent::__construct();
         $this->permissions=User_helper::get_permission('Stock_out_variety');
         $this->controller_url='stock_out_variety';
+        $this->load->helper('barcode_helper');
+        $this->lang->load('purpose');
     }
     public function index($action='list',$id=0)
     {
@@ -73,24 +75,8 @@ class Stock_out_variety extends Root_Controller
         foreach($items as &$item)
         {
             $item['date_stock_out']=System_helper::display_date($item['date_stock_out']);
-            $item['generated_id']=System_helper::get_generated_id($this->config->item('system_id_prefix_stock_out'),$item['id']);
-
-            if($item['purpose']==$this->config->item('system_purpose_variety_sample'))
-            {
-                $item['purpose']=$this->lang->line('LABEL_STOCK_OUT_PURPOSE_SAMPLE');
-            }
-            elseif($item['purpose']==$this->config->item('system_purpose_variety_short_inventory'))
-            {
-                $item['purpose']=$this->lang->line('LABEL_STOCK_OUT_PURPOSE_SHORT');
-            }
-            elseif($item['purpose']==$this->config->item('system_purpose_variety_demonstration'))
-            {
-                $item['purpose']=$this->lang->line('LABEL_STOCK_OUT_PURPOSE_DEMONSTRATION');
-            }
-            elseif($item['purpose']==$this->config->item('system_purpose_variety_rnd'))
-            {
-                $item['purpose']=$this->lang->line('LABEL_STOCK_OUT_PURPOSE_RND');
-            }
+            $item['generated_id']=Barcode_helper::get_barcode_stock_out($item['id']);
+            $item['purpose']=$this->lang->line('PURPOSE_'.$item['purpose']);
         }
         $this->json_return($items);
     }
