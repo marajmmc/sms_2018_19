@@ -79,8 +79,9 @@ class Stock_in_variety extends Root_Controller
         {
             $pagesize=$pagesize*2;
         }
-        $this->db->select('stock_in.*');
+
         $this->db->from($this->config->item('table_sms_stock_in_variety').' stock_in');
+        $this->db->select('stock_in.*');
         $this->db->where('stock_in.status',$this->config->item('system_status_active'));
         $this->db->order_by('stock_in.date_stock_in','DESC');
         $this->db->order_by('stock_in.id','DESC');
@@ -308,7 +309,7 @@ class Stock_in_variety extends Root_Controller
         else
         {
             //Minimum variety entry checking
-            
+
             $ajax['status']=false;
             $ajax['system_message']='At least one variety need to stock in.';
             $this->json_return($ajax);
