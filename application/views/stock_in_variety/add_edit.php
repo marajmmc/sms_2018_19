@@ -64,11 +64,24 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         <div class="row show-grid">
             <div class="col-xs-4">
                 <label for="purpose" class="control-label pull-right"><?php echo $this->lang->line('LABEL_PURPOSE'); ?></label>
+
             </div>
-            <div class="col-sm-4 col-xs-8">
+            <?php
+            if($item['purpose'])
+            {
+            ?>
                 <label for="purpose" class="control-label"><?php echo $this->lang->line('PURPOSE_'.$item['purpose']); ?></label>
-                
-            </div>
+                <input type="hidden" name="item[purpose]" value="<?php echo $item['purpose'];?>"/>
+
+            <?php } else{?>
+                <div class="col-sm-4 col-xs-8">
+                    <select id="purpose" name="item[purpose]" class="form-control">
+                        <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                        <option value="<?php echo $CI->config->item('system_purpose_variety_stock_in');?>" <?php if(isset($item['purpose'])){if($item['purpose']==$CI->config->item('system_purpose_variety_stock_in')){echo "selected";}}?>><?php echo $this->lang->line('LABEL_STOCK_IN');?></option>
+                        <option value="<?php echo $CI->config->item('system_purpose_variety_excess');?>" <?php if(isset($item['purpose'])){if($item['purpose']==$CI->config->item('system_purpose_variety_excess')){echo "selected";}}?>><?php echo $this->lang->line('LABEL_EXCESS');?></option>
+                    </select>
+                </div>
+            <?php } ?>
         </div>
         <div style="" class="row show-grid">
             <div class="col-xs-4">
@@ -123,7 +136,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                             </td>
                             <td class="text-right">
                                 <input type="text" id="quantity<?php echo $index+1;?>" value="<?php echo $si_variety['quantity']; ?>" class="form-control text-right float_type_positive quantity" data-current-id="<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][quantity]">
-                                <input type="hidden" value="<?php echo $si_variety['quantity']; ?>" name="old_quantity[<?php echo $si_variety['variety_id']?>][<?php echo $si_variety['pack_size_id']?>][<?php echo $si_variety['warehouse_id']?>]">
                             </td>
                         </tr>
                     <?php
