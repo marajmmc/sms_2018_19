@@ -8,11 +8,12 @@ $config['system_max_actions']=7;
 
 $config['system_status_yes']='Yes';
 $config['system_status_no']='No';
-$config['system_status_active']='ACTIVE';
-$config['system_status_inactive']='IN-ACTIVE';
-$config['system_status_delete']='DELETED';
-$config['system_status_pending']='PENDING';
-$config['system_status_complete']='COMPLETE';
+$config['system_status_active']='Active';
+$config['system_status_inactive']='In-Active';
+$config['system_status_delete']='Deleted';
+$config['system_status_closed']='Closed';
+$config['system_status_pending']='Pending';
+$config['system_status_complete']='Complete';
 
 $config['system_base_url_profile_picture']='http://50.116.76.180/login/';
 

@@ -19,3 +19,6 @@ $config['table_sms_lc_expense'] = 'arm_sms_2018_19.sms_lc_expense';
 // Setup
 $config['table_sms_setup_currency'] = 'arm_bms_2017_08.bms_setup_currency';
 $config['table_sms_direct_cost_items'] = 'arm_bms_2017_08.bms_setup_direct_cost_items';
+
+//set preference
+$config['table_sms_setup_user_preference'] = 'arm_sms_2018_19.sms_setup_user_preference';

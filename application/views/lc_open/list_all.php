@@ -2,37 +2,11 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 $CI=& get_instance();
 $action_buttons=array();
-if(isset($CI->permissions['action1']) && ($CI->permissions['action1']==1))
-{
-    $action_buttons[]=array(
-        'label'=>$CI->lang->line("ACTION_NEW"),
-        'href'=>site_url($CI->controller_url.'/index/add')
-    );
-}
-if(isset($CI->permissions['action1']) && ($CI->permissions['action1']==1))
-{
-    $action_buttons[]=array(
-        'type'=>'button',
-        'label'=>$CI->lang->line('ACTION_EDIT'),
-        'class'=>'button_jqx_action',
-        'data-action-link'=>site_url($CI->controller_url.'/index/edit')
-    );
-}
 if(isset($CI->permissions['action0']) && ($CI->permissions['action0']==1))
 {
     $action_buttons[]=array(
         'label'=>'Pending LC',
         'href'=>site_url($CI->controller_url.'/index/list')
-    );
-}
-if(isset($CI->permissions['action0']) && ($CI->permissions['action0']==1))
-{
-    $action_buttons[]=array
-    (
-        'type'=>'button',
-        'label'=>'Forward LC',
-        'class'=>'button_jqx_action',
-        'data-action-link'=>site_url($CI->controller_url.'/index/forward')
     );
 }
 if(isset($CI->permissions['action0']) && ($CI->permissions['action0']==1))
@@ -178,6 +152,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 { name: 'other_cost_currency', type: 'string' },
                 { name: 'status_forward', type: 'string' },
                 { name: 'status_release', type: 'string' },
+                { name: 'status_received', type: 'string' },
                 { name: 'status_expense', type: 'string' }
             ],
             id: 'id',
@@ -216,7 +191,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     { text: '<?php echo $CI->lang->line('LABEL_OTHER_COST_CURRENCY'); ?>', dataField: 'other_cost_currency', width:50, hidden: <?php echo $items['other_cost_currency']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_LC_FORWARD'); ?>', dataField: 'status_forward',cellsalign: 'center',filtertype: 'list', width:80},
                     { text: '<?php echo $CI->lang->line('LABEL_RELEASE_STATUS'); ?>', dataField: 'status_release',cellsalign: 'center',filtertype: 'list', width:80},
-                    { text: '<?php echo $CI->lang->line('STATUS'); ?>', dataField: 'status_expense',cellsalign: 'center',filtertype: 'list', width:80}
+                    { text: '<?php echo $CI->lang->line('LABEL_RECEIVED_STATUS'); ?>', dataField: 'status_received',cellsalign: 'center',filtertype: 'list', width:80},
+                    { text: '<?php echo $CI->lang->line('LABEL_EXPENSE_STATUS'); ?>', dataField: 'status_expense',cellsalign: 'center',filtertype: 'list', width:80}
                 ]
             });
     });

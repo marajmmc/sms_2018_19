@@ -45,6 +45,3 @@ $config['table_login_basic_setup_fiscal_year'] = 'arm_login_2018_19.login_basic_
 $config['table_login_basic_setup_competitor'] = 'arm_login_2018_19.login_basic_setup_competitor';
 $config['table_login_basic_setup_principal'] = 'arm_login_2018_19.login_basic_setup_principal';
 $config['table_login_basic_setup_warehouse'] = 'arm_login_2018_19.login_basic_setup_warehouse';
-
-//set preference
-$config['table_login_setup_user_preference'] = 'arm_login_2018_19.login_setup_user_preference';

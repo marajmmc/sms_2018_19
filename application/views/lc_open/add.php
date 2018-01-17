@@ -2,13 +2,15 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 $CI=& get_instance();
 $action_buttons=array();
-$action_buttons[]=array(
+$action_buttons[]=array
+(
     'label'=>$CI->lang->line("ACTION_BACK"),
     'href'=>site_url($CI->controller_url)
 );
 if(isset($CI->permissions['action1']) && ($CI->permissions['action1']==1))
 {
-    $action_buttons[]=array(
+    $action_buttons[]=array
+    (
         'type'=>'button',
         'label'=>$CI->lang->line("ACTION_SAVE"),
         'id'=>'button_action_save',
@@ -16,7 +18,8 @@ if(isset($CI->permissions['action1']) && ($CI->permissions['action1']==1))
     );
     if(isset($CI->permissions['action1']) && ($CI->permissions['action1']==1))
     {
-        $action_buttons[]=array(
+        $action_buttons[]=array
+        (
             'type'=>'button',
             'label'=>$CI->lang->line("ACTION_SAVE_NEW"),
             'id'=>'button_action_save_new',
@@ -31,13 +34,6 @@ if(isset($CI->permissions['action1']) && ($CI->permissions['action1']==1))
     );
 }
 $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
-
-$disabled='';
-/*if(!(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)) && $item['id']>0)
-{
-    $disabled=' disabled';
-}*/
-
 ?>
 <form id="save_form" action="<?php echo site_url($CI->controller_url.'/index/save');?>" method="post">
     <input type="hidden" id="id" name="id" value="0" />
@@ -49,13 +45,12 @@ $disabled='';
             </div>
             <div class="clearfix"></div>
         </div>
-
         <div class="row show-grid">
             <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_FISCAL_YEAR');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <select id="year_id" class="form-control" name="item[year_id]">
+                <select id="fiscal_year_id" class="form-control" name="item[fiscal_year_id]">
                     <option value=""><?php echo $this->lang->line('SELECT');?></option>
                     <?php
                     $time=time();
@@ -169,7 +164,7 @@ $disabled='';
                 <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_OTHER_COST_CURRENCY');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <input type="text" name="item[other_cost_currency]" id="other_cost_currency" class="form-control float_type_positive other_cost_currency" value=""/>
+                <input type="text" name="item[other_cost_total_currency]" id="other_cost_currency" class="form-control float_type_positive other_cost_total_currency" value=""/>
             </div>
         </div>
         <div class="row show-grid">
@@ -180,39 +175,40 @@ $disabled='';
                 <textarea name="item[remarks]" id="remarks" class="form-control" ></textarea>
             </div>
         </div>
+
         <div class="row show-grid">
             <div class="widget-header">
                 <div class="title">
-                   Add Varieties
+                    Add Varieties
                 </div>
                 <div class="clearfix"></div>
             </div>
             <div style="overflow-x: auto;" class="row show-grid">
                 <table class="table table-bordered">
                     <thead>
-                        <tr>
-                            <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_VARIETY'); ?></th>
-                            <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
-                            <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_QUANTITY_KG_PACK'); ?></th>
-                            <th style="min-width: 100px;">KG</th>
-                            <th style="min-width: 100px;">Unit Price (Currency)</th>
-                            <th style="min-width: 150px;">Total Price (Currency)</th>
-                            <th>&nbsp;</th>
-                        </tr>
+                    <tr>
+                        <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_VARIETY'); ?></th>
+                        <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
+                        <th style="min-width: 100px; text-align: center;"><?php echo $CI->lang->line('LABEL_QUANTITY_KG_PACK'); ?></th>
+                        <th style="min-width: 100px; text-align: right;">KG</th>
+                        <th style="min-width: 100px; text-align: right;">Unit Price (Currency)</th>
+                        <th style="min-width: 150px; text-align: right;">Total Price (Currency)</th>
+                        <th>&nbsp;</th>
+                    </tr>
                     </thead>
                     <tbody id="items_container">
                     </tbody>
                     <tfoot>
                     <tr>
                         <th colspan="3" class="text-right"><?php echo $this->lang->line('LABEL_TOTAL_KG')?></th>
-                        <th class="text-right"><label class="control-label" id="lbl_quantity_kg_grand_total">0.000</label></th>
+                        <th class="text-right"><label class="control-label" id="lbl_quantity_total_kg">0.000</label></th>
                         <th class="text-right"><?php echo $this->lang->line('LABEL_TOTAL_CURRENCY')?></th>
-                        <th class="text-right"><label class="control-label" id="lbl_price_grand_total">0.00</label></th>
+                        <th class="text-right"><label class="control-label" id="lbl_price_variety_total_currency">0.00</label></th>
                         <th class="text-right"></th>
                     </tr>
                     <tr>
                         <th colspan="5" class="text-right"><?php echo $this->lang->line('LABEL_GRAND_TOTAL_CURRENCY')?></th>
-                        <th class="text-right"><label class="control-label" id="lbl_price_grand_total_currency">0.00</label></th>
+                        <th class="text-right"><label class="control-label" id="lbl_price_total_currency">0.00</label></th>
                         <th>&nbsp;</th>
                     </tr>
                     </tfoot>
@@ -223,7 +219,7 @@ $disabled='';
 
                 </div>
                 <div class="col-xs-4">
-                    <button type="button" class="btn btn-warning system_button_add_more" data-current-id="<?php echo sizeof($items);?>"><?php echo $CI->lang->line('LABEL_ADD_MORE');?></button>
+                    <button type="button" class="btn btn-warning system_button_add_more" data-current-id="0"><?php echo $CI->lang->line('LABEL_ADD_MORE');?></button>
                 </div>
                 <div class="col-xs-4">
 
@@ -233,42 +229,40 @@ $disabled='';
     </div>
     <div class="clearfix"></div>
 </form>
-
 <div id="system_content_add_more" style="display: none;">
     <table>
         <tbody>
         <tr>
             <td>
-                <input type="hidden" class="lc_detail_id" id="lc_detail_id" value="0" />
-                <select class="form-control variety" id="varieties_container">
+                <select class="form-control variety_id" id="variety_id">
 
                 </select>
             </td>
             <td>
-                <select class="form-control quantity_type">
+                <select class="form-control pack_size_id">
                     <option value="-1"><?php echo $this->lang->line('SELECT'); ?></option>
                     <option value="0" data-pack-size-name="0">Bulk</option>
                     <?php
-                        foreach($packs as $pack)
-                        {
-                            ?>
-                                <option value="<?php echo $pack['value']?>" data-pack-size-name="<?php echo $pack['text'];?>"><?php echo $pack['text'];?></option>
-                            <?php
-                        }
+                    foreach($pack_sizes as $pack_size)
+                    {
+                        ?>
+                        <option value="<?php echo $pack_size['value']?>" data-pack-size-name="<?php echo $pack_size['text'];?>"><?php echo $pack_size['text'];?></option>
+                    <?php
+                    }
                     ?>
                 </select>
             </td>
             <td class="text-right">
-                <input type="text" class="form-control float_type_positive quantity" value=""/>
+                <input type="text" class="form-control float_type_positive quantity_lc" value=""/>
             </td>
             <td class="text-right">
-                <label class="control-label total_quantity_kg">0.000</label>
+                <label class="control-label quantity_lc_kg">0.000</label>
             </td>
             <td class="text-right">
-                <input type="text" class="form-control float_type_positive price" value=""/>
+                <input type="text" class="form-control float_type_positive price_unit_lc_currency" value=""/>
             </td>
             <td class="text-right">
-                <label class="control-label total_price">0.00</label>
+                <label class="control-label price_total_lc_currency">0.00</label>
             </td>
             <td>
                 <button type="button" class="btn btn-danger system_button_add_delete"><?php echo $CI->lang->line('DELETE'); ?></button>
@@ -277,87 +271,14 @@ $disabled='';
         </tbody>
     </table>
 </div>
-
-<script type="text/javascript">
-    function calculate_total()
-    {
-        $("#lbl_quantity_kg_grand_total").html('0.000')
-        $("#lbl_price_grand_total").html('0.00')
-        $("#lbl_price_grand_total_currency").html('0.00')
-        var other_cost_currency=parseFloat($("#other_cost_currency").val());
-        if(isNaN(other_cost_currency))
-        {
-            other_cost_currency=0;
-        }
-        var quantity_kg_grand_total=0;
-        var price_currency_grand_total=0;
-        var id='';
-
-        $('#items_container .order_quantity_total').each(function(index,element)
-        {
-            id = $(element).attr('data-current-id');
-            if($('#items_container #quantity_type_id_'+id).val()!='-1')
-            {
-                var price=parseFloat($("#price_id_"+id).val());
-                var quantity=parseFloat($("#quantity_id_"+id).val());
-                if(isNaN(price))
-                {
-                    price=0;
-                }
-                if(isNaN(quantity))
-                {
-                    quantity=0;
-                }
-
-                var total_quantity='0.000';
-                var pack_size=parseFloat($('option:selected', $("#quantity_type_id_"+id)).attr('data-pack-size-name'))
-                if(pack_size==0)
-                {
-                    total_quantity=parseFloat($("#quantity_id_"+id).val())
-                }
-                else
-                {
-                    total_quantity=parseFloat((pack_size*$("#quantity_id_"+id).val())/1000)
-                }
-                quantity_kg_grand_total+=total_quantity;
-                $("#total_quantity_kg_"+id).html(number_format(total_quantity,3));
-
-                var total_price=quantity*price;
-                price_currency_grand_total+=total_price;
-                $("#total_price_id_"+id).html(number_format(total_price,2,'.',','));
-            }
-            else
-            {
-                $(this).val('')
-                alert('Please select pack size. Try again.');
-                return false;
-            }
-
-
-        });
-        var price_other_cost_currency_grand_total=(price_currency_grand_total+other_cost_currency);
-        $("#lbl_quantity_kg_grand_total").html(number_format(quantity_kg_grand_total,3))
-        $("#lbl_price_grand_total").html(number_format(price_currency_grand_total,2))
-        $("#lbl_price_grand_total_currency").html(number_format(price_other_cost_currency_grand_total,2))
-    }
-    jQuery(document).ready(function()
-    {
+<script>
+    $(document).ready(function(){
         system_preset({controller:'<?php echo $CI->router->class; ?>'});
         $(".date_large").datepicker({dateFormat : display_date_format,changeMonth: true,changeYear: true,yearRange: "2015:+2"});
 
-        $(document).off('input','#items_container .order_quantity_total');
         $(document).off('change','#principal_id');
         $(document).on("change","#principal_id",function()
         {
-            <?php
-            if(!(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)) && $item['id']>0)
-            {
-                ?>
-                alert('Access denied. You have no permission. Please try again. ')
-                return;
-                <?php
-            }
-            ?>
             $('#items_container').html('');
             var principal_id = $('#principal_id').val();
             if(principal_id>0)
@@ -381,7 +302,7 @@ $disabled='';
             else
             {
                 $('#items_container').html('');
-                $('#varieties_container').html('');
+                $('#variety_id').html('');
             }
         });
 
@@ -398,8 +319,8 @@ $disabled='';
             $(this).attr('data-current-id',current_id);
             var content_id='#system_content_add_more table tbody';
 
-            $(content_id+' .lc_detail_id').attr('name','varieties['+current_id+'][lc_detail_id]');
-            $(content_id+' .variety').attr('name','varieties['+current_id+'][variety_id]');
+            $(content_id+' .variety_id').attr('id','variety_id_'+current_id);
+            $(content_id+' .variety_id').attr('name','varieties['+current_id+'][variety_id]');
 
             $(content_id+' .quantity_type').attr('id','quantity_type_id_'+current_id);
             $(content_id+' .quantity_type').attr('data-current-id',current_id);
@@ -430,48 +351,7 @@ $disabled='';
         $(document).on("click", ".system_button_add_delete", function(event)
         {
             $(this).closest('tr').remove();
-            calculate_total();
+            //calculate_total();
         });
-
-        $(document).off("input", ".price");
-        $(document).off("input", ".quantity");
-        $(document).off("input", ".quantity_type");
-        $(document).off("input", ".other_cost_currency");
-
-
-        $(document).off("input", "'#items_container .order_quantity_total'");
-        //////// calculate total quantity.
-        $(document).on("input",".order_quantity_total",function()
-        {
-            calculate_total();
-        });
-        //////// calculate total price currency.
-        $(document).on("input",".price",function()
-        {
-            calculate_total();
-        });
-        //////// packsize onchange quantity & price change.
-        $(document).on("input",".quantity_type",function()
-        {
-            if($(this).val()=='-1')
-            {
-                var current_id=parseInt($(this).attr('data-current-id'));
-                $("#quantity_id_"+current_id).val('');
-                $("#total_quantity_kg_"+current_id).html('0.000');
-                $("#price_id_"+current_id).val('');
-                $("#total_price_id_"+current_id).html('0.00');
-                $("#lbl_price_grand_total_currency").html('0.00');
-                calculate_total();
-            }
-            else
-            {
-                calculate_total();
-            }
-        });
-        //////// calculate total price currency with other cost.
-        $(document).on("input",".other_cost_currency",function()
-        {
-            calculate_total();
-        });
-    });
+    })
 </script>

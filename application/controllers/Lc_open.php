@@ -35,7 +35,7 @@ class Lc_open extends Root_Controller
         {
             $this->system_add();
         }
-        elseif($action=="edit")
+        /*elseif($action=="edit")
         {
             $this->system_edit($id);
         }
@@ -62,7 +62,7 @@ class Lc_open extends Root_Controller
         elseif($action=="save_preference")
         {
             $this->system_save_preference();
-        }
+        }*/
         else
         {
             $this->system_list();
@@ -73,7 +73,7 @@ class Lc_open extends Root_Controller
         if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
         {
             $user = User_helper::get_user();
-            $result=Query_helper::get_info($this->config->item('table_login_setup_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
+            $result=Query_helper::get_info($this->config->item('table_sms_setup_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
             $data['items']['id']= 1;
             $data['items']['fiscal_year_name']= 1;
             $data['items']['month_name']= 1;
@@ -118,6 +118,7 @@ class Lc_open extends Root_Controller
         }
         else
         {
+            $ajax['status']=false;
             $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
             $this->json_return($ajax);
         }
@@ -132,13 +133,13 @@ class Lc_open extends Root_Controller
         $pagesize = $this->input->post('pagesize');
         if(!$pagesize)
         {
-            $pagesize=50;
+            $pagesize=100;
         }
         else
         {
             $pagesize=$pagesize*2;
         }
-        $this->db->from($this->config->item('table_sms_lc_open').' lc');
+        /*$this->db->from($this->config->item('table_sms_lc_open').' lc');
         $this->db->select('lc.*');
         $this->db->select('fy.name fiscal_year_name');
         $this->db->select('principal.name principal_name');
@@ -170,7 +171,8 @@ class Lc_open extends Root_Controller
             $item['other_cost_currency']=$result['other_cost_currency'];
             $item['status_forward']=$result['status_forward'];
             $items[]=$item;
-        }
+        }*/
+        $items=array();
         $this->json_return($items);
     }
     private function system_list_all()
@@ -178,7 +180,7 @@ class Lc_open extends Root_Controller
         if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
         {
             $user = User_helper::get_user();
-            $result=Query_helper::get_info($this->config->item('table_login_setup_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
+            $result=Query_helper::get_info($this->config->item('table_sms_setup_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
             $data['items']['id']= 1;
             $data['items']['fiscal_year_name']= 1;
             $data['items']['month_name']= 1;
@@ -274,6 +276,7 @@ class Lc_open extends Root_Controller
             $item['status_expense']=$result['status_expense'];
             $item['status_release']=$result['status_release'];
             $item['status_forward']=$result['status_forward'];
+            $item['status_received']=$result['status_received'];
             $items[]=$item;
         }
         $this->json_return($items);
@@ -283,28 +286,23 @@ class Lc_open extends Root_Controller
         if(isset($this->permissions['action1'])&&($this->permissions['action1']==1))
         {
             $data['title']="Create New LC";
-
-            $data['fiscal_years']=Query_helper::get_info($this->config->item('table_login_basic_setup_fiscal_year'),array('id value','name text','date_start','date_end'),array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('id ASC'));
-
             $data['item']['id']=0;
+            /*$data['item']['fiscal_year_id']=0;
             $data['item']['month_id']=date('n');
             $data['item']['date_opening']=time();
             $data['item']['date_expected']='';
-            $data['item']['currency_id']=0;
             $data['item']['principal_id']=0;
+            $data['item']['currency_id']=0;
             $data['item']['lc_number']='';
             $data['item']['consignment_name']='';
-            $data['item']['price_total_currency']='';
-            $data['item']['other_cost_currency']='';
             $data['item']['remarks']='';
-            //$data['item']['amount_currency_rate']='';
-            $data['item']['status']=$this->config->item('system_status_active');
+            $data['item']['other_cost_total_currency']=0;
+            $data['items']=array();*/
 
-            $data['items']=array();
-
-            $data['currencies']=Query_helper::get_info($this->config->item('table_sms_setup_currency'),array('id value','name text','amount_rate_budget'),array('status !="'.$this->config->item('system_status_delete').'"'),0,0,array('ordering'));
+            $data['fiscal_years']=Query_helper::get_info($this->config->item('table_login_basic_setup_fiscal_year'),array('id value','name text','date_start','date_end'),array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('id ASC'));
+            $data['currencies']=Query_helper::get_info($this->config->item('table_sms_setup_currency'),array('id value','name text'),array('status !="'.$this->config->item('system_status_delete').'"'),0,0,array('ordering'));
             $data['principals']=Query_helper::get_info($this->config->item('table_login_basic_setup_principal'),array('id value','name text'),array('status !="'.$this->config->item('system_status_delete').'"'),0,0,array('ordering'));
-            $data['packs']=Query_helper::get_info($this->config->item('table_login_setup_classification_vpack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('id ASC'));
+            $data['pack_sizes']=Query_helper::get_info($this->config->item('table_login_setup_classification_vpack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('id ASC'));
 
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/add",$data,true));
@@ -317,6 +315,7 @@ class Lc_open extends Root_Controller
         }
         else
         {
+            $ajax['status']=false;
             $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
             $this->json_return($ajax);
         }
@@ -823,7 +822,7 @@ class Lc_open extends Root_Controller
     public function get_dropdown_arm_varieties_by_principal_id()
     {
         $principal_id = $this->input->post('principal_id');
-        $html_container_id='#varieties_container';
+        $html_container_id='#variety_id';
         if($this->input->post('html_container_id'))
         {
             $html_container_id=$this->input->post('html_container_id');
@@ -847,7 +846,7 @@ class Lc_open extends Root_Controller
         if(isset($this->permissions['action0']) && ($this->permissions['action0']==1))
         {
             $user = User_helper::get_user();
-            $result=Query_helper::get_info($this->config->item('table_login_setup_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
+            $result=Query_helper::get_info($this->config->item('table_sms_setup_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
             $data['items']['id']= 1;
             $data['items']['fiscal_year_name']= 1;
             $data['items']['month_name']= 1;
@@ -921,13 +920,13 @@ class Lc_open extends Root_Controller
             $time=time();
             $this->db->trans_start();  //DB Transaction Handle START
 
-            $result=Query_helper::get_info($this->config->item('table_login_setup_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
+            $result=Query_helper::get_info($this->config->item('table_sms_setup_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
             if($result)
             {
                 $data['user_updated']=$user->user_id;
                 $data['date_updated']=$time;
                 $data['preferences']=json_encode($items);
-                Query_helper::update($this->config->item('table_login_setup_user_preference'),$data,array('id='.$result['id']),false);
+                Query_helper::update($this->config->item('table_sms_setup_user_preference'),$data,array('id='.$result['id']),false);
             }
             else
             {
@@ -937,7 +936,7 @@ class Lc_open extends Root_Controller
                 $data['user_created']=$user->user_id;
                 $data['date_created']=$time;
                 $data['preferences']=json_encode($items);
-                Query_helper::add($this->config->item('table_login_setup_user_preference'),$data,false);
+                Query_helper::add($this->config->item('table_sms_setup_user_preference'),$data,false);
             }
 
             $this->db->trans_complete();   //DB Transaction Handle END
