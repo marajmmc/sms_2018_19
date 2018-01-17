@@ -167,13 +167,6 @@ class Stock_in_variety extends Root_Controller
             $this->db->where('stock_in_details.revision',1);
             $this->db->order_by('stock_in_details.id','ASC');
             $data['stock_in_varieties']=$this->db->get()->result_array();
-//            foreach($data['stock_in_varieties'] as &$result)
-//            {
-//                if($result['pack_size_id']==0)
-//                {
-//                    $result['pack_size_name']='Bulk';
-//                }
-//            }
             $data['crops']=Query_helper::get_info($this->config->item('table_login_setup_classification_crops'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $data['warehouses']=Query_helper::get_info($this->config->item('table_login_basic_setup_warehouse'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $data['packs']=Query_helper::get_info($this->config->item('table_login_setup_classification_vpack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
