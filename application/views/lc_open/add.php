@@ -320,19 +320,19 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             var content_id='#system_content_add_more table tbody';
 
             $(content_id+' .variety_id').attr('id','variety_id_'+current_id);
+            $(content_id+' .variety_id').attr('data-current-id',current_id);
             $(content_id+' .variety_id').attr('name','varieties['+current_id+'][variety_id]');
 
-            $(content_id+' .quantity_type').attr('id','quantity_type_id_'+current_id);
-            $(content_id+' .quantity_type').attr('data-current-id',current_id);
-            $(content_id+' .quantity_type').attr('name','varieties['+current_id+'][quantity_type_id]');
+            $(content_id+' .pack_size_id').attr('id','pack_size_id_'+current_id);
+            $(content_id+' .pack_size_id').attr('data-current-id',current_id);
+            $(content_id+' .pack_size_id').attr('name','varieties['+current_id+'][pack_size_id]');
 
-            $(content_id+' .quantity').addClass('order_quantity_total');
-            $(content_id+' .quantity').attr('id','quantity_id_'+current_id);
-            $(content_id+' .quantity').attr('data-current-id',current_id);
-            $(content_id+' .quantity').attr('name','varieties['+current_id+'][quantity_order]');
+            $(content_id+' .quantity_lc').attr('id','quantity_lc_'+current_id);
+            $(content_id+' .quantity_lc').attr('data-current-id',current_id);
+            $(content_id+' .quantity_lc').attr('name','varieties['+current_id+'][quantity_lc]');
 
-            $(content_id+' .total_quantity_kg').attr('id','total_quantity_kg_'+current_id);
-            $(content_id+' .total_quantity_kg').attr('data-current-id',current_id);
+            $(content_id+' .price_unit_lc_currency').attr('id','price_unit_lc_currency_'+current_id);
+            $(content_id+' .price_unit_lc_currency').attr('data-current-id',current_id);
             //$(content_id+' .total_quantity_kg').attr('name','varieties['+current_id+'][quantity_order]');
 
             $(content_id+' .price').attr('id','price_id_'+current_id);
