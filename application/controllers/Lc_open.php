@@ -24,14 +24,14 @@ class Lc_open extends Root_Controller
         {
             $this->system_get_items();
         }
-        elseif($action=="list_all")
+        /*elseif($action=="list_all")
         {
             $this->system_list_all();
         }
         elseif($action=="get_items_all")
         {
             $this->system_get_items_all();
-        }
+        }*/
         elseif($action=="add")
         {
             $this->system_add();
