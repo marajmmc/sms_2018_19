@@ -13,7 +13,7 @@ $config['table_sms_stock_summary_variety'] = 'arm_sms_2018_19.sms_stock_summary_
 // LC
 $config['table_sms_lc_open'] = 'arm_sms_2018_19.sms_lc_open';
 $config['table_sms_lc_details'] = 'arm_sms_2018_19.sms_lc_details';
-$config['table_sms_lc_detail_revisions'] = 'arm_sms_2018_19.sms_lc_detail_revisions';
+$config['table_sms_lc_open_histories'] = 'arm_sms_2018_19.sms_lc_open_histories';
 $config['table_sms_lc_expense'] = 'arm_sms_2018_19.sms_lc_expense';
 
 // Setup

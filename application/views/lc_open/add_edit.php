@@ -34,9 +34,10 @@ if(isset($CI->permissions['action1']) && ($CI->permissions['action1']==1))
     );
 }
 $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
+
 ?>
 <form id="save_form" action="<?php echo site_url($CI->controller_url.'/index/save');?>" method="post">
-    <input type="hidden" id="id" name="id" value="0" />
+    <input type="hidden" id="id" name="id" value="<?php echo $item['id']?>" />
     <input type="hidden" id="system_save_new_status" name="system_save_new_status" value="0" />
     <div class="row widget">
         <div class="widget-header">
@@ -50,28 +51,41 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_FISCAL_YEAR');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <select id="fiscal_year_id" class="form-control" name="item[fiscal_year_id]">
-                    <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                    <?php
-                    $time=time();
-                    $selected='';
-                    foreach($fiscal_years as $year)
-                    {
-                        if($time>=$year['date_start'] && $time<=$year['date_end'])
-                        {
-                            ?>
-                            <option value="<?php echo $year['value']?>" selected="selected"><?php echo $year['text'];?></option>
-                        <?php
-                        }
-                        else
-                        {
-                            ?>
-                            <option value="<?php echo $year['value']?>"><?php echo $year['text'];?></option>
-                        <?php
-                        }
-                    }
+                <?php
+                if($item['id']>0)
+                {
                     ?>
-                </select>
+                    <label class="control-label"><?php echo $item['fiscal_year_name']?></label>
+                <?php
+                }
+                else
+                {
+                    ?>
+                    <select id="fiscal_year_id" class="form-control" name="item[fiscal_year_id]">
+                        <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                        <?php
+                        $time=time();
+                        $selected='';
+                        foreach($fiscal_years as $year)
+                        {
+                            if($time>=$year['date_start'] && $time<=$year['date_end'])
+                            {
+                                ?>
+                                <option value="<?php echo $year['value']?>" selected="selected"><?php echo $year['text'];?></option>
+                            <?php
+                            }
+                            else
+                            {
+                                ?>
+                                <option value="<?php echo $year['value']?>"><?php echo $year['text'];?></option>
+                            <?php
+                            }
+                        }
+                        ?>
+                    </select>
+                <?php
+                }
+                ?>
             </div>
         </div>
         <div class="row show-grid">
@@ -79,17 +93,30 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_MONTH');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <select id="month_id" class="form-control" name="item[month_id]" >
-                    <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                    <?php
-                    for($i=1;$i<13;$i++)
-                    {
-                        ?>
-                        <option value="<?php echo $i;?>"><?php echo date("F", mktime(0, 0, 0,  $i,1, 2000));?></option>
-                    <?php
-                    }
+                <?php
+                if($item['id']>0)
+                {
                     ?>
-                </select>
+                    <label class="control-label"><?php echo date("F", mktime(0, 0, 0,  $item['month_id'],1, 2000));?></label>
+                <?php
+                }
+                else
+                {
+                    ?>
+                    <select id="month_id" class="form-control" name="item[month_id]" >
+                        <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                        <?php
+                        for($i=1;$i<13;$i++)
+                        {
+                            ?>
+                            <option value="<?php echo $i;?>"><?php echo date("F", mktime(0, 0, 0,  $i,1, 2000));?></option>
+                        <?php
+                        }
+                        ?>
+                    </select>
+                <?php
+                }
+                ?>
             </div>
         </div>
         <div class="row show-grid">
@@ -97,7 +124,20 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_OPENING');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <input type="text" name="item[date_opening]" id="date_opening" class="form-control datepicker date_large" value="<?php echo System_helper::display_date(time());?>" />
+                <?php
+                if($item['id']>0)
+                {
+                    ?>
+                    <label class="control-label"><?php echo System_helper::display_date($item['date_opening']);?></label>
+                <?php
+                }
+                else
+                {
+                    ?>
+                    <input type="text" name="item[date_opening]" id="date_opening" class="form-control datepicker date_large" value="<?php echo System_helper::display_date(time());?>" />
+                <?php
+                }
+                ?>
             </div>
         </div>
         <div class="row show-grid">
@@ -105,17 +145,30 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_PRINCIPAL_NAME');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <select id="principal_id" name="item[principal_id]" class="form-control" >
-                    <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                    <?php
-                    foreach($principals as $principal)
-                    {
-                        ?>
-                        <option value="<?php echo $principal['value']?>" ><?php echo $principal['text'];?></option>
-                    <?php
-                    }
+                <?php
+                if($item['id']>0)
+                {
                     ?>
-                </select>
+                    <label class="control-label"><?php echo $item['principal_name'];?></label>
+                <?php
+                }
+                else
+                {
+                    ?>
+                    <select id="principal_id" name="item[principal_id]" class="form-control" >
+                        <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                        <?php
+                        foreach($principals as $principal)
+                        {
+                            ?>
+                            <option value="<?php echo $principal['value']?>" ><?php echo $principal['text'];?></option>
+                        <?php
+                        }
+                        ?>
+                    </select>
+                <?php
+                }
+                ?>
             </div>
         </div>
         <div class="row show-grid">
@@ -123,7 +176,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_EXPECTED');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <input type="text" name="item[date_expected]" id="date_expected" class="form-control datepicker date_large" value="<?php echo System_helper::display_date(time());?>" />
+                <input type="text" name="item[date_expected]" id="date_expected" class="form-control datepicker date_large" value="<?php echo System_helper::display_date($item['date_expected']);?>" />
             </div>
         </div>
         <div class="row show-grid">
@@ -131,7 +184,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_LC_NUMBER');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <input type="text" name="item[lc_number]" id="lc_number" class="form-control" value=""/>
+                <input type="text" name="item[lc_number]" id="lc_number" class="form-control" value="<?php echo $item['lc_number'];?>"/>
             </div>
         </div>
         <div class="row show-grid">
@@ -144,7 +197,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <?php
                     foreach($currencies as $currency)
                     {?>
-                        <option value="<?php echo $currency['value']?>"><?php echo $currency['text'];?></option>
+                        <option value="<?php echo $currency['value']?>" <?php if(($currency['value']==$item['currency_id'])){ echo "selected";}?>><?php echo $currency['text'];?></option>
                     <?php
                     }
                     ?>
@@ -156,7 +209,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_CONSIGNMENT_NAME');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <textarea name="item[consignment_name]" id="consignment_name" class="form-control" ></textarea>
+                <textarea name="item[consignment_name]" id="consignment_name" class="form-control" ><?php echo $item['consignment_name'];?></textarea>
             </div>
         </div>
         <div class="row show-grid">
@@ -164,7 +217,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_OTHER_COST_CURRENCY');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <input type="text" name="item[other_cost_total_currency]" id="other_cost_currency" class="form-control float_type_positive other_cost_total_currency" value=""/>
+                <input type="text" name="item[price_other_cost_total_currency]" id="price_other_cost_total_currency" class="form-control float_type_positive price_other_cost_total_currency" value="<?php echo $item['price_other_cost_total_currency'];?>"/>
             </div>
         </div>
         <div class="row show-grid">
@@ -172,7 +225,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS');?> </label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <textarea name="item[remarks]" id="remarks" class="form-control" ></textarea>
+                <textarea name="item[remarks]" id="remarks" class="form-control" ><?php echo $item['remarks'];?></textarea>
             </div>
         </div>
 
@@ -189,7 +242,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <tr>
                         <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_VARIETY'); ?></th>
                         <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
-                        <th style="min-width: 100px; text-align: center;"><?php echo $CI->lang->line('LABEL_QUANTITY_KG_PACK'); ?></th>
+                        <th style="min-width: 100px; text-align: right  ;"><?php echo $CI->lang->line('LABEL_QUANTITY_KG_PACK'); ?></th>
                         <th style="min-width: 100px; text-align: right;">KG</th>
                         <th style="min-width: 100px; text-align: right;">Unit Price (Currency)</th>
                         <th style="min-width: 150px; text-align: right;">Total Price (Currency)</th>
@@ -197,18 +250,65 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     </tr>
                     </thead>
                     <tbody id="items_container">
+                    <?php
+                    $quantity_lc_kg=number_format(0,3);
+                    foreach($items as $index=>$value)
+                    {
+                        if($value['pack_size_id']==0)
+                        {
+                            $quantity_lc_kg=number_format($value['quantity_lc'],3);
+                        }
+                        else
+                        {
+                            $quantity_lc_kg=number_format((($value['quantity_lc']*$value['pack_size_name'])/1000),3);
+                        }
+                        ?>
+                        <tr>
+                            <td>
+                                <label><?php echo $value['variety_name']; ?></label>
+                                <input type="hidden" name="items[<?php echo $index+1;?>][variety_id]" value="<?php echo $value['variety_id']; ?>">
+                            </td>
+                            <td>
+                                <label><?php if($value['pack_size_id']==0){echo 'Bulk';}else{echo $value['pack_size_name'];} ?></label>
+                                <input type="hidden" name="items[<?php echo $index+1;?>][pack_size_id]" id="pack_size_id_<?php echo $index+1;?>" value="<?php echo $value['pack_size_id']; ?>" class="pack_size_id" data-pack-size-name="<?php if($value['pack_size_id']==0){echo 0;}else{echo $value['pack_size_name'];} ?>">
+                            </td>
+                            <td>
+                                <input type="text" value="<?php echo $value['quantity_lc']; ?>" class="form-control float_type_positive quantity_lc" id="quantity_lc_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][quantity_lc]">
+                            </td>
+                            <td class="text-right">
+                                <label class="control-label quantity_lc_kg" id="quantity_lc_kg_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>">
+                                    <?php echo $quantity_lc_kg; ?>
+                                </label>
+                            </td>
+                            <td>
+                                <input type="text" value="<?php echo $value['price_unit_lc_currency']; ?>" class="form-control float_type_positive price_unit_lc_currency" id="price_id_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][price_unit_lc_currency]">
+                            </td>
+                            <td class="text-right">
+                                <label class="control-label price_total_lc_currency" id="price_total_lc_currency_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>">
+                                    <?php echo number_format($value['price_total_lc_currency'],2); ?>
+                                </label>
+                            </td>
+                            <td>
+
+                            </td>
+                        </tr>
+                    <?php
+                    }
+                    ?>
                     </tbody>
                     <tfoot>
                     <tr>
                         <th colspan="3" class="text-right"><?php echo $this->lang->line('LABEL_TOTAL_KG')?></th>
-                        <th class="text-right"><label class="control-label" id="lbl_quantity_total_kg">0.000</label></th>
+                        <th class="text-right"><label class="control-label" id="lbl_quantity_total_kg"><?php echo number_format(($item['quantity_total_kg']),3)?></label></th>
                         <th class="text-right"><?php echo $this->lang->line('LABEL_TOTAL_CURRENCY')?></th>
-                        <th class="text-right"><label class="control-label" id="lbl_price_variety_total_currency">0.00</label></th>
+                        <th class="text-right"><label class="control-label" id="lbl_price_variety_total_currency"><?php echo number_format($item['price_variety_total_currency'],2)?></label></th>
                         <th class="text-right"></th>
                     </tr>
                     <tr>
                         <th colspan="5" class="text-right"><?php echo $this->lang->line('LABEL_GRAND_TOTAL_CURRENCY')?></th>
-                        <th class="text-right"><label class="control-label" id="lbl_price_total_currency">0.00</label></th>
+                        <th class="text-right">
+                            <label class="control-label" id="lbl_price_total_currency"> <?php echo number_format(($item['price_total_currency']),2)?></label>
+                        </th>
                         <th>&nbsp;</th>
                     </tr>
                     </tfoot>
@@ -219,7 +319,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
                 </div>
                 <div class="col-xs-4">
-                    <button type="button" class="btn btn-warning system_button_add_more" data-current-id="0"><?php echo $CI->lang->line('LABEL_ADD_MORE');?></button>
+                    <button type="button" class="btn btn-warning system_button_add_more" data-current-id="<?php echo sizeof($items);?>"><?php echo $CI->lang->line('LABEL_ADD_MORE');?></button>
                 </div>
                 <div class="col-xs-4">
 
@@ -235,7 +335,20 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         <tr>
             <td>
                 <select class="form-control variety_id" id="variety_id">
-
+                    <?php
+                    if($item['id']>0)
+                    {
+                        ?>
+                        <option value=""><?php echo $CI->lang->line('SELECT'); ?></option>
+                        <?php
+                        foreach($varieties as $variety)
+                        {
+                            ?><option value="<?php echo $variety['value']; ?>"><?php echo $variety['text']; ?></option><?php
+                        }
+                        ?>
+                    <?php
+                    }
+                    ?>
                 </select>
             </td>
             <td>
@@ -272,7 +385,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
     </table>
 </div>
 <script>
-    $(document).ready(function(){
+
+    $(document).ready(function()
+    {
         system_preset({controller:'<?php echo $CI->router->class; ?>'});
         $(".date_large").datepicker({dateFormat : display_date_format,changeMonth: true,changeYear: true,yearRange: "2015:+2"});
 
@@ -302,7 +417,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             else
             {
                 $('#items_container').html('');
-                $('#variety_id').html('');
+                $('.variety_id').html('');
             }
         });
 
@@ -321,27 +436,26 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
             $(content_id+' .variety_id').attr('id','variety_id_'+current_id);
             $(content_id+' .variety_id').attr('data-current-id',current_id);
-            $(content_id+' .variety_id').attr('name','varieties['+current_id+'][variety_id]');
+            $(content_id+' .variety_id').attr('name','items['+current_id+'][variety_id]');
 
             $(content_id+' .pack_size_id').attr('id','pack_size_id_'+current_id);
             $(content_id+' .pack_size_id').attr('data-current-id',current_id);
-            $(content_id+' .pack_size_id').attr('name','varieties['+current_id+'][pack_size_id]');
+            $(content_id+' .pack_size_id').attr('name','items['+current_id+'][pack_size_id]');
 
             $(content_id+' .quantity_lc').attr('id','quantity_lc_'+current_id);
             $(content_id+' .quantity_lc').attr('data-current-id',current_id);
-            $(content_id+' .quantity_lc').attr('name','varieties['+current_id+'][quantity_lc]');
+            $(content_id+' .quantity_lc').attr('name','items['+current_id+'][quantity_lc]');
+
+            $(content_id+' .quantity_lc_kg').attr('id','quantity_lc_kg_'+current_id);
+            $(content_id+' .quantity_lc_kg').attr('data-current-id',current_id);
 
             $(content_id+' .price_unit_lc_currency').attr('id','price_unit_lc_currency_'+current_id);
             $(content_id+' .price_unit_lc_currency').attr('data-current-id',current_id);
-            //$(content_id+' .total_quantity_kg').attr('name','varieties['+current_id+'][quantity_order]');
+            $(content_id+' .price_unit_lc_currency').attr('name','items['+current_id+'][price_unit_lc_currency]');
 
-            $(content_id+' .price').attr('id','price_id_'+current_id);
-            $(content_id+' .price').attr('data-current-id',current_id);
-            $(content_id+' .price').attr('name','varieties['+current_id+'][price_currency]');
-
-            $(content_id+' .total_price').attr('id','total_price_id_'+current_id);
-            $(content_id+' .total_price').attr('data-current-id',current_id);
-            $(content_id+' .total_price').attr('name','varieties['+current_id+'][amount_price_total_order]');
+            $(content_id+' .price_total_lc_currency').attr('id','price_total_lc_currency_'+current_id);
+            $(content_id+' .price_total_lc_currency').attr('data-current-id',current_id);
+            $(content_id+' .price_total_lc_currency').attr('name','items['+current_id+'][price_total_lc_currency]');
             var html=$(content_id).html();
             $("#items_container").append(html);
 

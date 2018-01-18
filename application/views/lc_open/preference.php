@@ -35,15 +35,15 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <div class="checkbox  btn btn-danger">
                     <label>
                         <input type="checkbox" class="allSelectCheckbox" name="" checked>
-                        <?php echo $CI->lang->line('ALL_SELECT_CHECKBOX'); ?>
+                        Select All
                     </label>
                 </div>
             </div>
-            <!--<div class="col-xs-4">
+            <div class="col-xs-4">
                 <div class="checkbox">
-                    <label><input type="checkbox" name="item[id]" <?php /*if($items['id']){echo 'checked';}*/?> checked><span class="label label-success"><?php /*echo $CI->lang->line('ID'); */?></span></label>
+                    <label><input type="checkbox" name="item[barcode]" <?php if($items['barcode']){echo 'checked';}?> checked><span class="label label-success"><?php echo $CI->lang->line('LABEL_BARCODE'); ?></span></label>
                 </div>
-            </div>-->
+            </div>
             <div class="col-xs-4">
                 <div class="checkbox">
                     <label><input type="checkbox" name="item[fiscal_year_name]" <?php if($items['fiscal_year_name']){echo 'checked';}?> value="1"><span class="label label-success"><?php echo $CI->lang->line('LABEL_FISCAL_YEAR'); ?></span></label>
@@ -86,12 +86,27 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             </div>
             <div class="col-xs-4">
                 <div class="checkbox">
-                    <label><input type="checkbox" name="item[price_total_currency]" <?php if($items['price_total_currency']){echo 'checked';}?> value="1"><span class="label label-success"><?php echo $CI->lang->line('LABEL_TOTAL_CURRENCY'); ?></span></label>
+                    <label><input type="checkbox" class="system_jqx_column" name="item[price_other_cost_total_currency]" <?php if($items['price_other_cost_total_currency']){echo 'checked';}?> value="1"><span class="label label-success"><?php echo $CI->lang->line('LABEL_OTHER_COST_CURRENCY'); ?></span></label>
                 </div>
             </div>
             <div class="col-xs-4">
                 <div class="checkbox">
-                    <label><input type="checkbox" name="item[other_cost_currency]" <?php if($items['other_cost_currency']){echo 'checked';}?> value="1"><span class="label label-success"><?php echo $CI->lang->line('LABEL_OTHER_COST_CURRENCY'); ?></span></label>
+                    <label><input type="checkbox" class="system_jqx_column" name="item[quantity_total_kg]" <?php if($items['quantity_total_kg']){echo 'checked';}?> value="1"><span class="label label-success">KG<?php //echo $CI->lang->line('LABEL_TOTAL_CURRENCY'); ?></span></label>
+                </div>
+            </div>
+            <div class="col-xs-4">
+                <div class="checkbox">
+                    <label><input type="checkbox" class="system_jqx_column" name="item[price_variety_total_currency]" <?php if($items['price_variety_total_currency']){echo 'checked';}?> value="1"><span class="label label-success">Variety Currency<?php //echo $CI->lang->line('LABEL_OTHER_COST_CURRENCY'); ?></span></label>
+                </div>
+            </div>
+            <div class="col-xs-4">
+                <div class="checkbox">
+                    <label><input type="checkbox" class="system_jqx_column" name="item[price_total_currency]" <?php if($items['price_total_currency']){echo 'checked';}?> value="1"><span class="label label-success"><?php echo $CI->lang->line('LABEL_TOTAL_CURRENCY'); ?></span></label>
+                </div>
+            </div>
+            <div class="col-xs-4">
+                <div class="checkbox">
+                    <label><input type="checkbox" class="system_jqx_column" name="item[status_forward]" <?php if($items['status_forward']){echo 'checked';}?> value="1"><span class="label label-success">Forwarded<?php //echo $CI->lang->line('LABEL_TOTAL_CURRENCY'); ?></span></label>
                 </div>
             </div>
         </div>

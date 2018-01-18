@@ -11,6 +11,7 @@ class Lc_open extends Root_Controller
         $this->message="";
         $this->permissions=User_helper::get_permission('Lc_open');
         $this->controller_url='lc_open';
+        $this->load->helper('barcode');
     }
 
     public function index($action="list",$id=0)
@@ -35,11 +36,15 @@ class Lc_open extends Root_Controller
         {
             $this->system_add();
         }
-        /*elseif($action=="edit")
+        elseif($action=="edit")
         {
             $this->system_edit($id);
         }
-        elseif($action=="details")
+        elseif($action=="save")
+        {
+            $this->system_save();
+        }
+        /*elseif($action=="details")
         {
             $this->system_details($id);
         }
@@ -50,11 +55,8 @@ class Lc_open extends Root_Controller
         elseif($action=="save_forward")
         {
             $this->system_save_lc_forward();
-        }
-        elseif($action=="save")
-        {
-            $this->system_save();
-        }
+        }*/
+
         elseif($action=="set_preference")
         {
             $this->system_set_preference();
@@ -62,7 +64,7 @@ class Lc_open extends Root_Controller
         elseif($action=="save_preference")
         {
             $this->system_save_preference();
-        }*/
+        }
         else
         {
             $this->system_list();
@@ -74,7 +76,7 @@ class Lc_open extends Root_Controller
         {
             $user = User_helper::get_user();
             $result=Query_helper::get_info($this->config->item('table_sms_setup_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
-            $data['items']['id']= 1;
+            $data['items']['barcode']= 1;
             $data['items']['fiscal_year_name']= 1;
             $data['items']['month_name']= 1;
             $data['items']['date_opening']= 1;
@@ -83,10 +85,11 @@ class Lc_open extends Root_Controller
             $data['items']['currency_name']= 1;
             $data['items']['lc_number']= 1;
             $data['items']['consignment_name']= 1;
+            $data['items']['price_other_cost_total_currency']= 1;
+            $data['items']['quantity_total_kg']= 1;
+            $data['items']['price_variety_total_currency']= 1;
             $data['items']['price_total_currency']= 1;
-            $data['items']['other_cost_currency']= 1;
-            $data['items']['status_expense']= 1;
-            $data['items']['status_release']= 1;
+            $data['items']['status_forward']= 1;
             if($result)
             {
                 if($result['preferences']!=null)
@@ -139,17 +142,17 @@ class Lc_open extends Root_Controller
         {
             $pagesize=$pagesize*2;
         }
-        /*$this->db->from($this->config->item('table_sms_lc_open').' lc');
+        $this->db->from($this->config->item('table_sms_lc_open').' lc');
         $this->db->select('lc.*');
         $this->db->select('fy.name fiscal_year_name');
         $this->db->select('principal.name principal_name');
         $this->db->select('sc.name currency_name');
-        $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.id = lc.year_id','INNER');
+        $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.id = lc.fiscal_year_id','INNER');
         $this->db->join($this->config->item('table_sms_setup_currency').' sc','sc.id = lc.currency_id','INNER');
         $this->db->join($this->config->item('table_login_basic_setup_principal').' principal','principal.id = lc.principal_id','INNER');
         $this->db->where('lc.status_forward',$this->config->item('system_status_no'));
         $this->db->where('lc.status',$this->config->item('system_status_active'));
-        $this->db->order_by('lc.year_id','DESC');
+        $this->db->order_by('lc.fiscal_year_id','DESC');
         $this->db->order_by('lc.id','DESC');
         $this->db->limit($pagesize,$current_records);
         $results=$this->db->get()->result_array();
@@ -159,6 +162,7 @@ class Lc_open extends Root_Controller
         {
             $item=array();
             $item['id']=$result['id'];
+            $item['barcode']=Barcode_helper::get_barcode_lc_open($result['id']);
             $item['fiscal_year_name']=$result['fiscal_year_name'];
             $item['month_name']=$this->lang->line("LABEL_MONTH_$result[month_id]");
             $item['date_opening']=System_helper::display_date($result['date_opening']);
@@ -167,12 +171,13 @@ class Lc_open extends Root_Controller
             $item['currency_name']=$result['currency_name'];
             $item['lc_number']=$result['lc_number'];
             $item['consignment_name']=$result['consignment_name'];
+            $item['quantity_total_kg']=$result['quantity_total_kg'];
+            $item['price_other_cost_total_currency']=$result['price_other_cost_total_currency'];
+            $item['price_variety_total_currency']=$result['price_variety_total_currency'];
             $item['price_total_currency']=$result['price_total_currency'];
-            $item['other_cost_currency']=$result['other_cost_currency'];
             $item['status_forward']=$result['status_forward'];
             $items[]=$item;
-        }*/
-        $items=array();
+        }
         $this->json_return($items);
     }
     private function system_list_all()
@@ -287,7 +292,7 @@ class Lc_open extends Root_Controller
         {
             $data['title']="Create New LC";
             $data['item']['id']=0;
-            /*$data['item']['fiscal_year_id']=0;
+            $data['item']['fiscal_year_id']=0;
             $data['item']['month_id']=date('n');
             $data['item']['date_opening']=time();
             $data['item']['date_expected']='';
@@ -296,8 +301,11 @@ class Lc_open extends Root_Controller
             $data['item']['lc_number']='';
             $data['item']['consignment_name']='';
             $data['item']['remarks']='';
-            $data['item']['other_cost_total_currency']=0;
-            $data['items']=array();*/
+            $data['item']['price_other_cost_total_currency']=0;
+            $data['item']['quantity_total_kg']=0;
+            $data['item']['price_variety_total_currency']=0;
+            $data['item']['price_total_currency']=0;
+            $data['items']=array();
 
             $data['fiscal_years']=Query_helper::get_info($this->config->item('table_login_basic_setup_fiscal_year'),array('id value','name text','date_start','date_end'),array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('id ASC'));
             $data['currencies']=Query_helper::get_info($this->config->item('table_sms_setup_currency'),array('id value','name text'),array('status !="'.$this->config->item('system_status_delete').'"'),0,0,array('ordering'));
@@ -305,7 +313,7 @@ class Lc_open extends Root_Controller
             $data['pack_sizes']=Query_helper::get_info($this->config->item('table_login_setup_classification_vpack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('id ASC'));
 
             $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/add",$data,true));
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/add_edit",$data,true));
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
@@ -333,35 +341,46 @@ class Lc_open extends Root_Controller
                 $item_id=$this->input->post('id');
             }
 
-            $data['item']=Query_helper::get_info($this->config->item('table_sms_lc_open'),'*',array('id ='.$item_id),1);
+            $this->db->from($this->config->item('table_sms_lc_open').' lco');
+            $this->db->select('lco.*');
+            $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.id = lco.fiscal_year_id','INNER');
+            $this->db->select('fy.name fiscal_year_name');
+            //$this->db->join($this->config->item('table_sms_setup_currency').' sc','sc.id = lco.currency_id','INNER');
+            //$this->db->select('sc.name currency_name');
+            $this->db->join($this->config->item('table_login_basic_setup_principal').' sp','sp.id = lco.principal_id','INNER');
+            $this->db->select('sp.name principal_name');
+            $this->db->where('lco.id',$item_id);
+            $this->db->where('lco.status',$this->config->item('system_status_active'));
+            $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
             {
+                System_helper::invalid_try('Edit Non Exists',$item_id);
                 $ajax['status']=false;
-                $ajax['system_message']='Invalid LC - Data Not Found. Please Try Again.';
+                $ajax['system_message']='Invalid LC.';
                 $this->json_return($ajax);
             }
             if($data['item']['status_forward']==$this->config->item('system_status_yes'))
             {
                 $ajax['status']=false;
-                $ajax['system_message']='Sorry this LC already forwarded. Please Try Again.';
+                $ajax['system_message']='LC already forwarded';
                 $this->json_return($ajax);
             }
 
-            $fiscal_year_id=$data['item']['year_id'];
-            $principal_id=$data['item']['principal_id'];
-            $data['fiscal_years']=Query_helper::get_info($this->config->item('table_login_basic_setup_fiscal_year'),array('id value','name text','date_start','date_end'),array("id=$fiscal_year_id",'status ="'.$this->config->item('system_status_active').'"'),1,0,array('id ASC'));
-            $data['currencies']=Query_helper::get_info($this->config->item('table_sms_setup_currency'),array('id value','name text','amount_rate_budget'),array('status !="'.$this->config->item('system_status_delete').'"'),0,0,array('ordering'));
-            $data['principals']=Query_helper::get_info($this->config->item('table_login_basic_setup_principal'),array('id value','name text'),array("id=$principal_id",'status !="'.$this->config->item('system_status_delete').'"'),1,0,array('ordering'));
-            $result_pack_size=Query_helper::get_info($this->config->item('table_login_setup_classification_vpack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('id ASC'));
-            $data['packs']=array();
-            foreach($result_pack_size as $pack_size)
-            {
-                $data['packs'][$pack_size['value']]['value']=$pack_size['value'];
-                $data['packs'][$pack_size['value']]['text']=$pack_size['text'];
-            }
-            $data['items']=Query_helper::get_info($this->config->item('table_sms_lc_details'),'*',array('lc_id='.$item_id, 'quantity_order>0'));
+            // item details table
+            $this->db->from($this->config->item('table_sms_lc_details').' lcd');
+            $this->db->select('lcd.*');
+            $this->db->select('scv.id variety_id, scv.name variety_name');
+            $this->db->select('svp.name_import variety_name_import');
+            $this->db->select('sps.name pack_size_name');
+            $this->db->join($this->config->item('table_login_setup_classification_varieties').' scv','scv.id = lcd.variety_id','INNER');
+            $this->db->join($this->config->item('table_login_setup_variety_principals').' svp','svp.variety_id = scv.id AND svp.principal_id = '.$data['item']['principal_id'].' AND svp.revision = 1','INNER');
+            $this->db->join($this->config->item('table_login_setup_classification_vpack_size').' sps','sps.id = lcd.pack_size_id','LEFT');
+            $this->db->where('lcd.lc_id',$item_id);
+            $data['items']=$this->db->get()->result_array();
 
-            /*get armalik variety*/
+            // get drop down info
+            $data['currencies']=Query_helper::get_info($this->config->item('table_sms_setup_currency'),array('id value','name text','amount_rate_budget'),array('status="'.$this->config->item('system_status_active').'"'),0,0,array('ordering'));
+
             $this->db->from($this->config->item('table_login_setup_classification_varieties').' v');
             $this->db->select('v.id value,v.name');
             $this->db->select('vp.name_import text');
@@ -376,9 +395,12 @@ class Lc_open extends Root_Controller
                 $data['varieties'][$result['value']]=$result;
             }
 
-            $data['title']="Edit LC (".$data['item']['lc_number'].')';
+            $data['pack_sizes']=Query_helper::get_info($this->config->item('table_login_setup_classification_vpack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('id ASC'));
+
+
+            $data['title']="Edit LC :: ". Barcode_helper::get_barcode_lc_open($item_id);
             $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/edit",$data,true));
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/add_edit",$data,true));
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
@@ -389,6 +411,233 @@ class Lc_open extends Root_Controller
         else
         {
             $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+    }
+    private function system_save()
+    {
+        $id = $this->input->post("id");
+        $user = User_helper::get_user();
+        if($id>0)
+        {
+            if(!(isset($this->permissions['action2']) && ($this->permissions['action2']==1)))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+                $this->json_return($ajax);
+            }
+        }
+        else
+        {
+            if(!(isset($this->permissions['action1']) && ($this->permissions['action1']==1)))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+                $this->json_return($ajax);
+            }
+        }
+
+        if(!$this->check_validation())
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->message;
+            $this->json_return($ajax);
+        }
+
+        $time=time();
+        $item=$this->input->post('item');
+        $items=$this->input->post('items');
+        $result_pack_size=Query_helper::get_info($this->config->item('table_login_setup_classification_vpack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('id ASC'));
+        $pack_sizes=array();
+        foreach($result_pack_size as $pack_size)
+        {
+            $pack_sizes[$pack_size['value']]['value']=$pack_size['value'];
+            $pack_sizes[$pack_size['value']]['text']=$pack_size['text'];
+        }
+
+        $this->db->trans_start();  //DB Transaction Handle START
+
+        if($id>0)
+        {
+
+            $lc_open_result=Query_helper::get_info($this->config->item('table_sms_lc_open'),'*',array('id ='.$id),1);
+            if(!$lc_open_result)
+            {
+                System_helper::invalid_try('Update Non Exists',$id);
+                $ajax['status']=false;
+                $ajax['system_message']='Invalid LC.';
+                $this->json_return($ajax);
+            }
+            if($lc_open_result['status_forward']==$this->config->item('system_status_yes'))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='LC already forwarded.';
+                $this->json_return($ajax);
+                die();
+            }
+
+            $result=Query_helper::get_info($this->config->item('table_sms_lc_details'),'*',array('lc_id='.$id));
+            $old_varieties=array();
+            if($result)
+            {
+                foreach($result as $row)
+                {
+                    $old_varieties[$row['variety_id']][$row['pack_size_id']]=$row;
+                }
+            }
+            $data=array();
+            $data['date_updated'] = $time;
+            $data['user_updated'] = $user->user_id;
+            Query_helper::update($this->config->item('table_sms_lc_open_histories'),$data, array('lc_id='.$id,'revision=1'), false);
+
+            $this->db->where('lc_id',$id);
+            $this->db->set('revision', 'revision+1', FALSE);
+            $this->db->update($this->config->item('table_sms_lc_open_histories'));
+
+            $price_variety_total_currency=0;
+            $quantity_total_kg=0;
+            foreach($items as $variety)
+            {
+                $price_variety_total_currency+=($variety['quantity_lc']*$variety['price_unit_lc_currency']);
+                if($variety['pack_size_id']==0)
+                {
+                    $quantity_total_kg+=$variety['quantity_lc'];
+                }
+                else
+                {
+                    if(isset($pack_sizes[$variety['pack_size_id']]['text']))
+                    {
+                        $quantity_total_kg+=(($pack_sizes[$variety['pack_size_id']]['text']*$variety['quantity_lc'])/1000);
+                    }
+                }
+                if(isset($old_varieties[$variety['variety_id']][$variety['pack_size_id']]))
+                {
+                    $lc_detail_id=$old_varieties[$variety['variety_id']][$variety['pack_size_id']]['id'];
+                    $old_variety_quantity=$old_varieties[$variety['variety_id']][$variety['pack_size_id']]['quantity_lc'];
+                    $old_variety_currency=$old_varieties[$variety['variety_id']][$variety['pack_size_id']]['price_unit_lc_currency'];
+                    if(($old_variety_quantity!=$variety['quantity_lc']) || ($old_variety_currency!=$variety['price_unit_lc_currency']))
+                    {
+                        $data=array();
+                        $data['quantity_lc']=$variety['quantity_lc'];
+                        $data['price_unit_lc_currency']=$variety['price_unit_lc_currency'];
+                        $data['price_total_lc_currency']=($variety['quantity_lc']*$variety['price_unit_lc_currency']);
+                        $this->db->set('revision_count', 'revision_count+1', FALSE);
+                        Query_helper::update($this->config->item('table_sms_lc_details'),$data, array('id='.$lc_detail_id), false);
+                    }
+                }
+                else
+                {
+                    $data=array();
+                    $data['lc_id']=$id;
+                    $data['variety_id']=$variety['variety_id'];
+                    $data['pack_size_id']=$variety['pack_size_id'];
+                    $data['quantity_lc']=$variety['quantity_lc'];
+                    $data['price_unit_lc_currency']=$variety['price_unit_lc_currency'];
+                    $data['price_total_lc_currency']=($variety['quantity_lc']*$variety['price_unit_lc_currency']);
+                    $data['revision_count']=1;
+                    Query_helper::add($this->config->item('table_sms_lc_details'),$data, false);
+                }
+
+                $data=array();
+                $data['lc_id']=$id;
+                $data['variety_id']=$variety['variety_id'];
+                $data['pack_size_id']=$variety['pack_size_id'];
+                $data['quantity']=$variety['quantity_lc'];
+                $data['price_unit_currency']=$variety['price_unit_lc_currency'];
+                $data['price_total_currency']=($variety['quantity_lc']*$variety['price_unit_lc_currency']);
+                $data['revision'] = 1;
+                $data['date_created'] = $time;
+                $data['user_created'] = $user->user_id;
+                Query_helper::add($this->config->item('table_sms_lc_open_histories'),$data, false);
+            }
+
+            $item['date_expected']=System_helper::get_time($item['date_expected']);
+            $item['quantity_total_kg']=$quantity_total_kg;
+            $item['price_variety_total_currency']=$price_variety_total_currency;
+            $item['price_total_currency']=($price_variety_total_currency+$item['price_other_cost_total_currency']);
+            $item['date_updated']=$time;
+            $item['user_updated']=$user->user_id;
+            $this->db->set('revision_count', 'revision_count+1', FALSE);
+            Query_helper::update($this->config->item('table_sms_lc_open'),$item,array('id='.$id));
+        }
+        else
+        {
+            $price_variety_total_currency=0;
+            $quantity_total_kg=0;
+            if($items)
+            {
+                foreach($items as $variety)
+                {
+                    $price_variety_total_currency+=($variety['quantity_lc']*$variety['price_unit_lc_currency']);
+                    if($variety['pack_size_id']==0)
+                    {
+                        $quantity_total_kg+=$variety['quantity_lc'];
+                    }
+                    else
+                    {
+                        if(isset($pack_sizes[$variety['pack_size_id']]['text']))
+                        {
+                            $quantity_total_kg+=(($pack_sizes[$variety['pack_size_id']]['text']*$variety['quantity_lc'])/1000);
+                        }
+                    }
+                }
+            }
+
+            $item['date_opening']=System_helper::get_time($item['date_opening']);
+            $item['date_expected']=System_helper::get_time($item['date_expected']);
+            $item['quantity_total_kg'] = $quantity_total_kg;
+            $item['price_variety_total_currency'] = $price_variety_total_currency;
+            $item['price_total_currency'] = ($price_variety_total_currency+$item['price_other_cost_total_currency']);
+            $item['status'] = $this->config->item('system_status_active');
+            $item['revision_count'] = 1;
+            $item['user_created'] = $user->user_id;
+            $item['date_created'] = time();
+            $lc_id=Query_helper::add($this->config->item('table_sms_lc_open'),$item);
+            //varieties
+            foreach($items as $variety)
+            {
+                $data=array();
+                $data['lc_id']=$lc_id;
+                $data['variety_id']=$variety['variety_id'];
+                $data['pack_size_id']=$variety['pack_size_id'];
+                $data['quantity_lc']=$variety['quantity_lc'];
+                $data['price_unit_lc_currency']=$variety['price_unit_lc_currency'];
+                $data['price_total_lc_currency']=($variety['quantity_lc']*$variety['price_unit_lc_currency']);
+                $data['revision_count']=1;
+                Query_helper::add($this->config->item('table_sms_lc_details'),$data, false);
+
+                $data=array();
+                $data['lc_id']=$lc_id;
+                $data['variety_id']=$variety['variety_id'];
+                $data['pack_size_id']=$variety['pack_size_id'];
+                $data['quantity']=$variety['quantity_lc'];
+                $data['price_unit_currency']=$variety['price_unit_lc_currency'];
+                $data['price_total_currency']=($variety['quantity_lc']*$variety['price_unit_lc_currency']);
+                $data['revision']=1;
+                $data['date_created'] = $time;
+                $data['user_created'] = $user->user_id;
+                Query_helper::add($this->config->item('table_sms_lc_open_histories'),$data, false);
+            }
+        }
+
+        $this->db->trans_complete();   //DB Transaction Handle END
+        if ($this->db->trans_status() === TRUE)
+        {
+            $save_and_new=$this->input->post('system_save_new_status');
+            $this->message=$this->lang->line("MSG_SAVED_SUCCESS");
+            if($save_and_new==1)
+            {
+                $this->system_add();
+            }
+            else
+            {
+                $this->system_list();
+            }
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("MSG_SAVED_FAIL");
             $this->json_return($ajax);
         }
     }
@@ -430,7 +679,7 @@ class Lc_open extends Root_Controller
             $this->db->select('sps.name pack_size_name');
             $this->db->join($this->config->item('table_login_setup_classification_varieties').' scv','scv.id = lcd.variety_id','INNER');
             $this->db->join($this->config->item('table_login_setup_variety_principals').' svp','svp.variety_id = scv.id AND svp.principal_id = '.$data['item']['principal_id'].' AND svp.revision = 1','INNER');
-            $this->db->join($this->config->item('table_login_setup_classification_vpack_size').' sps','sps.id = lcd.quantity_type_id','LEFT');
+            $this->db->join($this->config->item('table_login_setup_classification_vpack_size').' sps','sps.id = lcd.pack_size_id','LEFT');
             $this->db->where('lcd.lc_id',$item_id);
             $data['items']=$this->db->get()->result_array();
 
@@ -447,188 +696,6 @@ class Lc_open extends Root_Controller
         else
         {
             $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
-            $this->json_return($ajax);
-        }
-    }
-    private function system_save()
-    {
-        $id = $this->input->post("id");
-        $user = User_helper::get_user();
-        if($id>0)
-        {
-            if(!(isset($this->permissions['action2']) && ($this->permissions['action2']==1)))
-            {
-                $ajax['status']=false;
-                $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
-                $this->json_return($ajax);
-            }
-        }
-        else
-        {
-            if(!(isset($this->permissions['action1']) && ($this->permissions['action1']==1)))
-            {
-                $ajax['status']=false;
-                $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
-                $this->json_return($ajax);
-            }
-        }
-
-        if(!$this->check_validation())
-        {
-            $ajax['status']=false;
-            $ajax['system_message']=$this->message;
-            $this->json_return($ajax);
-        }
-
-        $time=time();
-        $data=$this->input->post('item');
-        $varieties=$this->input->post('varieties');
-
-        $this->db->trans_start();  //DB Transaction Handle START
-
-        if($id>0)
-        {
-
-            $lc_open_result=Query_helper::get_info($this->config->item('table_sms_lc_open'),'*',array('id ='.$id),1);
-            if(!$lc_open_result)
-            {
-                $ajax['status']=false;
-                $ajax['system_message']='Invalid LC - Data Not Found. Please Try Again.';
-                $this->json_return($ajax);
-            }
-            /*if($data['item']['status_release']==$this->config->item('system_status_complete'))
-            {
-                $ajax['status']=false;
-                $ajax['system_message']='You Can Not Modify LC Because LC Release Completed. Please Try Again.';
-                $this->json_return($ajax);
-                die();
-            }*/
-
-            $result=Query_helper::get_info($this->config->item('table_sms_lc_details'),'*',array('lc_id='.$id, 'quantity_order>0'));
-            $old_varieties=array();
-            if($result)
-            {
-                foreach($result as $row)
-                {
-                    $old_varieties[$row['variety_id']][$row['quantity_type_id']]['lc_detail_id']=$row['id'];
-                    $old_varieties[$row['variety_id']][$row['quantity_type_id']]['quantity_order']=$row['quantity_order'];
-                    $old_varieties[$row['variety_id']][$row['quantity_type_id']]['price_currency']=$row['price_currency'];
-                }
-            }
-
-            $price_total_currency=0;
-            foreach($varieties as $variety)
-            {
-                $price_total_currency+=($variety['quantity_order']*$variety['price_currency']);
-                if(isset($old_varieties[$variety['variety_id']][$variety['quantity_type_id']]))
-                {
-                    $lc_detail_id=$old_varieties[$variety['variety_id']][$variety['quantity_type_id']]['lc_detail_id'];
-                    $old_variety_quantity=$old_varieties[$variety['variety_id']][$variety['quantity_type_id']]['quantity_order'];
-                    $old_variety_currency=$old_varieties[$variety['variety_id']][$variety['quantity_type_id']]['price_currency'];
-                    if(($old_variety_quantity!=$variety['quantity_order']) || ($old_variety_currency!=$variety['price_currency']))
-                    {
-                        $variety_data=array();
-                        $variety_data['quantity_order']=$variety['quantity_order'];
-                        $variety_data['price_currency']=$variety['price_currency'];
-                        $variety_data['date_updated'] = $time;
-                        $variety_data['user_updated'] = $user->user_id;
-                        $this->db->set('revision', 'revision+1', FALSE);
-                        Query_helper::update($this->config->item('table_sms_lc_details'),$variety_data, array('id='.$lc_detail_id));
-                        unset($variety_data['revision']);
-                        unset($variety_data['date_updated']);
-                        unset($variety_data['user_updated']);
-                        $variety_data['lc_id']=$id;
-                        $variety_data['variety_id']=$variety['variety_id'];
-                        $variety_data['quantity_type_id']=$variety['quantity_type_id'];
-                        $variety_data['lc_detail_id'] = $lc_detail_id;
-                        Query_helper::add($this->config->item('table_sms_lc_detail_revisions'),$variety_data);
-                    }
-                }
-                else
-                {
-                    $variety_data=array();
-                    $variety_data['lc_id']=$id;
-                    $variety_data['variety_id']=$variety['variety_id'];
-                    $variety_data['quantity_type_id']=$variety['quantity_type_id'];
-                    $variety_data['quantity_order']=$variety['quantity_order'];
-                    $variety_data['price_currency']=$variety['price_currency'];
-                    $variety_data['revision']=1;
-                    $variety_data['date_created'] = $time;
-                    $variety_data['user_created'] = $user->user_id;
-                    $lc_detail_id=Query_helper::add($this->config->item('table_sms_lc_details'),$variety_data);
-                    unset($variety_data['revision']);
-                    $variety_data['lc_detail_id'] = $lc_detail_id;
-                    Query_helper::add($this->config->item('table_sms_lc_detail_revisions'),$variety_data);
-                }
-            }
-
-            $data['date_expected']=System_helper::get_time($data['date_expected']);
-            $data['price_total_currency']=$price_total_currency;
-            $data['date_updated']=$time;
-            $data['user_updated']=$user->user_id;
-            $this->db->set('revision', 'revision+1', FALSE);
-            Query_helper::update($this->config->item('table_sms_lc_open'),$data,array('id='.$id));
-
-        }
-        else
-        {
-            $price_total_currency=0;
-            if($varieties)
-            {
-                foreach($varieties as $variety)
-                {
-                    $price_total_currency+=($variety['quantity_order']*$variety['price_currency']);
-                }
-            }
-            $data['date_expected']=System_helper::get_time($data['date_expected']);
-            $data['date_opening']=System_helper::get_time($data['date_opening']);
-            $data['user_created'] = $user->user_id;
-            $data['date_created'] = time();
-            $data['status'] = $this->config->item('system_status_active');
-            $data['price_total_currency'] = $price_total_currency;
-            $data['price_total_taka'] = 0;
-            $data['other_cost_taka'] = 0;
-            $lc_id=Query_helper::add($this->config->item('table_sms_lc_open'),$data);
-            //varieties
-            if($varieties)
-            {
-                foreach($varieties as $variety)
-                {
-                    $variety_data=array();
-                    $variety_data['lc_id']=$lc_id;
-                    $variety_data['variety_id']=$variety['variety_id'];
-                    $variety_data['quantity_type_id']=$variety['quantity_type_id'];
-                    $variety_data['quantity_order']=$variety['quantity_order'];
-                    $variety_data['price_currency']=$variety['price_currency'];
-                    $variety_data['revision']=1;
-                    $variety_data['date_created'] = $time;
-                    $variety_data['user_created'] = $user->user_id;
-                    $lc_detail_id=Query_helper::add($this->config->item('table_sms_lc_details'),$variety_data);
-                    unset($variety_data['revision']);
-                    $variety_data['lc_detail_id'] = $lc_detail_id;
-                    Query_helper::add($this->config->item('table_sms_lc_detail_revisions'),$variety_data);
-                }
-            }
-        }
-
-        $this->db->trans_complete();   //DB Transaction Handle END
-        if ($this->db->trans_status() === TRUE)
-        {
-            $save_and_new=$this->input->post('system_save_new_status');
-            $this->message=$this->lang->line("MSG_SAVED_SUCCESS");
-            if($save_and_new==1)
-            {
-                $this->system_add();
-            }
-            else
-            {
-                $this->system_list();
-            }
-        }
-        else
-        {
-            $ajax['status']=false;
-            $ajax['system_message']=$this->lang->line("MSG_SAVED_FAIL");
             $this->json_return($ajax);
         }
     }
@@ -676,7 +743,7 @@ class Lc_open extends Root_Controller
             $this->db->select('sps.name pack_size_name');
             $this->db->join($this->config->item('table_login_setup_classification_varieties').' scv','scv.id = lcd.variety_id','INNER');
             $this->db->join($this->config->item('table_login_setup_variety_principals').' svp','svp.variety_id = scv.id AND svp.principal_id = '.$data['item']['principal_id'].' AND svp.revision = 1','INNER');
-            $this->db->join($this->config->item('table_login_setup_classification_vpack_size').' sps','sps.id = lcd.quantity_type_id','LEFT');
+            $this->db->join($this->config->item('table_login_setup_classification_vpack_size').' sps','sps.id = lcd.pack_size_id','LEFT');
             $this->db->where('lcd.lc_id',$item_id);
             $data['items']=$this->db->get()->result_array();
 
@@ -754,35 +821,40 @@ class Lc_open extends Root_Controller
     }
     private function check_validation()
     {
-        $varieties=$this->input->post('varieties');
-        if((sizeof($varieties)>0))
+        $items=$this->input->post('items');
+        if((sizeof($items)>0))
         {
             $duplicate_variety=array();
             $status_duplicate_variety=false;
-            foreach($varieties as $variety)
+            foreach($items as $variety)
             {
                 /// empty checking
-                if(!(($variety['variety_id']>0) && ($variety['quantity_type_id']>=0) && ($variety['quantity_order']>=0) && ($variety['price_currency']>0)))
+                if(!(($variety['variety_id']>0) && ($variety['pack_size_id']>=0) && ($variety['quantity_lc']>=0) && ($variety['price_unit_lc_currency']>0)))
                 {
-                    $this->message='Please properly data insert (variety info :: '.$variety['variety_id'].'). Try again.';
+                    $this->message='Invalid input (variety info :: '.$variety['variety_id'].').';
                     return false;
                 }
                 // duplicate variety checking
-                if(isset($duplicate_variety[$variety['variety_id']][$variety['quantity_type_id']]))
+                if(isset($duplicate_variety[$variety['variety_id']][$variety['pack_size_id']]))
                 {
-                    $duplicate_variety[$variety['variety_id']][$variety['quantity_type_id']]+=1;
+                    $duplicate_variety[$variety['variety_id']][$variety['pack_size_id']]+=1;
                     $status_duplicate_variety=true;
                 }
                 else
                 {
-                    $duplicate_variety[$variety['variety_id']][$variety['quantity_type_id']]=1;
+                    $duplicate_variety[$variety['variety_id']][$variety['pack_size_id']]=1;
                 }
             }
             if($status_duplicate_variety==true)
             {
-                $this->message='You have a mistake (variety duplicate entry). Try again.';
+                $this->message='Invalid input, variety duplicate entry.';
                 return false;
             }
+        }
+        else
+        {
+            $this->message='Variety information is empty.';
+            return false;
         }
 
         $this->load->library('form_validation');
@@ -790,28 +862,26 @@ class Lc_open extends Root_Controller
         $item = $this->input->post("item");
         if($id==0)
         {
-            $this->form_validation->set_rules('item[year_id]',$this->lang->line('LABEL_FISCAL_YEAR'),'required');
+            $this->form_validation->set_rules('item[fiscal_year_id]',$this->lang->line('LABEL_FISCAL_YEAR'),'required');
             $this->form_validation->set_rules('item[month_id]',$this->lang->line('LABEL_MONTH'),'required');
             $this->form_validation->set_rules('item[date_opening]',$this->lang->line('LABEL_DATE_OPENING'),'required');
             $this->form_validation->set_rules('item[principal_id]',$this->lang->line('LABEL_PRINCIPAL_NAME'),'required');
             if(!isset($item['date_opening']) || !strtotime($item['date_opening']))
             {
-                $this->message='LC opening date is not correct. Please Try again.';
+                $this->message='LC opening date is not correct formation.';
                 return false;
             }
         }
         if(!isset($item['date_expected']) || !strtotime($item['date_expected']))
         {
-            $this->message='LC expected date is not correct. Please Try again.';
+            $this->message='LC expected date is not correct formation.';
             return false;
         }
         $this->form_validation->set_rules('item[date_expected]',$this->lang->line('LABEL_DATE_EXPECTED'),'required');
         $this->form_validation->set_rules('item[lc_number]',$this->lang->line('LABEL_LC_NUMBER'),'required');
         $this->form_validation->set_rules('item[currency_id]',$this->lang->line('LABEL_CURRENCY_NAME'),'required');
         $this->form_validation->set_rules('item[consignment_name]',$this->lang->line('LABEL_CONSIGNMENT_NAME'),'required');
-        $this->form_validation->set_rules('item[other_cost_currency]',$this->lang->line('LABEL_OTHER_COST_CURRENCY'),'required');
-        //$this->form_validation->set_rules('item[amount_currency_rate]',$this->lang->line('LABEL_CURRENCY_RATE'),'required');
-        //$this->form_validation->set_rules('item[status]',$this->lang->line('STATUS'),'required');
+        $this->form_validation->set_rules('item[price_other_cost_total_currency]',$this->lang->line('LABEL_OTHER_COST_CURRENCY'),'required');
         if($this->form_validation->run() == FALSE)
         {
             $this->message=validation_errors();
@@ -822,7 +892,7 @@ class Lc_open extends Root_Controller
     public function get_dropdown_arm_varieties_by_principal_id()
     {
         $principal_id = $this->input->post('principal_id');
-        $html_container_id='#variety_id';
+        $html_container_id='.variety_id';
         if($this->input->post('html_container_id'))
         {
             $html_container_id=$this->input->post('html_container_id');
@@ -830,7 +900,8 @@ class Lc_open extends Root_Controller
 
         $this->db->from($this->config->item('table_login_setup_classification_varieties').' v');
         $this->db->select('v.id value,v.name');
-        $this->db->select('vp.name_import text');
+        //$this->db->select('vp.name_import  v.name text');
+        $this->db->select("CONCAT_WS(' ( ',vp.name_import,  CONCAT_WS('', v.name,')')) text");
         $this->db->join($this->config->item('table_login_setup_variety_principals').' vp','vp.variety_id = v.id AND vp.principal_id = '.$principal_id.' AND vp.revision = 1','INNER');
         $this->db->where('v.status',$this->config->item('system_status_active'));
         $this->db->where('v.whose','ARM');
@@ -847,7 +918,7 @@ class Lc_open extends Root_Controller
         {
             $user = User_helper::get_user();
             $result=Query_helper::get_info($this->config->item('table_sms_setup_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
-            $data['items']['id']= 1;
+            $data['items']['barcode']= 1;
             $data['items']['fiscal_year_name']= 1;
             $data['items']['month_name']= 1;
             $data['items']['date_opening']= 1;
@@ -856,10 +927,11 @@ class Lc_open extends Root_Controller
             $data['items']['currency_name']= 1;
             $data['items']['lc_number']= 1;
             $data['items']['consignment_name']= 1;
+            $data['items']['price_other_cost_total_currency']= 1;
+            $data['items']['quantity_total_kg']= 1;
+            $data['items']['price_variety_total_currency']= 1;
             $data['items']['price_total_currency']= 1;
-            $data['items']['other_cost_currency']= 1;
-            $data['items']['status_expense']= 1;
-            $data['items']['status_release']= 1;
+            $data['items']['status_forward']= 1;
             if($result)
             {
                 if($result['preferences']!=null)

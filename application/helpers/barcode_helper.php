@@ -29,4 +29,11 @@ class Barcode_helper
     }
     //it will be transferred into barcode helper
 
+    //LC
+    public static function get_barcode_lc_open($increment_id)
+    {
+        return 'LO'.str_pad($increment_id,6,0,STR_PAD_LEFT);
+    }
+
+
 }
