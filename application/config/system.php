@@ -18,12 +18,12 @@ $config['system_status_complete']='Complete';
 $config['system_base_url_profile_picture']='http://50.116.76.180/login/';
 
 //Stock
-$config['system_purpose_variety_stock_in']='STOCK_IN';
-$config['system_purpose_variety_excess']='EXCESS';
-$config['system_purpose_variety_rnd']='OUT_STOCK_RND';
-$config['system_purpose_variety_short_inventory']='OUT_STOCK_SHORT_INVENTORY';
-$config['system_purpose_variety_demonstration']='OUT_STOCK_DEMONSTRATION';
-$config['system_purpose_variety_sample']='OUT_STOCK_SAMPLE';
+$config['system_purpose_variety_stock_in']='Stock-In';
+$config['system_purpose_variety_excess']='Excess';
+$config['system_purpose_variety_rnd']='R&D Purpose';
+$config['system_purpose_variety_short_inventory']='Short Inventory';
+$config['system_purpose_variety_demonstration']='Demonstration';
+$config['system_purpose_variety_sample']='Sample Purpose';
 
 $config['system_customer_type_outlet_id']=1;
 $config['system_customer_type_customer_id']=2;

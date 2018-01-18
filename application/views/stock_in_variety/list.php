@@ -69,7 +69,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
     </div>
     <div class="col-xs-12" style="margin-bottom: 20px;">
         <div class="col-xs-12" style="margin-bottom: 20px;">
-            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column" value="id"><?php echo $CI->lang->line('ID'); ?></label>
+            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column" checked value="barcode"><?php echo $CI->lang->line('LABEL_BARCODE'); ?></label>
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column" checked value="date_stock_in"><?php echo $CI->lang->line('LABEL_DATE_STOCK_IN'); ?></label>
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column" checked value="quantity"><?php echo $CI->lang->line('LABEL_QUANTITY'); ?></label>
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column" checked value="purpose"><?php echo $CI->lang->line('LABEL_PURPOSE'); ?></label>
@@ -95,7 +95,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             dataType: "json",
             dataFields: [
                 { name: 'id', type: 'int' },
-                { name: 'generated_id', type: 'string' },
+                { name: 'barcode', type: 'string' },
                 { name: 'date_stock_in', type: 'string' },
                 { name: 'quantity_total', type: 'string' },
                 { name: 'purpose', type: 'string' },
@@ -125,8 +125,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 enablebrowserselection:true,
                 columnsreorder: true,
                 columns: [
-                    { text: '<?php echo $CI->lang->line('ID'); ?>', dataField: 'id',width:'90',hidden:true},
-                    { text: '<?php echo $CI->lang->line('SI ID'); ?>', dataField: 'generated_id',width:'110',hidden:false},
+                    { text: '<?php echo $CI->lang->line('LABEL_BARCODE'); ?>', dataField: 'barcode',width:'110'},
                     { text: '<?php echo $CI->lang->line('LABEL_DATE_STOCK_IN'); ?>', filtertype: 'list',dataField: 'date_stock_in',width:'140'},
                     { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL'); ?> (KG)', cellsalign: 'right',dataField: 'quantity_total',width:'200'},
                     { text: '<?php echo $CI->lang->line('LABEL_PURPOSE'); ?>', dataField: 'purpose',filtertype: 'list',width:'200'},

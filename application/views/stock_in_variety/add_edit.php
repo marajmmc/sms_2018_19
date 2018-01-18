@@ -67,11 +67,13 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             <?php
             if($item['purpose'])
             {
-            ?>
-                <label for="purpose" class="control-label"><?php echo $this->lang->line('PURPOSE_'.$item['purpose']); ?></label>
-                <input type="hidden" name="item[purpose]" value="<?php echo $item['purpose'];?>"/>
-
-            <?php } else{?>
+                ?>
+                <label for="purpose" class="control-label"><?php echo $item['purpose']; ?></label>
+                <?php
+            }
+            else
+            {
+                ?>
                 <div class="col-sm-4 col-xs-8">
                     <select id="purpose" name="item[purpose]" class="form-control">
                         <option value=""><?php echo $this->lang->line('SELECT');?></option>

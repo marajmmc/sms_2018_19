@@ -266,3 +266,4 @@ $lang['LABEL_EXCESS']='Excess';
 $lang['LABEL_WAREHOUSE'] = 'Warehouse';
 $lang['LABEL_CURRENT_STOCK'] = 'Current Stock (Pack/Kg)';
 $lang['LABEL_PURPOSE'] = 'Purpose';
+$lang['LABEL_BARCODE'] = 'Barcode';
