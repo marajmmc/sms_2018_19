@@ -37,14 +37,28 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
     <div class="clearfix"></div>
 </div>
 
-<div class="row show-grid">
-    <div class="col-xs-4">
-        <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_STOCK_OUT');?><span style="color:#FF0000">*</span></label>
+<?php
+if(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1))
+{
+    ?>
+    <div class="row show-grid">
+        <div class="col-xs-4">
+            <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_STOCK_OUT');?><span style="color:#FF0000">*</span></label>
+        </div>
+        <div class="col-sm-4 col-xs-8">
+            <input type="text" name="item[date_stock_out]" class="form-control datepicker" value="<?php echo System_helper::display_date($item['date_stock_out']);?>"/>
+        </div>
     </div>
-    <div class="col-sm-4 col-xs-8">
-        <input type="text" name="item[date_stock_out]" id="date_stock_out" class="form-control datepicker" value="<?php echo System_helper::display_date($item['date_stock_out']);?>"/>
+<?php } else{?>
+    <div class="row show-grid">
+        <div class="col-xs-4">
+            <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE');?></label>
+        </div>
+        <div class="col-sm-4 col-xs-8">
+            <?php echo System_helper::display_date($item['date_stock_out']);?>
+        </div>
     </div>
-</div>
+<?php }?>
 
 <div class="row show-grid">
     <div class="col-xs-4">
@@ -52,36 +66,17 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
     </div>
     <?php if($item['purpose']){?>
         <div class="col-sm-4 col-xs-8">
-            <label class="control-label">
-                <?php
-                if($item['purpose']==$CI->config->item('system_purpose_variety_short_inventory'))
-                {
-                    echo $this->lang->line('LABEL_STOCK_OUT_PURPOSE_SHORT');
-                }
-                elseif($item['purpose']==$CI->config->item('system_purpose_variety_rnd'))
-                {
-                    echo $this->lang->line('LABEL_STOCK_OUT_PURPOSE_RND');
-                }
-                elseif($item['purpose']==$CI->config->item('system_purpose_variety_sample'))
-                {
-                    echo $this->lang->line('LABEL_STOCK_OUT_PURPOSE_SAMPLE');
-                }
-                elseif($item['purpose']==$CI->config->item('system_purpose_variety_demonstration'))
-                {
-                    echo $this->lang->line('LABEL_STOCK_OUT_PURPOSE_DEMONSTRATION');
-                }
-                ?>
-            </label>
+            <label class="control-label"><?php echo $item['purpose']; ?></label>
             <input type="hidden" name="item[purpose]" value="<?php echo $item['purpose'];?>">
         </div>
     <?php } else{?>
         <div class="col-sm-4 col-xs-8">
             <select id="purpose" name="item[purpose]" class="form-control">
                 <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                <option value="<?php echo $CI->config->item('system_purpose_variety_short_inventory');?>" <?php if(isset($item['purpose'])){if($item['purpose']==$CI->config->item('system_purpose_variety_short_inventory')){echo "selected";}}?>><?php echo $this->lang->line('LABEL_STOCK_OUT_PURPOSE_SHORT');?></option>
-                <option value="<?php echo $CI->config->item('system_purpose_variety_rnd');?>" <?php if(isset($item['purpose'])){if($item['purpose']==$CI->config->item('system_purpose_variety_rnd')){echo "selected";}}?>><?php echo $this->lang->line('LABEL_STOCK_OUT_PURPOSE_RND');?></option>
-                <option value="<?php echo $CI->config->item('system_purpose_variety_sample');?>" <?php if(isset($item['purpose'])){if($item['purpose']==$CI->config->item('system_purpose_variety_sample')){echo "selected";}}?>><?php echo $this->lang->line('LABEL_STOCK_OUT_PURPOSE_SAMPLE');?></option>
-                <option value="<?php echo $CI->config->item('system_purpose_variety_demonstration');?>" <?php if(isset($item['purpose'])){if($item['purpose']==$CI->config->item('system_purpose_variety_demonstration')){echo "selected";}}?>><?php echo $this->lang->line('LABEL_STOCK_OUT_PURPOSE_DEMONSTRATION');?></option>
+                <option value="<?php echo $CI->config->item('system_purpose_variety_short_inventory');?>" <?php if(isset($item['purpose'])){if($item['purpose']==$CI->config->item('system_purpose_variety_short_inventory')){echo "selected";}}?>><?php echo $this->lang->line('LABEL_STOCK_OUT_SHORT_INVENTORY');?></option>
+                <option value="<?php echo $CI->config->item('system_purpose_variety_rnd');?>" <?php if(isset($item['purpose'])){if($item['purpose']==$CI->config->item('system_purpose_variety_rnd')){echo "selected";}}?>><?php echo $this->lang->line('LABEL_STOCK_OUT_RND');?></option>
+                <option value="<?php echo $CI->config->item('system_purpose_variety_sample');?>" <?php if(isset($item['purpose'])){if($item['purpose']==$CI->config->item('system_purpose_variety_sample')){echo "selected";}}?>><?php echo $this->lang->line('LABEL_STOCK_OUT_SAMPLE_PURPOSE');?></option>
+                <option value="<?php echo $CI->config->item('system_purpose_variety_demonstration');?>" <?php if(isset($item['purpose'])){if($item['purpose']==$CI->config->item('system_purpose_variety_demonstration')){echo "selected";}}?>><?php echo $this->lang->line('LABEL_STOCK_OUT_DEMONSTRATION');?></option>
             </select>
         </div>
     <?php } ?>
@@ -230,7 +225,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <input type="hidden"  id="variety_id<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][variety_id]" value="<?php echo $so_variety['variety_id']; ?>" />
                 </td>
                 <td>
-                    <label><?php echo $so_variety['pack_size_name']; ?></label>
+                    <label><?php if($so_variety['pack_size_id']==0){echo 'Bulk';}else{echo $so_variety['pack_size_name'];} ?></label>
                     <input type="hidden" id="pack_size_id<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][pack_size_id]" value="<?php echo $so_variety['pack_size_id']; ?>" />
 
                 </td>
