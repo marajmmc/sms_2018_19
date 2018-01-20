@@ -695,6 +695,7 @@ class Lc_open extends Root_Controller
             $this->db->join($this->config->item('table_login_setup_variety_principals').' svp','svp.variety_id = scv.id AND svp.principal_id = '.$data['item']['principal_id'].' AND svp.revision = 1','INNER');
             $this->db->join($this->config->item('table_login_setup_classification_vpack_size').' sps','sps.id = lcd.pack_size_id','LEFT');
             $this->db->where('lcd.lc_id',$item_id);
+            $this->db->where('lcd.quantity_lc >0');
             $this->db->order_by('lcd.id ASC');
             $data['items']=$this->db->get()->result_array();
 
@@ -755,6 +756,7 @@ class Lc_open extends Root_Controller
             $this->db->join($this->config->item('table_login_setup_variety_principals').' svp','svp.variety_id = scv.id AND svp.principal_id = '.$data['item']['principal_id'].' AND svp.revision = 1','INNER');
             $this->db->join($this->config->item('table_login_setup_classification_vpack_size').' sps','sps.id = lcd.pack_size_id','LEFT');
             $this->db->where('lcd.lc_id',$item_id);
+            $this->db->where('lcd.quantity_lc >0');
             $this->db->order_by('lcd.id ASC');
             $data['items']=$this->db->get()->result_array();
 
@@ -821,6 +823,7 @@ class Lc_open extends Root_Controller
             $this->db->join($this->config->item('table_login_setup_variety_principals').' svp','svp.variety_id = scv.id AND svp.principal_id = '.$data['item']['principal_id'].' AND svp.revision = 1','INNER');
             $this->db->join($this->config->item('table_login_setup_classification_vpack_size').' sps','sps.id = lcd.pack_size_id','LEFT');
             $this->db->where('lcd.lc_id',$item_id);
+            $this->db->where('lcd.quantity_lc >0');
             $this->db->order_by('lcd.id ASC');
             $data['items']=$this->db->get()->result_array();
 
