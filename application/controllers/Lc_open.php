@@ -908,7 +908,7 @@ class Lc_open extends Root_Controller
             foreach($items as $variety)
             {
                 /// empty checking
-                if(!(($variety['variety_id']>0) && ($variety['pack_size_id']>=0) && ($variety['quantity_lc']>=0) && ($variety['price_unit_lc_currency']>0)))
+                if(!(($variety['variety_id']>0) && ($variety['pack_size_id']>=0) && ($variety['quantity_lc']>0) && ($variety['price_unit_lc_currency']>0)))
                 {
                     $this->message='Invalid input (variety info :: '.$variety['variety_id'].').';
                     return false;
