@@ -56,7 +56,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 </tr>
                 <tr>
                     <th class="widget-header"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_OTHER_COST_CURRENCY');?></label></th>
-                    <th class="bg-danger"><label class="control-label"><?php echo number_format($item['other_cost_currency'],2);?></label></th>
+                    <th class="bg-danger"><label class="control-label"><?php echo number_format($item['price_other_cost_total_currency'],2);?></label></th>
                     <th class="widget-header"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS');?></label></th>
                     <th class="bg-danger"><label class="control-label"><?php echo $item['remarks'];?></label></th>
                 </tr>
@@ -71,7 +71,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <table class="table table-bordered">
                     <thead>
                         <tr>
-                            <th class="widget-header text-center" colspan="21">LC (<?php echo $item['lc_number'];?>) Product & Price Details :: (Forwarded: <?php echo $item['status_forward']?>)</th>
+                            <th class="widget-header text-center" colspan="21">LC (<?php echo Barcode_helper::get_barcode_lc_open($item['id']);?>) Product & Price Details :: (Forwarded: <?php echo $item['status_forward']?>)</th>
                         </tr>
                         <tr>
                             <th class="bg-danger" style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_VARIETY'); ?></th>
@@ -82,80 +82,66 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                             <th class="bg-danger text-right" style="min-width: 150px;">Total Price (Currency)</th>
                         </tr>
                     </thead>
+                    <tbody id="items_container">
                     <?php
-                    if(!empty($items))
+                    $quantity_lc_kg=number_format(0,3);
+                    foreach($items as $index=>$value)
                     {
-                        ?>
-                        <tbody>
-                        <?php
-                        $total_kg='0.000';
-                        $total_currency='0.00';
-                        $grand_total_currency='0.00';
-                        foreach($items as $data)
+                        if($value['pack_size_id']==0)
                         {
-                            $item_per_kg='0.000';
-                            $item_per_currency='0.000';
-                            if($data['quantity_type_id']==0)
-                            {
-                                $item_per_kg = number_format(($data['quantity_order']),3);
-                            }
-                            else
-                            {
-                                $item_per_kg = number_format((($data['pack_size_name']*$data['quantity_order'])/1000),3);
-                            }
-                            $item_per_currency=number_format(($data['quantity_order']*$data['price_currency']),2);
-                            $total_kg+=$item_per_kg;
-                            $total_currency+=($data['quantity_order']*$data['price_currency']);
-                            ?>
-                            <tr>
-                                <td><strong class="text-success"><?php echo $data['variety_name_import']?></strong></td>
-                                <td class="text-center"><?php if($data['pack_size_name']==0){echo "Bulk";}else{echo $data['pack_size_name'];}?></td>
-                                <td class="text-right"><?php echo $data['quantity_order']?></td>
-                                <td class="text-right"><?php echo $item_per_kg?></td>
-                                <td class="text-right"><?php echo $data['price_currency']?></td>
-                                <td class="text-right"><?php echo $item_per_currency?></td>
-                            </tr>
-                        <?php
+                            $quantity_lc_kg=number_format($value['quantity_lc'],3);
+                        }
+                        else
+                        {
+                            $quantity_lc_kg=number_format((($value['quantity_lc']*$value['pack_size_name'])/1000),3);
                         }
                         ?>
-                        </tbody>
-                        <tfoot>
                         <tr>
-                            <th colspan="3" class="text-right"><?php echo $this->lang->line('LABEL_TOTAL_KG')?></th>
-                            <th class="text-right"><label class="control-label"><?php echo number_format($total_kg,3);?></label></th>
-                            <th class="text-right"><?php echo $this->lang->line('LABEL_TOTAL_CURRENCY')?></th>
-                            <th class="text-right"><label class="control-label"><?php echo number_format($total_currency,2);?></label></th>
-                        </tr>
-                        <tr>
-                            <th colspan="5" class="text-right"><?php echo $this->lang->line('LABEL_OTHER_COST_CURRENCY')?></th>
-                            <th class="text-right">
-                                <label class="control-label"><?php echo number_format($item['other_cost_currency'],2)?></label>
-                            </th>
-                        </tr>
-                        <tr>
-                            <th colspan="5" class="text-right"><?php echo $this->lang->line('LABEL_GRAND_TOTAL_CURRENCY')?></th>
-                            <th class="text-right">
-                                <label class="control-label">
-                                    <?php
-                                    $grand_total_currency=($total_currency+$item['other_cost_currency']);
-                                    echo number_format($grand_total_currency,2);?>
+                            <td>
+                                <label><?php echo $value['variety_name']; ?></label>
+                            </td>
+                            <td class="text-center">
+                                <label><?php if($value['pack_size_id']==0){echo 'Bulk';}else{echo $value['pack_size_name'];} ?></label>
+                            </td>
+                            <td class="text-right">
+                                <label><?php echo number_format($value['quantity_lc'],3); ?></label>
+                            </td>
+                            <td class="text-right">
+                                <label><?php echo number_format($quantity_lc_kg,3); ?></label>
+                            </td>
+                            <td class="text-right">
+                                <label><?php echo number_format($value['price_unit_lc_currency'],2); ?></label>
+                            </td>
+                            <td class="text-right">
+                                <label class="control-label price_total_lc_currency" id="price_total_lc_currency_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>">
+                                    <?php echo number_format($value['price_total_lc_currency'],2); ?>
                                 </label>
-                            </th>
+                            </td>
                         </tr>
-                        </tfoot>
-                    <?php
-                    }
-                    else
-                    {
-                        ?>
-                        <tfoot>
-                            <tr>
-                                <td class="widget-header text-center" colspan="21"><strong>Data Not Found</strong></td>
-                            </tr>
-                        </tfoot>
                     <?php
                     }
                     ?>
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                        <th colspan="3" class="text-right"><?php echo $this->lang->line('LABEL_TOTAL_KG')?></th>
+                        <th class="text-right"><label class="control-label" id="lbl_quantity_total_kg"><?php echo number_format(($item['quantity_total_kg']),3)?></label></th>
+                        <th class="text-right"><?php echo $this->lang->line('LABEL_TOTAL_CURRENCY')?></th>
+                        <th class="text-right"><label class="control-label" id="lbl_price_variety_total_currency"><?php echo number_format($item['price_variety_total_currency'],2)?></label></th>
+                    </tr>
+                    <tr>
+                        <th colspan="5" class="text-right"><?php echo $this->lang->line('LABEL_OTHER_COST_CURRENCY')?></th>
+                        <th class="text-right">
+                            <label class="control-label"><?php echo number_format($item['price_other_cost_total_currency'],2)?></label>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th colspan="5" class="text-right"><?php echo $this->lang->line('LABEL_GRAND_TOTAL_CURRENCY')?></th>
+                        <th class="text-right">
+                            <label class="control-label" id="lbl_price_total_currency"> <?php echo number_format(($item['price_total_currency']),2)?></label>
+                        </th>
+                    </tr>
+                    </tfoot>
                 </table>
             </div>
 

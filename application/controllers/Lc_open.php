@@ -24,14 +24,14 @@ class Lc_open extends Root_Controller
         {
             $this->system_get_items();
         }
-        /*elseif($action=="list_all")
+        elseif($action=="list_all")
         {
             $this->system_list_all();
         }
         elseif($action=="get_items_all")
         {
             $this->system_get_items_all();
-        }*/
+        }
         elseif($action=="add")
         {
             $this->system_add();
@@ -44,9 +44,13 @@ class Lc_open extends Root_Controller
         {
             $this->system_save();
         }
-        /*elseif($action=="details")
+        elseif($action=="details")
         {
             $this->system_details($id);
+        }
+        elseif($action=="details_all_lc")
+        {
+            $this->system_details_all_lc($id);
         }
         elseif($action=="forward")
         {
@@ -55,8 +59,7 @@ class Lc_open extends Root_Controller
         elseif($action=="save_forward")
         {
             $this->system_save_lc_forward();
-        }*/
-
+        }
         elseif($action=="set_preference")
         {
             $this->system_set_preference();
@@ -64,6 +67,14 @@ class Lc_open extends Root_Controller
         elseif($action=="save_preference")
         {
             $this->system_save_preference();
+        }
+        elseif($action=="set_preference_all_lc")
+        {
+            $this->system_set_preference_all_lc();
+        }
+        elseif($action=="save_preference_all_lc")
+        {
+            $this->system_save_preference_all_lc();
         }
         else
         {
@@ -185,8 +196,8 @@ class Lc_open extends Root_Controller
         if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
         {
             $user = User_helper::get_user();
-            $result=Query_helper::get_info($this->config->item('table_sms_setup_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
-            $data['items']['id']= 1;
+            $result=Query_helper::get_info($this->config->item('table_sms_setup_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list_all"'),1);
+            $data['items']['barcode']= 1;
             $data['items']['fiscal_year_name']= 1;
             $data['items']['month_name']= 1;
             $data['items']['date_opening']= 1;
@@ -195,10 +206,11 @@ class Lc_open extends Root_Controller
             $data['items']['currency_name']= 1;
             $data['items']['lc_number']= 1;
             $data['items']['consignment_name']= 1;
+            $data['items']['price_other_cost_total_currency']= 1;
+            $data['items']['quantity_total_kg']= 1;
+            $data['items']['price_variety_total_currency']= 1;
             $data['items']['price_total_currency']= 1;
-            $data['items']['other_cost_currency']= 1;
-            $data['items']['status_expense']= 1;
-            $data['items']['status_release']= 1;
+            $data['items']['status_forward']= 1;
             if($result)
             {
                 if($result['preferences']!=null)
@@ -225,7 +237,7 @@ class Lc_open extends Root_Controller
             {
                 $ajax['system_message']=$this->message;
             }
-            $ajax['system_page_url']=site_url($this->controller_url);
+            $ajax['system_page_url']=site_url($this->controller_url."/index/list_all");
             $this->json_return($ajax);
         }
         else
@@ -244,7 +256,7 @@ class Lc_open extends Root_Controller
         $pagesize = $this->input->post('pagesize');
         if(!$pagesize)
         {
-            $pagesize=50;
+            $pagesize=100;
         }
         else
         {
@@ -255,19 +267,21 @@ class Lc_open extends Root_Controller
         $this->db->select('fy.name fiscal_year_name');
         $this->db->select('principal.name principal_name');
         $this->db->select('sc.name currency_name');
-        $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.id = lc.year_id','INNER');
+        $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.id = lc.fiscal_year_id','INNER');
         $this->db->join($this->config->item('table_sms_setup_currency').' sc','sc.id = lc.currency_id','INNER');
         $this->db->join($this->config->item('table_login_basic_setup_principal').' principal','principal.id = lc.principal_id','INNER');
-        $this->db->where('lc.status',$this->config->item('system_status_active'));
-        $this->db->order_by('lc.year_id','DESC');
+        $this->db->where('lc.status !=',$this->config->item('system_status_delete'));
+        $this->db->order_by('lc.fiscal_year_id','DESC');
         $this->db->order_by('lc.id','DESC');
         $this->db->limit($pagesize,$current_records);
         $results=$this->db->get()->result_array();
+
         $items=array();
         foreach($results as $result)
         {
             $item=array();
             $item['id']=$result['id'];
+            $item['barcode']=Barcode_helper::get_barcode_lc_open($result['id']);
             $item['fiscal_year_name']=$result['fiscal_year_name'];
             $item['month_name']=$this->lang->line("LABEL_MONTH_$result[month_id]");
             $item['date_opening']=System_helper::display_date($result['date_opening']);
@@ -276,12 +290,11 @@ class Lc_open extends Root_Controller
             $item['currency_name']=$result['currency_name'];
             $item['lc_number']=$result['lc_number'];
             $item['consignment_name']=$result['consignment_name'];
+            $item['quantity_total_kg']=$result['quantity_total_kg'];
+            $item['price_other_cost_total_currency']=$result['price_other_cost_total_currency'];
+            $item['price_variety_total_currency']=$result['price_variety_total_currency'];
             $item['price_total_currency']=$result['price_total_currency'];
-            $item['other_cost_currency']=$result['other_cost_currency'];
-            $item['status_expense']=$result['status_expense'];
-            $item['status_release']=$result['status_release'];
             $item['status_forward']=$result['status_forward'];
-            $item['status_received']=$result['status_received'];
             $items[]=$item;
         }
         $this->json_return($items);
@@ -659,7 +672,7 @@ class Lc_open extends Root_Controller
             $this->db->select('fy.name fiscal_year_name');
             $this->db->select('sc.name currency_name');
             $this->db->select('sp.name principal_name');
-            $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.id = lco.year_id','INNER');
+            $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.id = lco.fiscal_year_id','INNER');
             $this->db->join($this->config->item('table_sms_setup_currency').' sc','sc.id = lco.currency_id','INNER');
             $this->db->join($this->config->item('table_login_basic_setup_principal').' sp','sp.id = lco.principal_id','INNER');
             $this->db->where('lco.id',$item_id);
@@ -667,8 +680,9 @@ class Lc_open extends Root_Controller
             $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
             {
+                System_helper::invalid_try('View Non Exists',$item_id);
                 $ajax['status']=false;
-                $ajax['system_message']='Invalid LC - Data Not Found. Please Try Again.';
+                $ajax['system_message']='Invalid LC.';
                 $this->json_return($ajax);
             }
 
@@ -681,9 +695,10 @@ class Lc_open extends Root_Controller
             $this->db->join($this->config->item('table_login_setup_variety_principals').' svp','svp.variety_id = scv.id AND svp.principal_id = '.$data['item']['principal_id'].' AND svp.revision = 1','INNER');
             $this->db->join($this->config->item('table_login_setup_classification_vpack_size').' sps','sps.id = lcd.pack_size_id','LEFT');
             $this->db->where('lcd.lc_id',$item_id);
+            $this->db->order_by('lcd.id ASC');
             $data['items']=$this->db->get()->result_array();
 
-            $data['title']="LC Details :: ".$data['item']['lc_number'];
+            $data['title']="LC Details :: ".Barcode_helper::get_barcode_lc_open($item_id);
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/details",$data,true));
             if($this->message)
@@ -691,6 +706,66 @@ class Lc_open extends Root_Controller
                 $ajax['system_message']=$this->message;
             }
             $ajax['system_page_url']=site_url($this->controller_url.'/index/details/'.$item_id);
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+    }
+    private function system_details_all_lc($id)
+    {
+        if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
+        {
+            if($id>0)
+            {
+                $item_id=$id;
+            }
+            else
+            {
+                $item_id=$this->input->post('id');
+            }
+
+            $this->db->from($this->config->item('table_sms_lc_open').' lco');
+            $this->db->select('lco.*');
+            $this->db->select('fy.name fiscal_year_name');
+            $this->db->select('sc.name currency_name');
+            $this->db->select('sp.name principal_name');
+            $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.id = lco.fiscal_year_id','INNER');
+            $this->db->join($this->config->item('table_sms_setup_currency').' sc','sc.id = lco.currency_id','INNER');
+            $this->db->join($this->config->item('table_login_basic_setup_principal').' sp','sp.id = lco.principal_id','INNER');
+            $this->db->where('lco.id',$item_id);
+            $this->db->where('lco.status',$this->config->item('system_status_active'));
+            $data['item']=$this->db->get()->row_array();
+            if(!$data['item'])
+            {
+                System_helper::invalid_try('View Non Exists',$item_id);
+                $ajax['status']=false;
+                $ajax['system_message']='Invalid LC.';
+                $this->json_return($ajax);
+            }
+
+            $this->db->from($this->config->item('table_sms_lc_details').' lcd');
+            $this->db->select('lcd.*');
+            $this->db->select('scv.id variety_id, scv.name variety_name');
+            $this->db->select('svp.name_import variety_name_import');
+            $this->db->select('sps.name pack_size_name');
+            $this->db->join($this->config->item('table_login_setup_classification_varieties').' scv','scv.id = lcd.variety_id','INNER');
+            $this->db->join($this->config->item('table_login_setup_variety_principals').' svp','svp.variety_id = scv.id AND svp.principal_id = '.$data['item']['principal_id'].' AND svp.revision = 1','INNER');
+            $this->db->join($this->config->item('table_login_setup_classification_vpack_size').' sps','sps.id = lcd.pack_size_id','LEFT');
+            $this->db->where('lcd.lc_id',$item_id);
+            $this->db->order_by('lcd.id ASC');
+            $data['items']=$this->db->get()->result_array();
+
+            $data['title']="LC Details :: ".Barcode_helper::get_barcode_lc_open($item_id);
+            $ajax['status']=true;
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/details_all_lc",$data,true));
+            if($this->message)
+            {
+                $ajax['system_message']=$this->message;
+            }
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/details_all_lc/'.$item_id);
             $this->json_return($ajax);
         }
         else
@@ -717,7 +792,7 @@ class Lc_open extends Root_Controller
             $this->db->select('fy.name fiscal_year_name');
             $this->db->select('sc.name currency_name');
             $this->db->select('sp.name principal_name');
-            $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.id = lco.year_id','INNER');
+            $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.id = lco.fiscal_year_id','INNER');
             $this->db->join($this->config->item('table_sms_setup_currency').' sc','sc.id = lco.currency_id','INNER');
             $this->db->join($this->config->item('table_login_basic_setup_principal').' sp','sp.id = lco.principal_id','INNER');
             $this->db->where('lco.id',$item_id);
@@ -725,14 +800,15 @@ class Lc_open extends Root_Controller
             $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
             {
+                System_helper::invalid_try('Forwarded LC Non Exists',$item_id);
                 $ajax['status']=false;
-                $ajax['system_message']='Invalid LC - Data Not Found. Please Try Again.';
+                $ajax['system_message']='Invalid LC.';
                 $this->json_return($ajax);
             }
             if($data['item']['status_forward']==$this->config->item('system_status_yes'))
             {
                 $ajax['status']=false;
-                $ajax['system_message']='Already forwarded this LC :: '. $data['item']['lc_number'] .'.Please try another LC.';
+                $ajax['system_message']='Already forwarded this LC :: '. Barcode_helper::get_barcode_lc_open($item_id);
                 $this->json_return($ajax);
             }
 
@@ -745,9 +821,10 @@ class Lc_open extends Root_Controller
             $this->db->join($this->config->item('table_login_setup_variety_principals').' svp','svp.variety_id = scv.id AND svp.principal_id = '.$data['item']['principal_id'].' AND svp.revision = 1','INNER');
             $this->db->join($this->config->item('table_login_setup_classification_vpack_size').' sps','sps.id = lcd.pack_size_id','LEFT');
             $this->db->where('lcd.lc_id',$item_id);
+            $this->db->order_by('lcd.id ASC');
             $data['items']=$this->db->get()->result_array();
 
-            $data['title']="LC Forward :: ".$data['item']['lc_number'];
+            $data['title']="LC Forward :: ".Barcode_helper::get_barcode_lc_open($item_id);
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/forward",$data,true));
             if($this->message)
@@ -778,6 +855,7 @@ class Lc_open extends Root_Controller
         }
         else
         {
+            System_helper::invalid_try('Forward Access Denied',$id);
             $ajax['status']=false;
             $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
             $this->json_return($ajax);
@@ -789,8 +867,9 @@ class Lc_open extends Root_Controller
             $lc_open_result=Query_helper::get_info($this->config->item('table_sms_lc_open'),'*',array('id ='.$id),1);
             if(!$lc_open_result)
             {
+                System_helper::invalid_try('Forwarded LC Non Exists',$id);
                 $ajax['status']=false;
-                $ajax['system_message']='Invalid LC - Data Not Found. Please Try Again.';
+                $ajax['system_message']='Invalid LC.';
                 $this->json_return($ajax);
             }
             else
@@ -966,7 +1045,6 @@ class Lc_open extends Root_Controller
     }
     private function system_save_preference()
     {
-        $items=array();
         if($this->input->post('item'))
         {
             $items=$this->input->post('item');
@@ -1012,10 +1090,123 @@ class Lc_open extends Root_Controller
             }
 
             $this->db->trans_complete();   //DB Transaction Handle END
+            $ajax['status']=true;
             if ($this->db->trans_status() === TRUE)
             {
                 $this->message=$this->lang->line("MSG_SAVED_SUCCESS");
                 $this->system_list();
+            }
+            else
+            {
+                $ajax['status']=false;
+                $ajax['system_message']=$this->lang->line("MSG_SAVED_FAIL");
+                $this->json_return($ajax);
+            }
+        }
+    }
+    private function system_set_preference_all_lc()
+    {
+        if(isset($this->permissions['action0']) && ($this->permissions['action0']==1))
+        {
+            $user = User_helper::get_user();
+            $result=Query_helper::get_info($this->config->item('table_sms_setup_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list_all"'),1);
+            $data['items']['barcode']= 1;
+            $data['items']['fiscal_year_name']= 1;
+            $data['items']['month_name']= 1;
+            $data['items']['date_opening']= 1;
+            $data['items']['date_expected']= 1;
+            $data['items']['principal_name']= 1;
+            $data['items']['currency_name']= 1;
+            $data['items']['lc_number']= 1;
+            $data['items']['consignment_name']= 1;
+            $data['items']['price_other_cost_total_currency']= 1;
+            $data['items']['quantity_total_kg']= 1;
+            $data['items']['price_variety_total_currency']= 1;
+            $data['items']['price_total_currency']= 1;
+            $data['items']['status_forward']= 1;
+            if($result)
+            {
+                if($result['preferences']!=null)
+                {
+                    $data['preferences']=json_decode($result['preferences'],true);
+                    foreach($data['items'] as $key=>$value)
+                    {
+                        if(isset($data['preferences'][$key]))
+                        {
+                            $data['items'][$key]=$value;
+                        }
+                        else
+                        {
+                            $data['items'][$key]=0;
+                        }
+                    }
+                }
+            }
+
+            $data['title']="Set Preference";
+            $ajax['status']=true;
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/preference_all_lc",$data,true));
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/set_preference_all_lc');
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+    }
+    private function system_save_preference_all_lc()
+    {
+        if($this->input->post('item'))
+        {
+            $items=$this->input->post('item');
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("MSG_PLEASE_SELECT_ANY_ONE");
+            $this->json_return($ajax);
+            die();
+        }
+
+        $user = User_helper::get_user();
+        if(!(isset($this->permissions['action0']) && ($this->permissions['action0']==1)))
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+            die();
+        }
+        else
+        {
+            $time=time();
+            $this->db->trans_start();  //DB Transaction Handle START
+            $result=Query_helper::get_info($this->config->item('table_sms_setup_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list_all"'),1);
+            if($result)
+            {
+                $data['user_updated']=$user->user_id;
+                $data['date_updated']=$time;
+                $data['preferences']=json_encode($items);
+                Query_helper::update($this->config->item('table_sms_setup_user_preference'),$data,array('id='.$result['id']),false);
+            }
+            else
+            {
+                $data['user_id']=$user->user_id;
+                $data['controller']=$this->controller_url;
+                $data['method']='list_all';
+                $data['user_created']=$user->user_id;
+                $data['date_created']=$time;
+                $data['preferences']=json_encode($items);
+                Query_helper::add($this->config->item('table_sms_setup_user_preference'),$data,false);
+            }
+
+            $this->db->trans_complete();   //DB Transaction Handle END
+            $ajax['status']=true;
+            if ($this->db->trans_status() === TRUE)
+            {
+                $this->message=$this->lang->line("MSG_SAVED_SUCCESS");
+                $this->system_list_all();
             }
             else
             {
