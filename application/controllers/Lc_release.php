@@ -11,6 +11,7 @@ class Lc_release extends Root_Controller
         $this->message="";
         $this->permissions=User_helper::get_permission('Lc_release');
         $this->controller_url='lc_release';
+        $this->load->helper('barcode');
     }
 
     public function index($action="list",$id=0)
@@ -50,7 +51,7 @@ class Lc_release extends Root_Controller
         {
             $user = User_helper::get_user();
             $result=Query_helper::get_info($this->config->item('table_sms_setup_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
-            $data['items']['id']= 1;
+            $data['items']['barcode']= 1;
             $data['items']['fiscal_year_name']= 1;
             $data['items']['month_name']= 1;
             $data['items']['date_opening']= 1;
@@ -59,10 +60,11 @@ class Lc_release extends Root_Controller
             $data['items']['currency_name']= 1;
             $data['items']['lc_number']= 1;
             $data['items']['consignment_name']= 1;
+            $data['items']['price_other_cost_total_currency']= 1;
+            $data['items']['quantity_total_kg']= 1;
+            $data['items']['price_variety_total_currency']= 1;
             $data['items']['price_total_currency']= 1;
-            $data['items']['other_cost_currency']= 1;
-            $data['items']['status_received']= 1;
-            $data['items']['status_release']= 1;
+            $data['items']['status_forward']= 1;
             if($result)
             {
                 if($result['preferences']!=null)
@@ -94,24 +96,40 @@ class Lc_release extends Root_Controller
         }
         else
         {
+            $ajax['status']=false;
             $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
             $this->json_return($ajax);
         }
     }
     private function system_get_items()
     {
+        $current_records = $this->input->post('total_records');
+        if(!$current_records)
+        {
+            $current_records=0;
+        }
+        $pagesize = $this->input->post('pagesize');
+        if(!$pagesize)
+        {
+            $pagesize=100;
+        }
+        else
+        {
+            $pagesize=$pagesize*2;
+        }
         $this->db->from($this->config->item('table_sms_lc_open').' lc');
         $this->db->select('lc.*');
         $this->db->select('fy.name fiscal_year_name');
         $this->db->select('principal.name principal_name');
         $this->db->select('sc.name currency_name');
-        $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.id = lc.year_id','INNER');
+        $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.id = lc.fiscal_year_id','INNER');
         $this->db->join($this->config->item('table_sms_setup_currency').' sc','sc.id = lc.currency_id','INNER');
         $this->db->join($this->config->item('table_login_basic_setup_principal').' principal','principal.id = lc.principal_id','INNER');
         $this->db->where('lc.status_forward',$this->config->item('system_status_yes'));
-        $this->db->where('lc.status',$this->config->item('system_status_active'));
-        $this->db->order_by('lc.year_id','DESC');
+        $this->db->where('lc.status !=',$this->config->item('system_status_delete'));
+        $this->db->order_by('lc.fiscal_year_id','DESC');
         $this->db->order_by('lc.id','DESC');
+        $this->db->limit($pagesize,$current_records);
         $results=$this->db->get()->result_array();
 
         $items=array();
@@ -119,6 +137,7 @@ class Lc_release extends Root_Controller
         {
             $item=array();
             $item['id']=$result['id'];
+            $item['barcode']=Barcode_helper::get_barcode_lc_open($result['id']);
             $item['fiscal_year_name']=$result['fiscal_year_name'];
             $item['month_name']=$this->lang->line("LABEL_MONTH_$result[month_id]");
             $item['date_opening']=System_helper::display_date($result['date_opening']);
@@ -127,10 +146,11 @@ class Lc_release extends Root_Controller
             $item['currency_name']=$result['currency_name'];
             $item['lc_number']=$result['lc_number'];
             $item['consignment_name']=$result['consignment_name'];
+            $item['quantity_total_kg']=$result['quantity_total_kg'];
+            $item['price_other_cost_total_currency']=$result['price_other_cost_total_currency'];
+            $item['price_variety_total_currency']=$result['price_variety_total_currency'];
             $item['price_total_currency']=$result['price_total_currency'];
-            $item['other_cost_currency']=$result['other_cost_currency'];
-            $item['status_received']=$result['status_received'];
-            $item['status_release']=$result['status_release'];
+            $item['status_forward']=$result['status_forward'];
             $items[]=$item;
         }
         $this->json_return($items);

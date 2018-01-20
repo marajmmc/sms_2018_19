@@ -137,6 +137,11 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <label><input type="checkbox" class="system_jqx_column" value="status_forward" <?php if($items['status_forward']){echo 'checked';}?> value="1"><span class="label label-success">Forwarded<?php //echo $CI->lang->line('LABEL_TOTAL_CURRENCY'); ?></span></label>
             </div>
         </div>
+        <div class="col-xs-2">
+            <div class="checkbox">
+                <label><input type="checkbox" class="system_jqx_column" value="status_forward" <?php if($items['status_forward']){echo 'checked';}?> value="1"><span class="label label-success">Forwarded<?php //echo $CI->lang->line('LABEL_TOTAL_CURRENCY'); ?></span></label>
+            </div>
+        </div>
     </div>
     <div class="col-xs-12" id="system_jqx_container">
 

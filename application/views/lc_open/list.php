@@ -9,7 +9,7 @@ if(isset($CI->permissions['action1']) && ($CI->permissions['action1']==1))
         'href'=>site_url($CI->controller_url.'/index/add')
     );
 }
-if(isset($CI->permissions['action1']) && ($CI->permissions['action1']==1))
+if(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1))
 {
     $action_buttons[]=array(
         'type'=>'button',
@@ -25,7 +25,7 @@ if(isset($CI->permissions['action0']) && ($CI->permissions['action0']==1))
         'href'=>site_url($CI->controller_url.'/index/list_all')
     );
 }
-if(isset($CI->permissions['action0']) && ($CI->permissions['action0']==1))
+if((isset($CI->permissions['action1']) && ($CI->permissions['action1']==1)) || (isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)))
 {
     $action_buttons[]=array
     (
@@ -47,7 +47,8 @@ if(isset($CI->permissions['action0']) && ($CI->permissions['action0']==1))
 }
 if(isset($CI->permissions['action0']) && ($CI->permissions['action0']==1))
 {
-    $action_buttons[]=array(
+    $action_buttons[]=array
+    (
         'label'=>'Preference',
         'href'=>site_url($CI->controller_url.'/index/set_preference')
     );

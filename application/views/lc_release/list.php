@@ -58,11 +58,11 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         <div class="clearfix"></div>
     </div>
     <div class="col-xs-12" style="margin-bottom: 20px;">
-        <!--<div class="col-xs-2 ">
+        <div class="col-xs-2 ">
             <div class="checkbox">
-                <label><input type="checkbox" class="system_jqx_column" value="id" <?php /*if($items['id']){echo 'checked';}*/?> checked><span class="label label-success"><?php /*echo $CI->lang->line('ID'); */?></span></label>
+                <label><input type="checkbox" class="system_jqx_column" value="barcode" <?php if($items['barcode']){echo 'checked';}?> checked><span class="label label-success"><?php echo $CI->lang->line('LABEL_BARCODE'); ?></span></label>
             </div>
-        </div>-->
+        </div>
         <div class="col-xs-2">
             <div class="checkbox">
                 <label><input type="checkbox" class="system_jqx_column" value="fiscal_year_name" <?php if($items['fiscal_year_name']){echo 'checked';}?> value="1"><span class="label label-success"><?php echo $CI->lang->line('LABEL_FISCAL_YEAR'); ?></span></label>
@@ -105,22 +105,27 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         </div>
         <div class="col-xs-2">
             <div class="checkbox">
+                <label><input type="checkbox" class="system_jqx_column" value="price_other_cost_total_currency" <?php if($items['price_other_cost_total_currency']){echo 'checked';}?> value="1"><span class="label label-success"><?php echo $CI->lang->line('LABEL_OTHER_COST_CURRENCY'); ?></span></label>
+            </div>
+        </div>
+        <div class="col-xs-2">
+            <div class="checkbox">
+                <label><input type="checkbox" class="system_jqx_column" value="quantity_total_kg" <?php if($items['quantity_total_kg']){echo 'checked';}?> value="1"><span class="label label-success">KG<?php //echo $CI->lang->line('LABEL_TOTAL_CURRENCY'); ?></span></label>
+            </div>
+        </div>
+        <div class="col-xs-2">
+            <div class="checkbox">
+                <label><input type="checkbox" class="system_jqx_column" value="price_variety_total_currency" <?php if($items['price_variety_total_currency']){echo 'checked';}?> value="1"><span class="label label-success">Variety Currency<?php //echo $CI->lang->line('LABEL_OTHER_COST_CURRENCY'); ?></span></label>
+            </div>
+        </div>
+        <div class="col-xs-2">
+            <div class="checkbox">
                 <label><input type="checkbox" class="system_jqx_column" value="price_total_currency" <?php if($items['price_total_currency']){echo 'checked';}?> value="1"><span class="label label-success"><?php echo $CI->lang->line('LABEL_TOTAL_CURRENCY'); ?></span></label>
             </div>
         </div>
         <div class="col-xs-2">
             <div class="checkbox">
-                <label><input type="checkbox" class="system_jqx_column" value="other_cost_currency" <?php if($items['other_cost_currency']){echo 'checked';}?> value="1"><span class="label label-success"><?php echo $CI->lang->line('LABEL_OTHER_COST_CURRENCY'); ?></span></label>
-            </div>
-        </div>
-        <div class="col-xs-2">
-            <div class="checkbox">
-                <label><input type="checkbox" class="system_jqx_column" value="status_release" <?php if($items['status_release']){echo 'checked';}?> value="1"><span class="label label-success"><?php echo $CI->lang->line('LABEL_RELEASE_STATUS'); ?></span></label>
-            </div>
-        </div>
-        <div class="col-xs-2">
-            <div class="checkbox">
-                <label><input type="checkbox" class="system_jqx_column" value="status_received" <?php if($items['status_received']){echo 'checked';}?> value="1"><span class="label label-success"><?php echo $CI->lang->line('LABEL_RECEIVED_STATUS'); ?></span></label>
+                <label><input type="checkbox" class="system_jqx_column" value="status_forward" <?php if($items['status_forward']){echo 'checked';}?> value="1"><span class="label label-success">Forwarded<?php //echo $CI->lang->line('LABEL_TOTAL_CURRENCY'); ?></span></label>
             </div>
         </div>
     </div>
@@ -141,6 +146,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             dataType: "json",
             dataFields: [
                 { name: 'id', type: 'int' },
+                { name: 'barcode', type: 'string' },
                 { name: 'fiscal_year_name', type: 'string' },
                 { name: 'month_name', type: 'string' },
                 { name: 'date_opening', type: 'string' },
@@ -149,10 +155,11 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 { name: 'currency_name', type: 'string' },
                 { name: 'lc_number', type: 'string' },
                 { name: 'consignment_name', type: 'string' },
+                { name: 'price_other_cost_total_currency', type: 'string' },
+                { name: 'quantity_total_kg', type: 'string' },
+                { name: 'price_variety_total_currency', type: 'string' },
                 { name: 'price_total_currency', type: 'string' },
-                { name: 'other_cost_currency', type: 'string' },
-                { name: 'status_received', type: 'string' },
-                { name: 'status_release', type: 'string' }
+                { name: 'status_forward', type: 'string' }
             ],
             id: 'id',
             url: url
@@ -169,7 +176,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 sortable: true,
                 showfilterrow: true,
                 columnsresize: true,
-                pagesize:20,
+                pagesize:50,
                 pagesizeoptions: ['20', '50', '100', '200','300','500'],
                 selectionmode: 'singlerow',
                 altrows: true,
@@ -177,20 +184,23 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 autorowheight: true,
                 columnsreorder: true,
                 columns:
-                [
-                    { text: '<?php echo $CI->lang->line('LABEL_FISCAL_YEAR'); ?>', dataField: 'fiscal_year_name',filtertype: 'list', hidden: <?php echo $items['fiscal_year_name']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_MONTH'); ?>', dataField: 'month_name',filtertype: 'list', width:80, hidden: <?php echo $items['month_name']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_DATE_OPENING'); ?>', dataField: 'date_opening', width:90, hidden: <?php echo $items['date_opening']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_DATE_EXPECTED'); ?>', dataField: 'date_expected', width:90, hidden: <?php echo $items['date_expected']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_PRINCIPAL_NAME'); ?>', dataField: 'principal_name',filtertype: 'list', hidden: <?php echo $items['principal_name']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_CURRENCY_NAME'); ?>', dataField: 'currency_name',filtertype: 'list', hidden: <?php echo $items['currency_name']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_LC_NUMBER'); ?>', dataField: 'lc_number', hidden: <?php echo $items['lc_number']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_CONSIGNMENT_NAME'); ?>', dataField: 'consignment_name', hidden: <?php echo $items['consignment_name']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_TOTAL_CURRENCY'); ?>', dataField: 'price_total_currency', width:50, hidden: <?php echo $items['price_total_currency']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_OTHER_COST_CURRENCY'); ?>', dataField: 'other_cost_currency', width:50, hidden: <?php echo $items['other_cost_currency']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_RECEIVED_STATUS'); ?>', dataField: 'status_received',cellsalign: 'center',filtertype: 'list', width:80, hidden: <?php echo $items['status_received']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_RELEASE_STATUS'); ?>', dataField: 'status_release',cellsalign: 'center',filtertype: 'list', width:80, hidden: <?php echo $items['status_release']?0:1;?>}
-                ]
+                    [
+                        { text: '<?php echo $CI->lang->line('ID'); ?>', dataField: 'id',filtertype: 'list', hidden: true},
+                        { text: '<?php echo $CI->lang->line('LABEL_BARCODE'); ?>', dataField: 'barcode',filtertype: 'list', hidden: <?php echo $items['barcode']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_FISCAL_YEAR'); ?>', dataField: 'fiscal_year_name',filtertype: 'list', hidden: <?php echo $items['fiscal_year_name']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_MONTH'); ?>', dataField: 'month_name',filtertype: 'list', width:80, hidden: <?php echo $items['month_name']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_DATE_OPENING'); ?>', dataField: 'date_opening', width:90, hidden: <?php echo $items['date_opening']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_DATE_EXPECTED'); ?>', dataField: 'date_expected', width:90, hidden: <?php echo $items['date_expected']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_PRINCIPAL_NAME'); ?>', dataField: 'principal_name',filtertype: 'list', hidden: <?php echo $items['principal_name']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_CURRENCY_NAME'); ?>', dataField: 'currency_name',filtertype: 'list', hidden: <?php echo $items['currency_name']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_LC_NUMBER'); ?>', dataField: 'lc_number', hidden: <?php echo $items['lc_number']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_CONSIGNMENT_NAME'); ?>', dataField: 'consignment_name', hidden: <?php echo $items['consignment_name']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_OTHER_COST_CURRENCY'); ?>', dataField: 'price_other_cost_total_currency', width:50, hidden: <?php echo $items['price_other_cost_total_currency']?0:1;?>},
+                        { text: 'KG', dataField: 'quantity_total_kg', width:50, hidden: <?php echo $items['quantity_total_kg']?0:1;?>},
+                        { text: 'Variety Currency', dataField: 'price_variety_total_currency', width:50, hidden: <?php echo $items['price_variety_total_currency']?0:1;?>},
+                        { text: 'Total Currency', dataField: 'price_total_currency', width:50, hidden: <?php echo $items['price_total_currency']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_LC_FORWARD'); ?>', dataField: 'status_forward',cellsalign: 'center',filtertype: 'list', width:80}
+                    ]
             });
     });
 </script>

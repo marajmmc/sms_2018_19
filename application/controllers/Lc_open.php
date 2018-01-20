@@ -162,7 +162,7 @@ class Lc_open extends Root_Controller
         $this->db->join($this->config->item('table_sms_setup_currency').' sc','sc.id = lc.currency_id','INNER');
         $this->db->join($this->config->item('table_login_basic_setup_principal').' principal','principal.id = lc.principal_id','INNER');
         $this->db->where('lc.status_forward',$this->config->item('system_status_no'));
-        $this->db->where('lc.status',$this->config->item('system_status_active'));
+        $this->db->where('lc.status !=',$this->config->item('system_status_delete'));
         $this->db->order_by('lc.fiscal_year_id','DESC');
         $this->db->order_by('lc.id','DESC');
         $this->db->limit($pagesize,$current_records);
@@ -717,7 +717,7 @@ class Lc_open extends Root_Controller
     }
     private function system_details_all_lc($id)
     {
-        if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
+        if(isset($this->permissions['action1'])&&($this->permissions['action1']==1))
         {
             if($id>0)
             {
@@ -778,7 +778,7 @@ class Lc_open extends Root_Controller
     }
     private function system_lc_forward($id)
     {
-        if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
+        if((isset($this->permissions['action1']) && ($this->permissions['action1']==1)) || (isset($this->permissions['action2']) && ($this->permissions['action2']==1)))
         {
             if($id>0)
             {

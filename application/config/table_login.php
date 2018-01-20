@@ -28,8 +28,8 @@ $config['table_login_setup_classification_crops']='arm_login_2018_19.login_setup
 $config['table_login_setup_classification_crop_types']='arm_login_2018_19.login_setup_classification_crop_types';
 $config['table_login_setup_classification_varieties']='arm_login_2018_19.login_setup_classification_varieties';
 $config['table_login_setup_classification_vpack_size'] = 'arm_login_2018_19.login_setup_classification_variety_pack_size';
-$config['table_login_setup_classification_varietable_login_setup_classification_hybridty_category'] = 'arm_login_2018_19.login_setup_classification_variety_category';
-$config[''] = 'arm_login_2018_19.login_setup_classification_hybrid';
+$config['table_login_setup_classification_variety_category'] = 'arm_login_2018_19.login_setup_classification_variety_category';
+$config['table_login_setup_classification_hybrid'] = 'arm_login_2018_19.login_setup_classification_hybrid';
 $config['table_login_setup_variety_principals'] = 'arm_login_2018_19.login_setup_variety_principals';
 $config['table_login_setup_classification_variety_price'] = 'arm_login_2018_19.login_setup_classification_variety_price';
 

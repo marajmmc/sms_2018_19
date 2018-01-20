@@ -34,6 +34,10 @@ class Barcode_helper
     {
         return 'LO'.str_pad($increment_id,6,0,STR_PAD_LEFT);
     }
+    public static function get_barcode_lc_release($increment_id)
+    {
+        return 'LR'.str_pad($increment_id,6,0,STR_PAD_LEFT);
+    }
 
 
 }
