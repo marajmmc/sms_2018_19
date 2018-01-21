@@ -325,7 +325,7 @@ class Stock_out_variety extends Root_Controller
                     if($item['quantity']>$current_stock)
                     {
                         $ajax['status']=false;
-                        $ajax['system_message']='This Insert'.$item['variety_id'].' Pack size id: '.$item['pack_size_id'].' Warehouse id: '.$item['warehouse_id'].' Quantity: '.$item['quantity'].' will make current stock negative.';
+                        $ajax['system_message']='This Insert('.$item['variety_id'].'-'.$item['pack_size_id'].'-'.$item['warehouse_id'].'-'.$item['quantity'].' will make current stock negative.)';
                         $this->json_return($ajax);
                     }
                 }
@@ -333,7 +333,7 @@ class Stock_out_variety extends Root_Controller
             else
             {
                 $ajax['status']=false;
-                $ajax['system_message']='This Item'.$item['variety_id'].'-'.$item['pack_size_id'].'-'.$item['warehouse_id'].'-'.$item['quantity'].' is absent in stock.';
+                $ajax['system_message']='This Item('.$item['variety_id'].'-'.$item['pack_size_id'].'-'.$item['warehouse_id'].'-'.$item['quantity'].' is absent in stock.)';
                 $this->json_return($ajax);
             }
         }
@@ -446,7 +446,7 @@ class Stock_out_variety extends Root_Controller
                 else
                 {
                     $ajax['status']=false;
-                    $ajax['system_message']='This Item: '.$item['variety_id'].'-'.$item['pack_size_id'].'-'.$item['warehouse_id'].'-'.$item['quantity'].' is absent in stock.';
+                    $ajax['system_message']='This Item:('.$item['variety_id'].'-'.$item['pack_size_id'].'-'.$item['warehouse_id'].'-'.$item['quantity'].' is absent in stock.)';
                     $this->json_return($ajax);
                 }
             }
