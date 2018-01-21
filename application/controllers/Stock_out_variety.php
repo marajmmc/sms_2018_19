@@ -423,19 +423,19 @@ class Stock_out_variety extends Root_Controller
                     {
                         if($item_head['purpose']==$this->config->item('system_purpose_variety_rnd'))
                         {
-                            $data['out_stock_rnd']=($current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]['out_stock_rnd']-$item['quantity']);
+                            $data['out_stock_rnd']=($current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]['out_stock_rnd']+$item['quantity']);
                         }
                         elseif($item_head['purpose']==$this->config->item('system_purpose_variety_short_inventory'))
                         {
-                            $data['out_stock_short_inventory']=($current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]['out_stock_short_inventory']-$item['quantity']);
+                            $data['out_stock_short_inventory']=($current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]['out_stock_short_inventory']+$item['quantity']);
                         }
                         elseif($item_head['purpose']==$this->config->item('system_purpose_variety_demonstration'))
                         {
-                            $data['out_stock_demonstration']=($current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]['out_stock_demonstration']-$item['quantity']);
+                            $data['out_stock_demonstration']=($current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]['out_stock_demonstration']+$item['quantity']);
                         }
                         elseif($item_head['purpose']==$this->config->item('system_purpose_variety_sample'))
                         {
-                            $data['out_stock_sample']=($current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]['out_stock_sample']-$item['quantity']);
+                            $data['out_stock_sample']=($current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]['out_stock_sample']+$item['quantity']);
                         }
                         $data['current_stock']=($current_stock-$item['quantity']);
                     }
