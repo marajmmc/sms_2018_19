@@ -19,9 +19,10 @@ if(isset($CI->permissions['action0']) && ($CI->permissions['action0']==1))
         'data-action-link'=>site_url($CI->controller_url.'/index/details_all_lc')
     );
 }
-if(isset($CI->permissions['action0']) && ($CI->permissions['action0']==1))
+if(isset($CI->permissions['action6']) && ($CI->permissions['action6']==1))
 {
-    $action_buttons[]=array(
+    $action_buttons[]=array
+    (
         'label'=>'Preference',
         'href'=>site_url($CI->controller_url.'/index/set_preference_all_lc')
     );

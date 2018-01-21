@@ -7,7 +7,7 @@ $action_buttons[]=array
     'label'=>$CI->lang->line("ACTION_BACK"),
     'href'=>site_url($CI->controller_url)
 );
-if(isset($CI->permissions['action1']) && ($CI->permissions['action1']==1))
+if((isset($CI->permissions['action1']) && ($CI->permissions['action1']==1)) || (isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)))
 {
     $action_buttons[]=array
     (
@@ -16,23 +16,20 @@ if(isset($CI->permissions['action1']) && ($CI->permissions['action1']==1))
         'id'=>'button_action_save',
         'data-form'=>'#save_form'
     );
-    if(isset($CI->permissions['action1']) && ($CI->permissions['action1']==1))
-    {
-        $action_buttons[]=array
-        (
-            'type'=>'button',
-            'label'=>$CI->lang->line("ACTION_SAVE_NEW"),
-            'id'=>'button_action_save_new',
-            'data-form'=>'#save_form'
-        );
-    }
-    $action_buttons[]=array(
+    $action_buttons[]=array
+    (
         'type'=>'button',
-        'label'=>$CI->lang->line("ACTION_CLEAR"),
-        'id'=>'button_action_clear',
+        'label'=>$CI->lang->line("ACTION_SAVE_NEW"),
+        'id'=>'button_action_save_new',
         'data-form'=>'#save_form'
     );
 }
+$action_buttons[]=array(
+    'type'=>'button',
+    'label'=>$CI->lang->line("ACTION_CLEAR"),
+    'id'=>'button_action_clear',
+    'data-form'=>'#save_form'
+);
 $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
 ?>
@@ -127,9 +124,18 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <?php
                 if($item['id']>0)
                 {
-                    ?>
-                    <label class="control-label"><?php echo System_helper::display_date($item['date_opening']);?></label>
-                <?php
+                    if(isset($CI->permissions['action2']) && $CI->permissions['action2']==1)
+                    {
+                        ?>
+                        <input type="text" name="item[date_opening]" id="date_opening" class="form-control datepicker date_large" value="<?php echo System_helper::display_date(time());?>" />
+                    <?php
+                    }
+                    else
+                    {
+                        ?>
+                        <label class="control-label"><?php echo System_helper::display_date($item['date_opening']);?></label>
+                    <?php
+                    }
                 }
                 else
                 {
@@ -305,6 +311,13 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <th class="text-right"></th>
                     </tr>
                     <tr>
+                        <th colspan="5" class="text-right"><?php echo $this->lang->line('LABEL_OTHER_COST_CURRENCY')?></th>
+                        <th class="text-right">
+                            <label class="control-label" id="lbl_price_other_cost_total_currency"> <?php echo number_format(($item['price_other_cost_total_currency']),2)?></label>
+                        </th>
+                        <th>&nbsp;</th>
+                    </tr>
+                    <tr>
                         <th colspan="5" class="text-right"><?php echo $this->lang->line('LABEL_GRAND_TOTAL_CURRENCY')?></th>
                         <th class="text-right">
                             <label class="control-label" id="lbl_price_total_currency"> <?php echo number_format(($item['price_total_currency']),2)?></label>
@@ -352,7 +365,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 </select>
             </td>
             <td>
-                <select class="form-control pack_size_id" data-new-pack-size="0">
+                <select style="display: none;" class="form-control pack_size_id" data-new-pack-size="0">
                     <option value="-1"><?php echo $this->lang->line('SELECT'); ?></option>
                     <option value="0" data-pack-size-name="0">Bulk</option>
                     <?php
@@ -366,13 +379,13 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 </select>
             </td>
             <td class="text-right">
-                <input type="text" class="form-control float_type_positive quantity_lc" value=""/>
+                <input type="text" class="form-control float_type_positive quantity_lc" value="" style="display: none;"/>
             </td>
             <td class="text-right">
                 <label class="control-label quantity_lc_kg">0.000</label>
             </td>
             <td class="text-right">
-                <input type="text" class="form-control float_type_positive price_unit_lc_currency" value=""/>
+                <input type="text" class="form-control float_type_positive price_unit_lc_currency" value="" style="display: none;"/>
             </td>
             <td class="text-right">
                 <label class="control-label price_total_lc_currency">0.00</label>
@@ -385,11 +398,11 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
     </table>
 </div>
 <script>
-    function calculate_total()
+    /*function calculate_total()
     {
-        var quantity_total_kg=parseFloat(number_format(0,3));
-        var price_variety_total_currency=parseFloat(number_format(0,2));
-        var price_total_currency=parseFloat(number_format(0,2));
+        var quantity_total_kg=0;
+        var price_variety_total_currency=0;
+        var price_total_currency=0;
         $('#items_container .quantity_lc').each(function(index,element)
         {
             var current_id=parseInt($(this).attr('data-current-id'));
@@ -443,6 +456,29 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             price_total_currency=price_variety_total_currency;
         }
         $("#lbl_price_total_currency").html(number_format(price_total_currency,2));
+    }*/
+    function calculate_total()
+    {
+        var quantity_total_kg=0;
+        var price_total_lc_currency=0;
+        $('#items_container .quantity_lc_kg').each(function(index, element)
+        {
+            var current_id=parseInt($(this).attr('data-current-id'));
+            quantity_total_kg+=parseFloat($('#quantity_lc_kg_'+current_id).html());
+            price_total_lc_currency+=parseFloat($('#price_total_lc_currency_'+current_id).html());
+        });
+        $('#lbl_quantity_total_kg').html(number_format(quantity_total_kg,3));
+        $('#lbl_price_variety_total_currency').html(number_format(price_total_lc_currency,2));
+        if(isNaN($('#price_other_cost_total_currency').val()))
+        {
+            var price_total_currency=price_total_lc_currency;
+        }
+        else
+        {
+            var price_total_currency=(parseFloat($('#price_other_cost_total_currency').val())+price_total_lc_currency);
+        }
+
+        $('#lbl_price_total_currency').html(number_format(price_total_currency,2));
     }
     $(document).ready(function()
     {
@@ -523,22 +559,118 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         $(document).on("click", ".system_button_add_delete", function(event)
         {
             $(this).closest('tr').remove();
-            //calculate_total();
+            calculate_total();
         });
-        $(document).off('change','#items_container .pack_size_id');
-        $(document).on('input', '#items_container .pack_size_id', function(){
+
+        $(document).off('change','#items_container .variety_id');
+        $(document).on('change', '#items_container .variety_id', function(){
+            var current_id=parseInt($(this).attr('data-current-id'));
+            var variety_id=parseInt($(this).val());
+            if(variety_id>0)
+            {
+                $('#pack_size_id_'+current_id).show();
+                $('#quantity_lc_'+current_id).show();
+                $('#price_unit_lc_currency_'+current_id).show();
+            }
+            else
+            {
+                $('#pack_size_id_'+current_id).hide();
+                $('#quantity_lc_'+current_id).hide();
+                $('#price_unit_lc_currency_'+current_id).hide();
+            }
+            $('#pack_size_id_'+current_id).val('-1');
+            $('#quantity_lc_'+current_id).val('0.000');
+            $('#price_unit_lc_currency_'+current_id).val('0.00');
+            $('#quantity_lc_kg_'+current_id).html('0.000');
+            $('#price_total_lc_currency_'+current_id).html('0.00');
             calculate_total();
         })
-        $(document).off('change','#items_container .quantity_lc');
-        $(document).on('input', '#items_container .quantity_lc', function(){
+
+        $(document).off('change','#items_container .pack_size_id');
+        $(document).on('change', '#items_container .pack_size_id', function()
+        {
+            var current_id=parseInt($(this).attr('data-current-id'));
+            var pack_size_id=parseInt($(this).val());
+            if(pack_size_id!='-1')
+            {
+                $('#quantity_lc_'+current_id).show();
+                $('#price_unit_lc_currency_'+current_id).show();
+            }
+            else
+            {
+                $('#quantity_lc_'+current_id).hide();
+                $('#price_unit_lc_currency_'+current_id).hide();
+            }
+            $('#quantity_lc_'+current_id).val('0.000');
+            $('#price_unit_lc_currency_'+current_id).val('0.00');
+            $('#quantity_lc_kg_'+current_id).html('0.000');
+            $('#price_total_lc_currency_'+current_id).html('0.00');
+            calculate_total();
+        })
+
+        $(document).off('input','#items_container .quantity_lc');
+        $(document).on('input', '#items_container .quantity_lc', function()
+        {
+            var current_id=parseInt($(this).attr('data-current-id'));
+            var quantity_lc_kg=0;
+            var quantity_lc=parseFloat($(this).val());
+            var price_unit_lc_currency=parseFloat($("#price_unit_lc_currency_"+current_id).val());
+            if(isNaN(quantity_lc))
+            {
+                quantity_lc=0;
+            }
+            if(isNaN(price_unit_lc_currency))
+            {
+                var price_unit_lc_currency=0;
+            }
+            var pack_size=parseFloat($("#pack_size_id_"+current_id).attr('data-pack-size-name'));
+            if($("#pack_size_id_"+current_id).attr('data-new-pack-size')==0)
+            {
+                var pack_size=parseFloat($('option:selected', $("#pack_size_id_"+current_id)).attr('data-pack-size-name'));
+            }
+            if(pack_size==0)
+            {
+                quantity_lc_kg=quantity_lc;
+            }
+            else
+            {
+                quantity_lc_kg=parseFloat((pack_size*quantity_lc)/1000);
+            }
+            $("#quantity_lc_kg_"+current_id).html(number_format(quantity_lc_kg,3));
+            var price_total_lc_currency=(quantity_lc*price_unit_lc_currency);
+            $("#price_total_lc_currency_"+current_id).html(number_format(price_total_lc_currency,2));
             calculate_total();
         })
         $(document).off('change','#items_container .price_unit_lc_currency');
-        $(document).on('input', '#items_container .price_unit_lc_currency', function(){
+        $(document).on('input', '#items_container .price_unit_lc_currency', function()
+        {
+            var current_id=parseInt($(this).attr('data-current-id'));
+            var quantity_lc=parseFloat($("#quantity_lc_"+current_id).val());
+            var price_unit_lc_currency=parseFloat($(this).val());
+            if(isNaN(quantity_lc))
+            {
+                quantity_lc=0;
+            }
+            if(isNaN(price_unit_lc_currency))
+            {
+                var price_unit_lc_currency=0;
+            }
+            var price_total_lc_currency=(quantity_lc*price_unit_lc_currency);
+            $("#price_total_lc_currency_"+current_id).html(number_format(price_total_lc_currency,2));
             calculate_total();
         })
-        $(document).off('change','#price_other_cost_total_currency');
-        $(document).on('input', '#price_other_cost_total_currency', function(){
+        $(document).off('input','#price_other_cost_total_currency');
+        $(document).on('input', '#price_other_cost_total_currency', function()
+        {
+            if(isNaN($('#price_other_cost_total_currency').val()))
+            {
+                var price_other_cost_total_currency=0;
+            }
+            else
+            {
+                var price_other_cost_total_currency=parseFloat($('#price_other_cost_total_currency').val());
+            }
+            $('#lbl_price_other_cost_total_currency').html(number_format(price_other_cost_total_currency,2))
             calculate_total();
         })
     })

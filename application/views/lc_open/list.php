@@ -45,12 +45,23 @@ if(isset($CI->permissions['action0']) && ($CI->permissions['action0']==1))
         'data-action-link'=>site_url($CI->controller_url.'/index/details')
     );
 }
-if(isset($CI->permissions['action0']) && ($CI->permissions['action0']==1))
+if(isset($CI->permissions['action6']) && ($CI->permissions['action6']==1))
 {
     $action_buttons[]=array
     (
         'label'=>'Preference',
         'href'=>site_url($CI->controller_url.'/index/set_preference')
+    );
+}
+if(isset($CI->permissions['action3']) && ($CI->permissions['action3']==1))
+{
+    $action_buttons[]=array
+    (
+        'type'=>'button',
+        'label'=>$CI->lang->line('ACTION_DELETE'),
+        'data-message-confirm'=>'Are you sure to delete this data?',
+        'class'=>'button_jqx_action',
+        'data-action-link'=>site_url($CI->controller_url.'/index/delete')
     );
 }
 if(isset($CI->permissions['action4']) && ($CI->permissions['action4']==1))

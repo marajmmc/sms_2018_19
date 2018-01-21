@@ -208,7 +208,7 @@ class Lc_release extends Root_Controller
             $this->db->where('lcd.lc_id',$item_id);
             $data['items']=$this->db->get()->result_array();
 
-            $data['title']="LC Release :: ".Barcode_helper::get_barcode_lc_release($item_id);
+            $data['title']="LC Release :: ".Barcode_helper::get_barcode_lc_open($item_id);
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/edit",$data,true));
             if($this->message)
