@@ -80,7 +80,7 @@ class Stock_out_variety extends Root_Controller
         }
         $this->db->from($this->config->item('table_sms_stock_out_variety').' stock_out');
         $this->db->select('stock_out.*');
-        $this->db->where('stock_out.status',$this->config->item('system_status_active'));
+        $this->db->where('stock_out.status !=',$this->config->item('system_status_delete'));
         $this->db->order_by('stock_out.date_stock_out','DESC');
         $this->db->order_by('stock_out.id','DESC');
         $this->db->limit($pagesize,$current_records);
@@ -147,7 +147,7 @@ class Stock_out_variety extends Root_Controller
             }
             $this->db->from($this->config->item('table_sms_stock_out_variety').' stock_out');
             $this->db->select('stock_out.*');
-            $this->db->select('customer_info.name customers_name');
+            $this->db->select('customer_info.name outlet_name, customer_info.customer_id customer_id');
             $this->db->join($this->config->item('table_login_csetup_cus_info').' customer_info','customer_info.customer_id = stock_out.customer_id','LEFT');
             $this->db->select('districts.name district_name, districts.id district_id');
             $this->db->join($this->config->item('table_login_setup_location_districts').' districts','districts.id = customer_info.district_id','LEFT');
@@ -188,6 +188,10 @@ class Stock_out_variety extends Root_Controller
             $data['warehouses']=Query_helper::get_info($this->config->item('table_login_basic_setup_warehouse'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $data['packs']=Query_helper::get_info($this->config->item('table_login_setup_classification_vpack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $data['divisions']=Query_helper::get_info($this->config->item('table_login_setup_location_divisions'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
+            $data['zones']=Query_helper::get_info($this->config->item('table_login_setup_location_zones'),array('id value','name text'),array('division_id ='.$data['item']['division_id']));
+            $data['territories']=Query_helper::get_info($this->config->item('table_login_setup_location_territories'),array('id value','name text'),array('zone_id ='.$data['item']['zone_id']));
+            $data['districts']=Query_helper::get_info($this->config->item('table_login_setup_location_districts'),array('id value','name text'),array('territory_id ='.$data['item']['territory_id']));
+            $data['customers']=Query_helper::get_info($this->config->item('table_login_csetup_cus_info'),array('id value','name text'),array('district_id ='.$data['item']['district_id']));
             $data['title']="Edit Stock Out";
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/add_edit",$data,true));
@@ -368,6 +372,8 @@ class Stock_out_variety extends Root_Controller
 
             $data=array();//main data
             $data['date_stock_out']=System_helper::get_time($item_head['date_stock_out']);
+            $data['customer_id']=$item_head['customer_id'];
+            $data['customer_name']=$item_head['customer_name'];
             $data['remarks']=$item_head['remarks'];
             $data['quantity_total']=$quantity_total;
             $data['user_updated']=$user->user_id;
@@ -531,21 +537,31 @@ class Stock_out_variety extends Root_Controller
     {
         $id = $this->input->post("id");
         $data=$this->input->post('item');
+        $this->load->library('form_validation');
         if(!($id>0))
         {
-            $this->load->library('form_validation');
+
             $this->form_validation->set_rules('item[date_stock_out]',$this->lang->line('LABEL_DATE_STOCK_IN'),'required');
             $this->form_validation->set_rules('item[purpose]',$this->lang->line('LABEL_PURPOSE'),'required');
-            if($data['purpose']==$this->config->item('system_purpose_variety_sample'))
+            if(($data['purpose']==$this->config->item('system_purpose_variety_sample')) || ($data['purpose']==$this->config->item('system_purpose_variety_demonstration')))
             {
-                $this->form_validation->set_rules('item[customer_name]',$this->lang->line('LABEL_CUSTOMER_NAME'),'required');
-            }
-            if($this->form_validation->run() == FALSE)
-            {
-                $this->message=validation_errors();
-                return false;
+                $this->form_validation->set_rules('item[customer_id]',$this->lang->line('LABEL_OUTLET_NAME'),'required');
             }
         }
+        else
+        {
+            if(($data['purpose']==$this->config->item('system_purpose_variety_sample')) || ($data['purpose']==$this->config->item('system_purpose_variety_demonstration')))
+            {
+                $this->form_validation->set_rules('item[customer_id]',$this->lang->line('LABEL_OUTLET_NAME'),'required');
+            }
+
+        }
+        if($this->form_validation->run() == FALSE)
+        {
+            $this->message=validation_errors();
+            return false;
+        }
+
         return true;
     }
 }

@@ -62,7 +62,7 @@ if(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1))
 
 <div class="row show-grid">
     <div class="col-xs-4">
-        <label for="purpose" class="control-label pull-right"><?php echo $this->lang->line('LABEL_PURPOSE'); ?><span style="color:#FF0000">*</span></label>
+        <label for="purpose" class="control-label pull-right"><?php echo $this->lang->line('LABEL_PURPOSE'); ?></label>
     </div>
     <?php if($item['purpose']){?>
         <div class="col-sm-4 col-xs-8">
@@ -84,105 +84,96 @@ if(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1))
 
 <div style="<?php if(!($item['division_id'])){echo 'display:none';} ?>" class="row show-grid" id="division_id_container">
     <div class="col-xs-4">
-        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DIVISION_NAME');?></label>
+        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DIVISION_NAME');?><span style="color:#FF0000">*</span></label>
     </div>
-    <?php if(($item['division_id'])){?>
-        <div class="col-sm-4 col-xs-8">
-            <label class="control-label"><?php echo $item['division_name'];?></label>
-        </div>
-    <?php }else{?>
-        <div class="col-sm-4 col-xs-8">
-            <select id="division_id" class="form-control">
-                <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                <?php
-                foreach($divisions as $division)
-                {?>
-                    <option value="<?php echo $division['value']?>" <?php if($division['value']==$item['division_id']){ echo "selected";}?>><?php echo $division['text'];?></option>
-                <?php
-                }
-                ?>
-            </select>
-        </div>
-    <?php } ?>
+    <div class="col-sm-4 col-xs-8">
+        <select id="division_id" class="form-control">
+            <option value=""><?php echo $this->lang->line('SELECT');?></option>
+            <?php
+            foreach($divisions as $division)
+            {?>
+                <option value="<?php echo $division['value']?>" <?php if($division['value']==$item['division_id']){ echo "selected";}?>><?php echo $division['text'];?></option>
+            <?php
+            }
+            ?>
+        </select>
+    </div>
 </div>
 <div style="<?php if(!($item['zone_id'])){echo 'display:none';} ?>" class="row show-grid" id="zone_id_container">
     <div class="col-xs-4">
-        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ZONE_NAME');?></label>
+        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ZONE_NAME');?><span style="color:#FF0000">*</span></label>
     </div>
-    <?php if(($item['zone_id'])){?>
-        <div class="col-sm-4 col-xs-8">
-            <label class="control-label"><?php echo $item['zone_name'];?></label>
-        </div>
-    <?php }else{?>
-        <div class="col-sm-4 col-xs-8">
-            <select id="zone_id" class="form-control">
-                <option value=""><?php echo $this->lang->line('SELECT');?></option>
-            </select>
-        </div>
-    <?php } ?>
+    <div class="col-sm-4 col-xs-8">
+        <select id="zone_id" class="form-control">
+            <option value=""><?php echo $this->lang->line('SELECT');?></option>
+            <?php
+            foreach($zones as $zone)
+            {?>
+                <option value="<?php echo $zone['value']?>" <?php if($zone['value']==$item['zone_id']){ echo "selected";}?>><?php echo $zone['text'];?></option>
+            <?php
+            }
+            ?>
+        </select>
+    </div>
 </div>
 <div style="<?php if(!($item['territory_id'])){echo 'display:none';} ?>" class="row show-grid" id="territory_id_container">
     <div class="col-xs-4">
-        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TERRITORY_NAME');?></label>
+        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TERRITORY_NAME');?><span style="color:#FF0000">*</span></label>
     </div>
-    <?php if(($item['territory_id'])){?>
-        <div class="col-sm-4 col-xs-8">
-            <label class="control-label"><?php echo $item['territory_name'];?></label>
-        </div>
-    <?php }else{?>
-        <div class="col-sm-4 col-xs-8">
-            <select id="territory_id" class="form-control">
-                <option value=""><?php echo $this->lang->line('SELECT');?></option>
-            </select>
-        </div>
-    <?php } ?>
-
+    <div class="col-sm-4 col-xs-8">
+        <select id="territory_id" class="form-control">
+            <option value=""><?php echo $this->lang->line('SELECT');?></option>
+            <?php
+            foreach($territories as $territory)
+            {?>
+                <option value="<?php echo $territory['value']?>" <?php if($territory['value']==$item['territory_id']){ echo "selected";}?>><?php echo $territory['text'];?></option>
+            <?php
+            }
+            ?>
+        </select>
+    </div>
 </div>
 <div style="<?php if(!($item['district_id'])){echo 'display:none';} ?>" class="row show-grid" id="district_id_container">
     <div class="col-xs-4">
-        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DISTRICT_NAME');?></label>
+        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DISTRICT_NAME');?><span style="color:#FF0000">*</span></label>
     </div>
-    <?php if(($item['district_id'])){?>
-        <div class="col-sm-4 col-xs-8">
-            <label class="control-label"><?php echo $item['district_name'];?></label>
-        </div>
-    <?php }else{?>
-        <div class="col-sm-4 col-xs-8">
-            <select id="district_id" class="form-control">
-                <option value=""><?php echo $this->lang->line('SELECT');?></option>
-            </select>
-        </div>
-    <?php } ?>
+    <div class="col-sm-4 col-xs-8">
+        <select id="district_id" class="form-control">
+            <option value=""><?php echo $this->lang->line('SELECT');?></option>
+            <?php
+            foreach($districts as $district)
+            {?>
+                <option value="<?php echo $district['value']?>" <?php if($district['value']==$item['district_id']){ echo "selected";}?>><?php echo $district['text'];?></option>
+            <?php
+            }
+            ?>
+        </select>
+    </div>
 </div>
 <div style="<?php if(!($item['customer_id'])){echo 'display:none';} ?>" class="row show-grid" id="customer_id_container">
     <div class="col-xs-4">
-        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CUSTOMER_NAME');?></label>
+        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_OUTLET_NAME');?><span style="color:#FF0000">*</span></label>
     </div>
-    <?php if(($item['customer_id'])){?>
-        <div class="col-sm-4 col-xs-8">
-            <label class="control-label"><?php echo $item['customers_name'];?></label>
-        </div>
-    <?php }else{?>
-        <div class="col-sm-4 col-xs-8">
-            <select id="customer_id" name="item[customer_id]" class="form-control">
-                <option value=""><?php echo $this->lang->line('SELECT');?></option>
-            </select>
-        </div>
-    <?php } ?>
+    <div class="col-sm-4 col-xs-8">
+        <select id="customer_id" name="item[customer_id]" class="form-control">
+            <option value=""><?php echo $this->lang->line('SELECT');?></option>
+            <?php
+            foreach($customers as $customer)
+            {?>
+                <option value="<?php echo $customer['value']?>" <?php if($customer['value']==$item['customer_id']){ echo "selected";}?>><?php echo $customer['text'];?></option>
+            <?php
+            }
+            ?>
+        </select>
+    </div>
 </div>
-<div class="row show-grid" style="<?php if(!($item['customer_name']) || $item['customers_name']){echo 'display:none';} ?>" id="customer_name_container">
+<div class="row show-grid" style="<?php if(!($item['customer_name'])){echo 'display:none';} ?>" id="customer_name_container">
     <div class="col-xs-4">
         <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_CUSTOMER_NAME');?></label>
     </div>
-    <?php if($item['customer_name']){?>
-        <div class="col-sm-4 col-xs-8">
-            <label class="control-label"><?php echo $item['customer_name'];?></label>
-        </div>
-    <?php } else{?>
-        <div class="col-sm-4 col-xs-8">
-            <input type="text" name="item[customer_name]" id="customer_name" class="form-control" value="<?php echo $item['customer_name']?>"/>
-        </div>
-    <?php }?>
+    <div class="col-sm-4 col-xs-8">
+        <input type="text" name="item[customer_name]" id="customer_name" class="form-control" value="<?php echo $item['customer_name']?>"/>
+    </div>
 </div>
 
 <div style="" class="row show-grid">
@@ -238,7 +229,6 @@ if(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1))
                 </td>
                 <td class="text-right">
                     <input type="text" id="quantity<?php echo $index+1;?>" value="<?php echo $so_variety['quantity']; ?>" class="form-control text-right float_type_positive quantity" data-current-id="<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][quantity]">
-                    <input type="hidden" value="<?php echo $so_variety['quantity']; ?>" name="old_quantity[<?php echo $so_variety['variety_id']?>][<?php echo $so_variety['pack_size_id']?>][<?php echo $so_variety['warehouse_id']?>]">
                 </td>
             </tr>
         <?php
@@ -365,6 +355,10 @@ jQuery(document).ready(function()
         {
             $('#division_id_container').show();
         }
+        if(purpose=='<?php echo $CI->config->item('system_purpose_variety_demonstration'); ?>')
+        {
+            $('#division_id_container').show();
+        }
     });
 
     $(document).off('change', '#division_id');
@@ -450,24 +444,25 @@ jQuery(document).ready(function()
                 $('#customer_id').html(get_dropdown_with_select(system_customers[district_id]));
                 $('#customer_name_container').show();
             }
-        }
-    });
-
-    $(document).off('change', '#customer_id');
-    $(document).on('change','#customer_id',function()
-    {
-        $('#customer_name').val('');
-        var customer_id=$('#customer_id').val();
-        if(customer_id>0)
-        {
-            $('#customer_name_container').hide();
-            $("#customer_name").val($("#customer_id :selected").text());
-        }
-        else
-        {
             $('#customer_name_container').show();
         }
     });
+
+//    $(document).off('change', '#customer_id');
+//    $(document).on('change','#customer_id',function()
+//    {
+//        $('#customer_name').val('');
+//        var customer_id=$('#customer_id').val();
+//        if(customer_id>0)
+//        {
+//            $('#customer_name_container').hide();
+//            $("#customer_name").val($("#customer_id :selected").text());
+//        }
+//        else
+//        {
+//            $('#customer_name_container').show();
+//        }
+//    });
 
     $(document).off("click", ".system_button_add_more");
     $(document).on("click", ".system_button_add_more", function(event)

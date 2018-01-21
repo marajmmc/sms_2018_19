@@ -171,7 +171,7 @@ $lang['LABEL_DATE_START'] = 'Starting Date';
 $lang['LABEL_DATE_END'] = 'End Date';
 
 //customer
-$lang['LABEL_CUSTOMER_NAME'] = 'Customer';
+$lang['LABEL_CUSTOMER_NAME'] = 'Customer Name';
 $lang['LABEL_CUSTOMER_CODE'] = 'Customer Code';
 $lang['LABEL_PHONE'] = 'Phone';
 $lang['LABEL_NAME_OWNER'] = 'Owner Name';
