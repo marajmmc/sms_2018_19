@@ -418,7 +418,7 @@ class Stock_out_variety extends Root_Controller
                         {
                             $data['out_stock_sample']=($current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]['out_stock_sample']-$old_value+$item['quantity']);
                         }
-                        $data['current_stock']=($current_stock-$item['quantity']+$old_value+);
+                        $data['current_stock']=($current_stock-$item['quantity']+$old_value);
                     }else
                     {
                         if($item_head['purpose']==$this->config->item('system_purpose_variety_rnd'))
