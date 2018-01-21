@@ -117,6 +117,7 @@ class Lc_release extends Root_Controller
         {
             $pagesize=$pagesize*2;
         }
+
         $this->db->from($this->config->item('table_sms_lc_open').' lc');
         $this->db->select('lc.*');
         $this->db->select('fy.name fiscal_year_name');
@@ -173,7 +174,7 @@ class Lc_release extends Root_Controller
             $this->db->select('fy.name fiscal_year_name');
             $this->db->select('sc.name currency_name');
             $this->db->select('sp.name principal_name');
-            $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.id = lco.year_id','INNER');
+            $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.id = lco.fiscal_year_id','INNER');
             $this->db->join($this->config->item('table_sms_setup_currency').' sc','sc.id = lco.currency_id','INNER');
             $this->db->join($this->config->item('table_login_basic_setup_principal').' sp','sp.id = lco.principal_id','INNER');
             $this->db->where('lco.id',$item_id);
@@ -182,15 +183,16 @@ class Lc_release extends Root_Controller
             $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
             {
+                System_helper::invalid_try('Edit Non Exists',$item_id);
                 $ajax['status']=false;
-                $ajax['system_message']='Invalid LC - Data Not Found. Please Try Again.';
+                $ajax['system_message']='Invalid LC.';
                 $this->json_return($ajax);
             }
 
             if($data['item']['status_release']==$this->config->item('system_status_complete'))
             {
                 $ajax['status']=false;
-                $ajax['system_message']='You Can not Modify LC Because LC Release Completed. Please Try Again.';
+                $ajax['system_message']='You Can not Modify LC Because LC Release Completed.';
                 $this->json_return($ajax);
                 die();
             }
@@ -202,11 +204,11 @@ class Lc_release extends Root_Controller
             $this->db->select('sps.name pack_size_name');
             $this->db->join($this->config->item('table_login_setup_classification_varieties').' scv','scv.id = lcd.variety_id','INNER');
             $this->db->join($this->config->item('table_login_setup_variety_principals').' svp','svp.variety_id = scv.id AND svp.principal_id = '.$data['item']['principal_id'].' AND svp.revision = 1','INNER');
-            $this->db->join($this->config->item('table_login_setup_classification_vpack_size').' sps','sps.id = lcd.quantity_type_id','LEFT');
+            $this->db->join($this->config->item('table_login_setup_classification_vpack_size').' sps','sps.id = lcd.pack_size_id','LEFT');
             $this->db->where('lcd.lc_id',$item_id);
             $data['items']=$this->db->get()->result_array();
 
-            $data['title']="LC Release :: ".$data['item']['lc_number'];
+            $data['title']="LC Release :: ".Barcode_helper::get_barcode_lc_release($item_id);
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/edit",$data,true));
             if($this->message)

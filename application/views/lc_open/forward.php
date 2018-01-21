@@ -110,7 +110,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         ?>
                         <tr>
                             <td>
-                                <label><?php echo $value['variety_name']; ?></label>
+                                <label><?php echo $value['variety_name']; ?> (<?php echo $value['variety_name_import']; ?>)</label>
                             </td>
                             <td class="text-center">
                                 <label><?php if($value['pack_size_id']==0){echo 'Bulk';}else{echo $value['pack_size_name'];} ?></label>

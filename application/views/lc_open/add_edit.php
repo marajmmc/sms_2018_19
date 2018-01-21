@@ -265,7 +265,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         ?>
                         <tr>
                             <td>
-                                <label><?php echo $value['variety_name']; ?></label>
+                                <label><?php echo $value['variety_name']; ?> (<?php echo $value['variety_name_import']; ?>)</label>
                                 <input type="hidden" name="items[<?php echo $index+1;?>][variety_id]" value="<?php echo $value['variety_id']; ?>">
                             </td>
                             <td>
