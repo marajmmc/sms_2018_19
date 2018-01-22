@@ -21,8 +21,10 @@ $action_buttons[]=array(
 );
 $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 ?>
-<form class="form_valid" id="save_form" action="<?php echo site_url($CI->controller_url.'/index/save_preference_all_lc');?>" method="post">
+<form class="form_valid" id="save_form" action="<?php echo site_url('Common_controller/preference_save');?>" method="post">
     <input type="hidden" id="id" name="id" value="" />
+    <input type="hidden" id="controller_name" name="preference[controller_name]" value="<?php echo $this->controller_url?>" />
+    <input type="hidden" id="method_name" name="preference[method_name]" value="list_all" />
     <div class="row widget">
         <div class="widget-header">
             <div class="title">

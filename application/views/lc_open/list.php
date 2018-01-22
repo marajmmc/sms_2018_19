@@ -253,7 +253,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     { text: 'KG', dataField: 'quantity_total_kg', width:100, cellsalign: 'right', hidden: <?php echo $items['quantity_total_kg']?0:1;?>},
                     { text: 'Variety (Currency)', dataField: 'price_variety_total_currency', cellsalign: 'right', width:100, hidden: <?php echo $items['price_variety_total_currency']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_TOTAL_CURRENCY');?>', dataField: 'price_total_currency', cellsalign: 'right', width:100, hidden: <?php echo $items['price_total_currency']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_LC_FORWARD'); ?>', dataField: 'status_forward',cellsalign: 'center',filtertype: 'list', width:20}
+                    { text: '<?php echo $CI->lang->line('LABEL_LC_FORWARD'); ?>', dataField: 'status_forward',cellsalign: 'center',filtertype: 'list', width:30}
                 ]
             });
     });

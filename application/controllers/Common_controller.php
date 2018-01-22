@@ -4,13 +4,10 @@ class Common_controller extends Root_Controller
 {
     private  $message;
     public $permissions;
-    public $controller_url;
     public function __construct()
     {
         parent::__construct();
         $this->message='';
-        $this->controller_url=$this->router->class;
-
     }
     public function index()
     {
@@ -56,7 +53,6 @@ class Common_controller extends Root_Controller
         $preference=$this->input->post('preference');
         $controller_name=isset($preference['controller_name'])?$preference['controller_name']:'';
         $method=isset($preference['method_name'])?$preference['method_name']:'list';
-        $method_redirect=isset($preference['redirect_method'])?$preference['redirect_method']:'index';
         $user = User_helper::get_user();
         $this->permissions=User_helper::get_permission($controller_name);
         if(!(isset($this->permissions['action6']) && ($this->permissions['action6']==1)))
@@ -107,7 +103,8 @@ class Common_controller extends Root_Controller
             if ($this->db->trans_status() === TRUE)
             {
                 $this->message=$this->lang->line("MSG_SAVED_SUCCESS");
-                $this->controller_url.'/'.$method_redirect;
+                $ajax['system_page_url']=redirect($controller_name.'/index/'.$method);
+                $this->json_return($ajax);
             }
             else
             {

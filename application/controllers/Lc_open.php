@@ -1101,7 +1101,7 @@ class Lc_open extends Root_Controller
             $this->json_return($ajax);
         }
     }
-    private function system_save_preference()
+    /*private function system_save_preference()
     {
         if($this->input->post('item'))
         {
@@ -1161,7 +1161,7 @@ class Lc_open extends Root_Controller
                 $this->json_return($ajax);
             }
         }
-    }
+    }*/
     private function system_set_preference_all_lc()
     {
         if(isset($this->permissions['action6']) && ($this->permissions['action6']==1))
@@ -1214,7 +1214,7 @@ class Lc_open extends Root_Controller
             $this->json_return($ajax);
         }
     }
-    private function system_save_preference_all_lc()
+    /*private function system_save_preference_all_lc()
     {
         if($this->input->post('item'))
         {
@@ -1273,5 +1273,5 @@ class Lc_open extends Root_Controller
                 $this->json_return($ajax);
             }
         }
-    }
+    }*/
 }

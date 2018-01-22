@@ -30,7 +30,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
     <input type="hidden" id="id" name="id" value="" />
     <input type="hidden" id="controller_name" name="preference[controller_name]" value="<?php echo $this->controller_url?>" />
     <input type="hidden" id="method_name" name="preference[method_name]" value="list" />
-    <input type="hidden" id="redirect_method" name="preference[redirect_method]" value="index" />
     <div class="row widget">
         <div class="widget-header">
             <div class="title">
