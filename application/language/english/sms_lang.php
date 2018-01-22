@@ -267,6 +267,7 @@ $lang['LABEL_WAREHOUSE'] = 'Warehouse';
 $lang['LABEL_CURRENT_STOCK'] = 'Current Stock (Pack/Kg)';
 $lang['LABEL_PURPOSE'] = 'Purpose';
 $lang['LABEL_BARCODE'] = 'Barcode';
+$lang['MSG_DELETED_SUCCESS'] = 'Successfully Deleted';
 
 //Stock out purpose
 $lang['LABEL_STOCK_OUT_SHORT_INVENTORY']='Short Inventory';
