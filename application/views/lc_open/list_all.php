@@ -129,7 +129,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         </div>
         <div class="col-xs-2">
             <div class="checkbox">
-                <label><input type="checkbox" class="system_jqx_column" value="price_variety_total_currency" <?php if($items['price_variety_total_currency']){echo 'checked';}?> value="1"><span class="label label-success">Variety Currency<?php //echo $CI->lang->line('LABEL_OTHER_COST_CURRENCY'); ?></span></label>
+                <label><input type="checkbox" class="system_jqx_column" value="price_variety_total_currency" <?php if($items['price_variety_total_currency']){echo 'checked';}?> value="1"><span class="label label-success">Variety (Currency)<?php //echo $CI->lang->line('LABEL_OTHER_COST_CURRENCY'); ?></span></label>
             </div>
         </div>
         <div class="col-xs-2">
@@ -219,8 +219,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         { text: '<?php echo $CI->lang->line('LABEL_CONSIGNMENT_NAME'); ?>', dataField: 'consignment_name', width:150, hidden: <?php echo $items['consignment_name']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_OTHER_COST_CURRENCY'); ?>', dataField: 'price_other_cost_total_currency', width:100, cellsalign: 'right',  hidden: <?php echo $items['price_other_cost_total_currency']?0:1;?>},
                         { text: 'KG', dataField: 'quantity_total_kg', width:100, cellsalign: 'right', hidden: <?php echo $items['quantity_total_kg']?0:1;?>},
-                        { text: 'Variety Currency', dataField: 'price_variety_total_currency', cellsalign: 'right', width:100, hidden: <?php echo $items['price_variety_total_currency']?0:1;?>},
-                        { text: 'Total Currency', dataField: 'price_total_currency', cellsalign: 'right', width:100, hidden: <?php echo $items['price_total_currency']?0:1;?>},
+                        { text: 'Variety (Currency)', dataField: 'price_variety_total_currency', cellsalign: 'right', width:100, hidden: <?php echo $items['price_variety_total_currency']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_TOTAL_CURRENCY');?>', dataField: 'price_total_currency', cellsalign: 'right', width:100, hidden: <?php echo $items['price_total_currency']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_LC_FORWARD'); ?>', dataField: 'status_forward',cellsalign: 'center',filtertype: 'list', width:20}
                     ]
             });

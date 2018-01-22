@@ -3,11 +3,18 @@
 class Common_controller extends Root_Controller
 {
     private  $message;
+    public $permissions;
+    public $controller_url;
     public function __construct()
     {
         parent::__construct();
         $this->message='';
+        $this->controller_url=$this->router->class;
 
+    }
+    public function index()
+    {
+        die();
     }
     /*public function get_dropdown_armvarieties_by_croptypeid()
     {
@@ -42,5 +49,72 @@ class Common_controller extends Root_Controller
         $ajax['status']=true;
         $ajax['system_content'][]=array("id"=>$html_container_id,"html"=>$stock_current);
         $this->json_return($ajax);
+    }
+
+    public function preference_save()
+    {
+        $preference=$this->input->post('preference');
+        $controller_name=isset($preference['controller_name'])?$preference['controller_name']:'';
+        $method=isset($preference['method_name'])?$preference['method_name']:'list';
+        $method_redirect=isset($preference['redirect_method'])?$preference['redirect_method']:'index';
+        $user = User_helper::get_user();
+        $this->permissions=User_helper::get_permission($controller_name);
+        if(!(isset($this->permissions['action6']) && ($this->permissions['action6']==1)))
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+            die();
+        }
+        else
+        {
+            if($this->input->post('item'))
+            {
+                $items=$this->input->post('item');
+            }
+            else
+            {
+                $ajax['status']=false;
+                $ajax['system_message']=$this->lang->line("MSG_PLEASE_SELECT_ANY_ONE");
+                $this->json_return($ajax);
+                die();
+            }
+
+            $time=time();
+            $this->db->trans_start();  //DB Transaction Handle START
+
+            $result=Query_helper::get_info($this->config->item('table_sms_setup_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$controller_name.'"','method ="'.$method.'"'),1);
+            if($result)
+            {
+                $data['user_updated']=$user->user_id;
+                $data['date_updated']=$time;
+                $data['preferences']=json_encode($items);
+                Query_helper::update($this->config->item('table_sms_setup_user_preference'),$data,array('id='.$result['id']),false);
+            }
+            else
+            {
+                $data['user_id']=$user->user_id;
+                $data['controller']=$controller_name;
+                $data['method']="$method";
+                $data['user_created']=$user->user_id;
+                $data['date_created']=$time;
+                $data['preferences']=json_encode($items);
+                Query_helper::add($this->config->item('table_sms_setup_user_preference'),$data,false);
+            }
+
+            $this->db->trans_complete();   //DB Transaction Handle END
+            $ajax['status']=true;
+            if ($this->db->trans_status() === TRUE)
+            {
+                $this->message=$this->lang->line("MSG_SAVED_SUCCESS");
+                $this->controller_url.'/'.$method_redirect;
+            }
+            else
+            {
+                $ajax['status']=false;
+                $ajax['system_message']=$this->lang->line("MSG_SAVED_FAIL");
+                $this->json_return($ajax);
+            }
+        }
     }
 }

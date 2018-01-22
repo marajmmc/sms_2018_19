@@ -7,12 +7,17 @@ $action_buttons[]=array(
     'label'=>$CI->lang->line("ACTION_BACK"),
     'href'=>site_url($CI->controller_url)
 );
-$action_buttons[]=array(
-    'type'=>'button',
-    'label'=>$CI->lang->line("ACTION_SAVE"),
-    'id'=>'button_action_save',
-    'data-form'=>'#save_form'
-);
+if(isset($CI->permissions['action6']) && ($CI->permissions['action6']==1))
+{
+    $action_buttons[]=array
+    (
+        'type'=>'button',
+        'label'=>$CI->lang->line("ACTION_SAVE"),
+        'id'=>'button_action_save',
+        'data-form'=>'#save_form'
+    );
+}
+
 $action_buttons[]=array(
     'type'=>'button',
     'label'=>$CI->lang->line("ACTION_CLEAR"),
@@ -21,8 +26,11 @@ $action_buttons[]=array(
 );
 $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 ?>
-<form class="form_valid" id="save_form" action="<?php echo site_url($CI->controller_url.'/index/save_preference');?>" method="post">
+<form class="form_valid" id="save_form" action="<?php echo site_url('Common_controller/preference_save');?>" method="post">
     <input type="hidden" id="id" name="id" value="" />
+    <input type="hidden" id="controller_name" name="preference[controller_name]" value="<?php echo $this->controller_url?>" />
+    <input type="hidden" id="method_name" name="preference[method_name]" value="list" />
+    <input type="hidden" id="redirect_method" name="preference[redirect_method]" value="index" />
     <div class="row widget">
         <div class="widget-header">
             <div class="title">
