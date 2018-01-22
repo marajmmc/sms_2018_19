@@ -7,6 +7,8 @@ $lang['MSG_SITE_OFFLINE'] = 'Site is Currently Offline.Please contact with admin
 $lang['MSG_LOCATION_NOT_ASSIGNED_OR_INVALID'] = 'No Location assigned.Please contact with admin(01777709208).';
 $lang['MSG_CONFIRM_SAVE'] = 'Are You Sure to save?';
 $lang['MSG_FORWARD_SUCCESS'] = 'Successfully Forwarded';
+$lang['MSG_DELETED_SUCCESS'] = 'Successfully Deleted';
+$lang['MSG_SELECT_ONE'] = 'Please Select At least one item';
 
 //Action buttons
 $lang['ACTION_DASHBOARD'] = 'Dashboard';
@@ -267,7 +269,7 @@ $lang['LABEL_WAREHOUSE'] = 'Warehouse';
 $lang['LABEL_CURRENT_STOCK'] = 'Current Stock (Pack/Kg)';
 $lang['LABEL_PURPOSE'] = 'Purpose';
 $lang['LABEL_BARCODE'] = 'Barcode';
-$lang['MSG_DELETED_SUCCESS'] = 'Successfully Deleted';
+
 
 //Stock out purpose
 $lang['LABEL_STOCK_OUT_SHORT_INVENTORY']='Short Inventory';

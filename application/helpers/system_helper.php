@@ -97,5 +97,74 @@ class System_helper
         }
         return $stocks;
     }
+    //saving preference
+    public static function save_preference()
+    {
+        $CI =& get_instance();
+        $preference=$CI->input->post('preference');
+        //$controller_name=isset($preference['controller_name'])?$preference['controller_name']:'';
+        $method=isset($preference['method_name'])?$preference['method_name']:'list';
+        $user = User_helper::get_user();
+        //$CI->permissions=User_helper::get_permission($controller_name);
+        if(!(isset($CI->permissions['action6']) && ($CI->permissions['action6']==1)))
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$CI->lang->line("YOU_DONT_HAVE_ACCESS");
+            $CI->json_return($ajax);
+            die();
+        }
+        else
+        {
+            if($CI->input->post('items'))
+            {
+                $items=$CI->input->post('items');
+            }
+            else
+            {
+                $ajax['status']=false;
+                $ajax['system_message']=$CI->lang->line("MSG_SELECT_ONE");
+                $CI->json_return($ajax);
+                die();
+            }
+
+            $time=time();
+            $CI->db->trans_start();  //DB Transaction Handle START
+
+            $result=Query_helper::get_info($CI->config->item('table_sms_setup_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$CI->controller_url.'"','method ="'.$method.'"'),1);
+            if($result)
+            {
+                $data['user_updated']=$user->user_id;
+                $data['date_updated']=$time;
+                $data['preferences']=json_encode($items);
+                Query_helper::update($CI->config->item('table_sms_setup_user_preference'),$data,array('id='.$result['id']),false);
+            }
+            else
+            {
+                $data['user_id']=$user->user_id;
+                $data['controller']=$CI->controller_url;
+                $data['method']="$method";
+                $data['user_created']=$user->user_id;
+                $data['date_created']=$time;
+                $data['preferences']=json_encode($items);
+                Query_helper::add($CI->config->item('table_sms_setup_user_preference'),$data,false);
+            }
+
+            $CI->db->trans_complete();   //DB Transaction Handle END
+            $ajax['status']=true;
+            if ($CI->db->trans_status() === TRUE)
+            {
+                $CI->message=$CI->lang->line("MSG_SAVED_SUCCESS");
+                //$ajax['system_page_url']=redirect($controller_name.'/index/'.$method);
+                $CI->index($method);
+                //$CI->json_return($ajax);
+            }
+            else
+            {
+                $ajax['status']=false;
+                $ajax['system_message']=$CI->lang->line("MSG_SAVED_FAIL");
+                $CI->json_return($ajax);
+            }
+        }
+    }
 
 }

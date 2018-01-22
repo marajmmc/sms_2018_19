@@ -2,7 +2,7 @@
 
 class Lc_open extends Root_Controller
 {
-    private  $message;
+    public $message;
     public $permissions;
     public $controller_url;
     public function __construct()
@@ -68,17 +68,13 @@ class Lc_open extends Root_Controller
         {
             $this->system_set_preference();
         }
-        elseif($action=="save_preference")
-        {
-            $this->system_save_preference();
-        }
         elseif($action=="set_preference_all_lc")
         {
             $this->system_set_preference_all_lc();
         }
-        elseif($action=="save_preference_all_lc")
+        elseif($action=="save_preference")
         {
-            $this->system_save_preference_all_lc();
+            System_helper::save_preference();
         }
         else
         {

@@ -26,9 +26,8 @@ $action_buttons[]=array(
 );
 $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 ?>
-<form class="form_valid" id="save_form" action="<?php echo site_url('Common_controller/preference_save');?>" method="post">
+<form class="form_valid" id="save_form" action="<?php echo site_url($CI->controller_url.'/index/save_preference');?>" method="post">
     <input type="hidden" id="id" name="id" value="" />
-    <input type="hidden" id="controller_name" name="preference[controller_name]" value="<?php echo $this->controller_url?>" />
     <input type="hidden" id="method_name" name="preference[method_name]" value="list" />
     <div class="row widget">
         <div class="widget-header">
@@ -48,72 +47,72 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             </div>
             <div class="col-xs-4">
                 <div class="checkbox">
-                    <label><input type="checkbox" name="item[barcode]" <?php if($items['barcode']){echo 'checked';}?>  value="1"><span class="label label-success"><?php echo $CI->lang->line('LABEL_BARCODE'); ?></span></label>
+                    <label><input type="checkbox" name="items[barcode]" <?php if($items['barcode']){echo 'checked';}?>  value="1"><span class="label label-success"><?php echo $CI->lang->line('LABEL_BARCODE'); ?></span></label>
                 </div>
             </div>
             <div class="col-xs-4">
                 <div class="checkbox">
-                    <label><input type="checkbox" name="item[fiscal_year_name]" <?php if($items['fiscal_year_name']){echo 'checked';}?> value="1"><span class="label label-success"><?php echo $CI->lang->line('LABEL_FISCAL_YEAR'); ?></span></label>
+                    <label><input type="checkbox" name="items[fiscal_year_name]" <?php if($items['fiscal_year_name']){echo 'checked';}?> value="1"><span class="label label-success"><?php echo $CI->lang->line('LABEL_FISCAL_YEAR'); ?></span></label>
                 </div>
             </div>
             <div class="col-xs-4">
                 <div class="checkbox">
-                    <label><input type="checkbox" name="item[month_name]" <?php if($items['month_name']){echo 'checked';}?> value="1"><span class="label label-success"><?php echo $CI->lang->line('LABEL_MONTH'); ?></span></label>
+                    <label><input type="checkbox" name="items[month_name]" <?php if($items['month_name']){echo 'checked';}?> value="1"><span class="label label-success"><?php echo $CI->lang->line('LABEL_MONTH'); ?></span></label>
                 </div>
             </div>
             <div class="col-xs-4">
                 <div class="checkbox">
-                    <label><input type="checkbox" name="item[date_opening]" <?php if($items['date_opening']){echo 'checked';}?> value="1"><span class="label label-success"><?php echo $CI->lang->line('LABEL_DATE_OPENING'); ?></span></label>
+                    <label><input type="checkbox" name="items[date_opening]" <?php if($items['date_opening']){echo 'checked';}?> value="1"><span class="label label-success"><?php echo $CI->lang->line('LABEL_DATE_OPENING'); ?></span></label>
                 </div>
             </div>
             <div class="col-xs-4">
                 <div class="checkbox">
-                    <label><input type="checkbox" name="item[date_expected]" <?php if($items['date_expected']){echo 'checked';}?> value="1"><span class="label label-success"><?php echo $CI->lang->line('LABEL_DATE_EXPECTED'); ?></span></label>
+                    <label><input type="checkbox" name="items[date_expected]" <?php if($items['date_expected']){echo 'checked';}?> value="1"><span class="label label-success"><?php echo $CI->lang->line('LABEL_DATE_EXPECTED'); ?></span></label>
                 </div>
             </div>
             <div class="col-xs-4">
                 <div class="checkbox">
-                    <label><input type="checkbox" name="item[principal_name]" <?php if($items['principal_name']){echo 'checked';}?> value="1"><span class="label label-success"><?php echo $CI->lang->line('LABEL_PRINCIPAL_NAME'); ?></span></label>
+                    <label><input type="checkbox" name="items[principal_name]" <?php if($items['principal_name']){echo 'checked';}?> value="1"><span class="label label-success"><?php echo $CI->lang->line('LABEL_PRINCIPAL_NAME'); ?></span></label>
                 </div>
             </div>
             <div class="col-xs-4">
                 <div class="checkbox">
-                    <label><input type="checkbox" name="item[currency_name]" <?php if($items['currency_name']){echo 'checked';}?> value="1"><span class="label label-success"><?php echo $CI->lang->line('LABEL_CURRENCY_NAME'); ?></span></label>
+                    <label><input type="checkbox" name="items[currency_name]" <?php if($items['currency_name']){echo 'checked';}?> value="1"><span class="label label-success"><?php echo $CI->lang->line('LABEL_CURRENCY_NAME'); ?></span></label>
                 </div>
             </div>
             <div class="col-xs-4">
                 <div class="checkbox">
-                    <label><input type="checkbox" name="item[lc_number]" <?php if($items['lc_number']){echo 'checked';}?> value="1"><span class="label label-success"><?php echo $CI->lang->line('LABEL_LC_NUMBER'); ?></span></label>
+                    <label><input type="checkbox" name="items[lc_number]" <?php if($items['lc_number']){echo 'checked';}?> value="1"><span class="label label-success"><?php echo $CI->lang->line('LABEL_LC_NUMBER'); ?></span></label>
                 </div>
             </div>
             <div class="col-xs-4">
                 <div class="checkbox">
-                    <label><input type="checkbox" name="item[consignment_name]" <?php if($items['consignment_name']){echo 'checked';}?> value="1"><span class="label label-success"><?php echo $CI->lang->line('LABEL_CONSIGNMENT_NAME'); ?></span></label>
+                    <label><input type="checkbox" name="items[consignment_name]" <?php if($items['consignment_name']){echo 'checked';}?> value="1"><span class="label label-success"><?php echo $CI->lang->line('LABEL_CONSIGNMENT_NAME'); ?></span></label>
                 </div>
             </div>
             <div class="col-xs-4">
                 <div class="checkbox">
-                    <label><input type="checkbox" class="system_jqx_column" name="item[price_other_cost_total_currency]" <?php if($items['price_other_cost_total_currency']){echo 'checked';}?> value="1"><span class="label label-success"><?php echo $CI->lang->line('LABEL_OTHER_COST_CURRENCY'); ?></span></label>
+                    <label><input type="checkbox" class="system_jqx_column" name="items[price_other_cost_total_currency]" <?php if($items['price_other_cost_total_currency']){echo 'checked';}?> value="1"><span class="label label-success"><?php echo $CI->lang->line('LABEL_OTHER_COST_CURRENCY'); ?></span></label>
                 </div>
             </div>
             <div class="col-xs-4">
                 <div class="checkbox">
-                    <label><input type="checkbox" class="system_jqx_column" name="item[quantity_total_kg]" <?php if($items['quantity_total_kg']){echo 'checked';}?> value="1"><span class="label label-success">KG<?php //echo $CI->lang->line('LABEL_TOTAL_CURRENCY'); ?></span></label>
+                    <label><input type="checkbox" class="system_jqx_column" name="items[quantity_total_kg]" <?php if($items['quantity_total_kg']){echo 'checked';}?> value="1"><span class="label label-success">KG<?php //echo $CI->lang->line('LABEL_TOTAL_CURRENCY'); ?></span></label>
                 </div>
             </div>
             <div class="col-xs-4">
                 <div class="checkbox">
-                    <label><input type="checkbox" class="system_jqx_column" name="item[price_variety_total_currency]" <?php if($items['price_variety_total_currency']){echo 'checked';}?> value="1"><span class="label label-success">Variety Currency<?php //echo $CI->lang->line('LABEL_OTHER_COST_CURRENCY'); ?></span></label>
+                    <label><input type="checkbox" class="system_jqx_column" name="items[price_variety_total_currency]" <?php if($items['price_variety_total_currency']){echo 'checked';}?> value="1"><span class="label label-success">Variety Currency<?php //echo $CI->lang->line('LABEL_OTHER_COST_CURRENCY'); ?></span></label>
                 </div>
             </div>
             <div class="col-xs-4">
                 <div class="checkbox">
-                    <label><input type="checkbox" class="system_jqx_column" name="item[price_total_currency]" <?php if($items['price_total_currency']){echo 'checked';}?> value="1"><span class="label label-success"><?php echo $CI->lang->line('LABEL_TOTAL_CURRENCY'); ?></span></label>
+                    <label><input type="checkbox" class="system_jqx_column" name="items[price_total_currency]" <?php if($items['price_total_currency']){echo 'checked';}?> value="1"><span class="label label-success"><?php echo $CI->lang->line('LABEL_TOTAL_CURRENCY'); ?></span></label>
                 </div>
             </div>
             <div class="col-xs-4">
                 <div class="checkbox">
-                    <label><input type="checkbox" class="system_jqx_column" name="item[status_forward]" <?php if($items['status_forward']){echo 'checked';}?> value="1"><span class="label label-success">Forwarded<?php //echo $CI->lang->line('LABEL_TOTAL_CURRENCY'); ?></span></label>
+                    <label><input type="checkbox" class="system_jqx_column" name="items[status_forward]" <?php if($items['status_forward']){echo 'checked';}?> value="1"><span class="label label-success">Forwarded<?php //echo $CI->lang->line('LABEL_TOTAL_CURRENCY'); ?></span></label>
                 </div>
             </div>
         </div>
