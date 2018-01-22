@@ -122,9 +122,9 @@ class Lc_release extends Root_Controller
         $this->db->select('lc.*');
         $this->db->select('fy.name fiscal_year_name');
         $this->db->select('principal.name principal_name');
-        $this->db->select('sc.name currency_name');
+        $this->db->select('currency.name currency_name');
         $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.id = lc.fiscal_year_id','INNER');
-        $this->db->join($this->config->item('table_sms_setup_currency').' sc','sc.id = lc.currency_id','INNER');
+        $this->db->join($this->config->item('table_sms_setup_currency').' currency','currency.id = lc.currency_id','INNER');
         $this->db->join($this->config->item('table_login_basic_setup_principal').' principal','principal.id = lc.principal_id','INNER');
         $this->db->where('lc.status_forward',$this->config->item('system_status_yes'));
         $this->db->where('lc.status !=',$this->config->item('system_status_delete'));
@@ -147,10 +147,10 @@ class Lc_release extends Root_Controller
             $item['currency_name']=$result['currency_name'];
             $item['lc_number']=$result['lc_number'];
             $item['consignment_name']=$result['consignment_name'];
-            $item['quantity_total_kg']=$result['quantity_total_kg'];
-            $item['price_other_cost_total_currency']=$result['price_other_cost_total_currency'];
-            $item['price_variety_total_currency']=$result['price_variety_total_currency'];
-            $item['price_total_currency']=$result['price_total_currency'];
+            $item['quantity_total_kg']=number_format($result['quantity_total_kg'],3);
+            $item['price_other_cost_total_currency']=number_format($result['price_other_cost_total_currency'],2);
+            $item['price_variety_total_currency']=number_format($result['price_variety_total_currency'],2);
+            $item['price_total_currency']=number_format($result['price_total_currency'],2);
             $item['status_forward']=$result['status_forward'];
             $items[]=$item;
         }
@@ -172,13 +172,13 @@ class Lc_release extends Root_Controller
             $this->db->from($this->config->item('table_sms_lc_open').' lco');
             $this->db->select('lco.*');
             $this->db->select('fy.name fiscal_year_name');
-            $this->db->select('sc.name currency_name');
-            $this->db->select('sp.name principal_name');
+            $this->db->select('currency.name currency_name');
+            $this->db->select('principal.name principal_name');
             $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.id = lco.fiscal_year_id','INNER');
-            $this->db->join($this->config->item('table_sms_setup_currency').' sc','sc.id = lco.currency_id','INNER');
-            $this->db->join($this->config->item('table_login_basic_setup_principal').' sp','sp.id = lco.principal_id','INNER');
+            $this->db->join($this->config->item('table_sms_setup_currency').' currency','currency.id = lco.currency_id','INNER');
+            $this->db->join($this->config->item('table_login_basic_setup_principal').' principal','principal.id = lco.principal_id','INNER');
             $this->db->where('lco.id',$item_id);
-            $this->db->where('lco.status',$this->config->item('system_status_active'));
+            $this->db->where('lco.status !=',$this->config->item('system_status_delete'));
             $this->db->where('lco.status_forward',$this->config->item('system_status_yes'));
             $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
@@ -199,12 +199,12 @@ class Lc_release extends Root_Controller
 
             $this->db->from($this->config->item('table_sms_lc_details').' lcd');
             $this->db->select('lcd.*');
-            $this->db->select('scv.id variety_id, scv.name variety_name');
-            $this->db->select('svp.name_import variety_name_import');
-            $this->db->select('sps.name pack_size_name');
-            $this->db->join($this->config->item('table_login_setup_classification_varieties').' scv','scv.id = lcd.variety_id','INNER');
-            $this->db->join($this->config->item('table_login_setup_variety_principals').' svp','svp.variety_id = scv.id AND svp.principal_id = '.$data['item']['principal_id'].' AND svp.revision = 1','INNER');
-            $this->db->join($this->config->item('table_login_setup_classification_vpack_size').' sps','sps.id = lcd.pack_size_id','LEFT');
+            $this->db->select('v.id variety_id, v.name variety_name');
+            $this->db->select('vp.name_import variety_name_import');
+            $this->db->select('pack.name pack_size_name');
+            $this->db->join($this->config->item('table_login_setup_classification_varieties').' v','v.id = lcd.variety_id','INNER');
+            $this->db->join($this->config->item('table_login_setup_variety_principals').' vp','vp.variety_id = v.id AND vp.principal_id = '.$data['item']['principal_id'].' AND vp.revision = 1','INNER');
+            $this->db->join($this->config->item('table_login_setup_classification_vpack_size').' pack','pack.id = lcd.pack_size_id','LEFT');
             $this->db->where('lcd.lc_id',$item_id);
             $data['items']=$this->db->get()->result_array();
 
@@ -220,6 +220,7 @@ class Lc_release extends Root_Controller
         }
         else
         {
+            $ajax['status']=false;
             $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
             $this->json_return($ajax);
         }
@@ -250,17 +251,18 @@ class Lc_release extends Root_Controller
             $this->json_return($ajax);
         }
 
-        $lc_open_result=Query_helper::get_info($this->config->item('table_sms_lc_open'),'*',array('id ='.$id),1);
+        $lc_open_result=Query_helper::get_info($this->config->item('table_sms_lc_open'),'*',array('id ='.$id, 'status != "'.$this->config->item('system_status_delete').'"', 'status_forward = "'.$this->config->item('system_status_yes').'"'),1);
         if(!$lc_open_result)
         {
+            System_helper::invalid_try('Update Non Exists',$id);
             $ajax['status']=false;
-            $ajax['system_message']='Invalid LC - Data Not Found. Please Try Again.';
+            $ajax['system_message']='Invalid LC.';
             $this->json_return($ajax);
         }
         if($lc_open_result['status_release']==$this->config->item('system_status_complete'))
         {
             $ajax['status']=false;
-            $ajax['system_message']='You Can Not Modify LC Because LC Release Completed. Please Try Again.';
+            $ajax['system_message']='You Can Not Modify LC Because LC Release Completed.';
             $this->json_return($ajax);
             die();
         }
@@ -270,8 +272,7 @@ class Lc_release extends Root_Controller
         {
             foreach($result as $row)
             {
-                $old_varieties[$row['variety_id']][$row['quantity_type_id']]['lc_detail_id']=$row['id'];
-                $old_varieties[$row['variety_id']][$row['quantity_type_id']]['price_currency']=$row['price_currency'];
+                $old_varieties[$row['variety_id']][$row['pack_size_id']]=$row;
             }
         }
 
@@ -282,10 +283,10 @@ class Lc_release extends Root_Controller
         $price_release_total_currency=0;
         foreach($varieties as $variety)
         {
-            if(isset($old_varieties[$variety['variety_id']][$variety['quantity_type_id']]))
+            if(isset($old_varieties[$variety['variety_id']][$variety['pack_size_id']]))
             {
-                $lc_detail_id=$old_varieties[$variety['variety_id']][$variety['quantity_type_id']]['lc_detail_id'];
-                $variety_currency=$old_varieties[$variety['variety_id']][$variety['quantity_type_id']]['price_currency'];
+                $lc_detail_id=$old_varieties[$variety['variety_id']][$variety['pack_size_id']]['lc_detail_id'];
+                $variety_currency=$old_varieties[$variety['variety_id']][$variety['pack_size_id']]['price_currency'];
                 $price_release_total_currency+=($variety['quantity_release']*$variety_currency);
 
                 $variety_data=array();

@@ -7,7 +7,7 @@ $action_buttons[]=array
     'label'=>$CI->lang->line("ACTION_BACK"),
     'href'=>site_url($CI->controller_url)
 );
-if(isset($CI->permissions['action1']) && ($CI->permissions['action1']==1))
+if((isset($CI->permissions['action1']) && ($CI->permissions['action1']==1)) || (isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)))
 {
     $action_buttons[]=array
     (
@@ -16,15 +16,14 @@ if(isset($CI->permissions['action1']) && ($CI->permissions['action1']==1))
         'id'=>'button_action_save',
         'data-form'=>'#save_form'
     );
-
-    $action_buttons[]=array
-    (
-        'type'=>'button',
-        'label'=>$CI->lang->line("ACTION_CLEAR"),
-        'id'=>'button_action_clear',
-        'data-form'=>'#save_form'
-    );
 }
+$action_buttons[]=array
+(
+    'type'=>'button',
+    'label'=>$CI->lang->line("ACTION_CLEAR"),
+    'id'=>'button_action_clear',
+    'data-form'=>'#save_form'
+);
 $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
 ?>
@@ -107,29 +106,32 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         ?>
                         <tbody>
                         <?php
-
+                        $quantity_total_lc_kg=0;
+                        $quantity_total_release_kg=0;
                         foreach($items as $index=>$data)
                         {
                             if(!$item['user_release_created'])
                             {
                                 $quantity_release=$data['quantity_lc'];
-                                $price_total_release_currency=number_format($data['price_total_lc_currency'],2);
+                                $price_total_release_currency=$data['price_total_lc_currency'];
                             }
                             else
                             {
                                 $quantity_release=$data['quantity_release'];
-                                $price_total_release_currency=number_format($data['price_total_release_currency'],3);
+                                $price_total_release_currency=$data['price_total_release_currency'];
                             }
                             if($data['pack_size_id']==0)
                             {
-                                $quantity_lc_kg=number_format($data['quantity_lc'],3);
-                                $quantity_release_kg=number_format($quantity_release,3);
+                                $quantity_lc_kg=$data['quantity_lc'];
+                                $quantity_release_kg=$quantity_release;
                             }
                             else
                             {
-                                $quantity_lc_kg=number_format(($data['pack_size_name']*$data['quantity_lc'])/1000,3);
-                                $quantity_release_kg=number_format(($data['pack_size_name']*$quantity_release)/1000,3);
+                                $quantity_lc_kg=(($data['pack_size_name']*$data['quantity_lc'])/1000);
+                                $quantity_release_kg=(($data['pack_size_name']*$quantity_release)/1000);
                             }
+                            $quantity_total_lc_kg+=$quantity_lc_kg;
+                            $quantity_total_release_kg+=$quantity_release_kg;
                             ?>
                             <tr>
                                 <td>
@@ -145,19 +147,19 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                                     <input type="hidden" value="<?php echo $data['price_unit_lc_currency']; ?>" class="form-control float_type_positive price_unit_lc_currency" id="price_unit_lc_currency_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][price_unit_lc_currency]">
                                 </td>
                                 <td class="text-right"><?php echo number_format($data['quantity_lc'],3)?></td>
-                                <td class="text-right"><?php echo $quantity_lc_kg?></td>
+                                <td class="text-right"><?php echo number_format($quantity_lc_kg,3)?></td>
                                 <td class="text-right"><?php echo number_format($data['price_total_lc_currency'],2)?></td>
                                 <td>
                                     <input type="text" value="<?php echo $quantity_release; ?>" class="form-control float_type_positive quantity_release" id="quantity_release_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][quantity_release]">
                                 </td>
                                 <td class="text-right" >
                                     <label class="control-label quantity_release_kg" id="quantity_release_kg_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>">
-                                        <?php echo $quantity_release_kg; ?>
+                                        <?php echo number_format($quantity_release_kg,3); ?>
                                     </label>
                                 </td>
                                 <td class="text-right">
                                     <label class="control-label price_total_release_currency" id="price_total_release_currency_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>">
-                                        <?php echo $price_total_release_currency; ?>
+                                        <?php echo number_format($price_total_release_currency,2); ?>
                                     </label>
                                 </td>
                             </tr>
@@ -168,25 +170,25 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <tfoot>
                         <tr>
                             <th colspan="4" class="text-right"><?php echo $this->lang->line('LABEL_TOTAL_KG')?> & <?php echo $this->lang->line('LABEL_TOTAL_CURRENCY')?></th>
-                            <th class="text-right"><label class="control-label"><?php //echo number_format($total_kg,3);?></label></th>
-                            <th class="text-right"><label class="control-label"><?php //echo number_format($total_currency,2);?></label></th>
+                            <th class="text-right"><label class="control-label"><?php echo number_format($quantity_total_lc_kg,3);?></label></th>
+                            <th class="text-right"><label class="control-label"><?php echo number_format($item['price_total_currency'],2);?></label></th>
                             <th>&nbsp;</th>
-                            <th class="text-right"><label class="control-label" id="lbl_quantity_kg_grand_total"><?php //echo number_format($release_total_kg,3);?></label></th>
+                            <th class="text-right"><label class="control-label" id="lbl_quantity_kg_grand_total"><?php echo number_format($quantity_total_release_kg,3);?></label></th>
                             <th class="text-right"><label class="control-label" id="lbl_price_grand_total"><?php //echo number_format($release_total_currency,2);?></label></th>
                         </tr>
                         <tr>
                             <th colspan="5" class="text-right"><?php echo $this->lang->line('LABEL_OTHER_COST_CURRENCY')?></th>
-                            <th class="text-right"><label class="control-label"><?php //echo number_format($item['other_cost_currency'],2)?></label></th>
+                            <th class="text-right"><label class="control-label"><?php echo number_format($item['price_other_cost_total_currency'],2)?></label></th>
                             <th colspan="2">&nbsp;</th>
-                            <th class="text-right"><label class="control-label"><?php //echo number_format($item['other_cost_currency'],2)?></label></th>
+                            <th class="text-right"><label class="control-label"><?php echo number_format($item['price_other_cost_total_currency'],2)?></label></th>
                         </tr>
                         <tr>
                             <th colspan="5" class="text-right"><?php echo $this->lang->line('LABEL_GRAND_TOTAL_CURRENCY')?></th>
                             <th class="text-right">
                                 <label class="control-label">
                                     <?php
-                                    //$grand_total_currency=($total_currency+$item['other_cost_currency']);
-                                    //echo number_format($grand_total_currency,2);?>
+                                    $price_total_currency=($item['price_total_currency']+$item['price_other_cost_total_currency']);
+                                    echo number_format($price_total_currency,2);?>
                                 </label>
                             </th>
                             <th colspan="2">&nbsp;</th>
