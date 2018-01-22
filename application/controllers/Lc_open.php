@@ -186,10 +186,10 @@ class Lc_open extends Root_Controller
             $item['currency_name']=$result['currency_name'];
             $item['lc_number']=$result['lc_number'];
             $item['consignment_name']=$result['consignment_name'];
-            $item['quantity_total_kg']=$result['quantity_total_kg'];
-            $item['price_other_cost_total_currency']=$result['price_other_cost_total_currency'];
-            $item['price_variety_total_currency']=$result['price_variety_total_currency'];
-            $item['price_total_currency']=$result['price_total_currency'];
+            $item['quantity_total_kg']=number_format($result['quantity_total_kg'],3);
+            $item['price_other_cost_total_currency']=number_format($result['price_other_cost_total_currency'],2);
+            $item['price_variety_total_currency']=number_format($result['price_variety_total_currency'],2);
+            $item['price_total_currency']=number_format($result['price_total_currency'],2);
             $item['status_forward']=$result['status_forward'];
             $items[]=$item;
         }
@@ -294,10 +294,10 @@ class Lc_open extends Root_Controller
             $item['currency_name']=$result['currency_name'];
             $item['lc_number']=$result['lc_number'];
             $item['consignment_name']=$result['consignment_name'];
-            $item['quantity_total_kg']=$result['quantity_total_kg'];
-            $item['price_other_cost_total_currency']=$result['price_other_cost_total_currency'];
-            $item['price_variety_total_currency']=$result['price_variety_total_currency'];
-            $item['price_total_currency']=$result['price_total_currency'];
+            $item['quantity_total_kg']=number_format($result['quantity_total_kg'],3);
+            $item['price_other_cost_total_currency']=number_format($result['price_other_cost_total_currency'],2);
+            $item['price_variety_total_currency']=number_format($result['price_variety_total_currency'],2);
+            $item['price_total_currency']=number_format($result['price_total_currency'],2);
             $item['status_forward']=$result['status_forward'];
             $items[]=$item;
         }
@@ -802,7 +802,12 @@ class Lc_open extends Root_Controller
                 $ajax['system_message']='Invalid LC.';
                 $this->json_return($ajax);
             }
-
+            if($result['status_release']==$this->config->item('system_status_complete'))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='Already LC Released.';
+                $this->json_return($ajax);
+            }
             $this->db->trans_start();  //DB Transaction Handle START
             Query_helper::update($this->config->item('table_sms_lc_open'),array('status'=>$this->config->item('system_status_delete')),array("id = ".$item_id));
             $this->db->trans_complete();   //DB Transaction Handle END

@@ -398,65 +398,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
     </table>
 </div>
 <script>
-    /*function calculate_total()
-    {
-        var quantity_total_kg=0;
-        var price_variety_total_currency=0;
-        var price_total_currency=0;
-        $('#items_container .quantity_lc').each(function(index,element)
-        {
-            var current_id=parseInt($(this).attr('data-current-id'));
-            if($('#items_container #pack_size_id_'+current_id).val()!='-1')
-            {
-                var quantity_lc_kg=number_format(0,3);
-                var price_total_lc_currency=number_format(0,2);
-                var quantity_lc=parseFloat($('#quantity_lc_'+current_id).val());
-                var price_unit_lc_currency=parseFloat($("#price_unit_lc_currency_"+current_id).val());
-                if(isNaN(quantity_lc))
-                {
-                    quantity_lc=0;
-                }
-                if(isNaN(price_unit_lc_currency))
-                {
-                    price_unit_lc_currency=0;
-                }
 
-                var pack_size=parseFloat($("#pack_size_id_"+current_id).attr('data-pack-size-name'));
-                if($("#pack_size_id_"+current_id).attr('data-new-pack-size')==0)
-                {
-                    var pack_size=parseFloat($('option:selected', $("#pack_size_id_"+current_id)).attr('data-pack-size-name'));
-                }
-
-                if(pack_size==0)
-                {
-                    quantity_lc_kg=quantity_lc;
-                }
-                else
-                {
-                    quantity_lc_kg=parseFloat((pack_size*quantity_lc)/1000);
-                }
-
-                $("#quantity_lc_kg_"+current_id).html(number_format(quantity_lc_kg,3));
-                price_total_lc_currency=(quantity_lc*price_unit_lc_currency);
-                $("#price_total_lc_currency_"+current_id).html(number_format(price_total_lc_currency,2));
-
-                quantity_total_kg+=quantity_lc_kg;
-                price_variety_total_currency+=price_total_lc_currency;
-            }
-        });
-
-        $("#lbl_quantity_total_kg").html('');
-        $("#lbl_quantity_total_kg").html(number_format(quantity_total_kg,3));
-        $("#lbl_price_variety_total_currency").html('');
-        $("#lbl_price_variety_total_currency").html(number_format(price_variety_total_currency,2));
-        $("#lbl_price_total_currency").html('');
-        price_total_currency=(parseFloat($("#price_other_cost_total_currency").val())+price_variety_total_currency);
-        if(isNaN(parseFloat($("#price_other_cost_total_currency").val())))
-        {
-            price_total_currency=price_variety_total_currency;
-        }
-        $("#lbl_price_total_currency").html(number_format(price_total_currency,2));
-    }*/
     function calculate_total()
     {
         var quantity_total_kg=0;
@@ -464,8 +406,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         $('#items_container .quantity_lc_kg').each(function(index, element)
         {
             var current_id=parseInt($(this).attr('data-current-id'));
-            quantity_total_kg+=parseFloat($('#quantity_lc_kg_'+current_id).html());
-            price_total_lc_currency+=parseFloat($('#price_total_lc_currency_'+current_id).html());
+            quantity_total_kg+=parseFloat($('#quantity_lc_kg_'+current_id).html().replace(/,/g,''));
+            price_total_lc_currency+=parseFloat($('#price_total_lc_currency_'+current_id).html().replace(/,/g,''));
         });
         $('#lbl_quantity_total_kg').html(number_format(quantity_total_kg,3));
         $('#lbl_price_variety_total_currency').html(number_format(price_total_lc_currency,2));
@@ -569,18 +511,17 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             if(variety_id>0)
             {
                 $('#pack_size_id_'+current_id).show();
-                $('#quantity_lc_'+current_id).show();
-                $('#price_unit_lc_currency_'+current_id).show();
             }
             else
             {
                 $('#pack_size_id_'+current_id).hide();
-                $('#quantity_lc_'+current_id).hide();
-                $('#price_unit_lc_currency_'+current_id).hide();
             }
+            $('#quantity_lc_'+current_id).hide();
+            $('#price_unit_lc_currency_'+current_id).hide();
+
             $('#pack_size_id_'+current_id).val('-1');
-            $('#quantity_lc_'+current_id).val('0.000');
-            $('#price_unit_lc_currency_'+current_id).val('0.00');
+            $('#quantity_lc_'+current_id).val('');
+            $('#price_unit_lc_currency_'+current_id).val('');
             $('#quantity_lc_kg_'+current_id).html('0.000');
             $('#price_total_lc_currency_'+current_id).html('0.00');
             calculate_total();
@@ -601,8 +542,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 $('#quantity_lc_'+current_id).hide();
                 $('#price_unit_lc_currency_'+current_id).hide();
             }
-            $('#quantity_lc_'+current_id).val('0.000');
-            $('#price_unit_lc_currency_'+current_id).val('0.00');
+            $('#quantity_lc_'+current_id).val('');
+            $('#price_unit_lc_currency_'+current_id).val('');
             $('#quantity_lc_kg_'+current_id).html('0.000');
             $('#price_total_lc_currency_'+current_id).html('0.00');
             calculate_total();
