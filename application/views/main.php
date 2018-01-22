@@ -35,11 +35,27 @@ foreach($results as $result)
 {
     $system_districts[$result['territory_id']][]=$result;
 }
-$results=Query_helper::get_info($CI->config->item('table_login_csetup_cus_info'),array('customer_id value','name text','district_id'),array('type ='.$CI->config->item('system_customer_type_customer_id'),'revision =1'),0,0,array('ordering ASC'));
+
+$this->db->from($this->config->item('table_login_csetup_customer').' customer');
+$this->db->join($this->config->item('table_login_csetup_cus_info').' cus_info','cus_info.customer_id = customer.id','LEFT');
+$this->db->select('customer.id');
+$this->db->select('cus_info.type, cus_info.district_id, cus_info.customer_id value, cus_info.name text');
+$this->db->where('customer.status',$CI->config->item('system_status_active'));
+$results=$this->db->get()->result_array();
 $system_customers=array();
+$system_outlets=array();
+$system_all_customers=array();
 foreach($results as $result)
 {
-    $system_customers[$result['district_id']][]=$result;
+    if($result['type']==$CI->config->item('system_customer_type_customer_id'))
+    {
+        $system_customers[$result['district_id']][]=$result;
+    }
+    elseif($result['type']==$CI->config->item('system_customer_type_outlet_id'))
+    {
+        $system_outlets[$result['district_id']][]=$result;
+    }
+    $system_all_customers[]=$result;
 }
 ?>
 <!DOCTYPE html>
@@ -109,6 +125,7 @@ foreach($results as $result)
             var system_territories=JSON.parse('<?php echo json_encode($system_territories);?>');
             var system_districts=JSON.parse('<?php echo json_encode($system_districts);?>');
             var system_customers=JSON.parse('<?php echo json_encode($system_customers);?>');
+            var system_outlets=JSON.parse('<?php echo json_encode($system_outlets);?>');
         </script>
         <header class="hidden-print">
 

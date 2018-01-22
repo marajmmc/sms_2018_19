@@ -158,7 +158,7 @@ class Stock_out_variety extends Root_Controller
             $this->db->select('divisions.name division_name, divisions.id division_id');
             $this->db->join($this->config->item('table_login_setup_location_divisions').' divisions','divisions.id = zones.division_id','LEFT');
             $this->db->where('stock_out.id',$item_id);
-            $this->db->where('stock_out.status',$this->config->item('system_status_active'));
+            $this->db->where('stock_out.status !=',$this->config->item('system_status_delete'));
             $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
             {
@@ -191,7 +191,16 @@ class Stock_out_variety extends Root_Controller
             $data['zones']=Query_helper::get_info($this->config->item('table_login_setup_location_zones'),array('id value','name text'),array('division_id ='.$data['item']['division_id']));
             $data['territories']=Query_helper::get_info($this->config->item('table_login_setup_location_territories'),array('id value','name text'),array('zone_id ='.$data['item']['zone_id']));
             $data['districts']=Query_helper::get_info($this->config->item('table_login_setup_location_districts'),array('id value','name text'),array('territory_id ='.$data['item']['territory_id']));
-            $data['customers']=Query_helper::get_info($this->config->item('table_login_csetup_cus_info'),array('id value','name text'),array('district_id ='.$data['item']['district_id']));
+
+            //getting outlets name
+            $this->db->from($this->config->item('table_login_csetup_customer').' customer');
+            $this->db->join($this->config->item('table_login_csetup_cus_info').' cus_info','cus_info.customer_id = customer.id','LEFT');
+            $this->db->select('cus_info.type, cus_info.district_id, cus_info.customer_id value, cus_info.name text');
+            $this->db->where('customer.status',$this->config->item('system_status_active'));
+            $this->db->where('cus_info.district_id',$data['item']['district_id']);
+            $this->db->where('cus_info.type',$this->config->item('system_customer_type_outlet_id'));
+            $data['customers']=$this->db->get()->result_array();
+
             $data['title']="Edit Stock Out";
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/add_edit",$data,true));
@@ -215,6 +224,8 @@ class Stock_out_variety extends Root_Controller
         $user = User_helper::get_user();
         $time = time();
         /*--Start-- Permission Checking */
+        $old_item=array();
+
         if($id>0)
         {
             if(!(isset($this->permissions['action2']) && ($this->permissions['action2']==1)))
@@ -223,7 +234,7 @@ class Stock_out_variety extends Root_Controller
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->json_return($ajax);
             }
-            $old_item=Query_helper::get_info($this->config->item('table_sms_stock_out_variety'),'*',array('status ="'.$this->config->item('system_status_active').'"','id ='.$id),1);
+            $old_item=Query_helper::get_info($this->config->item('table_sms_stock_out_variety'),'*',array('status !="'.$this->config->item('system_status_delete').'"','id ='.$id),1);
             if(!$old_item)
             {
                 System_helper::invalid_try('Save Non Exists',$id);
@@ -408,38 +419,38 @@ class Stock_out_variety extends Root_Controller
                     if(isset($old_quantities[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]))
                     {
                         $old_value=$old_quantities[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]['quantity'];
-                        if($item_head['purpose']==$this->config->item('system_purpose_variety_rnd'))
+                        if($old_item['purpose']==$this->config->item('system_purpose_variety_rnd'))
                         {
                             $data['out_stock_rnd']=($current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]['out_stock_rnd']-$old_value+$item['quantity']);
                         }
-                        elseif($item_head['purpose']==$this->config->item('system_purpose_variety_short_inventory'))
+                        elseif($old_item['purpose']==$this->config->item('system_purpose_variety_short_inventory'))
                         {
                             $data['out_stock_short_inventory']=($current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]['out_stock_short_inventory']-$old_value+$item['quantity']);
                         }
-                        elseif($item_head['purpose']==$this->config->item('system_purpose_variety_demonstration'))
+                        elseif($old_item['purpose']==$this->config->item('system_purpose_variety_demonstration'))
                         {
                             $data['out_stock_demonstration']=($current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]['out_stock_demonstration']-$old_value+$item['quantity']);
                         }
-                        elseif($item_head['purpose']==$this->config->item('system_purpose_variety_sample'))
+                        elseif($old_item['purpose']==$this->config->item('system_purpose_variety_sample'))
                         {
                             $data['out_stock_sample']=($current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]['out_stock_sample']-$old_value+$item['quantity']);
                         }
                         $data['current_stock']=($current_stock-$item['quantity']+$old_value);
                     }else
                     {
-                        if($item_head['purpose']==$this->config->item('system_purpose_variety_rnd'))
+                        if($old_item['purpose']==$this->config->item('system_purpose_variety_rnd'))
                         {
                             $data['out_stock_rnd']=($current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]['out_stock_rnd']+$item['quantity']);
                         }
-                        elseif($item_head['purpose']==$this->config->item('system_purpose_variety_short_inventory'))
+                        elseif($old_item['purpose']==$this->config->item('system_purpose_variety_short_inventory'))
                         {
                             $data['out_stock_short_inventory']=($current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]['out_stock_short_inventory']+$item['quantity']);
                         }
-                        elseif($item_head['purpose']==$this->config->item('system_purpose_variety_demonstration'))
+                        elseif($old_item['purpose']==$this->config->item('system_purpose_variety_demonstration'))
                         {
                             $data['out_stock_demonstration']=($current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]['out_stock_demonstration']+$item['quantity']);
                         }
-                        elseif($item_head['purpose']==$this->config->item('system_purpose_variety_sample'))
+                        elseif($old_item['purpose']==$this->config->item('system_purpose_variety_sample'))
                         {
                             $data['out_stock_sample']=($current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]['out_stock_sample']+$item['quantity']);
                         }
@@ -537,24 +548,26 @@ class Stock_out_variety extends Root_Controller
     {
         $id = $this->input->post("id");
         $data=$this->input->post('item');
+        $old_item=Query_helper::get_info($this->config->item('table_sms_stock_out_variety'),'*',array('status !="'.$this->config->item('system_status_delete').'"','id ='.$id),1);
         $this->load->library('form_validation');
         if(!($id>0))
         {
-
             $this->form_validation->set_rules('item[date_stock_out]',$this->lang->line('LABEL_DATE_STOCK_IN'),'required');
             $this->form_validation->set_rules('item[purpose]',$this->lang->line('LABEL_PURPOSE'),'required');
             if(($data['purpose']==$this->config->item('system_purpose_variety_sample')) || ($data['purpose']==$this->config->item('system_purpose_variety_demonstration')))
             {
                 $this->form_validation->set_rules('item[customer_id]',$this->lang->line('LABEL_OUTLET_NAME'),'required');
+                $this->form_validation->set_rules('item[customer_name]',$this->lang->line('LABEL_CUSTOMER_NAME'),'required');
             }
         }
         else
         {
-            if(($data['purpose']==$this->config->item('system_purpose_variety_sample')) || ($data['purpose']==$this->config->item('system_purpose_variety_demonstration')))
+            $this->form_validation->set_rules('id','ID','required');
+            if(($old_item['purpose']==$this->config->item('system_purpose_variety_sample')) || ($old_item['purpose']==$this->config->item('system_purpose_variety_demonstration')))
             {
                 $this->form_validation->set_rules('item[customer_id]',$this->lang->line('LABEL_OUTLET_NAME'),'required');
+                $this->form_validation->set_rules('item[customer_name]',$this->lang->line('LABEL_CUSTOMER_NAME'),'required');
             }
-
         }
         if($this->form_validation->run() == FALSE)
         {

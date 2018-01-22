@@ -338,7 +338,6 @@ class Stock_in_variety extends Root_Controller
         if($id>0)
         {
             /* --Start-- Item saving (In three table consequently)*/
-
             $data=array();
             $data['date_stock_in']=System_helper::get_time($item_head['date_stock_in']);
             $data['remarks']=$item_head['remarks'];
@@ -373,15 +372,6 @@ class Stock_in_variety extends Root_Controller
 
 
                 //summary calculation
-                if($id>0)
-                {
-                    $purpose=$old_item['purpose'];
-                }
-                else
-                {
-                    $purpose=$item_head['purpose'];
-                }
-
                 $data=array();
                 $data['in_stock']=0;
                 $data['in_excess']=0;
@@ -389,7 +379,7 @@ class Stock_in_variety extends Root_Controller
                 if(isset($old_quantities[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]))
                 {
                     $variance=$item['quantity']-$old_quantities[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]['quantity'];
-                    if($purpose==$this->config->item('system_purpose_variety_excess'))
+                    if($old_item['purpose']==$this->config->item('system_purpose_variety_excess'))
                     {
                         $data['in_excess']=$variance;
                     }
@@ -400,7 +390,7 @@ class Stock_in_variety extends Root_Controller
                 }
                 else//new entry
                 {
-                    if($purpose==$this->config->item('system_purpose_variety_excess'))
+                    if($old_item['purpose']==$this->config->item('system_purpose_variety_excess'))
                     {
                         $data['in_excess']=$item['quantity'];
                     }

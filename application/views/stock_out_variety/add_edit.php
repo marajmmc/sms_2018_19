@@ -67,7 +67,6 @@ if(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1))
     <?php if($item['purpose']){?>
         <div class="col-sm-4 col-xs-8">
             <label class="control-label"><?php echo $item['purpose']; ?></label>
-            <input type="hidden" name="item[purpose]" value="<?php echo $item['purpose'];?>">
         </div>
     <?php } else{?>
         <div class="col-sm-4 col-xs-8">
@@ -169,7 +168,7 @@ if(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1))
 </div>
 <div class="row show-grid" style="<?php if(!($item['customer_name'])){echo 'display:none';} ?>" id="customer_name_container">
     <div class="col-xs-4">
-        <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_CUSTOMER_NAME');?></label>
+        <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_CUSTOMER_NAME');?><span style="color:#FF0000">*</span></label>
     </div>
     <div class="col-sm-4 col-xs-8">
         <input type="text" name="item[customer_name]" id="customer_name" class="form-control" value="<?php echo $item['customer_name']?>"/>
@@ -438,31 +437,16 @@ jQuery(document).ready(function()
         $('#customer_name_container').hide();
         if(district_id>0)
         {
-            if(system_customers[district_id]!==undefined)
+            if(system_outlets[district_id]!==undefined)
             {
                 $('#customer_id_container').show();
-                $('#customer_id').html(get_dropdown_with_select(system_customers[district_id]));
+                $('#customer_id').html(get_dropdown_with_select(system_outlets[district_id]));
                 $('#customer_name_container').show();
             }
-            $('#customer_name_container').show();
         }
     });
 
-//    $(document).off('change', '#customer_id');
-//    $(document).on('change','#customer_id',function()
-//    {
-//        $('#customer_name').val('');
-//        var customer_id=$('#customer_id').val();
-//        if(customer_id>0)
-//        {
-//            $('#customer_name_container').hide();
-//            $("#customer_name").val($("#customer_id :selected").text());
-//        }
-//        else
-//        {
-//            $('#customer_name_container').show();
-//        }
-//    });
+    $(document).off('change', '#customer_id');
 
     $(document).off("click", ".system_button_add_more");
     $(document).on("click", ".system_button_add_more", function(event)
