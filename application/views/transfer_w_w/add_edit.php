@@ -6,18 +6,21 @@ $action_buttons[]=array(
     'label'=>$CI->lang->line("ACTION_BACK"),
     'href'=>site_url($CI->controller_url)
 );
-$action_buttons[]=array(
-    'type'=>'button',
-    'label'=>$CI->lang->line("ACTION_SAVE"),
-    'id'=>'button_action_save',
-    'data-form'=>'#save_form'
-);
-$action_buttons[]=array(
-    'type'=>'button',
-    'label'=>$CI->lang->line("ACTION_SAVE_NEW"),
-    'id'=>'button_action_save_new',
-    'data-form'=>'#save_form'
-);
+if((isset($CI->permissions['action1']) && ($CI->permissions['action1']==1)) || (isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)))
+{
+    $action_buttons[]=array(
+        'type'=>'button',
+        'label'=>$CI->lang->line("ACTION_SAVE"),
+        'id'=>'button_action_save',
+        'data-form'=>'#save_form'
+    );
+    $action_buttons[]=array(
+        'type'=>'button',
+        'label'=>$CI->lang->line("ACTION_SAVE_NEW"),
+        'id'=>'button_action_save_new',
+        'data-form'=>'#save_form'
+    );
+}
 $action_buttons[]=array(
     'type'=>'button',
     'label'=>$CI->lang->line("ACTION_CLEAR"),
@@ -41,7 +44,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <label class="control-label pull-right">Transfer Date<span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <input type="text" name="item[date_stock_in]" id="date_stock_in" class="form-control datepicker" value="<?php echo System_helper::display_date($item['date_stock_in']);?>"/>
+                <input type="text" name="item[date_transfer]" id="date_transfer" class="form-control datepicker" value="<?php echo System_helper::display_date($item['date_transfer']);?>"/>
             </div>
         </div>
 
@@ -149,7 +152,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <label for="destination_warehouse_id" class="control-label pull-right">Destination Warehouse<span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <select id="warehouse_id" name="item[warehouse_id]" class="form-control">
+                <select id="destination_warehouse_id" name="item[destination_warehouse_id]" class="form-control">
                     <option value=""><?php echo $this->lang->line('SELECT');?></option>
                     <?php
                     foreach($warehouses as $warehouse)
@@ -162,21 +165,25 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             </div>
         </div>
 
-        <div class="row show-grid">
-            <div class="col-xs-4">
-                <label for="quantity" class="control-label pull-right"><?php echo $this->lang->line('LABEL_QUANTITY');?><span style="color:#FF0000">*</span></label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <input type="text" name="item[quantity]" id="quantity" class="form-control float_type_positive" value="<?php echo $item['quantity'];?>"/>
+        <div style="display:none;" class="row show-grid" id="quantity_id">
+            <div class="row show-grid">
+                <div class="col-xs-4">
+                    <label for="quantity" class="control-label pull-right"><?php echo $this->lang->line('LABEL_QUANTITY');?><span style="color:#FF0000">*</span></label>
+                </div>
+                <div class="col-sm-4 col-xs-8">
+                    <input type="text" name="item[quantity]" id="quantity" class="form-control float_type_positive" value="<?php echo $item['quantity'];?>"/>
+                </div>
             </div>
         </div>
 
-        <div style="" class="row show-grid">
-            <div class="col-xs-4">
-                <label for="remarks" class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS');?></label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <textarea name="item[remarks]" id="remarks" class="form-control"><?php echo $item['remarks'] ?></textarea>
+        <div style="display:none;" class="row show-grid" id="remarks_id">
+            <div style="" class="row show-grid">
+                <div class="col-xs-4">
+                    <label for="remarks" class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS');?></label>
+                </div>
+                <div class="col-sm-4 col-xs-8">
+                    <textarea name="item[remarks]" id="remarks" class="form-control"><?php echo $item['remarks'] ?></textarea>
+                </div>
             </div>
         </div>
 
@@ -257,25 +264,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 $('#pack_size_id_container').show();
                 $('#source_warehouse_id_container').hide();
                 $('#current_stock_container').hide();
-                $.ajax({
-                    url: "<?php echo site_url($CI->controller_url.'/get_pack_size'); ?>",
-                    type: 'POST',
-                    datatype: "JSON",
-                    data:{
-                        warehouse_id:warehouse_id,
-                        pack_size_id:pack_size_id,
-                        variety_id:variety_id,
-                        html_container_id:'#stock_current_'+active_id
-                    },
-                    success: function (data, status)
-                    {
-                        $("#stock_current_"+active_id).text(data);
-                    },
-                    error: function (xhr, desc, err)
-                    {
-                        console.log("error");
-                    }
-                });
             }
             else
             {
@@ -300,21 +288,25 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 $('#current_stock_container').hide();
             }
         });
-        $(document).on("change","#warehouse_id",function()
+        $(document).on("change","#source_warehouse_id",function()
         {
             $("#current_stock_id").text("");
             var variety_id=$('#variety_id').val();
             var pack_size_id=$('#pack_size_id').val();
-            var warehouse_id=$('#warehouse_id').val();
-            if(warehouse_id>0)
+            var source_warehouse_id=$('#source_warehouse_id').val();
+            if(source_warehouse_id>0)
             {
                 $('#current_stock_container').show();
+                $('#quantity_id').show();
+                $('#remarks_id').show();
+                $('#destination_warehouse_id_container').show();
+
                 $.ajax({
                     url: base_url+"common_controller/get_current_stock/",
                     type: 'POST',
                     datatype: "JSON",
                     data:{
-                        warehouse_id:warehouse_id,
+                        warehouse_id:source_warehouse_id,
                         pack_size_id:pack_size_id,
                         variety_id:variety_id
                     },

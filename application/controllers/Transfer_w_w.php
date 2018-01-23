@@ -73,7 +73,7 @@ class Transfer_w_w extends Root_Controller
                 'pack_size_id' => -1,
                 'warehouse_id' => '',
                 'quantity' => '',
-                'date_stock_in' => $time,
+                'date_transfer' => $time,
                 'purpose' => '',
                 'remarks' => ''
             );
