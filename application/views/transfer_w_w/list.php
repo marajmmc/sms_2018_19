@@ -47,7 +47,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 { name: 'barcode', type: 'string' },
                 { name: 'date_transfer_w_w', type: 'string' },
                 { name: 'quantity_total', type: 'string' },
-                { name: 'purpose', type: 'string' },
                 { name: 'remarks', type: 'string' }
             ],
             id: 'id',
@@ -77,7 +76,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     { text: 'ID', dataField: 'id',width:'110'},
                     { text: 'Transfer Date', filtertype: 'list',dataField: 'date_transfer_w_w',width:'140'},
                     { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL'); ?> (KG)', cellsalign: 'right',dataField: 'quantity_total',width:'200'},
-                    { text: '<?php echo $CI->lang->line('LABEL_PURPOSE'); ?>', dataField: 'purpose',filtertype: 'list',width:'200'},
                     { text: '<?php echo $CI->lang->line('LABEL_REMARKS'); ?>', dataField: 'remarks'}
                 ]
             });
