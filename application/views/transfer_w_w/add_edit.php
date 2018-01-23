@@ -286,17 +286,17 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         });
         $(document).on("change","#pack_size_id",function()
         {
-            $("#warehouse_id").val("");
+            $("#source_warehouse_id").val("");
             $("#current_stock_id").text("");
             var pack_size_id=$('#pack_size_id').val();
             if(pack_size_id == '')
             {
-                $('#warehouse_id_container').hide();
+                $('#source_warehouse_id_container').hide();
                 $('#current_stock_container').hide();
             }
             else
             {
-                $('#warehouse_id_container').show();
+                $('#source_warehouse_id_container').show();
                 $('#current_stock_container').hide();
             }
         });
