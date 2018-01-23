@@ -11,7 +11,6 @@ class Transfer_w_w extends Root_Controller
         parent::__construct();
         $this->permissions=User_helper::get_permission('Transfer_w_w');
         $this->controller_url='transfer_w_w';
-        $this->load->helper('barcode_helper');
     }
     public function index($action='list',$id=0)
     {
@@ -53,7 +52,6 @@ class Transfer_w_w extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
     private function system_get_items()
     {
         $items=array();
@@ -65,16 +63,18 @@ class Transfer_w_w extends Root_Controller
         {
             $time=time();
             $data['title']="Transfer (Warehouse to Warehouse)";
-            $data["item"] = Array(
+            $data["item"] = Array
+            (
                 'id' => 0,
+                'date_transfer' => $time,
                 'crop_id'=>0,
                 'crop_type_id'=>0,
                 'variety_id'=>0,
                 'pack_size_id' => -1,
-                'warehouse_id' => '',
-                'quantity' => '',
-                'date_transfer' => $time,
-                'purpose' => '',
+                'source_warehouse_id' => '',
+                'destination_warehouse_id' => '',
+                'current_stock' =>0,
+                'quantity' => 0,
                 'remarks' => ''
             );
             $data['crops']=Query_helper::get_info($this->config->item('table_login_setup_classification_crops'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
@@ -82,13 +82,14 @@ class Transfer_w_w extends Root_Controller
             $data['varieties']=array();
             $data['warehouses']=Query_helper::get_info($this->config->item('table_login_basic_setup_warehouse'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $data['packs']=Query_helper::get_info($this->config->item('table_login_setup_classification_vpack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
-            $ajax['system_page_url']=site_url($this->controller_url."/index/add");
+
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/add_edit",$data,true));
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
             }
+            $ajax['system_page_url']=site_url($this->controller_url."/index/add");
             $this->json_return($ajax);
         }
         else
@@ -99,8 +100,4 @@ class Transfer_w_w extends Root_Controller
         }
     }
 
-    public function get_pack_size()
-    {
-
-    }
 }

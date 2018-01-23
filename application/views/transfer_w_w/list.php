@@ -63,9 +63,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             dataType: "json",
             dataFields: [
                 { name: 'id', type: 'int' },
-                { name: 'barcode', type: 'string' },
-                { name: 'date_transfer_w_w', type: 'string' },
-                { name: 'quantity_total', type: 'string' },
+                { name: 'date_transfer', type: 'string' },
+                { name: 'quantity', type: 'string' },
                 { name: 'remarks', type: 'string' }
             ],
             id: 'id',
@@ -92,9 +91,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 enablebrowserselection:true,
                 columnsreorder: true,
                 columns: [
-                    { text: 'ID', dataField: 'id',width:'110'},
-                    { text: 'Transfer Date', filtertype: 'list',dataField: 'date_transfer_w_w',width:'140'},
-                    { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL'); ?> (KG)', cellsalign: 'right',dataField: 'quantity_total',width:'200'},
+                    { text: 'ID', dataField: 'id',width:'50'},
+                    { text: 'Transfer Date', filtertype: 'list',dataField: 'date_transfer',width:'90'},
+                    { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL'); ?> (KG)', cellsalign: 'right',dataField: 'quantity',width:'100'},
                     { text: '<?php echo $CI->lang->line('LABEL_REMARKS'); ?>', dataField: 'remarks'}
                 ]
             });

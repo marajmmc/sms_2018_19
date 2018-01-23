@@ -44,25 +44,51 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <label class="control-label pull-right">Transfer Date<span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <input type="text" name="item[date_transfer]" id="date_transfer" class="form-control datepicker" value="<?php echo System_helper::display_date($item['date_transfer']);?>"/>
+                <?php
+                if($item['id']>0)
+                {
+                    ?>
+                    <label class="control-label"><?php echo System_helper::display_date($item['date_transfer']);?></label>
+                <?php
+                }
+                else
+                {
+                    ?>
+                    <input type="text" name="item[date_transfer]" id="date_transfer" class="form-control datepicker" value="<?php echo System_helper::display_date($item['date_transfer']);?>"/>
+                <?php
+                }
+                ?>
             </div>
         </div>
-
         <div style="" class="row show-grid">
             <div class="col-xs-4">
                 <label for="crop_id" class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CROP_NAME');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <select id="crop_id" class="form-control">
-                    <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                    <?php
-                    foreach($crops as $crop)
-                    {?>
-                        <option value="<?php echo $crop['value']?>"><?php echo $crop['text'];?></option>
-                    <?php
-                    }
+                <?php
+                if($item['id']>0)
+                {
                     ?>
-                </select>
+                    <label class="control-label"><?php echo $item['crop_name']?></label>
+                <?php
+                }
+                else
+                {
+                    ?>
+                    <select id="crop_id" class="form-control">
+                        <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                        <?php
+                        foreach($crops as $crop)
+                        {
+                            ?>
+                            <option value="<?php echo $crop['value']?>"><?php echo $crop['text'];?></option>
+                        <?php
+                        }
+                        ?>
+                    </select>
+                <?php
+                }
+                ?>
             </div>
         </div>
 
@@ -125,12 +151,12 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <label for="warehouse_id" class="control-label pull-right">Source Warehouse<span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <select id="source_warehouse_id" name="item[warehouse_id]" class="form-control">
+                <select id="source_warehouse_id" name="item[source_warehouse_id]" class="form-control">
                     <option value=""><?php echo $this->lang->line('SELECT');?></option>
                     <?php
                     foreach($warehouses as $warehouse)
                     {?>
-                        <option value="<?php echo $warehouse['value']?>"><?php echo $warehouse['text'];?></option>
+                        <option value="<?php echo $warehouse['value']?>" <?php if($warehouse['value']==$item['source_warehouse_id']){echo "selected";}?>><?php echo $warehouse['text'];?></option>
                     <?php
                     }
                     ?>
@@ -143,7 +169,11 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <label for="current_stock_id" class="control-label pull-right">Current Stock</label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <label id="current_stock_id"><?php if(isset($item['current_stock']) && $item['pack_size_id']==0){echo number_format($item['current_stock'],3).' kg';} else{echo $item['current_stock'].' packet';}?></label>
+                <label id="current_stock_id">
+                    <?php
+                    echo number_format($item['current_stock'],3);
+                    ?>
+                </label>
             </div>
         </div>
 
@@ -156,8 +186,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <option value=""><?php echo $this->lang->line('SELECT');?></option>
                     <?php
                     foreach($warehouses as $warehouse)
-                    {?>
-                        <option value="<?php echo $warehouse['value']?>"><?php echo $warehouse['text'];?></option>
+                    {
+                        ?>
+                        <option value="<?php echo $warehouse['value']?>" <?php if($warehouse['value']==$item['destination_warehouse_id']){echo "selected";}?>><?php echo $warehouse['text'];?></option>
                     <?php
                     }
                     ?>
