@@ -8,7 +8,9 @@ $lang['MSG_LOCATION_NOT_ASSIGNED_OR_INVALID'] = 'No Location assigned.Please con
 $lang['MSG_CONFIRM_SAVE'] = 'Are You Sure to save?';
 $lang['MSG_FORWARD_SUCCESS'] = 'Successfully Forwarded';
 $lang['MSG_DELETED_SUCCESS'] = 'Successfully Deleted';
+$lang['MSG_ROLE_ASSIGN_SUCCESS'] = 'Role Assign Successful.';
 $lang['MSG_SELECT_ONE'] = 'Please Select At least one item';
+
 
 //Action buttons
 $lang['ACTION_DASHBOARD'] = 'Dashboard';
@@ -26,7 +28,6 @@ $lang['ACTION_DELETE'] = 'Delete';
 $lang['DELETE_CONFIRM'] = 'Are You sure to delete?';
 $lang['ACTION_PRINT'] = 'Print';
 $lang['ACTION_DOWNLOAD'] = 'Download';
-$lang['MSG_ROLE_ASSIGN_SUCCESS'] = 'Role Assign Successful.';
 $lang['ACTION_LOAD_MORE'] = 'Load More';
 $lang['ACTION_DOCUMENT'] = 'Documents';
 $lang['ACTION_ASSIGN_GROUP_ROLE'] = 'Assign Group Role';

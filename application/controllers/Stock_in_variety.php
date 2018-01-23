@@ -254,7 +254,6 @@ class Stock_in_variety extends Root_Controller
                 $results=Query_helper::get_info($this->config->item('table_sms_stock_in_variety_details'),'*',array('stock_in_id ='.$id,'revision ='.'1'));
                 foreach($results as $result)
                 {
-                    //$old_quantities[$old_item['variety_id']][$old_item['pack_size_id']][$old_item['warehouse_id']]=$old_item['quantity'];
                     $old_quantities[$result['variety_id']][$result['pack_size_id']][$result['warehouse_id']]=$result;
                 }
             }
@@ -432,7 +431,7 @@ class Stock_in_variety extends Root_Controller
         else
         {
             /* --Start-- Item saving (In three table consequently)*/
-            $data=array();
+            $data=array(); //Main Data
             $data['date_stock_in']=System_helper::get_time($item_head['date_stock_in']);
             $data['purpose']=$item_head['purpose'];
             $data['remarks']=$item_head['remarks'];
@@ -443,73 +442,60 @@ class Stock_in_variety extends Root_Controller
             $item_id=Query_helper::add($this->config->item('table_sms_stock_in_variety'),$data);
             foreach($items as $item)
             {
-                $data_details=array();
-                $data_details['stock_in_id']=$item_id;
-                $data_details['variety_id']=$item['variety_id'];
-                $data_details['pack_size_id']=$item['pack_size_id'];
-                $data_details['warehouse_id']=$item['warehouse_id'];
-                $data_details['quantity']=$item['quantity'];
-                $data_details['revision']=1;
-                $data_details['user_created']=$user->user_id;
-                $data_details['date_created']=$time;
-                Query_helper::add($this->config->item('table_sms_stock_in_variety_details'),$data_details,false);
+                $data=array(); //Details Data
+                $data['stock_in_id']=$item_id;
+                $data['variety_id']=$item['variety_id'];
+                $data['pack_size_id']=$item['pack_size_id'];
+                $data['warehouse_id']=$item['warehouse_id'];
+                $data['quantity']=$item['quantity'];
+                $data['revision']=1;
+                $data['user_created']=$user->user_id;
+                $data['date_created']=$time;
+                Query_helper::add($this->config->item('table_sms_stock_in_variety_details'),$data,false);
 
                 if(isset($current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]))
                 {
-                    $s_data=array();
+                    $data=array(); //Summary Data
                     if($item_head['purpose']==$this->config->item('system_purpose_variety_stock_in'))
                     {
-                        $in_stock=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]['in_stock'];
-                        $s_data['in_stock']=($item['quantity']+$in_stock);
+                        $data['in_stock']=($item['quantity']+$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]['in_stock']);
                     }
                     elseif($item_head['purpose']==$this->config->item('system_purpose_variety_excess'))
                     {
-                        $in_excess=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]['in_excess'];
-                        $s_data['in_excess']=($item['quantity']+$in_excess);
+                        $data['in_excess']=($item['quantity']+$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]['in_excess']);
                     }
-                    $current_stock=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]['current_stock'];
-                    $s_data['current_stock'] = ($item['quantity']+$current_stock);
-                    $s_data['date_updated'] = $time;
-                    $s_data['user_updated'] = $user->user_id;
-                    Query_helper::update($this->config->item('table_sms_stock_summary_variety'),$s_data,array('variety_id='.$item['variety_id'],'pack_size_id='.$item['pack_size_id'],'warehouse_id='.$item['warehouse_id']));
+                    $data['current_stock'] = ($item['quantity']+$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]['current_stock']);
+                    $data['date_updated'] = $time;
+                    $data['user_updated'] = $user->user_id;
+                    Query_helper::update($this->config->item('table_sms_stock_summary_variety'),$data,array('variety_id='.$item['variety_id'],'pack_size_id='.$item['pack_size_id'],'warehouse_id='.$item['warehouse_id']));
                 }
                 else
                 {
-                    $s_data=array();
-                    $s_data['variety_id'] = $item['variety_id'];
-                    $s_data['pack_size_id'] = $item['pack_size_id'];
-                    $s_data['warehouse_id'] = $item['warehouse_id'];
+                    $data=array(); //Summary Data
+                    $data['variety_id'] = $item['variety_id'];
+                    $data['pack_size_id'] = $item['pack_size_id'];
+                    $data['warehouse_id'] = $item['warehouse_id'];
                     if($item_head['purpose']==$this->config->item('system_purpose_variety_stock_in'))
                     {
-                        $s_data['in_stock']=$item['quantity'];
+                        $data['in_stock']=$item['quantity'];
                     }
                     elseif($item_head['purpose']==$this->config->item('system_purpose_variety_excess'))
                     {
-                        $s_data['in_excess']=$item['quantity'];
+                        $data['in_excess']=$item['quantity'];
                     }
-                    $s_data['current_stock'] = $item['quantity'];
-                    $s_data['date_updated'] = $time;
-                    $s_data['user_updated'] = $user->user_id;
-                    Query_helper::add($this->config->item('table_sms_stock_summary_variety'),$s_data);
+                    $data['current_stock'] = $item['quantity'];
+                    $data['date_updated'] = $time;
+                    $data['user_updated'] = $user->user_id;
+                    Query_helper::add($this->config->item('table_sms_stock_summary_variety'),$data);
                 }
             }
             /* --End-- Item saving (In three table consequently)*/
         }
         $this->db->trans_complete();   //DB Transaction Handle END
-        if($this->db->trans_status() === FALSE)
+        if ($this->db->trans_status()===true)
         {
-            $this->db->trans_rollback();
-
-            $ajax['status']=false;
-            $ajax['system_message']=$this->lang->line("MSG_SAVED_FAIL");
-            $this->json_return($ajax);
-        }
-        else
-        {
-            $this->db->trans_commit();
-
             $save_and_new=$this->input->post('system_save_new_status');
-            $this->message=$this->lang->line("MSG_SAVED_SUCCESS");
+            $this->message=$this->lang->line('MSG_SAVED_SUCCESS');
             if($save_and_new==1)
             {
                 $this->system_add();
@@ -518,6 +504,12 @@ class Stock_in_variety extends Root_Controller
             {
                 $this->system_list();
             }
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line('MSG_SAVED_FAIL');
+            $this->json_return($ajax);
         }
     }
 
@@ -536,7 +528,7 @@ class Stock_in_variety extends Root_Controller
             $data['item']=Query_helper::get_info($this->config->item('table_sms_stock_in_variety'),'*',array('status !="'.$this->config->item('system_status_delete').'"','id ='.$item_id),1);
             if(!$data['item'])
             {
-                System_helper::invalid_try('Stock In Item Not Exists',$item_id);
+                System_helper::invalid_try('Details Not Exists',$item_id);
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid Try.';
                 $this->json_return($ajax);
@@ -595,7 +587,7 @@ class Stock_in_variety extends Root_Controller
             $item_head=Query_helper::get_info($this->config->item('table_sms_stock_in_variety'),'*',array('status !="'.$this->config->item('system_status_delete').'"','id ='.$item_id),1);
             if(!$item_head)
             {
-                System_helper::invalid_try('Stock In Item Not Exists',$item_id);
+                System_helper::invalid_try('Delete Not Exists',$item_id);
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid Try.';
                 $this->json_return($ajax);
@@ -664,19 +656,16 @@ class Stock_in_variety extends Root_Controller
             }
 
             $this->db->trans_complete();   //DB Transaction Handle END
-            if($this->db->trans_status() === FALSE)
+            if ($this->db->trans_status()===true)
             {
-                $this->db->trans_rollback();
-
-                $ajax['status']=false;
-                $ajax['system_message']=$this->lang->line("MSG_SAVED_FAIL");
-                $this->json_return($ajax);
+                $this->message=$this->lang->line("MSG_DELETED_SUCCESS");
+                $this->system_list();
             }
             else
             {
-                $this->db->trans_commit();
-                $this->message=$this->lang->line("MSG_DELETED_SUCCESS");
-                $this->system_list();
+                $ajax['status']=false;
+                $ajax['system_message']=$this->lang->line('MSG_SAVED_FAIL');
+                $this->json_return($ajax);
             }
         }
         else

@@ -520,20 +520,10 @@ class Stock_out_variety extends Root_Controller
             /* --End-- Item saving (In three table consequently)*/
         }
         $this->db->trans_complete();   //DB Transaction Handle END
-        if($this->db->trans_status() === FALSE)
+        if ($this->db->trans_status()===true)
         {
-            $this->db->trans_rollback();
-
-            $ajax['status']=false;
-            $ajax['system_message']=$this->lang->line("MSG_SAVED_FAIL");
-            $this->json_return($ajax);
-        }
-        else
-        {
-            $this->db->trans_commit();
-
             $save_and_new=$this->input->post('system_save_new_status');
-            $this->message=$this->lang->line("MSG_SAVED_SUCCESS");
+            $this->message=$this->lang->line('MSG_SAVED_SUCCESS');
             if($save_and_new==1)
             {
                 $this->system_add();
@@ -542,6 +532,12 @@ class Stock_out_variety extends Root_Controller
             {
                 $this->system_list();
             }
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line('MSG_SAVED_FAIL');
+            $this->json_return($ajax);
         }
     }
     private function check_validation()
