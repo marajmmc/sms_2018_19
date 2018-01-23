@@ -33,7 +33,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE');?> :</label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <?php echo System_helper::display_date($item['date_stock_in']);?>
+                <?php echo System_helper::display_date($item['date_stock_out']);?>
             </div>
         </div>
 
@@ -44,14 +44,69 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             <div class="col-sm-4 col-xs-8">
                 <?php echo $item['purpose']; ?>
             </div>
-
         </div>
+        <?php if($item['customer_name']){?>
+            <div class="row show-grid">
+                <div class="col-xs-4">
+                    <label for="purpose" class="control-label pull-right"><?php echo $this->lang->line('LABEL_DIVISION_NAME'); ?> :</label>
+                </div>
+                <div class="col-sm-4 col-xs-8">
+                    <?php echo $item['division_name']; ?>
+                </div>
+            </div>
+
+            <div class="row show-grid">
+                <div class="col-xs-4">
+                    <label for="purpose" class="control-label pull-right"><?php echo $this->lang->line('LABEL_ZONE_NAME'); ?> :</label>
+                </div>
+                <div class="col-sm-4 col-xs-8">
+                    <?php echo $item['zone_name']; ?>
+                </div>
+            </div>
+
+            <div class="row show-grid">
+                <div class="col-xs-4">
+                    <label for="purpose" class="control-label pull-right"><?php echo $this->lang->line('LABEL_TERRITORY_NAME'); ?> :</label>
+                </div>
+                <div class="col-sm-4 col-xs-8">
+                    <?php echo $item['territory_name']; ?>
+                </div>
+            </div>
+
+            <div class="row show-grid">
+                <div class="col-xs-4">
+                    <label for="purpose" class="control-label pull-right"><?php echo $this->lang->line('LABEL_DISTRICT_NAME'); ?> :</label>
+                </div>
+                <div class="col-sm-4 col-xs-8">
+                    <?php echo $item['district_name']; ?>
+                </div>
+            </div>
+
+            <div class="row show-grid">
+                <div class="col-xs-4">
+                    <label for="purpose" class="control-label pull-right"><?php echo $this->lang->line('LABEL_OUTLET_NAME'); ?> :</label>
+                </div>
+                <div class="col-sm-4 col-xs-8">
+                    <?php echo $item['outlet_name']; ?>
+                </div>
+            </div>
+
+            <div class="row show-grid">
+                <div class="col-xs-4">
+                    <label for="purpose" class="control-label pull-right"><?php echo $this->lang->line('LABEL_CUSTOMER_NAME'); ?> :</label>
+                </div>
+                <div class="col-sm-4 col-xs-8">
+                    <?php echo $item['customer_name']; ?>
+                </div>
+            </div>
+        <?php } ?>
+
         <div style="" class="row show-grid">
             <div class="col-xs-4">
                 <label for="remarks" class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS');?> :</label>
             </div>
             <div class="col-sm-4 col-xs-8">
-               <?php echo $item['remarks']; ?>
+                <?php echo $item['remarks']; ?>
             </div>
         </div>
 
@@ -70,30 +125,30 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 </thead>
                 <tbody>
                 <?php
-                foreach($stock_in_varieties as $index=>$si_variety)
+                foreach($stock_out_varieties as $index=>$so_variety)
                 {
                     ?>
                     <tr>
                         <td>
-                            <label><?php echo $si_variety['crop_name']; ?></label>
+                            <label><?php echo $so_variety['crop_name']; ?></label>
                         </td>
                         <td>
-                            <label><?php echo $si_variety['crop_type_name']; ?></label>
+                            <label><?php echo $so_variety['crop_type_name']; ?></label>
                         </td>
                         <td>
-                            <label><?php echo $si_variety['variety_name']; ?></label>
+                            <label><?php echo $so_variety['variety_name']; ?></label>
                         </td>
                         <td>
-                            <label><?php if($si_variety['pack_size_id']==0){echo 'Bulk';}else{echo $si_variety['pack_size_name'];} ?></label>
+                            <label><?php if($so_variety['pack_size_id']==0){echo 'Bulk';}else{echo $so_variety['pack_size_name'];} ?></label>
                         </td>
                         <td>
-                            <label><?php echo $si_variety['ware_house_name']; ?></label>
+                            <label><?php echo $so_variety['ware_house_name']; ?></label>
                         </td>
                         <td class="text-right">
-                            <label><?php $current_stock=System_helper::get_variety_stock(array($si_variety['variety_id'])); if(isset($current_stock)){echo $current_stock[$si_variety['variety_id']][$si_variety['pack_size_id']][$si_variety['warehouse_id']]['current_stock'];}else{echo 0;}?></label>
+                            <label><?php $current_stock=System_helper::get_variety_stock(array($so_variety['variety_id'])); if(isset($current_stock)){echo $current_stock[$so_variety['variety_id']][$so_variety['pack_size_id']][$so_variety['warehouse_id']]['current_stock'];}else{echo 0;}?></label>
                         </td>
                         <td class="text-right">
-                            <label><?php echo $si_variety['quantity']; ?></label>
+                            <label><?php echo $so_variety['quantity']; ?></label>
                         </td>
                     </tr>
                 <?php
