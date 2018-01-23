@@ -50,7 +50,7 @@ class Lc_release extends Root_Controller
         if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
         {
             $user = User_helper::get_user();
-            $result=Query_helper::get_info($this->config->item('table_sms_setup_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
+            $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
             $data['items']['barcode']= 1;
             $data['items']['fiscal_year_name']= 1;
             $data['items']['month_name']= 1;
@@ -341,7 +341,7 @@ class Lc_release extends Root_Controller
         if(isset($this->permissions['action0']) && ($this->permissions['action0']==1))
         {
             $user = User_helper::get_user();
-            $result=Query_helper::get_info($this->config->item('table_sms_setup_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
+            $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
             $data['items']['id']= 1;
             $data['items']['fiscal_year_name']= 1;
             $data['items']['month_name']= 1;
@@ -414,13 +414,13 @@ class Lc_release extends Root_Controller
             $time=time();
             $this->db->trans_start();  //DB Transaction Handle START
 
-            $result=Query_helper::get_info($this->config->item('table_sms_setup_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
+            $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
             if($result)
             {
                 $data['user_updated']=$user->user_id;
                 $data['date_updated']=$time;
                 $data['preferences']=json_encode($items);
-                Query_helper::update($this->config->item('table_sms_setup_user_preference'),$data,array('id='.$result['id']),false);
+                Query_helper::update($this->config->item('table_system_user_preference'),$data,array('id='.$result['id']),false);
             }
             else
             {
@@ -430,7 +430,7 @@ class Lc_release extends Root_Controller
                 $data['user_created']=$user->user_id;
                 $data['date_created']=$time;
                 $data['preferences']=json_encode($items);
-                Query_helper::add($this->config->item('table_sms_setup_user_preference'),$data,false);
+                Query_helper::add($this->config->item('table_system_user_preference'),$data,false);
             }
 
             $this->db->trans_complete();   //DB Transaction Handle END

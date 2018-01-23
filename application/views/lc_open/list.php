@@ -2,6 +2,13 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 $CI=& get_instance();
 $action_buttons=array();
+if(isset($CI->permissions['action0']) && ($CI->permissions['action0']==1))
+{
+    $action_buttons[]=array(
+        'label'=>'All LC',
+        'href'=>site_url($CI->controller_url.'/index/list_all')
+    );
+}
 if(isset($CI->permissions['action1']) && ($CI->permissions['action1']==1))
 {
     $action_buttons[]=array(
@@ -16,13 +23,6 @@ if(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1))
         'label'=>$CI->lang->line('ACTION_EDIT'),
         'class'=>'button_jqx_action',
         'data-action-link'=>site_url($CI->controller_url.'/index/edit')
-    );
-}
-if(isset($CI->permissions['action0']) && ($CI->permissions['action0']==1))
-{
-    $action_buttons[]=array(
-        'label'=>'All LC',
-        'href'=>site_url($CI->controller_url.'/index/list_all')
     );
 }
 if((isset($CI->permissions['action1']) && ($CI->permissions['action1']==1)) || (isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)))
@@ -43,14 +43,6 @@ if(isset($CI->permissions['action0']) && ($CI->permissions['action0']==1))
         'label'=>$CI->lang->line('ACTION_DETAILS'),
         'class'=>'button_jqx_action',
         'data-action-link'=>site_url($CI->controller_url.'/index/details')
-    );
-}
-if(isset($CI->permissions['action6']) && ($CI->permissions['action6']==1))
-{
-    $action_buttons[]=array
-    (
-        'label'=>'Preference',
-        'href'=>site_url($CI->controller_url.'/index/set_preference')
     );
 }
 if(isset($CI->permissions['action3']) && ($CI->permissions['action3']==1))
@@ -83,7 +75,14 @@ if(isset($CI->permissions['action5']) && ($CI->permissions['action5']==1))
         'data-title'=>"Download"
     );
 }
-
+if(isset($CI->permissions['action6']) && ($CI->permissions['action6']==1))
+{
+    $action_buttons[]=array
+    (
+        'label'=>'Preference',
+        'href'=>site_url($CI->controller_url.'/index/set_preference')
+    );
+}
 $action_buttons[]=array(
     'label'=>$CI->lang->line("ACTION_REFRESH"),
     'href'=>site_url($CI->controller_url.'/index/list')
@@ -253,7 +252,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     { text: 'KG', dataField: 'quantity_total_kg', width:100, cellsalign: 'right', hidden: <?php echo $items['quantity_total_kg']?0:1;?>},
                     { text: 'Variety (Currency)', dataField: 'price_variety_total_currency', cellsalign: 'right', width:100, hidden: <?php echo $items['price_variety_total_currency']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_TOTAL_CURRENCY');?>', dataField: 'price_total_currency', cellsalign: 'right', width:100, hidden: <?php echo $items['price_total_currency']?0:1;?>},
-                    { text: 'Forwarded', dataField: 'status_forward',cellsalign: 'center',filtertype: 'list', width:30}
+                    { text: 'Forwarded', dataField: 'status_forward',cellsalign: 'center',filtertype: 'list', width:30, hidden: <?php echo $items['status_forward']?0:1;?>}
                 ]
             });
     });

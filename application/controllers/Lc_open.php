@@ -86,7 +86,7 @@ class Lc_open extends Root_Controller
         if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
         {
             $user = User_helper::get_user();
-            $result=Query_helper::get_info($this->config->item('table_sms_setup_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
+            $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
             $data['items']['barcode']= 1;
             $data['items']['fiscal_year_name']= 1;
             $data['items']['month_name']= 1;
@@ -196,7 +196,7 @@ class Lc_open extends Root_Controller
         if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
         {
             $user = User_helper::get_user();
-            $result=Query_helper::get_info($this->config->item('table_sms_setup_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list_all"'),1);
+            $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list_all"'),1);
             $data['items']['barcode']= 1;
             $data['items']['fiscal_year_name']= 1;
             $data['items']['month_name']= 1;
@@ -423,6 +423,7 @@ class Lc_open extends Root_Controller
         }
         else
         {
+            $ajax['status']=false;
             $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
             $this->json_return($ajax);
         }
@@ -1049,7 +1050,7 @@ class Lc_open extends Root_Controller
         if(isset($this->permissions['action6']) && ($this->permissions['action6']==1))
         {
             $user = User_helper::get_user();
-            $result=Query_helper::get_info($this->config->item('table_sms_setup_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
+            $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
             $data['items']['barcode']= 1;
             $data['items']['fiscal_year_name']= 1;
             $data['items']['month_name']= 1;
@@ -1096,73 +1097,12 @@ class Lc_open extends Root_Controller
             $this->json_return($ajax);
         }
     }
-    /*private function system_save_preference()
-    {
-        if($this->input->post('item'))
-        {
-            $items=$this->input->post('item');
-        }
-        else
-        {
-            $ajax['status']=false;
-            $ajax['system_message']=$this->lang->line("MSG_PLEASE_SELECT_ANY_ONE");
-            $this->json_return($ajax);
-            die();
-        }
-
-        $user = User_helper::get_user();
-        if(!(isset($this->permissions['action6']) && ($this->permissions['action6']==1)))
-        {
-            $ajax['status']=false;
-            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
-            $this->json_return($ajax);
-            die();
-        }
-        else
-        {
-            $time=time();
-            $this->db->trans_start();  //DB Transaction Handle START
-
-            $result=Query_helper::get_info($this->config->item('table_sms_setup_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
-            if($result)
-            {
-                $data['user_updated']=$user->user_id;
-                $data['date_updated']=$time;
-                $data['preferences']=json_encode($items);
-                Query_helper::update($this->config->item('table_sms_setup_user_preference'),$data,array('id='.$result['id']),false);
-            }
-            else
-            {
-                $data['user_id']=$user->user_id;
-                $data['controller']=$this->controller_url;
-                $data['method']='list';
-                $data['user_created']=$user->user_id;
-                $data['date_created']=$time;
-                $data['preferences']=json_encode($items);
-                Query_helper::add($this->config->item('table_sms_setup_user_preference'),$data,false);
-            }
-
-            $this->db->trans_complete();   //DB Transaction Handle END
-            $ajax['status']=true;
-            if ($this->db->trans_status() === TRUE)
-            {
-                $this->message=$this->lang->line("MSG_SAVED_SUCCESS");
-                $this->system_list();
-            }
-            else
-            {
-                $ajax['status']=false;
-                $ajax['system_message']=$this->lang->line("MSG_SAVED_FAIL");
-                $this->json_return($ajax);
-            }
-        }
-    }*/
     private function system_set_preference_all_lc()
     {
         if(isset($this->permissions['action6']) && ($this->permissions['action6']==1))
         {
             $user = User_helper::get_user();
-            $result=Query_helper::get_info($this->config->item('table_sms_setup_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list_all"'),1);
+            $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list_all"'),1);
             $data['items']['barcode']= 1;
             $data['items']['fiscal_year_name']= 1;
             $data['items']['month_name']= 1;
@@ -1209,64 +1149,5 @@ class Lc_open extends Root_Controller
             $this->json_return($ajax);
         }
     }
-    /*private function system_save_preference_all_lc()
-    {
-        if($this->input->post('item'))
-        {
-            $items=$this->input->post('item');
-        }
-        else
-        {
-            $ajax['status']=false;
-            $ajax['system_message']=$this->lang->line("MSG_PLEASE_SELECT_ANY_ONE");
-            $this->json_return($ajax);
-            die();
-        }
 
-        $user = User_helper::get_user();
-        if(!(isset($this->permissions['action6']) && ($this->permissions['action6']==1)))
-        {
-            $ajax['status']=false;
-            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
-            $this->json_return($ajax);
-            die();
-        }
-        else
-        {
-            $time=time();
-            $this->db->trans_start();  //DB Transaction Handle START
-            $result=Query_helper::get_info($this->config->item('table_sms_setup_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list_all"'),1);
-            if($result)
-            {
-                $data['user_updated']=$user->user_id;
-                $data['date_updated']=$time;
-                $data['preferences']=json_encode($items);
-                Query_helper::update($this->config->item('table_sms_setup_user_preference'),$data,array('id='.$result['id']),false);
-            }
-            else
-            {
-                $data['user_id']=$user->user_id;
-                $data['controller']=$this->controller_url;
-                $data['method']='list_all';
-                $data['user_created']=$user->user_id;
-                $data['date_created']=$time;
-                $data['preferences']=json_encode($items);
-                Query_helper::add($this->config->item('table_sms_setup_user_preference'),$data,false);
-            }
-
-            $this->db->trans_complete();   //DB Transaction Handle END
-            $ajax['status']=true;
-            if ($this->db->trans_status() === TRUE)
-            {
-                $this->message=$this->lang->line("MSG_SAVED_SUCCESS");
-                $this->system_list_all();
-            }
-            else
-            {
-                $ajax['status']=false;
-                $ajax['system_message']=$this->lang->line("MSG_SAVED_FAIL");
-                $this->json_return($ajax);
-            }
-        }
-    }*/
 }
