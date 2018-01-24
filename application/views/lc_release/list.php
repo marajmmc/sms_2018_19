@@ -4,18 +4,12 @@ $CI=& get_instance();
 $action_buttons=array();
 if((isset($CI->permissions['action1']) && ($CI->permissions['action1']==1)) || (isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)))
 {
-    $action_buttons[]=array(
+    $action_buttons[]=array
+    (
         'type'=>'button',
         'label'=>'LC Release',
         'class'=>'button_jqx_action',
         'data-action-link'=>site_url($CI->controller_url.'/index/edit')
-    );
-}
-if(isset($CI->permissions['action6']) && ($CI->permissions['action6']==1))
-{
-    $action_buttons[]=array(
-        'label'=>'Preference',
-        'href'=>site_url($CI->controller_url.'/index/set_preference')
     );
 }
 if(isset($CI->permissions['action4']) && ($CI->permissions['action4']==1))
@@ -37,7 +31,13 @@ if(isset($CI->permissions['action5']) && ($CI->permissions['action5']==1))
         'data-title'=>"Download"
     );
 }
-
+if(isset($CI->permissions['action6']) && ($CI->permissions['action6']==1))
+{
+    $action_buttons[]=array(
+        'label'=>'Preference',
+        'href'=>site_url($CI->controller_url.'/index/set_preference')
+    );
+}
 $action_buttons[]=array(
     'label'=>$CI->lang->line("ACTION_REFRESH"),
     'href'=>site_url($CI->controller_url.'/index/list')
@@ -64,7 +64,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         <div class="col-xs-12" style="margin-bottom: 20px;">
             <div class="col-xs-2 ">
                 <div class="checkbox">
-                    <label><input type="checkbox" class="system_jqx_column" value="barcode" <?php if($items['barcode']){echo 'checked';}?> ><span class="label label-success"><?php echo $CI->lang->line('LABEL_BARCODE'); ?></span></label>
+                    <label><input type="checkbox" class="system_jqx_column" value="barcode" <?php if($items['barcode']){echo 'checked';}?> value="1"><span class="label label-success"><?php echo $CI->lang->line('LABEL_BARCODE'); ?></span></label>
                 </div>
             </div>
             <div class="col-xs-2">
@@ -109,27 +109,27 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             </div>
             <div class="col-xs-2">
                 <div class="checkbox">
-                    <label><input type="checkbox" class="system_jqx_column" value="price_other_cost_total_currency" <?php if($items['price_other_cost_total_currency']){echo 'checked';}?> value="1"><span class="label label-success"><?php echo $CI->lang->line('LABEL_OTHER_COST_CURRENCY'); ?></span></label>
+                    <label><input type="checkbox" class="system_jqx_column" value="price_other_cost_total_release_currency" <?php if($items['price_other_cost_total_release_currency']){echo 'checked';}?> value="1"><span class="label label-success"><?php echo $CI->lang->line('LABEL_OTHER_COST_CURRENCY'); ?></span></label>
                 </div>
             </div>
             <div class="col-xs-2">
                 <div class="checkbox">
-                    <label><input type="checkbox" class="system_jqx_column" value="quantity_total_kg" <?php if($items['quantity_total_kg']){echo 'checked';}?> value="1"><span class="label label-success">KG<?php //echo $CI->lang->line('LABEL_TOTAL_CURRENCY'); ?></span></label>
+                    <label><input type="checkbox" class="system_jqx_column" value="quantity_total_release_kg" <?php if($items['quantity_total_release_kg']){echo 'checked';}?> value="1"><span class="label label-success">KG</span></label>
                 </div>
             </div>
             <div class="col-xs-2">
                 <div class="checkbox">
-                    <label><input type="checkbox" class="system_jqx_column" value="price_variety_total_currency" <?php if($items['price_variety_total_currency']){echo 'checked';}?> value="1"><span class="label label-success">Variety (Currency)<?php //echo $CI->lang->line('LABEL_OTHER_COST_CURRENCY'); ?></span></label>
+                    <label><input type="checkbox" class="system_jqx_column" value="price_variety_total_release_currency" <?php if($items['price_variety_total_release_currency']){echo 'checked';}?> value="1"><span class="label label-success">Variety (Currency)</span></label>
                 </div>
             </div>
             <div class="col-xs-2">
                 <div class="checkbox">
-                    <label><input type="checkbox" class="system_jqx_column" value="price_total_currency" <?php if($items['price_total_currency']){echo 'checked';}?> value="1"><span class="label label-success"><?php echo $CI->lang->line('LABEL_TOTAL_CURRENCY'); ?></span></label>
+                    <label><input type="checkbox" class="system_jqx_column" value="price_total_release_currency" <?php if($items['price_total_release_currency']){echo 'checked';}?> value="1"><span class="label label-success"><?php echo $CI->lang->line('LABEL_TOTAL_CURRENCY'); ?></span></label>
                 </div>
             </div>
             <div class="col-xs-2">
                 <div class="checkbox">
-                    <label><input type="checkbox" class="system_jqx_column" value="status_forward" <?php if($items['status_forward']){echo 'checked';}?> value="1"><span class="label label-success">Forwarded<?php //echo $CI->lang->line('LABEL_TOTAL_CURRENCY'); ?></span></label>
+                    <label><input type="checkbox" class="system_jqx_column" value="status_release" <?php if($items['status_release']){echo 'checked';}?> value="1"><span class="label label-success"><?php echo $this->lang->line('STATUS')?></span></label>
                 </div>
             </div>
         </div>
@@ -162,11 +162,11 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 { name: 'currency_name', type: 'string' },
                 { name: 'lc_number', type: 'string' },
                 { name: 'consignment_name', type: 'string' },
-                { name: 'price_other_cost_total_currency', type: 'string' },
-                { name: 'quantity_total_kg', type: 'string' },
-                { name: 'price_variety_total_currency', type: 'string' },
-                { name: 'price_total_currency', type: 'string' },
-                { name: 'status_forward', type: 'string' }
+                { name: 'price_other_cost_total_release_currency', type: 'string' },
+                { name: 'quantity_total_release_kg', type: 'string' },
+                { name: 'price_variety_total_release_currency', type: 'string' },
+                { name: 'price_total_release_currency', type: 'string' },
+                { name: 'status_release', type: 'string' }
             ],
             id: 'id',
             type: 'POST',
@@ -199,14 +199,14 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         { text: '<?php echo $CI->lang->line('LABEL_DATE_OPENING'); ?>', dataField: 'date_opening', width:90, hidden: <?php echo $items['date_opening']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_DATE_EXPECTED'); ?>', dataField: 'date_expected', width:90, hidden: <?php echo $items['date_expected']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_PRINCIPAL_NAME'); ?>', dataField: 'principal_name',filtertype: 'list', width:80, hidden: <?php echo $items['principal_name']?0:1;?>},
-                        { text: '<?php echo $CI->lang->line('LABEL_CURRENCY_NAME'); ?>', dataField: 'currency_name',filtertype: 'list', width:45, hidden: <?php echo $items['currency_name']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_CURRENCY_NAME'); ?>', dataField: 'currency_name',filtertype: 'list', width:80, hidden: <?php echo $items['currency_name']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_LC_NUMBER'); ?>', dataField: 'lc_number', hidden: <?php echo $items['lc_number']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_CONSIGNMENT_NAME'); ?>', dataField: 'consignment_name', width:150, hidden: <?php echo $items['consignment_name']?0:1;?>},
-                        { text: '<?php echo $CI->lang->line('LABEL_OTHER_COST_CURRENCY'); ?>', dataField: 'price_other_cost_total_currency', width:100, cellsalign: 'right',  hidden: <?php echo $items['price_other_cost_total_currency']?0:1;?>},
-                        { text: 'KG', dataField: 'quantity_total_kg', width:100, cellsalign: 'right', hidden: <?php echo $items['quantity_total_kg']?0:1;?>},
-                        { text: 'Variety (Currency)', dataField: 'price_variety_total_currency', cellsalign: 'right', width:100, hidden: <?php echo $items['price_variety_total_currency']?0:1;?>},
-                        { text: '<?php echo $CI->lang->line('LABEL_TOTAL_CURRENCY');?>', dataField: 'price_total_currency', cellsalign: 'right', width:100, hidden: <?php echo $items['price_total_currency']?0:1;?>},
-                        { text: '<?php echo $CI->lang->line('LABEL_LC_FORWARD'); ?>', dataField: 'status_forward',cellsalign: 'center',filtertype: 'list', width:30}
+                        { text: '<?php echo $CI->lang->line('LABEL_OTHER_COST_CURRENCY'); ?>', dataField: 'price_other_cost_total_release_currency', width:100, cellsalign: 'right',  hidden: <?php echo $items['price_other_cost_total_release_currency']?0:1;?>},
+                        { text: 'KG', dataField: 'quantity_total_release_kg', width:100, cellsalign: 'right', hidden: <?php echo $items['quantity_total_release_kg']?0:1;?>},
+                        { text: 'Variety (Currency)', dataField: 'price_variety_total_release_currency', cellsalign: 'right', width:100, hidden: <?php echo $items['price_variety_total_release_currency']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_TOTAL_CURRENCY');?>', dataField: 'price_total_release_currency', cellsalign: 'right', width:100, hidden: <?php echo $items['price_total_release_currency']?0:1;?>},
+                        { text: '<?php echo $this->lang->line('STATUS')?>', dataField: 'status_release',cellsalign: 'center',filtertype: 'list', width:65, hidden: <?php echo $items['status_release']?0:1;?>}
                     ]
             });
     });

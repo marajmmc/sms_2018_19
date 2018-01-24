@@ -476,6 +476,7 @@ class Lc_open extends Root_Controller
             $lc_open_result=Query_helper::get_info($this->config->item('table_sms_lc_open'),'*',array('id ='.$id, 'status != "'.$this->config->item('system_status_delete').'"'),1);
             if(!$lc_open_result)
             {
+                $this->db->trans_complete();
                 System_helper::invalid_try('Update Non Exists',$id);
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid LC.';
@@ -483,6 +484,7 @@ class Lc_open extends Root_Controller
             }
             if($lc_open_result['status_forward']==$this->config->item('system_status_yes'))
             {
+                $this->db->trans_complete();
                 $ajax['status']=false;
                 $ajax['system_message']='LC already forwarded.';
                 $this->json_return($ajax);
