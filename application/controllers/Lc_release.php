@@ -134,7 +134,7 @@ class Lc_release extends Root_Controller
         $this->db->order_by('lco.id','DESC');
         $this->db->limit($pagesize,$current_records);
         $results=$this->db->get()->result_array();
-
+        echo $this->db->last_query();
         $items=array();
         foreach($results as $result)
         {
