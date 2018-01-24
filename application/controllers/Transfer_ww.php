@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Transfer_w_w extends Root_Controller
+class Transfer_ww extends Root_Controller
 {
     private $message;
     public $permissions;
@@ -9,8 +9,8 @@ class Transfer_w_w extends Root_Controller
     public function __construct()
     {
         parent::__construct();
-        $this->permissions=User_helper::get_permission('Transfer_w_w');
-        $this->controller_url='transfer_w_w';
+        $this->permissions=User_helper::get_permission('Transfer_ww');
+        $this->controller_url='transfer_ww';
     }
     public function index($action='list',$id=0)
     {
@@ -70,19 +70,13 @@ class Transfer_w_w extends Root_Controller
                 'crop_id'=>0,
                 'crop_type_id'=>0,
                 'variety_id'=>0,
-                'pack_size_id' => -1,
-                'source_warehouse_id' => '',
                 'destination_warehouse_id' => '',
                 'current_stock' =>0,
-                'quantity' => 0,
+                'quantity' => '',
                 'remarks' => ''
             );
             $data['crops']=Query_helper::get_info($this->config->item('table_login_setup_classification_crops'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
-            $data['crop_types']=array();
-            $data['varieties']=array();
-            $data['warehouses']=Query_helper::get_info($this->config->item('table_login_basic_setup_warehouse'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
-            $data['packs']=Query_helper::get_info($this->config->item('table_login_setup_classification_vpack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
-
+            $data['destination_warehouses']=Query_helper::get_info($this->config->item('table_login_basic_setup_warehouse'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/add_edit",$data,true));
             if($this->message)
@@ -100,4 +94,52 @@ class Transfer_w_w extends Root_Controller
         }
     }
 
+    public function get_pack_size()
+    {
+        $variety_id = $this->input->post('variety_id');
+        $html_container_id='#pack_size_id';
+        if($this->input->post('html_container_id'))
+        {
+            $html_container_id=$this->input->post('html_container_id');
+        }
+        $this->db->from($this->config->item('table_sms_stock_summary_variety').' stock_summary');
+        $this->db->select('stock_summary.pack_size_id value');
+        $this->db->select('v_pack_size.name text');
+        $this->db->join($this->config->item('table_login_setup_classification_vpack_size').' v_pack_size','v_pack_size.id = stock_summary.pack_size_id','LEFT');
+        $this->db->where('stock_summary.variety_id',$variety_id);
+        $this->db->group_by('stock_summary.pack_size_id');
+        $items=$this->db->get()->result_array();
+        foreach($items as &$item)
+        {
+            if($item['value']==0)
+            {
+                $item['text']='Bulk';
+            }
+        }
+        $data['items']=$items;
+        $ajax['status']=true;
+        $ajax['system_content'][]=array("id"=>$html_container_id,"html"=>$this->load->view("dropdown_with_select",$data,true));
+        $this->json_return($ajax);
+    }
+
+    public function get_source_warehouse()
+    {
+        $variety_id = $this->input->post('variety_id');
+        $pack_size_id = $this->input->post('pack_size_id');
+        $html_container_id='#source_warehouse_id';
+        if($this->input->post('html_container_id'))
+        {
+            $html_container_id=$this->input->post('html_container_id');
+        }
+        $this->db->from($this->config->item('table_sms_stock_summary_variety').' stock_summary');
+        $this->db->select('stock_summary.warehouse_id value');
+        $this->db->select('ware_house.name text');
+        $this->db->join($this->config->item('table_login_basic_setup_warehouse').' ware_house','ware_house.id = stock_summary.warehouse_id','LEFT');
+        $this->db->where('stock_summary.variety_id',$variety_id);
+        $this->db->where('stock_summary.pack_size_id',$pack_size_id);
+        $data['items']=$this->db->get()->result_array();
+        $ajax['status']=true;
+        $ajax['system_content'][]=array("id"=>$html_container_id,"html"=>$this->load->view("dropdown_with_select",$data,true));
+        $this->json_return($ajax);
+    }
 }

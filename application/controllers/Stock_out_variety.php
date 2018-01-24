@@ -753,7 +753,6 @@ class Stock_out_variety extends Root_Controller
             $this->message=validation_errors();
             return false;
         }
-
         return true;
     }
 }
