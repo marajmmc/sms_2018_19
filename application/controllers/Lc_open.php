@@ -817,7 +817,7 @@ class Lc_open extends Root_Controller
             {
                 $ajax['status']=false;
                 $ajax['system_message']=$this->lang->line("MSG_SAVED_FAIL");
-                $this->jsonReturn($ajax);
+                $this->json_return($ajax);
             }
         }
         else
@@ -890,6 +890,7 @@ class Lc_open extends Root_Controller
         }
         else
         {
+            $ajax['status']=false;
             $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
             $this->json_return($ajax);
         }
@@ -948,6 +949,7 @@ class Lc_open extends Root_Controller
         }
         else
         {
+            $ajax['status']=false;
             $this->message=$this->lang->line("MSG_SAVED_SUCCESS");
             $this->system_list();
         }
