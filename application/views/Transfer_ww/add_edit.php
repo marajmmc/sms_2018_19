@@ -168,24 +168,24 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             </div>
         </div>
 
-        <div style="display:none;" class="row show-grid" id="quantity_id">
+        <div style="display:none;" class="row show-grid" id="quantity_id_container">
             <div class="row show-grid">
                 <div class="col-xs-4">
                     <label for="quantity" class="control-label pull-right"><?php echo $this->lang->line('LABEL_QUANTITY');?><span style="color:#FF0000">*</span></label>
                 </div>
                 <div class="col-sm-4 col-xs-8">
-                    <input type="text" name="item[quantity]" id="quantity" class="form-control float_type_positive" value="<?php echo $item['quantity'];?>"/>
+                    <input type="text" name="item[quantity]" id="quantity_id" class="form-control float_type_positive" value="<?php echo $item['quantity'];?>"/>
                 </div>
             </div>
         </div>
 
-        <div style="display:none;" class="row show-grid" id="remarks_id">
+        <div style="display:none;" class="row show-grid" id="remarks_id_container">
             <div style="" class="row show-grid">
                 <div class="col-xs-4">
                     <label for="remarks" class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS');?></label>
                 </div>
                 <div class="col-sm-4 col-xs-8">
-                    <textarea name="item[remarks]" id="remarks" class="form-control"><?php echo $item['remarks'] ?></textarea>
+                    <textarea name="item[remarks]" id="remarks_id" class="form-control"><?php echo $item['remarks'] ?></textarea>
                 </div>
             </div>
         </div>
@@ -220,8 +220,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 $('#source_warehouse_id_container').hide();
                 $('#current_stock_container').hide();
                 $('#destination_warehouse_id_container').hide();
-                $('#quantity_id').hide();
-                $('#remarks_id').hide();
+                $('#quantity_id_container').hide();
+                $('#remarks_id_container').hide();
                 $('#crop_type_id').html(get_dropdown_with_select(system_types[crop_id]));
             }
             else
@@ -232,8 +232,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 $('#source_warehouse_id_container').hide();
                 $('#current_stock_container').hide();
                 $('#destination_warehouse_id_container').hide();
-                $('#quantity_id').hide();
-                $('#remarks_id').hide();
+                $('#quantity_id_container').hide();
+                $('#remarks_id_container').hide();
             }
         });
 
@@ -255,8 +255,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 $('#source_warehouse_id_container').hide();
                 $('#current_stock_container').hide();
                 $('#destination_warehouse_id_container').hide();
-                $('#quantity_id').hide();
-                $('#remarks_id').hide();
+                $('#quantity_id_container').hide();
+                $('#remarks_id_container').hide();
                 $('#variety_id').html(get_dropdown_with_select(system_varieties[crop_type_id]));
             }
             else
@@ -266,8 +266,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 $('#source_warehouse_id_container').hide();
                 $('#current_stock_container').hide();
                 $('#destination_warehouse_id_container').hide();
-                $('#quantity_id').hide();
-                $('#remarks_id').hide();
+                $('#quantity_id_container').hide();
+                $('#remarks_id_container').hide();
             }
         });
 
@@ -287,8 +287,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 $('#source_warehouse_id_container').hide();
                 $('#current_stock_container').hide();
                 $('#destination_warehouse_id_container').hide();
-                $('#quantity_id').hide();
-                $('#remarks_id').hide();
+                $('#quantity_id_container').hide();
+                $('#remarks_id_container').hide();
                 $.ajax({
                     url: base_url+"<?php echo $CI->controller_url?>/get_pack_size/",
                     type: 'POST',
@@ -311,8 +311,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 $('#source_warehouse_id_container').hide();
                 $('#current_stock_container').hide();
                 $('#destination_warehouse_id_container').hide();
-                $('#quantity_id').hide();
-                $('#remarks_id').hide();
+                $('#quantity_id_container').hide();
+                $('#remarks_id_container').hide();
             }
         });
 
@@ -331,16 +331,16 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 $('#source_warehouse_id_container').hide();
                 $('#current_stock_container').hide();
                 $('#destination_warehouse_id_container').hide();
-                $('#quantity_id').hide();
-                $('#remarks_id').hide();
+                $('#quantity_id_container').hide();
+                $('#remarks_id_container').hide();
             }
             else
             {
                 $('#source_warehouse_id_container').show();
                 $('#current_stock_container').hide();
                 $('#destination_warehouse_id_container').hide();
-                $('#quantity_id').hide();
-                $('#remarks_id').hide();
+                $('#quantity_id_container').hide();
+                $('#remarks_id_container').hide();
                 $.ajax({
                     url: base_url+"<?php echo $CI->controller_url?>/get_source_warehouse/",
                     type: 'POST',
@@ -373,8 +373,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             if(source_warehouse_id>0)
             {
                 $('#current_stock_container').show();
-                $('#quantity_id').show();
-                $('#remarks_id').show();
+                $('#quantity_id_container').show();
+                $('#remarks_id_container').show();
                 $('#destination_warehouse_id_container').show();
 
                 $.ajax({
@@ -400,8 +400,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             else
             {
                 $('#current_stock_container').hide();
-                $('#quantity_id').hide();
-                $('#remarks_id').hide();
+                $('#quantity_id_container').hide();
+                $('#remarks_id_container').hide();
                 $('#destination_warehouse_id_container').hide();
             }
         });
