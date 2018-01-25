@@ -81,7 +81,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <table class="table table-bordered">
                     <thead>
                     <tr>
-                        <th class="widget-header text-center" colspan="21">LC (<?php echo Barcode_helper::get_barcode_lc_release($item['id']);?>) Product & Price Details  :: ( Completed Status: <?php echo $item['status_release']?> )</th>
+                        <th class="widget-header text-center" colspan="21">LC (<?php echo Barcode_helper::get_barcode_lc($item['id']);?>) Product & Price Details  :: ( Release Status: <?php echo $item['status_release']?> )</th>
                     </tr>
                     <tr>
                         <th class="label-info" rowspan="2"><?php echo $CI->lang->line('LABEL_VARIETY'); ?></th>

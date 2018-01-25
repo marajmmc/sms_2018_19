@@ -173,7 +173,7 @@ class Lc_open extends Root_Controller
         {
             $item=array();
             $item['id']=$result['id'];
-            $item['barcode']=Barcode_helper::get_barcode_lc_open($result['id']);
+            $item['barcode']=Barcode_helper::get_barcode_lc($result['id']);
             $item['fiscal_year_name']=$result['fiscal_year_name'];
             $item['month_name']=$this->lang->line("LABEL_MONTH_$result[month_id]");
             $item['date_opening']=System_helper::display_date($result['date_opening']);
@@ -281,7 +281,7 @@ class Lc_open extends Root_Controller
         {
             $item=array();
             $item['id']=$result['id'];
-            $item['barcode']=Barcode_helper::get_barcode_lc_open($result['id']);
+            $item['barcode']=Barcode_helper::get_barcode_lc($result['id']);
             $item['fiscal_year_name']=$result['fiscal_year_name'];
             $item['month_name']=$this->lang->line("LABEL_MONTH_$result[month_id]");
             $item['date_opening']=System_helper::display_date($result['date_opening']);
@@ -411,7 +411,7 @@ class Lc_open extends Root_Controller
             $data['pack_sizes']=Query_helper::get_info($this->config->item('table_login_setup_classification_vpack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('id ASC'));
 
 
-            $data['title']="Edit LC :: ". Barcode_helper::get_barcode_lc_open($item_id);
+            $data['title']="Edit LC :: ". Barcode_helper::get_barcode_lc($item_id);
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/add_edit",$data,true));
             if($this->message)
@@ -566,6 +566,7 @@ class Lc_open extends Root_Controller
                 Query_helper::add($this->config->item('table_sms_lc_open_histories'),$data, false);
             }
 
+            $item['date_opening']=System_helper::get_time($item['date_opening']);
             $item['date_expected']=System_helper::get_time($item['date_expected']);
             $item['quantity_total_kg']=$quantity_total_kg;
             $item['price_variety_total_currency']=$price_variety_total_currency;
@@ -702,7 +703,7 @@ class Lc_open extends Root_Controller
             $this->db->order_by('lcd.id ASC');
             $data['items']=$this->db->get()->result_array();
 
-            $data['title']="LC Details :: ".Barcode_helper::get_barcode_lc_open($item_id);
+            $data['title']="LC Details :: ".Barcode_helper::get_barcode_lc($item_id);
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/details",$data,true));
             if($this->message)
@@ -763,7 +764,7 @@ class Lc_open extends Root_Controller
             $this->db->order_by('lcd.id ASC');
             $data['items']=$this->db->get()->result_array();
 
-            $data['title']="LC Details :: ".Barcode_helper::get_barcode_lc_open($item_id);
+            $data['title']="LC Details :: ".Barcode_helper::get_barcode_lc($item_id);
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/details_all_lc",$data,true));
             if($this->message)
@@ -863,7 +864,7 @@ class Lc_open extends Root_Controller
             if($data['item']['status_forward']==$this->config->item('system_status_yes'))
             {
                 $ajax['status']=false;
-                $ajax['system_message']='Already forwarded this LC :: '. Barcode_helper::get_barcode_lc_open($item_id);
+                $ajax['system_message']='Already forwarded this LC :: '. Barcode_helper::get_barcode_lc($item_id);
                 $this->json_return($ajax);
             }
 
@@ -880,7 +881,7 @@ class Lc_open extends Root_Controller
             $this->db->order_by('lcd.id ASC');
             $data['items']=$this->db->get()->result_array();
 
-            $data['title']="LC Forward :: ".Barcode_helper::get_barcode_lc_open($item_id);
+            $data['title']="LC Forward :: ".Barcode_helper::get_barcode_lc($item_id);
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/forward",$data,true));
             if($this->message)
@@ -932,8 +933,8 @@ class Lc_open extends Root_Controller
             else
             {
                 $time=time();
-                $data['date_updated']=$time;
-                $data['user_updated']=$user->user_id;
+                $data['date_forward_updated']=$time;
+                $data['user_forward_updated']=$user->user_id;
                 //$this->db->set('revision_count', 'revision_count+1', FALSE);
                 $update_lc=Query_helper::update($this->config->item('table_sms_lc_open'),$data,array('id='.$id));
                 if($update_lc)
@@ -966,7 +967,7 @@ class Lc_open extends Root_Controller
             foreach($items as $variety)
             {
                 /// empty checking
-                if(!(($variety['variety_id']>0) && ($variety['pack_size_id']>=0) && ($variety['quantity_lc']>=0) && ($variety['price_unit_lc_currency']>0)))
+                if(!(($variety['variety_id']>0) && ($variety['pack_size_id']>=0) && ($variety['quantity_lc']>=0) && ($variety['price_unit_lc_currency']>=0)))
                 {
                     $this->message='Invalid input (variety info :: '.$variety['variety_id'].').';
                     return false;

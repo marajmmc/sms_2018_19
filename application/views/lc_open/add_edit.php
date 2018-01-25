@@ -127,7 +127,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     if(isset($CI->permissions['action2']) && $CI->permissions['action2']==1)
                     {
                         ?>
-                        <input type="text" name="item[date_opening]" id="date_opening" class="form-control datepicker date_large" value="<?php echo System_helper::display_date(time());?>" />
+                        <input type="text" name="item[date_opening]" id="date_opening" class="form-control datepicker date_large" value="<?php echo System_helper::display_date($item['date_opening']);?>" />
                     <?php
                     }
                     else

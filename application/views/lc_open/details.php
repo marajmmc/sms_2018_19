@@ -62,7 +62,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <table class="table table-bordered">
                     <thead>
                         <tr>
-                            <th class="widget-header text-center" colspan="21">LC (<?php echo Barcode_helper::get_barcode_lc_open($item['id']);?>) Product & Price Details :: (Forwarded: <?php echo $item['status_forward']?>)</th>
+                            <th class="widget-header text-center" colspan="21">LC (<?php echo Barcode_helper::get_barcode_lc($item['id']);?>) Product & Price Details :: (Forwarded: <?php echo $item['status_forward']?>)</th>
                         </tr>
                         <tr>
                             <th class="bg-danger" style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_VARIETY'); ?></th>
