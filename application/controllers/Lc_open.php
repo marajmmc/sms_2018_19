@@ -934,7 +934,7 @@ class Lc_open extends Root_Controller
                 $time=time();
                 $data['date_updated']=$time;
                 $data['user_updated']=$user->user_id;
-                $this->db->set('revision_count', 'revision_count+1', FALSE);
+                //$this->db->set('revision_count', 'revision_count+1', FALSE);
                 $update_lc=Query_helper::update($this->config->item('table_sms_lc_open'),$data,array('id='.$id));
                 if($update_lc)
                 {

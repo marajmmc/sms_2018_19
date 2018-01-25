@@ -11,6 +11,14 @@ if((isset($CI->permissions['action1']) && ($CI->permissions['action1']==1)) || (
         'class'=>'button_jqx_action',
         'data-action-link'=>site_url($CI->controller_url.'/index/edit')
     );
+
+    $action_buttons[]=array
+    (
+        'type'=>'button',
+        'label'=>'Release Complete',
+        'class'=>'button_jqx_action',
+        'data-action-link'=>site_url($CI->controller_url.'/index/release_complete')
+    );
 }
 if(isset($CI->permissions['action4']) && ($CI->permissions['action4']==1))
 {

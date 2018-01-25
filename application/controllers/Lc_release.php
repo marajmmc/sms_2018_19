@@ -32,6 +32,14 @@ class Lc_release extends Root_Controller
         {
             $this->system_save();
         }
+        elseif($action=="release_complete")
+        {
+            $this->system_release_complete($id);
+        }
+        elseif($action=="save_release_complete")
+        {
+            $this->system_save_release_complete();
+        }
         elseif($action=="set_preference")
         {
             $this->system_set_preference();
@@ -139,7 +147,7 @@ class Lc_release extends Root_Controller
         {
             $item=array();
             $item['id']=$result['id'];
-            $item['barcode']=Barcode_helper::get_barcode_lc_open($result['id']);
+            $item['barcode']=Barcode_helper::get_barcode_lc_release($result['id']);
             $item['fiscal_year_name']=$result['fiscal_year_name'];
             $item['month_name']=$this->lang->line("LABEL_MONTH_$result[month_id]");
             $item['date_opening']=System_helper::display_date($result['date_opening']);
@@ -202,7 +210,7 @@ class Lc_release extends Root_Controller
             $this->db->where('lcd.lc_id',$item_id);
             $data['items']=$this->db->get()->result_array();
 
-            $data['title']="LC Release :: ".Barcode_helper::get_barcode_lc_open($item_id);
+            $data['title']="LC Release :: ".Barcode_helper::get_barcode_lc_release($item_id);
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/edit",$data,true));
             if($this->message)
@@ -360,6 +368,127 @@ class Lc_release extends Root_Controller
             $ajax['status']=false;
             $ajax['system_message']=$this->lang->line("MSG_SAVED_FAIL");
             $this->json_return($ajax);
+        }
+    }
+    private function system_release_complete($id)
+    {
+        if((isset($this->permissions['action1']) && ($this->permissions['action1']==1)) || (isset($this->permissions['action2']) && ($this->permissions['action2']==1)))
+        {
+            if($id>0)
+            {
+                $item_id=$id;
+            }
+            else
+            {
+                $item_id=$this->input->post('id');
+            }
+
+            $this->db->from($this->config->item('table_sms_lc_open').' lco');
+            $this->db->select('lco.*');
+            $this->db->select('fy.name fiscal_year_name');
+            $this->db->select('currency.name currency_name');
+            $this->db->select('principal.name principal_name');
+            $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.id = lco.fiscal_year_id','INNER');
+            $this->db->join($this->config->item('table_sms_setup_currency').' currency','currency.id = lco.currency_id','INNER');
+            $this->db->join($this->config->item('table_login_basic_setup_principal').' principal','principal.id = lco.principal_id','INNER');
+            $this->db->where('lco.id',$item_id);
+            $this->db->where('lco.status_forward',$this->config->item('system_status_yes'));
+            $this->db->where('lco.status_release',$this->config->item('system_status_pending'));
+            $this->db->where('lco.status !=',$this->config->item('system_status_delete'));
+            $data['item']=$this->db->get()->row_array();
+            if(!$data['item'])
+            {
+                System_helper::invalid_try('Forward Non Exists',$item_id);
+                $ajax['status']=false;
+                $ajax['system_message']='Invalid LC.';
+                $this->json_return($ajax);
+            }
+
+            $this->db->from($this->config->item('table_sms_lc_details').' lcd');
+            $this->db->select('lcd.*');
+            $this->db->select('v.id variety_id, v.name variety_name');
+            $this->db->select('vp.name_import variety_name_import');
+            $this->db->select('pack.name pack_size_name');
+            $this->db->join($this->config->item('table_login_setup_classification_varieties').' v','v.id = lcd.variety_id','INNER');
+            $this->db->join($this->config->item('table_login_setup_variety_principals').' vp','vp.variety_id = v.id AND vp.principal_id = '.$data['item']['principal_id'].' AND vp.revision = 1','INNER');
+            $this->db->join($this->config->item('table_login_setup_classification_vpack_size').' pack','pack.id = lcd.pack_size_id','LEFT');
+            $this->db->where('lcd.lc_id',$item_id);
+            $data['items']=$this->db->get()->result_array();
+
+            $data['title']="LC Release :: ".Barcode_helper::get_barcode_lc_release($item_id);
+            $ajax['status']=true;
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/release_complete",$data,true));
+            if($this->message)
+            {
+                $ajax['system_message']=$this->message;
+            }
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/release_complete/'.$item_id);
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+    }
+    private function system_save_release_complete()
+    {
+        $id = $this->input->post("id");
+        $user = User_helper::get_user();
+        if($id>0)
+        {
+            if(!(isset($this->permissions['action1']) && ($this->permissions['action1']==1)) || !(isset($this->permissions['action2']) && ($this->permissions['action2']==1)))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+                $this->json_return($ajax);
+            }
+        }
+        else
+        {
+            System_helper::invalid_try('Forward Access Denied',$id);
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+
+        $item=$this->input->post('item');
+        if($item['status_release']==$this->config->item('system_status_complete'))
+        {
+            $result=Query_helper::get_info($this->config->item('table_sms_lc_open'),'*',array('id ='.$id),1);
+            if(!$result)
+            {
+                System_helper::invalid_try('Completed LC Non Exists',$id);
+                $ajax['status']=false;
+                $ajax['system_message']='Invalid LC.';
+                $this->json_return($ajax);
+            }
+            else
+            {
+                $time=time();
+                $item['date_release_updated']=$time;
+                $item['user_release_updated']=$user->user_id;
+                //$this->db->set('revision_count', 'revision_count+1', FALSE);
+                $update_lc=Query_helper::update($this->config->item('table_sms_lc_open'),$item,array('id='.$id));
+                if($update_lc)
+                {
+                    $this->message=$this->lang->line("MSG_SAVED_SUCCESS");
+                    $this->system_list();
+                }
+                else
+                {
+                    $ajax['status']=false;
+                    $ajax['system_message']=$this->lang->line("MSG_SAVED_FAIL");
+                    $this->json_return($ajax);
+                }
+            }
+        }
+        else
+        {
+            $ajax['status']=false;
+            $this->message=$this->lang->line("MSG_SAVED_SUCCESS");
+            $this->system_list();
         }
     }
     private function check_validation()
