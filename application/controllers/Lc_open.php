@@ -87,34 +87,34 @@ class Lc_open extends Root_Controller
         {
             $user = User_helper::get_user();
             $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
-            $data['items']['barcode']= 1;
-            $data['items']['fiscal_year_name']= 1;
-            $data['items']['month_name']= 1;
-            $data['items']['date_opening']= 1;
-            $data['items']['date_expected']= 1;
-            $data['items']['principal_name']= 1;
-            $data['items']['currency_name']= 1;
-            $data['items']['lc_number']= 1;
-            $data['items']['consignment_name']= 1;
-            $data['items']['price_other_cost_total_currency']= 1;
-            $data['items']['quantity_total_kg']= 1;
-            $data['items']['price_variety_total_currency']= 1;
-            $data['items']['price_total_currency']= 1;
-            $data['items']['status_forward']= 1;
+            $data['system_preference_items']['barcode']= 1;
+            $data['system_preference_items']['fiscal_year_name']= 1;
+            $data['system_preference_items']['month_name']= 1;
+            $data['system_preference_items']['date_opening']= 1;
+            $data['system_preference_items']['date_expected']= 1;
+            $data['system_preference_items']['principal_name']= 1;
+            $data['system_preference_items']['currency_name']= 1;
+            $data['system_preference_items']['lc_number']= 1;
+            $data['system_preference_items']['consignment_name']= 1;
+            $data['system_preference_items']['price_other_cost_total_currency']= 1;
+            $data['system_preference_items']['quantity_total_kg']= 1;
+            $data['system_preference_items']['price_variety_total_currency']= 1;
+            $data['system_preference_items']['price_total_currency']= 1;
+            $data['system_preference_items']['status_forward']= 1;
             if($result)
             {
                 if($result['preferences']!=null)
                 {
-                    $data['preferences']=json_decode($result['preferences'],true);
-                    foreach($data['items'] as $key=>$value)
+                    $preferences=json_decode($result['preferences'],true);
+                    foreach($data['system_preference_items'] as $key=>$value)
                     {
-                        if(isset($data['preferences'][$key]))
+                        if(isset($preferences[$key]))
                         {
-                            $data['items'][$key]=$value;
+                            $data['system_preference_items'][$key]=$value;
                         }
                         else
                         {
-                            $data['items'][$key]=0;
+                            $data['system_preference_items'][$key]=0;
                         }
                     }
                 }
@@ -1056,34 +1056,34 @@ class Lc_open extends Root_Controller
         {
             $user = User_helper::get_user();
             $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
-            $data['items']['barcode']= 1;
-            $data['items']['fiscal_year_name']= 1;
-            $data['items']['month_name']= 1;
-            $data['items']['date_opening']= 1;
-            $data['items']['date_expected']= 1;
-            $data['items']['principal_name']= 1;
-            $data['items']['currency_name']= 1;
-            $data['items']['lc_number']= 1;
-            $data['items']['consignment_name']= 1;
-            $data['items']['price_other_cost_total_currency']= 1;
-            $data['items']['quantity_total_kg']= 1;
-            $data['items']['price_variety_total_currency']= 1;
-            $data['items']['price_total_currency']= 1;
-            $data['items']['status_forward']= 1;
+            $data['system_preference_items']['barcode']= 1;
+            $data['system_preference_items']['fiscal_year_name']= 1;
+            $data['system_preference_items']['month_name']= 1;
+            $data['system_preference_items']['date_opening']= 1;
+            $data['system_preference_items']['date_expected']= 1;
+            $data['system_preference_items']['principal_name']= 1;
+            $data['system_preference_items']['currency_name']= 1;
+            $data['system_preference_items']['lc_number']= 1;
+            $data['system_preference_items']['consignment_name']= 1;
+            $data['system_preference_items']['price_other_cost_total_currency']= 1;
+            $data['system_preference_items']['quantity_total_kg']= 1;
+            $data['system_preference_items']['price_variety_total_currency']= 1;
+            $data['system_preference_items']['price_total_currency']= 1;
+            $data['system_preference_items']['status_forward']= 1;
             if($result)
             {
                 if($result['preferences']!=null)
                 {
-                    $data['preferences']=json_decode($result['preferences'],true);
-                    foreach($data['items'] as $key=>$value)
+                    $preferences=json_decode($result['preferences'],true);
+                    foreach($data['system_preference_items'] as $key=>$value)
                     {
-                        if(isset($data['preferences'][$key]))
+                        if(isset($preferences[$key]))
                         {
-                            $data['items'][$key]=$value;
+                            $data['system_preference_items'][$key]=$value;
                         }
                         else
                         {
-                            $data['items'][$key]=0;
+                            $data['system_preference_items'][$key]=0;
                         }
                     }
                 }
@@ -1091,7 +1091,7 @@ class Lc_open extends Root_Controller
 
             $data['title']="Set Preference";
             $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/preference",$data,true));
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("preference_add_edit",$data,true));
             $ajax['system_page_url']=site_url($this->controller_url.'/index/set_preference');
             $this->json_return($ajax);
         }

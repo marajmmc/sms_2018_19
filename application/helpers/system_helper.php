@@ -101,8 +101,8 @@ class System_helper
     public static function save_preference()
     {
         $CI =& get_instance();
-        $preference=$CI->input->post('preference');
-        $method=isset($preference['method_name'])?$preference['method_name']:'list';
+        $preference_method_name=$CI->input->post('preference_method_name');
+        $method=isset($preference_method_name)?$preference_method_name:'list';
         $user = User_helper::get_user();
         if(!(isset($CI->permissions['action6']) && ($CI->permissions['action6']==1)))
         {
@@ -113,11 +113,8 @@ class System_helper
         }
         else
         {
-            if($CI->input->post('items'))
-            {
-                $items=$CI->input->post('items');
-            }
-            else
+            $system_preference_items=$CI->input->post('system_preference_items');
+            if(!$system_preference_items)
             {
                 $ajax['status']=false;
                 $ajax['system_message']=$CI->lang->line("MSG_SELECT_ONE");
@@ -133,7 +130,7 @@ class System_helper
             {
                 $data['user_updated']=$user->user_id;
                 $data['date_updated']=$time;
-                $data['preferences']=json_encode($items);
+                $data['preferences']=json_encode($system_preference_items);
                 Query_helper::update($CI->config->item('table_system_user_preference'),$data,array('id='.$result['id']),false);
             }
             else
@@ -143,7 +140,7 @@ class System_helper
                 $data['method']="$method";
                 $data['user_created']=$user->user_id;
                 $data['date_created']=$time;
-                $data['preferences']=json_encode($items);
+                $data['preferences']=json_encode($system_preference_items);
                 Query_helper::add($CI->config->item('table_system_user_preference'),$data,false);
             }
 
