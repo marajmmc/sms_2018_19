@@ -278,30 +278,12 @@ class Transfer_ww extends Root_Controller
 
         /*-- End-- Validation Checking */
 
-        /* --Start-- for counting quantity of Transfer Warehouse*/
-        $pack_size=array();
-        $results=Query_helper::get_info($this->config->item('table_login_setup_classification_vpack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
-        foreach($results as $result)
-        {
-            $pack_size[$result['value']]=$result['text'];
-        }
-        $quantity=0;
-        if($item['pack_size_id']!=0)
-        {
-            $quantity+=(($pack_size[$item['pack_size_id']])*($item['quantity'])/1000);
-
-        }else
-        {
-            $quantity+=$item['quantity'];
-        }
-        /* --End-- for counting quantity of Transfer Warehouse*/
-
         $this->db->trans_start(); //DB Transaction Handle START
         if($id>0)
         {
             $data=array(); //Main Data
             $data['date_transfer']=System_helper::get_time($item['date_transfer']);
-            $data['quantity']=$quantity;
+            $data['quantity']=$item['quantity'];
             $data['remarks']=$item['remarks'];
             $data['user_updated']=$user->user_id;
             $data['date_updated']=$time;
@@ -331,7 +313,7 @@ class Transfer_ww extends Root_Controller
             $data['pack_size_id']=$item['pack_size_id'];
             $data['source_warehouse_id']=$item['source_warehouse_id'];
             $data['destination_warehouse_id']=$item['destination_warehouse_id'];
-            $data['quantity']=$quantity;
+            $data['quantity']=$item['quantity'];
             $data['remarks']=$item['remarks'];
             $data['revision_counter']=1;
             $data['user_created']=$user->user_id;
