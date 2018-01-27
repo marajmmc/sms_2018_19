@@ -65,7 +65,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 </div>
             </div>
         <?php } ?>
-        
+
         <div class="row show-grid">
             <div class="col-xs-4">
                 <label for="purpose" class="control-label pull-right"><?php echo $this->lang->line('LABEL_PURPOSE'); ?></label>
