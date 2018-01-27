@@ -148,7 +148,7 @@ class Stock_in_variety extends Root_Controller
             {
                 $item_id=$this->input->post('id');
             }
-            $data['item']=Query_helper::get_info($this->config->item('table_sms_stock_in_variety'),'*',array('status ="'.$this->config->item('system_status_active').'"','id ='.$item_id),1);
+            $data['item']=Query_helper::get_info($this->config->item('table_sms_stock_in_variety'),'*',array('status !="'.$this->config->item('system_status_delete').'"','id ='.$item_id),1);
             if(!$data['item'])
             {
                 System_helper::invalid_try('Edit Non Exists',$item_id);
@@ -210,7 +210,7 @@ class Stock_in_variety extends Root_Controller
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->json_return($ajax);
             }
-            $old_item=Query_helper::get_info($this->config->item('table_sms_stock_in_variety'),'*',array('status ="'.$this->config->item('system_status_active').'"','id ='.$id),1);
+            $old_item=Query_helper::get_info($this->config->item('table_sms_stock_in_variety'),'*',array('status !="'.$this->config->item('system_status_delete').'"','id ='.$id),1);
             if(!$old_item)
             {
                 System_helper::invalid_try('Save Non Exists',$id);

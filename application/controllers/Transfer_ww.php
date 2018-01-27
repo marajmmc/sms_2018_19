@@ -31,6 +31,10 @@ class Transfer_ww extends Root_Controller
         {
             $this->system_edit($id);
         }
+        elseif($action=="details")
+        {
+            $this->system_details($id);
+        }
         elseif($action=='save')
         {
             $this->system_save();
@@ -87,7 +91,7 @@ class Transfer_ww extends Root_Controller
         foreach($items as &$item)
         {
             $item['date_transfer']=System_helper::display_date($item['date_transfer']);
-            $item['barcode']=Barcode_helper::get_barcode_stock_out($item['id']);
+            $item['barcode']=Barcode_helper::get_barcode_transfer_warehouse_to_warehouse($item['id']);
         }
         $this->json_return($items);
     }
@@ -105,7 +109,6 @@ class Transfer_ww extends Root_Controller
                 'crop_type_id'=>0,
                 'variety_id'=>0,
                 'destination_warehouse_id' => '',
-                'current_stock' =>0,
                 'quantity' => '',
                 'remarks' => ''
             );
@@ -155,6 +158,7 @@ class Transfer_ww extends Root_Controller
             $this->db->select('crop.name crop_name');
             $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = type.crop_id','LEFT');
             $this->db->where('transfer_warehouse.id',$item_id);
+            $this->db->where('transfer_warehouse.status !=',$this->config->item('system_status_delete'));
             $this->db->order_by('transfer_warehouse.id','ASC');
             $data['item']=$this->db->get()->row_array();
 
@@ -175,6 +179,64 @@ class Transfer_ww extends Root_Controller
                 $ajax['system_message']=$this->message;
             }
             $ajax['system_page_url']=site_url($this->controller_url.'/index/edit/'.$item_id);
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+    }
+
+    private function system_details($id)
+    {
+        if(isset($this->permissions['action0']) && ($this->permissions['action0']==1))
+        {
+            if($id>0)
+            {
+                $item_id=$id;
+            }
+            else
+            {
+                $item_id=$this->input->post('id');
+            }
+            $this->db->from($this->config->item('table_sms_transfer_warehouse_variety').' transfer_warehouse');
+            $this->db->select('transfer_warehouse.*');
+            $this->db->select('variety.name variety_name');
+            $this->db->join($this->config->item('table_login_setup_classification_varieties').' variety','variety.id = transfer_warehouse.variety_id','LEFT');
+            $this->db->select('v_pack_size.name pack_size_name');
+            $this->db->join($this->config->item('table_login_setup_classification_vpack_size').' v_pack_size','v_pack_size.id = transfer_warehouse.pack_size_id','LEFT');
+            $this->db->select('source_ware_house.name source_ware_house_name');
+            $this->db->join($this->config->item('table_login_basic_setup_warehouse').' source_ware_house','source_ware_house.id = transfer_warehouse.source_warehouse_id','LEFT');
+            $this->db->select('destination_ware_house.name destination_ware_house_name');
+            $this->db->join($this->config->item('table_login_basic_setup_warehouse').' destination_ware_house','destination_ware_house.id = transfer_warehouse.destination_warehouse_id','LEFT');
+            $this->db->select('type.name crop_type_name');
+            $this->db->join($this->config->item('table_login_setup_classification_crop_types').' type','type.id = variety.crop_type_id','LEFT');
+            $this->db->select('crop.name crop_name');
+            $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = type.crop_id','LEFT');
+            $this->db->where('transfer_warehouse.id',$item_id);
+            $this->db->where('transfer_warehouse.status !=',$this->config->item('system_status_delete'));
+            $this->db->order_by('transfer_warehouse.id','ASC');
+            $data['item']=$this->db->get()->row_array();
+
+            if(!$data['item'])
+            {
+                System_helper::invalid_try('Details Non Exists',$item_id);
+                $ajax['status']=false;
+                $ajax['system_message']='Invalid Try.';
+                $this->json_return($ajax);
+            }
+
+            $data['title']="Transfer (Warehouse to Warehouse)";
+
+            $ajax['status']=true;
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/details",$data,true));
+            if($this->message)
+            {
+                $ajax['system_message']=$this->message;
+            }
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/details/'.$item_id);
             $this->json_return($ajax);
         }
         else
@@ -234,6 +296,14 @@ class Transfer_ww extends Root_Controller
 
         /*-- Start-- Validation Checking */
 
+        //Checking Same warehouse ID(source and destination)
+        if($item['source_warehouse_id']==$item['destination_warehouse_id'])
+        {
+            $ajax['status']=false;
+            $ajax['system_message']='Source Warehouse and Destination Warehouse is same';
+            $this->json_return($ajax);
+        }
+
         //Negative Stock Checking
         if(isset($current_stocks[$item['variety_id']][$item['pack_size_id']][$item['source_warehouse_id']]))
         {
@@ -265,14 +335,6 @@ class Transfer_ww extends Root_Controller
         {
             $ajax['status']=false;
             $ajax['system_message']='This Transfer:('.$item['variety_id'].'-'.$item['pack_size_id'].'-'.$item['source_warehouse_id'].' is absent in stock.)';
-            $this->json_return($ajax);
-        }
-
-        //Checking Same warehouse ID(source and destination)
-        if($item['source_warehouse_id']==$item['destination_warehouse_id'])
-        {
-            $ajax['status']=false;
-            $ajax['system_message']='Source Warehouse and Destination Warehouse is same';
             $this->json_return($ajax);
         }
 
