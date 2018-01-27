@@ -78,7 +78,7 @@ class System_helper
         $data['action_id']=$action_id;
         $data['other_info']=$other_info;
         $data['date_created']=$time;
-        $data['date_created_string']=System_helper::display_date($time);
+        $data['date_created_string']=System_helper::display_date_time($time);
         $CI->db->insert($CI->config->item('table_system_history_hack'), $data);
     }
     public static function get_variety_stock($variety_ids=array())
