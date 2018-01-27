@@ -50,6 +50,7 @@ $lang['LABEL_ACTION3'] = 'Delete';
 $lang['LABEL_ACTION4'] = 'Print';
 $lang['LABEL_ACTION5'] = 'Download';
 $lang['LABEL_ACTION6'] = 'Column Headers';
+$lang['LABEL_ACTION7'] = 'Forward';
 
 $lang['TOTAL_TASK'] = 'Number of Tasks';
 $lang['LABEL_TYPE'] = 'Type';
