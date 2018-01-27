@@ -278,3 +278,21 @@ $lang['LABEL_STOCK_OUT_SHORT_INVENTORY']='Short Inventory';
 $lang['LABEL_STOCK_OUT_RND']='R&D Purpose';
 $lang['LABEL_STOCK_OUT_SAMPLE_PURPOSE']='Sample Purpose';
 $lang['LABEL_STOCK_OUT_DEMONSTRATION']='Demonstration';
+
+// Preference Lang added by maraj
+$lang['LABEL_FISCAL_YEAR_NAME']='Fiscal Year Name';
+$lang['LABEL_MONTH_NAME']='Month';
+$lang['LABEL_PRICE_OTHER_COST_TOTAL_CURRENCY']='LC Other Cost';
+$lang['LABEL_QUANTITY_TOTAL_KG']='Total (KG)';
+$lang['LABEL_PRICE_VARIETY_TOTAL_CURRENCY']='Total Variety (Currency)';
+
+$lang['LABEL_PRICE_OTHER_COST_TOTAL_RELEASE_CURRENCY']='LC Release Other Cost';
+$lang['LABEL_QUANTITY_TOTAL_RELEASE_KG']='Release Total (KG)';
+$lang['LABEL_PRICE_VARIETY_TOTAL_RELEASE_CURRENCY']='Release Total Variety (Currency)';
+$lang['LABEL_PRICE_TOTAL_RELEASE_CURRENCY']='Release Total (Currency)';
+
+$lang['LABEL_PRICE_TOTAL_CURRENCY']='Total (Currency)';
+$lang['LABEL_STATUS_FORWARD']='Forward Status';
+$lang['LABEL_STATUS_RELEASE']='Release Status';
+$lang['LABEL_STATUS_RECEIVE']='Receive Status';
+$lang['LABEL_STATUS_LC']='LC Status';

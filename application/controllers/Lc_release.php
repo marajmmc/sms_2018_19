@@ -59,34 +59,34 @@ class Lc_release extends Root_Controller
         {
             $user = User_helper::get_user();
             $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
-            $data['items']['barcode']= 1;
-            $data['items']['fiscal_year_name']= 1;
-            $data['items']['month_name']= 1;
-            $data['items']['date_opening']= 1;
-            $data['items']['date_expected']= 1;
-            $data['items']['principal_name']= 1;
-            $data['items']['currency_name']= 1;
-            $data['items']['lc_number']= 1;
-            $data['items']['consignment_name']= 1;
-            $data['items']['price_other_cost_total_release_currency']= 1;
-            $data['items']['quantity_total_release_kg']= 1;
-            $data['items']['price_variety_total_release_currency']= 1;
-            $data['items']['price_total_release_currency']= 1;
-            $data['items']['status_release']= 1;
+            $data['system_preference_items']['barcode']= 1;
+            $data['system_preference_items']['fiscal_year_name']= 1;
+            $data['system_preference_items']['month_name']= 1;
+            $data['system_preference_items']['date_opening']= 1;
+            $data['system_preference_items']['date_expected']= 1;
+            $data['system_preference_items']['principal_name']= 1;
+            $data['system_preference_items']['currency_name']= 1;
+            $data['system_preference_items']['lc_number']= 1;
+            $data['system_preference_items']['consignment_name']= 1;
+            $data['system_preference_items']['price_other_cost_total_release_currency']= 1;
+            $data['system_preference_items']['quantity_total_release_kg']= 1;
+            $data['system_preference_items']['price_variety_total_release_currency']= 1;
+            $data['system_preference_items']['price_total_release_currency']= 1;
+            $data['system_preference_items']['status_release']= 1;
             if($result)
             {
                 if($result['preferences']!=null)
                 {
-                    $data['preferences']=json_decode($result['preferences'],true);
-                    foreach($data['items'] as $key=>$value)
+                    $preferences=json_decode($result['preferences'],true);
+                    foreach($data['system_preference_items'] as $key=>$value)
                     {
-                        if(isset($data['preferences'][$key]))
+                        if(isset($preferences[$key]))
                         {
-                            $data['items'][$key]=$value;
+                            $data['system_preference_items'][$key]=$value;
                         }
                         else
                         {
-                            $data['items'][$key]=0;
+                            $data['system_preference_items'][$key]=0;
                         }
                     }
                 }
@@ -94,7 +94,6 @@ class Lc_release extends Root_Controller
 
             $data['title']="LC Release List";
             $ajax['status']=true;
-            //$ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("preference",$data,true));
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/list",$data,true));
             if($this->message)
             {
@@ -193,7 +192,7 @@ class Lc_release extends Root_Controller
             $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
             {
-                System_helper::invalid_try('Edit Non Exists',$item_id);
+                System_helper::invalid_try('Edit Release Non Exists',$item_id);
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid LC.';
                 $this->json_return($ajax);
@@ -257,7 +256,7 @@ class Lc_release extends Root_Controller
         $result=Query_helper::get_info($this->config->item('table_sms_lc_open'),'*',array('id ='.$id, 'status != "'.$this->config->item('system_status_delete').'"', 'status_forward = "'.$this->config->item('system_status_yes').'"'),1);
         if(!$result)
         {
-            System_helper::invalid_try('Update Non Exists',$id);
+            System_helper::invalid_try('Update Release Non Exists',$id);
             $ajax['status']=false;
             $ajax['system_message']='Invalid LC.';
             $this->json_return($ajax);
@@ -399,7 +398,7 @@ class Lc_release extends Root_Controller
             $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
             {
-                System_helper::invalid_try('Forward Non Exists',$item_id);
+                System_helper::invalid_try('Edit Release Complete LC Non Exists',$item_id);
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid LC.';
                 $this->json_return($ajax);
@@ -440,7 +439,7 @@ class Lc_release extends Root_Controller
         $user = User_helper::get_user();
         if($id>0)
         {
-            if(!(isset($this->permissions['action1']) && ($this->permissions['action1']==1)) || !(isset($this->permissions['action2']) && ($this->permissions['action2']==1)))
+            if(!((isset($this->permissions['action1']) && ($this->permissions['action1']==1)) || (isset($this->permissions['action2']) && ($this->permissions['action2']==1))))
             {
                 $ajax['status']=false;
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
@@ -449,7 +448,6 @@ class Lc_release extends Root_Controller
         }
         else
         {
-            System_helper::invalid_try('Forward Access Denied',$id);
             $ajax['status']=false;
             $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
             $this->json_return($ajax);
@@ -461,7 +459,7 @@ class Lc_release extends Root_Controller
             $result=Query_helper::get_info($this->config->item('table_sms_lc_open'),'*',array('id ='.$id, 'status != "'.$this->config->item('system_status_delete').'"', 'status_forward = "'.$this->config->item('system_status_yes').'"', 'status_release = "'.$this->config->item('system_status_pending').'"'),1);
             if(!$result)
             {
-                System_helper::invalid_try('Release LC Completed Non Exists',$id);
+                System_helper::invalid_try('Update Release Completed LC Non Exists',$id);
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid LC.';
                 $this->json_return($ajax);
@@ -469,9 +467,8 @@ class Lc_release extends Root_Controller
             else
             {
                 $time=time();
-                $item['date_release_updated']=$time;
-                $item['user_release_updated']=$user->user_id;
-                //$this->db->set('revision_count', 'revision_count+1', FALSE);
+                $item['date_release_forwarded']=$time;
+                $item['user_release_forwarded']=$user->user_id;
                 $update_lc=Query_helper::update($this->config->item('table_sms_lc_open'),$item,array('id='.$id));
                 if($update_lc)
                 {
@@ -523,42 +520,39 @@ class Lc_release extends Root_Controller
         {
             $user = User_helper::get_user();
             $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
-            $data['items']['barcode']= 1;
-            $data['items']['fiscal_year_name']= 1;
-            $data['items']['month_name']= 1;
-            $data['items']['date_opening']= 1;
-            $data['items']['date_expected']= 1;$data['items']['principal_name']= 1;
-            $data['items']['currency_name']= 1;
-            $data['items']['lc_number']= 1;
-            $data['items']['consignment_name']= 1;
-            $data['items']['price_other_cost_total_release_currency']= 1;
-            $data['items']['quantity_total_release_kg']= 1;
-            $data['items']['price_variety_total_release_currency']= 1;
-            $data['items']['price_total_release_currency']= 1;
-            $data['items']['status_release']= 1;
+            $data['system_preference_items']['barcode']= 1;
+            $data['system_preference_items']['fiscal_year_name']= 1;
+            $data['system_preference_items']['month_name']= 1;
+            $data['system_preference_items']['date_opening']= 1;
+            $data['system_preference_items']['date_expected']= 1;$data['items']['principal_name']= 1;
+            $data['system_preference_items']['currency_name']= 1;
+            $data['system_preference_items']['lc_number']= 1;
+            $data['system_preference_items']['consignment_name']= 1;
+            $data['system_preference_items']['price_other_cost_total_release_currency']= 1;
+            $data['system_preference_items']['quantity_total_release_kg']= 1;
+            $data['system_preference_items']['price_variety_total_release_currency']= 1;
+            $data['system_preference_items']['price_total_release_currency']= 1;
+            $data['system_preference_items']['status_release']= 1;
             if($result)
             {
                 if($result['preferences']!=null)
                 {
-                    $data['preferences']=json_decode($result['preferences'],true);
-                    foreach($data['items'] as $key=>$value)
+                    $preferences=json_decode($result['preferences'],true);
+                    foreach($data['system_preference_items'] as $key=>$value)
                     {
-                        if(isset($data['preferences'][$key]))
+                        if(isset($preferences[$key]))
                         {
-                            $data['items'][$key]=$value;
+                            $data['system_preference_items'][$key]=$value;
                         }
                         else
                         {
-                            $data['items'][$key]=0;
+                            $data['system_preference_items'][$key]=0;
                         }
                     }
                 }
             }
-
-            $data['title']="Set Preference";
             $ajax['status']=true;
-            //$ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("preference_add_edit",$data,true));
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/preference",$data,true));
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("preference_add_edit",$data,true));
             $ajax['system_page_url']=site_url($this->controller_url.'/index/set_preference');
             $this->json_return($ajax);
         }

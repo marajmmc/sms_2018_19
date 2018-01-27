@@ -121,29 +121,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_OPENING');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <?php
-                if($item['id']>0)
-                {
-                    if(isset($CI->permissions['action2']) && $CI->permissions['action2']==1)
-                    {
-                        ?>
-                        <input type="text" name="item[date_opening]" id="date_opening" class="form-control datepicker date_large" value="<?php echo System_helper::display_date($item['date_opening']);?>" />
-                    <?php
-                    }
-                    else
-                    {
-                        ?>
-                        <label class="control-label"><?php echo System_helper::display_date($item['date_opening']);?></label>
-                    <?php
-                    }
-                }
-                else
-                {
-                    ?>
-                    <input type="text" name="item[date_opening]" id="date_opening" class="form-control datepicker date_large" value="<?php echo System_helper::display_date(time());?>" />
-                <?php
-                }
-                ?>
+                <input type="text" name="item[date_opening]" id="date_opening" class="form-control datepicker date_large" value="<?php echo System_helper::display_date($item['date_opening']);?>" />
             </div>
         </div>
         <div class="row show-grid">

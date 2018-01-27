@@ -245,7 +245,7 @@ class Lc_receive extends Root_Controller
         $result=Query_helper::get_info($this->config->item('table_sms_lc_open'),'*',array('id ='.$id, 'status != "'.$this->config->item('system_status_delete').'"', 'status_forward = "'.$this->config->item('system_status_yes').'"', 'status_release = "'.$this->config->item('system_status_complete').'"'),1);
         if(!$result)
         {
-            System_helper::invalid_try('Update Non Exists',$id);
+            System_helper::invalid_try('Update Receive Non Exists',$id);
             $ajax['status']=false;
             $ajax['system_message']='Invalid LC.';
             $this->json_return($ajax);
@@ -379,7 +379,7 @@ class Lc_receive extends Root_Controller
             $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
             {
-                System_helper::invalid_try('Edit Non Exists',$item_id);
+                System_helper::invalid_try('Edit Receive Complete Non Exists',$item_id);
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid LC.';
                 $this->json_return($ajax);
@@ -430,7 +430,7 @@ class Lc_receive extends Root_Controller
         $user = User_helper::get_user();
         if($id>0)
         {
-            if(!(isset($this->permissions['action1']) && ($this->permissions['action1']==1)) || !(isset($this->permissions['action2']) && ($this->permissions['action2']==1)))
+            if(!((isset($this->permissions['action1']) && ($this->permissions['action1']==1)) || (isset($this->permissions['action2']) && ($this->permissions['action2']==1))))
             {
                 $ajax['status']=false;
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
@@ -439,7 +439,6 @@ class Lc_receive extends Root_Controller
         }
         else
         {
-            System_helper::invalid_try('Receive Access Denied',$id);
             $ajax['status']=false;
             $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
             $this->json_return($ajax);
@@ -451,7 +450,7 @@ class Lc_receive extends Root_Controller
             $result=Query_helper::get_info($this->config->item('table_sms_lc_open'),'*',array('id ='.$id, 'status != "'.$this->config->item('system_status_delete').'"', 'status_forward = "'.$this->config->item('system_status_yes').'"', 'status_release = "'.$this->config->item('system_status_complete').'"', 'status_receive = "'.$this->config->item('system_status_pending').'"'),1);
             if(!$result)
             {
-                System_helper::invalid_try('Receive LC Completed Non Exists',$id);
+                System_helper::invalid_try('Update Receive Completed LC Non Exists',$id);
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid LC.';
                 $this->json_return($ajax);
@@ -474,7 +473,7 @@ class Lc_receive extends Root_Controller
                         if(isset($current_stocks[$result['variety_id']][$result['pack_size_id']][$result['receive_warehouse_id']]))
                         {
                             $data['current_stock']=$current_stocks[$result['variety_id']][$result['pack_size_id']][$result['receive_warehouse_id']]['current_stock']+$result['quantity_receive'];
-                            $data['in_stock']=$current_stocks[$result['variety_id']][$result['pack_size_id']][$result['receive_warehouse_id']]['in_stock']+$result['quantity_receive'];
+                            $data['in_lc']=$current_stocks[$result['variety_id']][$result['pack_size_id']][$result['receive_warehouse_id']]['in_lc']+$result['quantity_receive'];
                             $data['date_updated'] = $time;
                             $data['user_updated'] = $user->user_id;
                             Query_helper::update($this->config->item('table_sms_stock_summary_variety'),$data,array('variety_id='.$result['variety_id'],'pack_size_id='.$result['pack_size_id'],'warehouse_id='.$result['receive_warehouse_id']));
@@ -485,15 +484,15 @@ class Lc_receive extends Root_Controller
                             $data['pack_size_id'] = $result['pack_size_id'];
                             $data['warehouse_id'] = $result['receive_warehouse_id'];
                             $data['current_stock'] = $result['quantity_receive'];
-                            $data['in_stock'] = $result['quantity_receive'];
+                            $data['in_lc'] = $result['quantity_receive'];
                             $data['date_updated'] = $time;
                             $data['user_updated'] = $user->user_id;
                             Query_helper::add($this->config->item('table_sms_stock_summary_variety'),$data);
                         }
                     }
                     $time=time();
-                    $item_head['date_release_updated']=$time;
-                    $item_head['user_release_updated']=$user->user_id;
+                    $item_head['date_receive_completed']=$time;
+                    $item_head['user_receive_completed']=$user->user_id;
                     Query_helper::update($this->config->item('table_sms_lc_open'),$item_head,array('id='.$id));
 
                     $this->db->trans_complete();   //DB Transaction Handle END
