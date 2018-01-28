@@ -108,7 +108,7 @@ class Transfer_ww extends Root_Controller
                 'crop_type_id'=>0,
                 'variety_id'=>0,
                 'destination_warehouse_id' => '',
-                'current_stock' => '',
+                'current_stock' => 0,
                 'quantity' => '',
                 'remarks' => ''
             );
