@@ -175,19 +175,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             <div class="col-xs-4">
                 <label for="current_stock_id" class="control-label pull-right">Current Stock</label>
             </div>
-            <?php if($item['id']>0){?>
-                <div class="col-sm-4 col-xs-8">
-                    <label><?php $current_stock=System_helper::get_variety_stock(array($item['variety_id'])); if(isset($current_stock)){echo $current_stock[$item['variety_id']][$item['pack_size_id']][$item['source_warehouse_id']]['current_stock'];}else{echo 0;}?></label>
-                </div>
-            <?php }else{?>
-                <div class="col-sm-4 col-xs-8">
-                    <label id="current_stock_id">
-                        <?php
-                        echo number_format($item['current_stock'],3);
-                        ?>
-                    </label>
-                </div>
-            <?php } ?>
+            <div class="col-sm-4 col-xs-8">
+                <label id="current_stock_id"><?php echo $item['current_stock'];?></label>
+            </div>
         </div>
 
         <div style="<?php if(!($item['id']>0)){echo 'display:none';} ?>" class="row show-grid" id="destination_warehouse_id_container">
@@ -259,28 +249,18 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             $("#quantity_id").val("");
             $("#remarks_id").val("");
             var crop_id=$('#crop_id').val();
+            $('#crop_type_id_container').hide();
+            $('#variety_id_container').hide();
+            $('#pack_size_id_container').hide();
+            $('#source_warehouse_id_container').hide();
+            $('#current_stock_container').hide();
+            $('#destination_warehouse_id_container').hide();
+            $('#quantity_id_container').hide();
+            $('#remarks_id_container').hide();
             if(crop_id>0)
             {
                 $('#crop_type_id_container').show();
-                $('#variety_id_container').hide();
-                $('#pack_size_id_container').hide();
-                $('#source_warehouse_id_container').hide();
-                $('#current_stock_container').hide();
-                $('#destination_warehouse_id_container').hide();
-                $('#quantity_id_container').hide();
-                $('#remarks_id_container').hide();
                 $('#crop_type_id').html(get_dropdown_with_select(system_types[crop_id]));
-            }
-            else
-            {
-                $('#crop_type_id_container').hide();
-                $('#variety_id_container').hide();
-                $('#pack_size_id_container').hide();
-                $('#source_warehouse_id_container').hide();
-                $('#current_stock_container').hide();
-                $('#destination_warehouse_id_container').hide();
-                $('#quantity_id_container').hide();
-                $('#remarks_id_container').hide();
             }
         });
 
@@ -295,26 +275,17 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             $("#quantity_id").val("");
             $("#remarks_id").val("");
             var crop_type_id=$('#crop_type_id').val();
+            $('#variety_id_container').hide();
+            $('#pack_size_id_container').hide();
+            $('#source_warehouse_id_container').hide();
+            $('#current_stock_container').hide();
+            $('#destination_warehouse_id_container').hide();
+            $('#quantity_id_container').hide();
+            $('#remarks_id_container').hide();
             if(crop_type_id>0)
             {
                 $('#variety_id_container').show();
-                $('#pack_size_id_container').hide();
-                $('#source_warehouse_id_container').hide();
-                $('#current_stock_container').hide();
-                $('#destination_warehouse_id_container').hide();
-                $('#quantity_id_container').hide();
-                $('#remarks_id_container').hide();
                 $('#variety_id').html(get_dropdown_with_select(system_varieties[crop_type_id]));
-            }
-            else
-            {
-                $('#variety_id_container').hide();
-                $('#pack_size_id_container').hide();
-                $('#source_warehouse_id_container').hide();
-                $('#current_stock_container').hide();
-                $('#destination_warehouse_id_container').hide();
-                $('#quantity_id_container').hide();
-                $('#remarks_id_container').hide();
             }
         });
 
@@ -328,14 +299,15 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             $("#quantity_id").val("");
             $("#remarks_id").val("");
             var variety_id=$('#variety_id').val();
+            $('#pack_size_id_container').hide();
+            $('#source_warehouse_id_container').hide();
+            $('#current_stock_container').hide();
+            $('#destination_warehouse_id_container').hide();
+            $('#quantity_id_container').hide();
+            $('#remarks_id_container').hide();
             if(variety_id>0)
             {
                 $('#pack_size_id_container').show();
-                $('#source_warehouse_id_container').hide();
-                $('#current_stock_container').hide();
-                $('#destination_warehouse_id_container').hide();
-                $('#quantity_id_container').hide();
-                $('#remarks_id_container').hide();
                 $.ajax({
                     url: base_url+"<?php echo $CI->controller_url?>/get_pack_size/",
                     type: 'POST',
@@ -351,15 +323,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
                     }
                 });
-            }
-            else
-            {
-                $('#pack_size_id_container').hide();
-                $('#source_warehouse_id_container').hide();
-                $('#current_stock_container').hide();
-                $('#destination_warehouse_id_container').hide();
-                $('#quantity_id_container').hide();
-                $('#remarks_id_container').hide();
             }
         });
 
