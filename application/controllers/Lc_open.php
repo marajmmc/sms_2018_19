@@ -822,7 +822,7 @@ class Lc_open extends Root_Controller
     }
     private function system_lc_forward($id)
     {
-        if((isset($this->permissions['action1']) && ($this->permissions['action1']==1)) || (isset($this->permissions['action2']) && ($this->permissions['action2']==1)))
+        if((isset($this->permissions['action7']) && ($this->permissions['action7']==1)))
         {
             if($id>0)
             {
@@ -894,7 +894,7 @@ class Lc_open extends Root_Controller
         $user = User_helper::get_user();
         if($id>0)
         {
-            if(!((isset($this->permissions['action1']) && ($this->permissions['action1']==1)) || (isset($this->permissions['action2']) && ($this->permissions['action2']==1))))
+            if(!((isset($this->permissions['action7']) && ($this->permissions['action7']==1))))
             {
                 $ajax['status']=false;
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");

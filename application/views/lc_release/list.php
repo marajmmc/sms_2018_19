@@ -11,14 +11,6 @@ if((isset($CI->permissions['action1']) && ($CI->permissions['action1']==1)) || (
         'class'=>'button_jqx_action',
         'data-action-link'=>site_url($CI->controller_url.'/index/edit')
     );
-
-    $action_buttons[]=array
-    (
-        'type'=>'button',
-        'label'=>'Release Complete',
-        'class'=>'button_jqx_action',
-        'data-action-link'=>site_url($CI->controller_url.'/index/release_complete')
-    );
 }
 if(isset($CI->permissions['action4']) && ($CI->permissions['action4']==1))
 {
@@ -44,6 +36,16 @@ if(isset($CI->permissions['action6']) && ($CI->permissions['action6']==1))
     $action_buttons[]=array(
         'label'=>'Preference',
         'href'=>site_url($CI->controller_url.'/index/set_preference')
+    );
+}
+if((isset($CI->permissions['action7']) && ($CI->permissions['action7']==1)))
+{
+    $action_buttons[]=array
+    (
+        'type'=>'button',
+        'label'=>'Release Complete',
+        'class'=>'button_jqx_action',
+        'data-action-link'=>site_url($CI->controller_url.'/index/release_complete')
     );
 }
 $action_buttons[]=array(
