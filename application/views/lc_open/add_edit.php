@@ -16,13 +16,6 @@ if((isset($CI->permissions['action1']) && ($CI->permissions['action1']==1)) || (
         'id'=>'button_action_save',
         'data-form'=>'#save_form'
     );
-    $action_buttons[]=array
-    (
-        'type'=>'button',
-        'label'=>$CI->lang->line("ACTION_SAVE_NEW"),
-        'id'=>'button_action_save_new',
-        'data-form'=>'#save_form'
-    );
 }
 $action_buttons[]=array(
     'type'=>'button',
@@ -173,15 +166,15 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         </div>
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_BANK_NAME');?><span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_BANK_ACCOUNT_NUMBER');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <select id="currency_id" name="item[currency_id]" class="form-control">
+                <select id="bank_account_id" name="item[bank_account_id]" class="form-control">
                     <option value=""><?php echo $this->lang->line('SELECT');?></option>
                     <?php
-                    foreach($currencies as $currency)
+                    foreach($bank_accounts as $bank_account)
                     {?>
-                        <option value="<?php echo $currency['value']?>" <?php if(($currency['value']==$item['currency_id'])){ echo "selected";}?>><?php echo $currency['text'];?></option>
+                        <option value="<?php echo $bank_account['value']?>" <?php if(($bank_account['value']==$item['bank_account_id'])){ echo "selected";}?>><?php echo $bank_account['text'];?></option>
                     <?php
                     }
                     ?>
@@ -223,7 +216,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         </div>
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS');?> </label>
+                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS_LC_OPEN');?> </label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <textarea name="item[remarks]" id="remarks" class="form-control" ><?php echo $item['remarks'];?></textarea>

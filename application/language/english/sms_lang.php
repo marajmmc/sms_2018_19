@@ -255,6 +255,13 @@ $lang['LABEL_GRAND_TOTAL_KG']='Grand Total (KG)';
 $lang['LABEL_TOTAL_CURRENCY']='Total (Currency)';
 $lang['LABEL_GRAND_TOTAL_CURRENCY']='Grand Total (Currency)';
 $lang['LABEL_LC_FORWARD']='Forward LC';
+$lang['LABEL_BANK_NAME']='Bank Name';
+$lang['LABEL_BANK_ACCOUNT_NUMBER']='Bank Account Number';
+$lang['LABEL_REMARKS_LC_OPEN']='LC Open Remarks';
+$lang['LABEL_REMARKS_LC_RELEASE']='Release Remarks';
+$lang['LABEL_REMARKS_LC_RECEIVE']='Receive Remarks';
+$lang['LABEL_REMARKS_LC_EXPENSE']='Expense Remarks';
+
 
 //crop classification
 $lang['LABEL_CROP_NAME']='Crop';
@@ -279,17 +286,22 @@ $lang['LABEL_STOCK_OUT_RND']='R&D Purpose';
 $lang['LABEL_STOCK_OUT_SAMPLE_PURPOSE']='Sample Purpose';
 $lang['LABEL_STOCK_OUT_DEMONSTRATION']='Demonstration';
 
+
 // Preference Lang added by maraj
-$lang['LABEL_FISCAL_YEAR_NAME']='Fiscal Year Name';
+$lang['LABEL_FISCAL_YEAR_NAME']='Fiscal Year';
 $lang['LABEL_MONTH_NAME']='Month';
 $lang['LABEL_PRICE_OTHER_COST_TOTAL_CURRENCY']='LC Other Cost';
 $lang['LABEL_QUANTITY_TOTAL_KG']='Total (KG)';
 $lang['LABEL_PRICE_VARIETY_TOTAL_CURRENCY']='Total Variety (Currency)';
 
+/*release*/
 $lang['LABEL_PRICE_OTHER_COST_TOTAL_RELEASE_CURRENCY']='LC Release Other Cost';
 $lang['LABEL_QUANTITY_TOTAL_RELEASE_KG']='Release Total (KG)';
 $lang['LABEL_PRICE_VARIETY_TOTAL_RELEASE_CURRENCY']='Release Total Variety (Currency)';
 $lang['LABEL_PRICE_TOTAL_RELEASE_CURRENCY']='Release Total (Currency)';
+
+/*receive*/
+$lang['LABEL_QUANTITY_TOTAL_RECEIVE_KG']='Receive Total (KG)';
 
 $lang['LABEL_PRICE_TOTAL_CURRENCY']='Total (Currency)';
 $lang['LABEL_STATUS_FORWARD']='Forward Status';

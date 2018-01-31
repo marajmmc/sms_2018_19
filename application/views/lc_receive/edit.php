@@ -42,6 +42,16 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             <table class="table table-bordered table-responsive ">
                 <thead>
                 <tr>
+                    <th class="widget-header"><label class="control-label pull-right">Release Completed By</label></th>
+                    <th class="bg-danger"><label class="control-label"><?php echo $item['user_full_name']?></label></th>
+                    <th class="widget-header"><label class="control-label pull-right">Release Completed Time</label></th>
+                    <th class="bg-danger"><label class="control-label"><?php echo System_helper::display_date_time($item['date_release_completed']);?></label></th>
+                </tr>
+                </thead>
+            </table>
+            <table class="table table-bordered table-responsive ">
+                <thead>
+                <tr>
                     <th class="widget-header"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_FISCAL_YEAR');?></label></th>
                     <th class="bg-danger"><label class="control-label"><?php echo $item['fiscal_year_name']?></label></th>
                     <th class="widget-header"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_MONTH');?></label></th>
@@ -61,13 +71,26 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 </tr>
                 <tr>
                     <th class="widget-header"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_CONSIGNMENT_NAME');?></label></th>
-                    <th><label class="control-label"><?php echo $item['consignment_name'];?></label></th>
-                    <th class="widget-header"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS');?></label></th>
-                    <th class="bg-danger"><label class="control-label"><?php echo $item['remarks'];?></label></th>
+                    <th colspan="3"><label class="control-label"><?php echo $item['consignment_name'];?></label></th>
+                </tr>
+                <tr>
+                    <th class="widget-header"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS_LC_OPEN');?></label></th>
+                    <th class="bg-danger" colspan="3"><label class="control-label"><?php echo $item['remarks'];?></label></th>
+                </tr>
+                <tr>
+                    <th class="widget-header"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS_LC_RELEASE');?></label></th>
+                    <th class="bg-danger" colspan="3"><label class="control-label"><?php echo $item['remarks_release'];?></label></th>
                 </tr>
                 </thead>
-
             </table>
+            <div class="row show-grid">
+                <div class="col-xs-4">
+                    <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS_LC_RECEIVE');?> </label>
+                </div>
+                <div class="col-sm-4 col-xs-8">
+                    <textarea name="item[remarks_receive]" id="remarks_receive" class="form-control" ><?php echo $item['remarks_receive'];?></textarea>
+                </div>
+            </div>
         </div>
         <div class="clearfix"></div>
         <div class="row show-grid">
@@ -101,7 +124,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         $quantity_total_receive_kg=0;
                         foreach($items as $index=>$data)
                         {
-                            if($item['revision_receive_count']==0)
+                            if($data['revision_receive_count']==0)
                             {
                                 $quantity_receive=$data['quantity_release'];
                             }

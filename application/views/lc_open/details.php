@@ -2,7 +2,8 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 $CI=& get_instance();
 $action_buttons=array();
-$action_buttons[]=array(
+$action_buttons[]=array
+(
     'label'=>$CI->lang->line("ACTION_BACK"),
     'href'=>site_url($CI->controller_url)
 );
@@ -40,16 +41,20 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <th class="bg-danger"><label class="control-label"><?php echo $item['lc_number'];?></label></th>
                 </tr>
                 <tr>
+                    <th class="widget-header"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_BANK_ACCOUNT_NUMBER');?></label></th>
+                    <th><label class="control-label"><?php echo $item['bank_account_number'];?></label></th>
                     <th class="widget-header"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_CURRENCY_NAME');?></label></th>
                     <th><label class="control-label"><?php echo $item['currency_name'];?></label></th>
-                    <th class="widget-header"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_CONSIGNMENT_NAME');?></label></th>
-                    <th><label class="control-label"><?php echo $item['consignment_name'];?></label></th>
                 </tr>
                 <tr>
                     <th class="widget-header"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_OTHER_COST_CURRENCY');?></label></th>
                     <th class="bg-danger"><label class="control-label"><?php echo number_format($item['price_other_cost_total_currency'],2);?></label></th>
-                    <th class="widget-header"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS');?></label></th>
-                    <th class="bg-danger"><label class="control-label"><?php echo $item['remarks'];?></label></th>
+                    <th class="widget-header"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_CONSIGNMENT_NAME');?></label></th>
+                    <th><label class="control-label"><?php echo $item['consignment_name'];?></label></th>
+                </tr>
+                <tr>
+                    <th class="widget-header"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS_LC_OPEN');?></label></th>
+                    <th class="bg-danger" colspan="3"><label class="control-label"><?php echo $item['remarks'];?></label></th>
                 </tr>
                 </thead>
 

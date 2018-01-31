@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Lc_release extends Root_Controller
+class Lc_expense extends Root_Controller
 {
     public $message;
     public $permissions;
@@ -9,8 +9,8 @@ class Lc_release extends Root_Controller
     {
         parent::__construct();
         $this->message="";
-        $this->permissions=User_helper::get_permission('Lc_release');
-        $this->controller_url='lc_release';
+        $this->permissions=User_helper::get_permission('Lc_expense');
+        $this->controller_url='lc_expense';
     }
 
     public function index($action="list",$id=0)
@@ -31,13 +31,13 @@ class Lc_release extends Root_Controller
         {
             $this->system_save();
         }
-        elseif($action=="release_complete")
+        elseif($action=="expense_complete")
         {
-            $this->system_release_complete($id);
+            $this->system_expense_complete($id);
         }
-        elseif($action=="save_release_complete")
+        elseif($action=="save_expense_complete")
         {
-            $this->system_save_release_complete();
+            $this->system_save_expense_complete();
         }
         elseif($action=="set_preference")
         {
@@ -67,11 +67,11 @@ class Lc_release extends Root_Controller
             $data['system_preference_items']['currency_name']= 1;
             $data['system_preference_items']['lc_number']= 1;
             $data['system_preference_items']['consignment_name']= 1;
-            $data['system_preference_items']['price_other_cost_total_release_currency']= 1;
-            $data['system_preference_items']['quantity_total_release_kg']= 1;
-            $data['system_preference_items']['price_variety_total_release_currency']= 1;
-            $data['system_preference_items']['price_total_release_currency']= 1;
-            $data['system_preference_items']['status_release']= 1;
+            $data['system_preference_items']['price_other_cost_total_expense_currency']= 1;
+            $data['system_preference_items']['quantity_total_expense_kg']= 1;
+            $data['system_preference_items']['price_variety_total_expense_currency']= 1;
+            $data['system_preference_items']['price_total_expense_currency']= 1;
+            $data['system_preference_items']['status_expense']= 1;
             if($result)
             {
                 if($result['preferences']!=null)
@@ -91,7 +91,7 @@ class Lc_release extends Root_Controller
                 }
             }
 
-            $data['title']="LC Release List";
+            $data['title']="LC Expense List";
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/list",$data,true));
             if($this->message)
@@ -119,7 +119,7 @@ class Lc_release extends Root_Controller
         $this->db->join($this->config->item('table_sms_setup_currency').' currency','currency.id = lco.currency_id','INNER');
         $this->db->join($this->config->item('table_login_basic_setup_principal').' principal','principal.id = lco.principal_id','INNER');
         $this->db->where('lco.status_forward',$this->config->item('system_status_yes'));
-        $this->db->where('lco.status_release',$this->config->item('system_status_pending'));
+        $this->db->where('lco.status_expense',$this->config->item('system_status_pending'));
         $this->db->where('lco.status !=',$this->config->item('system_status_delete'));
         $this->db->order_by('lco.fiscal_year_id','DESC');
         $this->db->order_by('lco.id','DESC');
@@ -138,11 +138,11 @@ class Lc_release extends Root_Controller
             $item['currency_name']=$result['currency_name'];
             $item['lc_number']=$result['lc_number'];
             $item['consignment_name']=$result['consignment_name'];
-            $item['quantity_total_release_kg']=number_format($result['quantity_total_release_kg'],3);
-            $item['price_other_cost_total_release_currency']=number_format($result['price_other_cost_total_release_currency'],2);
-            $item['price_variety_total_release_currency']=number_format($result['price_variety_total_release_currency'],2);
-            $item['price_total_release_currency']=number_format($result['price_total_release_currency'],2);
-            $item['status_release']=$result['status_release'];
+            $item['quantity_total_expense_kg']=number_format($result['quantity_total_expense_kg'],3);
+            $item['price_other_cost_total_expense_currency']=number_format($result['price_other_cost_total_expense_currency'],2);
+            $item['price_variety_total_expense_currency']=number_format($result['price_variety_total_expense_currency'],2);
+            $item['price_total_expense_currency']=number_format($result['price_total_expense_currency'],2);
+            $item['status_expense']=$result['status_expense'];
             $items[]=$item;
         }
         $this->json_return($items);
@@ -180,7 +180,7 @@ class Lc_release extends Root_Controller
             $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
             {
-                System_helper::invalid_try('Edit Release Non Exists',$item_id);
+                System_helper::invalid_try('Edit Expense Non Exists',$item_id);
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid LC.';
                 $this->json_return($ajax);
@@ -198,7 +198,7 @@ class Lc_release extends Root_Controller
             $this->db->where('lcd.quantity_lc >0');
             $data['items']=$this->db->get()->result_array();
 
-            $data['title']="LC Release :: ".Barcode_helper::get_barcode_lc($item_id);
+            $data['title']="LC Expense :: ".Barcode_helper::get_barcode_lc($item_id);
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/edit",$data,true));
             if($this->message)
@@ -234,16 +234,16 @@ class Lc_release extends Root_Controller
             $result=Query_helper::get_info($this->config->item('table_sms_lc_open'),'*',array('id ='.$id, 'status != "'.$this->config->item('system_status_delete').'"', 'status_forward = "'.$this->config->item('system_status_yes').'"'),1);
             if(!$result)
             {
-                System_helper::invalid_try('Update Release Non Exists',$id);
+                System_helper::invalid_try('Update Expense Non Exists',$id);
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid LC.';
                 $this->json_return($ajax);
             }
 
-            if($result['status_release']==$this->config->item('system_status_complete'))
+            if($result['status_expense']==$this->config->item('system_status_complete'))
             {
                 $ajax['status']=false;
-                $ajax['system_message']='You Can Not Modify LC Because LC Release Completed.';
+                $ajax['system_message']='You Can Not Modify LC Because LC Expense Completed.';
                 $this->json_return($ajax);
             }
         }
@@ -280,44 +280,44 @@ class Lc_release extends Root_Controller
         $data=array();
         $data['date_updated'] = $time;
         $data['user_updated'] = $user->user_id;
-        Query_helper::update($this->config->item('table_sms_lc_release_histories'),$data, array('lc_id='.$id,'revision=1'), false);
+        Query_helper::update($this->config->item('table_sms_lc_expense_histories'),$data, array('lc_id='.$id,'revision=1'), false);
 
         $this->db->where('lc_id',$id);
         $this->db->set('revision', 'revision+1', FALSE);
-        $this->db->update($this->config->item('table_sms_lc_release_histories'));
+        $this->db->update($this->config->item('table_sms_lc_expense_histories'));
 
 
         $this->db->trans_start();  //DB Transaction Handle START
 
-        $price_variety_total_release_currency=0;
-        $quantity_total_release_kg=0;
+        $price_variety_total_expense_currency=0;
+        $quantity_total_expense_kg=0;
         foreach($items as $item)
         {
             if(isset($old_varieties[$item['variety_id']][$item['pack_size_id']]))
             {
                 $lc_detail_id=$old_varieties[$item['variety_id']][$item['pack_size_id']]['id'];
                 $old_variety_currency=$old_varieties[$item['variety_id']][$item['pack_size_id']]['price_unit_lc_currency'];
-                $old_variety_quantity_release=$old_varieties[$item['variety_id']][$item['pack_size_id']]['quantity_release'];
+                $old_variety_quantity_expense=$old_varieties[$item['variety_id']][$item['pack_size_id']]['quantity_expense'];
 
-                $price_variety_total_release_currency+=($item['quantity_release']*$old_variety_currency);
+                $price_variety_total_expense_currency+=($item['quantity_expense']*$old_variety_currency);
                 if($item['pack_size_id']==0)
                 {
-                    $quantity_total_release_kg+=$item['quantity_release'];
+                    $quantity_total_expense_kg+=$item['quantity_expense'];
                 }
                 else
                 {
                     if(isset($pack_sizes[$item['pack_size_id']]['text']))
                     {
-                        $quantity_total_release_kg+=(($pack_sizes[$item['pack_size_id']]['text']*$item['quantity_release'])/1000);
+                        $quantity_total_expense_kg+=(($pack_sizes[$item['pack_size_id']]['text']*$item['quantity_expense'])/1000);
                     }
                 }
 
-                if(($old_variety_quantity_release!=$item['quantity_release']))
+                if(($old_variety_quantity_expense!=$item['quantity_expense']))
                 {
                     $data=array();
-                    $data['quantity_release']=$item['quantity_release'];
-                    $data['price_total_release_currency']=($item['quantity_release']*$old_variety_currency);
-                    $this->db->set('revision_release_count', 'revision_release_count+1', FALSE);
+                    $data['quantity_expense']=$item['quantity_expense'];
+                    $data['price_total_expense_currency']=($item['quantity_expense']*$old_variety_currency);
+                    $this->db->set('revision_expense_count', 'revision_expense_count+1', FALSE);
                     Query_helper::update($this->config->item('table_sms_lc_details'),$data, array('id='.$lc_detail_id), false);
                 }
 
@@ -325,24 +325,24 @@ class Lc_release extends Root_Controller
                 $data['lc_id']=$id;
                 $data['variety_id']=$old_varieties[$item['variety_id']][$item['pack_size_id']]['variety_id'];
                 $data['pack_size_id']=$old_varieties[$item['variety_id']][$item['pack_size_id']]['pack_size_id'];
-                $data['quantity']=$item['quantity_release'];
+                $data['quantity']=$item['quantity_expense'];
                 $data['price_unit_currency']=$old_variety_currency;
-                $data['price_total_currency']=($item['quantity_release']*$old_variety_currency);
+                $data['price_total_currency']=($item['quantity_expense']*$old_variety_currency);
                 $data['revision'] = 1;
                 $data['date_created'] = $time;
                 $data['user_created'] = $user->user_id;
-                Query_helper::add($this->config->item('table_sms_lc_release_histories'),$data, false);
+                Query_helper::add($this->config->item('table_sms_lc_expense_histories'),$data, false);
             }
         }
 
-        $item_head['quantity_total_release_kg']=$quantity_total_release_kg;
-        $item_head['price_other_cost_total_release_currency']=$item_head['price_other_cost_total_release_currency'];
-        $item_head['price_variety_total_release_currency']=$price_variety_total_release_currency;
-        $item_head['price_total_release_currency']=($price_variety_total_release_currency+$item_head['price_other_cost_total_release_currency']);
-        $item_head['price_total_release_taka']=$item_head['price_total_release_taka'];
-        $item_head['date_release_updated']=$time;
-        $item_head['user_release_updated']=$user->user_id;
-        $this->db->set('revision_release_count', 'revision_release_count+1', FALSE);
+        $item_head['quantity_total_expense_kg']=$quantity_total_expense_kg;
+        $item_head['price_other_cost_total_expense_currency']=$item_head['price_other_cost_total_expense_currency'];
+        $item_head['price_variety_total_expense_currency']=$price_variety_total_expense_currency;
+        $item_head['price_total_expense_currency']=($price_variety_total_expense_currency+$item_head['price_other_cost_total_expense_currency']);
+        $item_head['price_total_expense_taka']=$item_head['price_total_expense_taka'];
+        $item_head['date_expense_updated']=$time;
+        $item_head['user_expense_updated']=$user->user_id;
+        $this->db->set('revision_expense_count', 'revision_expense_count+1', FALSE);
         Query_helper::update($this->config->item('table_sms_lc_open'),$item_head,array('id='.$id));
 
         $this->db->trans_complete();   //DB Transaction Handle END
@@ -358,7 +358,7 @@ class Lc_release extends Root_Controller
             $this->json_return($ajax);
         }
     }
-    private function system_release_complete($id)
+    private function system_expense_complete($id)
     {
         if((isset($this->permissions['action7']) && ($this->permissions['action7']==1)))
         {
@@ -386,12 +386,12 @@ class Lc_release extends Root_Controller
             $this->db->select('ui.name user_full_name');
             $this->db->where('lco.id',$item_id);
             $this->db->where('lco.status_forward',$this->config->item('system_status_yes'));
-            $this->db->where('lco.status_release',$this->config->item('system_status_pending'));
+            $this->db->where('lco.status_expense',$this->config->item('system_status_pending'));
             $this->db->where('lco.status !=',$this->config->item('system_status_delete'));
             $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
             {
-                System_helper::invalid_try('Edit Release Complete LC Non Exists',$item_id);
+                System_helper::invalid_try('Edit expense Complete LC Non Exists',$item_id);
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid LC.';
                 $this->json_return($ajax);
@@ -409,14 +409,14 @@ class Lc_release extends Root_Controller
             $this->db->where('lcd.quantity_lc >0');
             $data['items']=$this->db->get()->result_array();
 
-            $data['title']="LC Release :: ".Barcode_helper::get_barcode_lc($item_id);
+            $data['title']="LC Expense :: ".Barcode_helper::get_barcode_lc($item_id);
             $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/release_complete",$data,true));
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/expense_complete",$data,true));
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
             }
-            $ajax['system_page_url']=site_url($this->controller_url.'/index/release_complete/'.$item_id);
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/expense_complete/'.$item_id);
             $this->json_return($ajax);
         }
         else
@@ -426,7 +426,7 @@ class Lc_release extends Root_Controller
             $this->json_return($ajax);
         }
     }
-    private function system_save_release_complete()
+    private function system_save_expense_complete()
     {
         $id = $this->input->post("id");
         $user = User_helper::get_user();
@@ -447,12 +447,12 @@ class Lc_release extends Root_Controller
         }
 
         $item=$this->input->post('item');
-        if($item['status_release']==$this->config->item('system_status_complete'))
+        if($item['status_expense']==$this->config->item('system_status_complete'))
         {
-            $result=Query_helper::get_info($this->config->item('table_sms_lc_open'),'*',array('id ='.$id, 'status != "'.$this->config->item('system_status_delete').'"', 'status_forward = "'.$this->config->item('system_status_yes').'"', 'status_release = "'.$this->config->item('system_status_pending').'"'),1);
+            $result=Query_helper::get_info($this->config->item('table_sms_lc_open'),'*',array('id ='.$id, 'status != "'.$this->config->item('system_status_delete').'"', 'status_forward = "'.$this->config->item('system_status_yes').'"', 'status_expense = "'.$this->config->item('system_status_pending').'"'),1);
             if(!$result)
             {
-                System_helper::invalid_try('Update Release Completed LC Non Exists',$id);
+                System_helper::invalid_try('Update expense Completed LC Non Exists',$id);
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid LC.';
                 $this->json_return($ajax);
@@ -460,8 +460,8 @@ class Lc_release extends Root_Controller
             else
             {
                 $time=time();
-                $item['date_release_forwarded']=$time;
-                $item['user_release_forwarded']=$user->user_id;
+                $item['date_expense_forwarded']=$time;
+                $item['user_expense_forwarded']=$user->user_id;
                 $update_lc=Query_helper::update($this->config->item('table_sms_lc_open'),$item,array('id='.$id));
                 if($update_lc)
                 {
@@ -491,7 +491,7 @@ class Lc_release extends Root_Controller
             foreach($items as $item)
             {
                 /// empty checking
-                if(!($item['quantity_release']>=0))
+                if(!($item['quantity_expense']>=0))
                 {
                     $this->message='Invalid input (variety info :: '.$item['variety_id'].').';
                     return false;
@@ -521,11 +521,11 @@ class Lc_release extends Root_Controller
             $data['system_preference_items']['currency_name']= 1;
             $data['system_preference_items']['lc_number']= 1;
             $data['system_preference_items']['consignment_name']= 1;
-            $data['system_preference_items']['price_other_cost_total_release_currency']= 1;
-            $data['system_preference_items']['quantity_total_release_kg']= 1;
-            $data['system_preference_items']['price_variety_total_release_currency']= 1;
-            $data['system_preference_items']['price_total_release_currency']= 1;
-            $data['system_preference_items']['status_release']= 1;
+            $data['system_preference_items']['price_other_cost_total_expense_currency']= 1;
+            $data['system_preference_items']['quantity_total_expense_kg']= 1;
+            $data['system_preference_items']['price_variety_total_expense_currency']= 1;
+            $data['system_preference_items']['price_total_expense_currency']= 1;
+            $data['system_preference_items']['status_expense']= 1;
             if($result)
             {
                 if($result['preferences']!=null)

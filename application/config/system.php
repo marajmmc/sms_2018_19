@@ -27,3 +27,8 @@ $config['system_purpose_variety_sample']='Sample Purpose';
 
 $config['system_customer_type_outlet_id']=1;
 $config['system_customer_type_customer_id']=2;
+
+/*Bank & Account Config*/
+// purpose
+$config['system_bank_account_purpose']['lc']='Lc';
+$config['system_bank_account_purpose']['sale_receive']='Sale Receive';

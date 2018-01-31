@@ -11,7 +11,6 @@ class Lc_receive extends Root_Controller
         $this->message="";
         $this->permissions=User_helper::get_permission('Lc_receive');
         $this->controller_url='lc_receive';
-        $this->load->helper('barcode');
     }
 
     public function index($action="list",$id=0)
@@ -59,32 +58,31 @@ class Lc_receive extends Root_Controller
         {
             $user = User_helper::get_user();
             $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
-            $data['items']['barcode']= 1;
-            $data['items']['fiscal_year_name']= 1;
-            $data['items']['month_name']= 1;
-            $data['items']['date_opening']= 1;
-            $data['items']['date_expected']= 1;
-            $data['items']['principal_name']= 1;
-            $data['items']['currency_name']= 1;
-            $data['items']['lc_number']= 1;
-            $data['items']['consignment_name']= 1;
-            $data['items']['quantity_total_release_kg']= 1;
-            $data['items']['quantity_total_receive_kg']= 1;
-            $data['items']['status_receive']= 1;
+            $data['system_preference_items']['barcode']= 1;
+            $data['system_preference_items']['fiscal_year_name']= 1;
+            $data['system_preference_items']['month_name']= 1;
+            $data['system_preference_items']['date_opening']= 1;
+            $data['system_preference_items']['date_expected']= 1;
+            $data['system_preference_items']['principal_name']= 1;
+            $data['system_preference_items']['currency_name']= 1;
+            $data['system_preference_items']['lc_number']= 1;
+            $data['system_preference_items']['consignment_name']= 1;
+            $data['system_preference_items']['quantity_total_release_kg']= 1;
+            $data['system_preference_items']['quantity_total_receive_kg']= 1;
             if($result)
             {
                 if($result['preferences']!=null)
                 {
-                    $data['preferences']=json_decode($result['preferences'],true);
-                    foreach($data['items'] as $key=>$value)
+                    $preferences=json_decode($result['preferences'],true);
+                    foreach($data['system_preference_items'] as $key=>$value)
                     {
-                        if(isset($data['preferences'][$key]))
+                        if(isset($preferences[$key]))
                         {
-                            $data['items'][$key]=$value;
+                            $data['system_preference_items'][$key]=$value;
                         }
                         else
                         {
-                            $data['items'][$key]=0;
+                            $data['system_preference_items'][$key]=0;
                         }
                     }
                 }
@@ -166,6 +164,11 @@ class Lc_receive extends Root_Controller
             $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.id = lco.fiscal_year_id','INNER');
             $this->db->join($this->config->item('table_sms_setup_currency').' currency','currency.id = lco.currency_id','INNER');
             $this->db->join($this->config->item('table_login_basic_setup_principal').' principal','principal.id = lco.principal_id','INNER');
+            $this->db->join($this->config->item('table_login_setup_bank_account').' ba','ba.id = lco.bank_account_id','INNER');
+            $this->db->join($this->config->item('table_login_setup_bank').' bank','bank.id = ba.bank_id','INNER');
+            $this->db->select("CONCAT_WS(' ( ',ba.account_number,  CONCAT_WS('', bank.name,' - ',ba.branch_name,')')) bank_account_number");
+            $this->db->join($this->config->item('table_login_setup_user_info').' ui','ui.user_id = lco.user_release_completed','INNER');
+            $this->db->select('ui.name user_full_name');
             $this->db->where('lco.id',$item_id);
             $this->db->where('lco.status_forward',$this->config->item('system_status_yes'));
             $this->db->where('lco.status_release',$this->config->item('system_status_complete'));
@@ -372,6 +375,8 @@ class Lc_receive extends Root_Controller
             $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.id = lco.fiscal_year_id','INNER');
             $this->db->join($this->config->item('table_sms_setup_currency').' currency','currency.id = lco.currency_id','INNER');
             $this->db->join($this->config->item('table_login_basic_setup_principal').' principal','principal.id = lco.principal_id','INNER');
+            $this->db->join($this->config->item('table_login_setup_user_info').' ui','ui.user_id = lco.user_release_completed','INNER');
+            $this->db->select('ui.name user_full_name');
             $this->db->where('lco.id',$item_id);
             $this->db->where('lco.status_forward',$this->config->item('system_status_yes'));
             $this->db->where('lco.status_release',$this->config->item('system_status_complete'));
@@ -428,6 +433,8 @@ class Lc_receive extends Root_Controller
     {
         $id = $this->input->post("id");
         $user = User_helper::get_user();
+        $time=time();
+        $item_head=$this->input->post('item');
         if($id>0)
         {
             if(!((isset($this->permissions['action1']) && ($this->permissions['action1']==1)) || (isset($this->permissions['action2']) && ($this->permissions['action2']==1))))
@@ -444,7 +451,7 @@ class Lc_receive extends Root_Controller
             $this->json_return($ajax);
         }
 
-        $item_head=$this->input->post('item');
+
         if($item_head['status_receive']==$this->config->item('system_status_complete'))
         {
             $result=Query_helper::get_info($this->config->item('table_sms_lc_open'),'*',array('id ='.$id, 'status != "'.$this->config->item('system_status_delete').'"', 'status_forward = "'.$this->config->item('system_status_yes').'"', 'status_release = "'.$this->config->item('system_status_complete').'"', 'status_receive = "'.$this->config->item('system_status_pending').'"'),1);
@@ -457,7 +464,6 @@ class Lc_receive extends Root_Controller
             }
             else
             {
-                $time=time();
                 $results=Query_helper::get_info($this->config->item('table_sms_lc_details'),'*',array('lc_id='.$id,'quantity_lc > 0'));
                 if($results)
                 {
@@ -490,7 +496,6 @@ class Lc_receive extends Root_Controller
                             Query_helper::add($this->config->item('table_sms_stock_summary_variety'),$data);
                         }
                     }
-                    $time=time();
                     $item_head['date_receive_completed']=$time;
                     $item_head['user_receive_completed']=$user->user_id;
                     Query_helper::update($this->config->item('table_sms_lc_open'),$item_head,array('id='.$id));
@@ -562,42 +567,37 @@ class Lc_receive extends Root_Controller
         {
             $user = User_helper::get_user();
             $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
-            $data['items']['barcode']= 1;
-            $data['items']['fiscal_year_name']= 1;
-            $data['items']['month_name']= 1;
-            $data['items']['date_opening']= 1;
-            $data['items']['date_expected']= 1;$data['items']['principal_name']= 1;
-            $data['items']['currency_name']= 1;
-            $data['items']['lc_number']= 1;
-            $data['items']['consignment_name']= 1;
-            $data['items']['price_other_cost_total_receive_currency']= 1;
-            $data['items']['quantity_total_receive_kg']= 1;
-            $data['items']['price_variety_total_receive_currency']= 1;
-            $data['items']['price_total_receive_currency']= 1;
-            $data['items']['status_receive']= 1;
+            $data['system_preference_items']['barcode']= 1;
+            $data['system_preference_items']['fiscal_year_name']= 1;
+            $data['system_preference_items']['month_name']= 1;
+            $data['system_preference_items']['date_opening']= 1;
+            $data['system_preference_items']['date_expected']= 1;
+            $data['system_preference_items']['principal_name']= 1;
+            $data['system_preference_items']['currency_name']= 1;
+            $data['system_preference_items']['lc_number']= 1;
+            $data['system_preference_items']['consignment_name']= 1;
+            $data['system_preference_items']['quantity_total_release_kg']= 1;
+            $data['system_preference_items']['quantity_total_receive_kg']= 1;
             if($result)
             {
                 if($result['preferences']!=null)
                 {
-                    $data['preferences']=json_decode($result['preferences'],true);
-                    foreach($data['items'] as $key=>$value)
+                    $preferences=json_decode($result['preferences'],true);
+                    foreach($data['system_preference_items'] as $key=>$value)
                     {
-                        if(isset($data['preferences'][$key]))
+                        if(isset($preferences[$key]))
                         {
-                            $data['items'][$key]=$value;
+                            $data['system_preference_items'][$key]=$value;
                         }
                         else
                         {
-                            $data['items'][$key]=0;
+                            $data['system_preference_items'][$key]=0;
                         }
                     }
                 }
             }
-
-            $data['title']="Set Preference";
             $ajax['status']=true;
-            //$ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("preference_add_edit",$data,true));
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/preference",$data,true));
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("preference_add_edit",$data,true));
             $ajax['system_page_url']=site_url($this->controller_url.'/index/set_preference');
             $this->json_return($ajax);
         }

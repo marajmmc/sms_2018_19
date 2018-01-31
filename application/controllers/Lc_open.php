@@ -12,7 +12,6 @@ class Lc_open extends Root_Controller
         $this->permissions=User_helper::get_permission('Lc_open');
         $this->controller_url='lc_open';
     }
-
     public function index($action="list",$id=0)
     {
         if($action=="list")
@@ -301,6 +300,7 @@ class Lc_open extends Root_Controller
             $data['item']['date_expected']='';
             $data['item']['principal_id']=0;
             $data['item']['currency_id']=0;
+            $data['item']['bank_account_id']=0;
             $data['item']['lc_number']='';
             $data['item']['consignment_name']='';
             $data['item']['remarks']='';
@@ -314,6 +314,17 @@ class Lc_open extends Root_Controller
             $data['currencies']=Query_helper::get_info($this->config->item('table_sms_setup_currency'),array('id value','name text'),array('status !="'.$this->config->item('system_status_delete').'"'),0,0,array('ordering'));
             $data['principals']=Query_helper::get_info($this->config->item('table_login_basic_setup_principal'),array('id value','name text'),array('status !="'.$this->config->item('system_status_delete').'"'),0,0,array('ordering'));
             $data['pack_sizes']=Query_helper::get_info($this->config->item('table_login_setup_classification_vpack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('id ASC'));
+
+            $this->db->from($this->config->item('table_login_setup_bank_account').' ba');
+            $this->db->select('ba.id value');
+            $this->db->select("CONCAT_WS(' ( ',ba.account_number,  CONCAT_WS('', bank.name,' - ',ba.branch_name,')')) text");
+            $this->db->join($this->config->item('table_login_setup_bank').' bank','bank.id=ba.bank_id AND bank.status='.'"'.$this->config->item('system_status_active').'"','INNER');
+            $this->db->join($this->config->item('table_login_setup_bank_account_purpose').' bap','bap.bank_account_id=ba.id AND bap.revision=1 AND bap.purpose ="lc" AND bap.status='.'"'.$this->config->item('system_status_active').'"','INNER');
+            $this->db->where('ba.status',$this->config->item('system_status_active'));
+            $this->db->where('ba.account_type_receive = 1');
+            $data['bank_accounts']=$this->db->get()->result_array();
+
+            //$data['bank_accounts']=Query_helper::get_info($this->config->item('table_login_setup_bank'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('name'));
 
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/add_edit",$data,true));
@@ -381,8 +392,18 @@ class Lc_open extends Root_Controller
             $this->db->where('lcd.lc_id',$item_id);
             $data['items']=$this->db->get()->result_array();
 
+            //get bank account
+            $this->db->from($this->config->item('table_login_setup_bank_account').' ba');
+            $this->db->select('ba.id value');
+            $this->db->select("CONCAT_WS(' ( ',ba.account_number,  CONCAT_WS('', bank.name,' - ',ba.branch_name,')')) text");
+            $this->db->join($this->config->item('table_login_setup_bank').' bank','bank.id=ba.bank_id','INNER');
+            $this->db->join($this->config->item('table_login_setup_bank_account_purpose').' bap','bap.bank_account_id=ba.id AND bap.revision=1 AND bap.purpose ="lc"','INNER');
+            $this->db->where('ba.status !=',$this->config->item('system_status_delete'));
+            $this->db->where('ba.account_type_receive = 1');
+            $data['bank_accounts']=$this->db->get()->result_array();
+
             // get drop down info
-            $data['currencies']=Query_helper::get_info($this->config->item('table_sms_setup_currency'),array('id value','name text','amount_rate_budget'),array('status="'.$this->config->item('system_status_active').'"'),0,0,array('ordering'));
+            $data['currencies']=Query_helper::get_info($this->config->item('table_sms_setup_currency'),array('id value','name text','amount_rate_budget'),array('status !="'.$this->config->item('system_status_delete').'"'),0,0,array('ordering'));
 
             $this->db->from($this->config->item('table_login_setup_classification_varieties').' v');
             $this->db->select('v.id value,v.name');
@@ -422,6 +443,9 @@ class Lc_open extends Root_Controller
     {
         $id = $this->input->post("id");
         $user = User_helper::get_user();
+        $time=time();
+        $item=$this->input->post('item');
+        $items=$this->input->post('items');
         if($id>0)
         {
             if(!(isset($this->permissions['action2']) && ($this->permissions['action2']==1)))
@@ -429,6 +453,22 @@ class Lc_open extends Root_Controller
                 $ajax['status']=false;
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->json_return($ajax);
+            }
+
+            $result=Query_helper::get_info($this->config->item('table_sms_lc_open'),'*',array('id ='.$id, 'status != "'.$this->config->item('system_status_delete').'"'),1);
+            if(!$result)
+            {
+                System_helper::invalid_try('Update Non Exists',$id);
+                $ajax['status']=false;
+                $ajax['system_message']='Invalid LC.';
+                $this->json_return($ajax);
+            }
+            if($result['status_forward']==$this->config->item('system_status_yes'))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='LC already forwarded.';
+                $this->json_return($ajax);
+                die();
             }
         }
         else
@@ -447,9 +487,6 @@ class Lc_open extends Root_Controller
             $this->json_return($ajax);
         }
 
-        $time=time();
-        $item=$this->input->post('item');
-        $items=$this->input->post('items');
         $result_pack_size=Query_helper::get_info($this->config->item('table_login_setup_classification_vpack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('id ASC'));
         $pack_sizes=array();
         foreach($result_pack_size as $pack_size)
@@ -462,25 +499,6 @@ class Lc_open extends Root_Controller
 
         if($id>0)
         {
-
-            $lc_open_result=Query_helper::get_info($this->config->item('table_sms_lc_open'),'*',array('id ='.$id, 'status != "'.$this->config->item('system_status_delete').'"'),1);
-            if(!$lc_open_result)
-            {
-                $this->db->trans_complete();
-                System_helper::invalid_try('Update Non Exists',$id);
-                $ajax['status']=false;
-                $ajax['system_message']='Invalid LC.';
-                $this->json_return($ajax);
-            }
-            if($lc_open_result['status_forward']==$this->config->item('system_status_yes'))
-            {
-                $this->db->trans_complete();
-                $ajax['status']=false;
-                $ajax['system_message']='LC already forwarded.';
-                $this->json_return($ajax);
-                die();
-            }
-
             $result=Query_helper::get_info($this->config->item('table_sms_lc_details'),'*',array('lc_id='.$id));
             $old_varieties=array();
             if($result)
@@ -527,7 +545,7 @@ class Lc_open extends Root_Controller
                         $data['price_unit_lc_currency']=$variety['price_unit_lc_currency'];
                         $data['price_total_lc_currency']=($variety['quantity_lc']*$variety['price_unit_lc_currency']);
                         $this->db->set('revision_count', 'revision_count+1', FALSE);
-                        Query_helper::update($this->config->item('table_sms_lc_details'),$data, array('id='.$lc_detail_id), false);
+                        Query_helper::update($this->config->item('table_sms_lc_details'),$data, array('id='.$lc_detail_id),false);
                     }
                 }
                 else
@@ -668,6 +686,9 @@ class Lc_open extends Root_Controller
             $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.id = lco.fiscal_year_id','INNER');
             $this->db->join($this->config->item('table_sms_setup_currency').' currency','currency.id = lco.currency_id','INNER');
             $this->db->join($this->config->item('table_login_basic_setup_principal').' principal','principal.id = lco.principal_id','INNER');
+            $this->db->join($this->config->item('table_login_setup_bank_account').' ba','ba.id = lco.bank_account_id','INNER');
+            $this->db->join($this->config->item('table_login_setup_bank').' bank','bank.id = ba.bank_id','INNER');
+            $this->db->select("CONCAT_WS(' ( ',ba.account_number,  CONCAT_WS('', bank.name,' - ',ba.branch_name,')')) bank_account_number");
             $this->db->where('lco.id',$item_id);
             $this->db->where('lco.status !=',$this->config->item('system_status_delete'));
             $data['item']=$this->db->get()->row_array();
@@ -730,6 +751,9 @@ class Lc_open extends Root_Controller
             $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.id = lco.fiscal_year_id','INNER');
             $this->db->join($this->config->item('table_sms_setup_currency').' currency','currency.id = lco.currency_id','INNER');
             $this->db->join($this->config->item('table_login_basic_setup_principal').' principal','principal.id = lco.principal_id','INNER');
+            $this->db->join($this->config->item('table_login_setup_bank_account').' ba','ba.id = lco.bank_account_id','INNER');
+            $this->db->join($this->config->item('table_login_setup_bank').' bank','bank.id = ba.bank_id','INNER');
+            $this->db->select("CONCAT_WS(' ( ',ba.account_number,  CONCAT_WS('', bank.name,' - ',ba.branch_name,')')) bank_account_number");
             $this->db->where('lco.id',$item_id);
             $this->db->where('lco.status !=',$this->config->item('system_status_delete'));
             $data['item']=$this->db->get()->row_array();
@@ -841,6 +865,9 @@ class Lc_open extends Root_Controller
             $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.id = lco.fiscal_year_id','INNER');
             $this->db->join($this->config->item('table_sms_setup_currency').' currency','currency.id = lco.currency_id','INNER');
             $this->db->join($this->config->item('table_login_basic_setup_principal').' principal','principal.id = lco.principal_id','INNER');
+            $this->db->join($this->config->item('table_login_setup_bank_account').' ba','ba.id = lco.bank_account_id','INNER');
+            $this->db->join($this->config->item('table_login_setup_bank').' bank','bank.id = ba.bank_id','INNER');
+            $this->db->select("CONCAT_WS(' ( ',ba.account_number,  CONCAT_WS('', bank.name,' - ',ba.branch_name,')')) bank_account_number");
             $this->db->where('lco.id',$item_id);
             $this->db->where('lco.status !=',$this->config->item('system_status_delete'));
             $data['item']=$this->db->get()->row_array();
@@ -1006,6 +1033,7 @@ class Lc_open extends Root_Controller
         }
         $this->form_validation->set_rules('item[date_expected]',$this->lang->line('LABEL_DATE_EXPECTED'),'required');
         $this->form_validation->set_rules('item[lc_number]',$this->lang->line('LABEL_LC_NUMBER'),'required');
+        $this->form_validation->set_rules('item[bank_account_id]',$this->lang->line('LABEL_BANK_NAME'),'required');
         $this->form_validation->set_rules('item[currency_id]',$this->lang->line('LABEL_CURRENCY_NAME'),'required');
         $this->form_validation->set_rules('item[consignment_name]',$this->lang->line('LABEL_CONSIGNMENT_NAME'),'required');
         $this->form_validation->set_rules('item[price_other_cost_total_currency]',$this->lang->line('LABEL_OTHER_COST_CURRENCY'),'required');
