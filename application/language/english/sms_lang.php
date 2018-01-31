@@ -313,3 +313,11 @@ $lang['LABEL_STATUS_FORWARD']='Forward Status';
 $lang['LABEL_STATUS_RELEASE']='Release Status';
 $lang['LABEL_STATUS_RECEIVE']='Receive Status';
 $lang['LABEL_STATUS_LC']='LC Status';
+
+// Raw Materials Lang added by Saiful
+
+$lang['LABEL_SUPPLIER']='Supplier';
+$lang['LABEL_QUANTITY_SUPPLY']='Supply Quantity';
+$lang['LABEL_QUANTITY_RECEIVE']='Receive Quantity';
+
+$lang['LABEL_DATE_PURCHASE']='Purchase date';

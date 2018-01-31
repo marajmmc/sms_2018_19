@@ -32,3 +32,8 @@ $config['system_customer_type_customer_id']=2;
 // purpose
 $config['system_bank_account_purpose']['lc']='Lc';
 $config['system_bank_account_purpose']['sale_receive']='Sale Receive';
+
+/// Added by saiful. Need to review.
+$config['system_master_foil']='Master';
+$config['system_common_foil']='Foil';
+$config['system_sticker']='Sticker';

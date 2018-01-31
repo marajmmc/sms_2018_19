@@ -24,3 +24,27 @@ $config['table_sms_direct_cost_items'] = 'arm_bms_2017_08.bms_setup_direct_cost_
 
 //Transfer
 $config['table_sms_transfer_warehouse_variety'] = 'arm_sms_2018_19.sms_transfer_warehouse_variety';
+
+//Raw Materials
+
+//Purchase Master Foil
+$config['table_sms_purchase_raw_master'] = 'arm_sms_2018_19.sms_purchase_raw_master';
+$config['table_sms_purchase_raw_master_details'] = 'arm_sms_2018_19.sms_purchase_raw_master_details';
+
+//Purchase Common Foil
+$config['table_sms_purchase_raw_foil'] = 'arm_sms_2018_19.sms_purchase_raw_foil';
+
+//Purchase Sticker
+$config['table_sms_purchase_raw_sticker'] = 'arm_sms_2018_19.sms_purchase_raw_sticker';
+$config['table_sms_purchase_raw_sticker_details'] = 'arm_sms_2018_19.sms_purchase_raw_sticker_details';
+
+//Stock in Master Foil
+$config['table_sms_stock_in_raw_master'] = 'arm_sms_2018_19.sms_stock_in_raw_master';
+$config['table_sms_stock_in_raw_master_details'] = 'arm_sms_2018_19.sms_stock_in_raw_master_details';
+
+//Stock in Sticker
+$config['table_sms_stock_in_raw_sticker'] = 'arm_sms_2018_19.sms_stock_in_raw_sticker';
+$config['table_sms_stock_in_raw_sticker_details'] = 'arm_sms_2018_19.sms_stock_in_raw_sticker_details';
+
+//Raw stock Summary
+$config['table_sms_stock_summary_raw'] = 'arm_sms_2018_19.sms_stock_summary_raw';
