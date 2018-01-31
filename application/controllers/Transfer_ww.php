@@ -308,38 +308,49 @@ class Transfer_ww extends Root_Controller
             $this->json_return($ajax);
         }
 
-        //Negative Stock Checking
+        //Negative Stock Checking For Source Warehouse and destination warehouse
+        $stock_source=0;
+        $stock_destination=0;
         if(isset($current_stocks[$item['variety_id']][$item['pack_size_id']][$item['source_warehouse_id']]))
         {
-            $current_stock=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['source_warehouse_id']]['current_stock'];
-            if($id>0)
+            $stock_source=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['source_warehouse_id']]['current_stock'];
+
+        }
+        if(isset($current_stocks[$item['variety_id']][$item['pack_size_id']][$item['destination_warehouse_id']]))
+        {
+            $stock_destination=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['destination_warehouse_id']]['current_stock'];
+        }
+        if($id>0)
+        {
+            if($item['quantity']>$old_value)
             {
-                if($item['quantity']>$old_value)
-                {
-                    $variance=$item['quantity']-$old_value;
-                    if($variance>$current_stock)
-                    {
-                        $ajax['status']=false;
-                        $ajax['system_message']='This Transfer('.$item['variety_id'].'-'.$item['pack_size_id'].'-'.$item['source_warehouse_id'].'-'.$old_value.'-'.$item['quantity'].') will make current stock negative.';
-                        $this->json_return($ajax);
-                    }
-                }
-            }
-            else
-            {
-                if($item['quantity']>$current_stock)
+                $variance=$item['quantity']-$old_value;
+                if($variance>$stock_source)
                 {
                     $ajax['status']=false;
-                    $ajax['system_message']='This Transfer('.$item['variety_id'].'-'.$item['pack_size_id'].'-'.$item['source_warehouse_id'].'-'.$item['quantity'].') will make current stock negative.';
+                    $ajax['system_message']='This Transfer('.$item['variety_id'].'-'.$item['pack_size_id'].'-'.$item['source_warehouse_id'].'-'.$old_value.'-'.$item['quantity'].') will make current stock negative.';
+                    $this->json_return($ajax);
+                }
+            }
+            else if($item['quantity']<$old_value)
+            {
+                $variance=$old_value-$item['quantity'];
+                if($variance>$stock_destination)
+                {
+                    $ajax['status']=false;
+                    $ajax['system_message']='This Update Transfer('.$item['variety_id'].'-'.$item['pack_size_id'].'-'.$item['destination_warehouse_id'].'-'.$old_value.'-'.$item['quantity'].') will make current stock negative.';
                     $this->json_return($ajax);
                 }
             }
         }
         else
         {
-            $ajax['status']=false;
-            $ajax['system_message']='This Transfer:('.$item['variety_id'].'-'.$item['pack_size_id'].'-'.$item['source_warehouse_id'].' is absent in stock.)';
-            $this->json_return($ajax);
+            if($item['quantity']>$stock_source)
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='This Transfer('.$item['variety_id'].'-'.$item['pack_size_id'].'-'.$item['source_warehouse_id'].'-'.$item['quantity'].') will make current stock negative.';
+                $this->json_return($ajax);
+            }
         }
 
         /*-- End-- Validation Checking */
