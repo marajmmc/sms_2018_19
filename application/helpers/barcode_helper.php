@@ -27,7 +27,6 @@ class Barcode_helper
     {
         return 'TO'.str_pad($increment_id,6,0,STR_PAD_LEFT);
     }
-    //it will be transferred into barcode helper
 
     //LC
     public static function get_barcode_lc($increment_id)
@@ -35,5 +34,27 @@ class Barcode_helper
         return 'LC'.str_pad($increment_id,6,0,STR_PAD_LEFT);
     }
 
+  //  Added By saiful
 
+    // Raw Materials
+    public static function get_barcode_purchase_master($increment_id)
+    {
+        return 'PM'.str_pad($increment_id,6,0,STR_PAD_LEFT);
+    }
+    public static function get_barcode_purchase_foil($increment_id)
+    {
+        return 'PF'.str_pad($increment_id,6,0,STR_PAD_LEFT);
+    }
+    public static function get_barcode_purchase_sticker($increment_id)
+    {
+        return 'PS'.str_pad($increment_id,6,0,STR_PAD_LEFT);
+    }
+    public static function get_barcode_stock_in_master($increment_id)
+    {
+        return 'MI'.str_pad($increment_id,6,0,STR_PAD_LEFT);
+    }
+    public static function get_barcode_stock_in_sticker($increment_id)
+    {
+        return 'MS'.str_pad($increment_id,6,0,STR_PAD_LEFT);
+    }
 }
