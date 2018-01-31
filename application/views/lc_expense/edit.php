@@ -68,8 +68,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <tr>
                     <th class="widget-header"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_OTHER_COST_CURRENCY');?></label></th>
                     <th class="bg-danger"><label class="control-label"><?php echo number_format($item['price_other_cost_total_currency'],2);?></label></th>
-                    <th class="widget-header"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_CONSIGNMENT_NAME');?></label></th>
-                    <th><label class="control-label"><?php echo $item['consignment_name'];?></label></th>
+                    <th class="widget-header"><label class="control-label pull-right">Release Others Costs (Currency)</label></th>
+                    <th class="bg-danger"><label class="control-label"><?php echo number_format($item['price_other_cost_total_release_currency'],2);?></label></th>
                 </tr>
                 <tr>
                     <th class="widget-header"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_CONSIGNMENT_NAME');?></label></th>
@@ -120,14 +120,18 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <tbody>
                     <?php
                     $serial=1;
+                    $price_total_expense_head_taka=0;
+                    $amount=0;
                     foreach($items as $row)
                     {
+                        $amount=isset($cost_item[$row['id']])?$cost_item[$row['id']]:0;
+                        $price_total_expense_head_taka+=$amount;
                         ?>
                         <tr>
                             <td><?php echo $serial?></td>
                             <td><?php echo $row['name']?></td>
                             <td>
-                                <input type="text" name="items[<?php echo $row['id']?>][amount]" id="amount" class="form-control float_type_positive amount" value="<?php echo isset($cost_item[$row['id']])?$cost_item[$row['id']]:0;?>" />
+                                <input type="text" name="items[<?php echo $row['id']?>][amount]" id="amount" class="form-control float_type_positive amount" value="<?php echo $amount;?>" />
                             </td>
                         </tr>
                     <?php
@@ -135,6 +139,26 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     }
                     ?>
                     </tbody>
+                    <tfoot>
+                    <tr>
+                        <th colspan="2" class="text-right">Total Expense(Taka): </th>
+                        <th class="text-right">
+                            <label class="control-label" id="lbl_price_total_expense_head_taka"><?php echo number_format($price_total_expense_head_taka,2)?></label>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th colspan="2" class="text-right">Total (Taka): </th>
+                        <th class="text-right">
+                            <label class="control-label" id="lbl_price_total_all_taka"><?php echo number_format($item['price_total_all_taka'],2)?></label>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th colspan="2" class="text-right">Grand Total (Taka): </th>
+                        <th class="text-right">
+                            <label class="control-label" id="lbl_grand_total"><?php echo number_format(($item['price_total_all_taka']+$price_total_expense_head_taka),2)?></label>
+                        </th>
+                    </tr>
+                    </tfoot>
                 </table>
             </div>
         </div>
@@ -144,63 +168,42 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 <script>
     function calculate_total()
     {
-        var quantity_total_kg=0;
-        var price_total_release_currency=0;
-        $('.quantity_release_kg').each(function(index, element)
+        var price_total_expense_head_taka=0;
+        var price_total_all_taka=0;
+        var amount=0;
+        $('.amount').each(function(index, element)
         {
-            var current_id=parseInt($(this).attr('data-current-id'));
-            quantity_total_kg+=parseFloat($('#quantity_release_kg_'+current_id).html().replace(/,/g,''));
-            price_total_release_currency+=parseFloat($('#price_total_release_currency_'+current_id).html().replace(/,/g,''));
+            if(!isNaN($(this).val()) && $(this).val()!='')
+            {
+                amount=parseFloat($(this).val());
+            }
+            price_total_expense_head_taka+=parseFloat(amount);
         });
-        $('#lbl_quantity_total_release_kg').html(number_format(quantity_total_kg,3));
-        $('#lbl_price_variety_total_release_currency').html(number_format(price_total_release_currency,2));
-        if(isNaN($('#price_other_cost_total_release_currency').val()))
+        $('#lbl_price_total_expense_head_taka').html(number_format(price_total_expense_head_taka,2));
+
+        if(isNaN($('#price_total_all_taka').val()) || $('#price_total_all_taka').val()=='')
         {
-            var price_total_release_currency=price_total_release_currency;
+            var price_total_all_taka=price_total_expense_head_taka;
         }
         else
         {
-            var price_total_release_currency=(parseFloat($('#price_other_cost_total_release_currency').val())+price_total_release_currency);
+            var price_total_all_taka=(parseFloat($('#price_total_all_taka').val())+price_total_expense_head_taka);
         }
 
-        $('#lbl_price_total_release_currency').html(number_format(price_total_release_currency,2));
+        $('#lbl_grand_total').html(number_format(price_total_all_taka,2));
     }
     $(document).ready(function()
     {
-        $(document).off('input','.quantity_release');
-        $(document).on('input', '.quantity_release', function()
+        $(document).off('input','.amount');
+        $(document).on('input', '.amount', function()
         {
-            var current_id=parseInt($(this).attr('data-current-id'));
-            var quantity_release_kg=0;
-            var quantity_release=parseFloat($(this).val());
-            var price_unit_lc_currency=parseFloat($("#price_unit_lc_currency_"+current_id).val());
-            if(isNaN(quantity_release))
-            {
-                quantity_release=0;
-            }
-            if(isNaN(price_unit_lc_currency))
-            {
-                var price_unit_lc_currency=0;
-            }
-
-            var pack_size=parseFloat($("#pack_size_id_"+current_id).attr('data-pack-size-name'));
-            if(pack_size==0)
-            {
-                quantity_release_kg=quantity_release;
-            }
-            else
-            {
-                quantity_release_kg=parseFloat((pack_size*quantity_release)/1000);
-            }
-            $("#quantity_release_kg_"+current_id).html(number_format(quantity_release_kg,3));
-            var price_total_release_currency=(quantity_release*price_unit_lc_currency);
-            $("#price_total_release_currency_"+current_id).html(number_format(price_total_release_currency,2));
             calculate_total()
         })
 
-        $(document).off('input','#price_other_cost_total_release_currency');
-        $(document).on('input', '#price_other_cost_total_release_currency', function()
+        $(document).off('input','#price_total_all_taka');
+        $(document).on('input', '#price_total_all_taka', function()
         {
+            $("#lbl_price_total_all_taka").html(number_format($(this).val(),2))
             calculate_total();
         })
     })
