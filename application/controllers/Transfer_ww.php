@@ -11,6 +11,7 @@ class Transfer_ww extends Root_Controller
         parent::__construct();
         $this->permissions=User_helper::get_permission('Transfer_ww');
         $this->controller_url='transfer_ww';
+        $this->load->helper('barcode_helper');
     }
     public function index($action='list',$id=0)
     {
@@ -29,10 +30,6 @@ class Transfer_ww extends Root_Controller
         elseif($action=='edit')
         {
             $this->system_edit($id);
-        }
-        elseif($action=="delete")
-        {
-            $this->system_delete($id);
         }
         elseif($action=="details")
         {
@@ -112,7 +109,6 @@ class Transfer_ww extends Root_Controller
                 'crop_type_id'=>0,
                 'variety_id'=>0,
                 'destination_warehouse_id' => '',
-                'current_stock' => 0,
                 'quantity' => '',
                 'remarks' => ''
             );
@@ -165,6 +161,7 @@ class Transfer_ww extends Root_Controller
             $this->db->where('transfer_warehouse.status !=',$this->config->item('system_status_delete'));
             $this->db->order_by('transfer_warehouse.id','ASC');
             $data['item']=$this->db->get()->row_array();
+
             if(!$data['item'])
             {
                 System_helper::invalid_try('Edit Non Exists',$item_id);
@@ -172,10 +169,9 @@ class Transfer_ww extends Root_Controller
                 $ajax['system_message']='Invalid Try.';
                 $this->json_return($ajax);
             }
-            $current_stocks=System_helper::get_variety_stock(array($data['item']['variety_id']));
-            $data['item']['current_stock']=$current_stocks[$data['item']['variety_id']][$data['item']['pack_size_id']][$data['item']['source_warehouse_id']]['current_stock'];
 
             $data['title']="Transfer (Warehouse to Warehouse)";
+
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/add_edit",$data,true));
             if($this->message)
@@ -304,11 +300,11 @@ class Transfer_ww extends Root_Controller
         if($item['source_warehouse_id']==$item['destination_warehouse_id'])
         {
             $ajax['status']=false;
-            $ajax['system_message']='Source warehouse and destination warehouse can not be same';
+            $ajax['system_message']='Source Warehouse and Destination Warehouse is same';
             $this->json_return($ajax);
         }
 
-        //Negative Stock Checking For Source Warehouse
+        //Negative Stock Checking
         if(isset($current_stocks[$item['variety_id']][$item['pack_size_id']][$item['source_warehouse_id']]))
         {
             $current_stock=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['source_warehouse_id']]['current_stock'];
@@ -340,32 +336,6 @@ class Transfer_ww extends Root_Controller
             $ajax['status']=false;
             $ajax['system_message']='This Transfer:('.$item['variety_id'].'-'.$item['pack_size_id'].'-'.$item['source_warehouse_id'].' is absent in stock.)';
             $this->json_return($ajax);
-        }
-
-        //Negative Stock Checking For destination warehouse
-        if($id>0)
-        {
-            if(isset($current_stocks[$item['variety_id']][$item['pack_size_id']][$item['destination_warehouse_id']]))
-            {
-                $current_stock=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['destination_warehouse_id']]['current_stock'];
-                if($item['quantity']<$old_value)
-                {
-                    $variance=$old_value-$item['quantity'];
-                    if($variance>$current_stock)
-                    {
-                        $ajax['status']=false;
-                        $ajax['system_message']='This Update Transfer('.$item['variety_id'].'-'.$item['pack_size_id'].'-'.$item['destination_warehouse_id'].'-'.$old_value.'-'.$item['quantity'].') will make current stock negative.';
-                        $this->json_return($ajax);
-                    }
-                }
-
-            }
-            else
-            {
-                $ajax['status']=false;
-                $ajax['system_message']='This Transfer:('.$item['variety_id'].'-'.$item['pack_size_id'].'-'.$item['destination_warehouse_id'].' is absent in stock.)';
-                $this->json_return($ajax);
-            }
         }
 
         /*-- End-- Validation Checking */
@@ -509,96 +479,6 @@ class Transfer_ww extends Root_Controller
         $ajax['status']=true;
         $ajax['system_content'][]=array("id"=>$html_container_id,"html"=>$this->load->view("dropdown_with_select",$data,true));
         $this->json_return($ajax);
-    }
-
-    private function system_delete($id)
-    {
-        if(isset($this->permissions['action3']) && ($this->permissions['action3']==1))
-        {
-            if($id>0)
-            {
-                $item_id=$id;
-            }
-            else
-            {
-                $item_id=$this->input->post('id');
-            }
-            $user = User_helper::get_user();
-            $time = time();
-            $item=Query_helper::get_info($this->config->item('table_sms_transfer_warehouse_variety'),'*',array('status !="'.$this->config->item('system_status_delete').'"','id ='.$item_id),1);
-            if(!$item)
-            {
-                System_helper::invalid_try('Delete Not Exists',$item_id);
-                $ajax['status']=false;
-                $ajax['system_message']='Invalid Try.';
-                $this->json_return($ajax);
-            }
-
-            // Getting current stocks
-            $current_stocks=System_helper::get_variety_stock(array($item['variety_id']));
-
-            /*--Start-- Validation Checking */
-
-            //Negative Stock Checking
-            if(isset($current_stocks[$item['variety_id']][$item['pack_size_id']][$item['destination_warehouse_id']]))
-            {
-                $current_stock=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['destination_warehouse_id']]['current_stock'];
-                if($item['quantity']>$current_stock)
-                {
-                    $ajax['status']=false;
-                    $ajax['system_message']='This Delete From Transfer('.$item['variety_id'].'-'.$item['pack_size_id'].'-'.$item['source_warehouse_id'].'-'.$item['quantity'].') will make current stock negative.';
-                    $this->json_return($ajax);
-                }
-            }
-            else
-            {
-                $ajax['status']=false;
-                $ajax['system_message']='This Delete From Transfer:('.$item['variety_id'].'-'.$item['pack_size_id'].'-'.$item['source_warehouse_id'].' is absent in stock.)';
-                $this->json_return($ajax);
-            }
-
-            /*--End-- Validation Checking */
-
-            $this->db->trans_start();  //DB Transaction Handle START
-            $data=array();
-            $data['user_updated']=$user->user_id;
-            $data['date_updated']=$time;
-            $data['status']=$this->config->item('system_status_delete');
-            Query_helper::update($this->config->item('table_sms_transfer_warehouse_variety'),$data,array('id='.$item_id));
-
-            $data=array(); //Summary data for source warehouse
-            $data['out_transfer_warehouse']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['source_warehouse_id']]['out_transfer_warehouse']-$item['quantity'];
-            $data['current_stock']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['source_warehouse_id']]['current_stock']+$item['quantity'];
-            $data['date_updated'] = $time;
-            $data['user_updated'] = $user->user_id;
-            Query_helper::update($this->config->item('table_sms_stock_summary_variety'),$data,array('variety_id='.$item['variety_id'],'pack_size_id='.$item['pack_size_id'],'warehouse_id='.$item['source_warehouse_id']));
-
-            $data=array(); //Summary data for destination warehouse
-            $data['in_transfer_warehouse']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['destination_warehouse_id']]['in_transfer_warehouse']-$item['quantity'];
-            $data['current_stock']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['destination_warehouse_id']]['current_stock']-$item['quantity'];
-            $data['date_updated'] = $time;
-            $data['user_updated'] = $user->user_id;
-            Query_helper::update($this->config->item('table_sms_stock_summary_variety'),$data,array('variety_id='.$item['variety_id'],'pack_size_id='.$item['pack_size_id'],'warehouse_id='.$item['destination_warehouse_id']));
-
-            $this->db->trans_complete();   //DB Transaction Handle END
-            if ($this->db->trans_status()===true)
-            {
-                $this->message=$this->lang->line("MSG_DELETED_SUCCESS");
-                $this->system_list();
-            }
-            else
-            {
-                $ajax['status']=false;
-                $ajax['system_message']=$this->lang->line('MSG_SAVED_FAIL');
-                $this->json_return($ajax);
-            }
-        }
-        else
-        {
-            $ajax['status']=false;
-            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
-            $this->json_return($ajax);
-        }
     }
 
     private function check_validation()
