@@ -71,7 +71,6 @@ class Lc_release extends Root_Controller
             $data['system_preference_items']['quantity_total_release_kg']= 1;
             $data['system_preference_items']['price_variety_total_release_currency']= 1;
             $data['system_preference_items']['price_total_release_currency']= 1;
-            $data['system_preference_items']['status_release']= 1;
             if($result)
             {
                 if($result['preferences']!=null)
@@ -525,7 +524,6 @@ class Lc_release extends Root_Controller
             $data['system_preference_items']['quantity_total_release_kg']= 1;
             $data['system_preference_items']['price_variety_total_release_currency']= 1;
             $data['system_preference_items']['price_total_release_currency']= 1;
-            $data['system_preference_items']['status_release']= 1;
             if($result)
             {
                 if($result['preferences']!=null)

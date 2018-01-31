@@ -919,6 +919,8 @@ class Lc_open extends Root_Controller
     {
         $id = $this->input->post("id");
         $user = User_helper::get_user();
+        $time=time();
+        $data=$this->input->post('item');
         if($id>0)
         {
             if(!((isset($this->permissions['action7']) && ($this->permissions['action7']==1))))
@@ -935,7 +937,6 @@ class Lc_open extends Root_Controller
             $this->json_return($ajax);
         }
 
-        $data=$this->input->post('item');
         if($data['status_forward']==$this->config->item('system_status_yes'))
         {
             $result=Query_helper::get_info($this->config->item('table_sms_lc_open'),'*',array('id ='.$id, 'status != "'.$this->config->item('system_status_delete').'"'),1);
@@ -948,7 +949,6 @@ class Lc_open extends Root_Controller
             }
             else
             {
-                $time=time();
                 $data['date_forward_updated']=$time;
                 $data['user_forward_updated']=$user->user_id;
                 //$this->db->set('revision_count', 'revision_count+1', FALSE);

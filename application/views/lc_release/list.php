@@ -97,8 +97,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 { name: 'price_other_cost_total_release_currency', type: 'string' },
                 { name: 'quantity_total_release_kg', type: 'string' },
                 { name: 'price_variety_total_release_currency', type: 'string' },
-                { name: 'price_total_release_currency', type: 'string' },
-                { name: 'status_release', type: 'string' }
+                { name: 'price_total_release_currency', type: 'string' }
             ],
             id: 'id',
             url: url
@@ -136,8 +135,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         { text: '<?php echo $CI->lang->line('LABEL_PRICE_OTHER_COST_TOTAL_RELEASE_CURRENCY'); ?>', dataField: 'price_other_cost_total_release_currency', width:100, cellsalign: 'right',  hidden: <?php echo $system_preference_items['price_other_cost_total_release_currency']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL_RELEASE_KG'); ?>', dataField: 'quantity_total_release_kg', width:100, cellsalign: 'right', hidden: <?php echo $system_preference_items['quantity_total_release_kg']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_PRICE_VARIETY_TOTAL_RELEASE_CURRENCY'); ?>', dataField: 'price_variety_total_release_currency', cellsalign: 'right', width:100, hidden: <?php echo $system_preference_items['price_variety_total_release_currency']?0:1;?>},
-                        { text: '<?php echo $CI->lang->line('LABEL_PRICE_TOTAL_RELEASE_CURRENCY');?>', dataField: 'price_total_release_currency', cellsalign: 'right', width:100, hidden: <?php echo $system_preference_items['price_total_release_currency']?0:1;?>},
-                        { text: '<?php echo $this->lang->line('LABEL_STATUS_RELEASE')?>', dataField: 'status_release',cellsalign: 'center',filtertype: 'list', width:70, hidden: <?php echo $system_preference_items['status_release']?0:1;?>}
+                        { text: '<?php echo $CI->lang->line('LABEL_PRICE_TOTAL_RELEASE_CURRENCY');?>', dataField: 'price_total_release_currency', cellsalign: 'right', width:100, hidden: <?php echo $system_preference_items['price_total_release_currency']?0:1;?>}
                     ]
             });
     });

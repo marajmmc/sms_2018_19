@@ -299,9 +299,14 @@ $lang['LABEL_PRICE_OTHER_COST_TOTAL_RELEASE_CURRENCY']='LC Release Other Cost';
 $lang['LABEL_QUANTITY_TOTAL_RELEASE_KG']='Release Total (KG)';
 $lang['LABEL_PRICE_VARIETY_TOTAL_RELEASE_CURRENCY']='Release Total Variety (Currency)';
 $lang['LABEL_PRICE_TOTAL_RELEASE_CURRENCY']='Release Total (Currency)';
+$lang['LABEL_PRICE_TOTAL_RELEASE_TAKA']='Release Total (Taka)';
 
 /*receive*/
 $lang['LABEL_QUANTITY_TOTAL_RECEIVE_KG']='Receive Total (KG)';
+
+/*expense*/
+$lang['LABEL_PRICE_TOTAL_EXPENSE_HEAD_TAKA']='Expense Head (Taka)';
+$lang['LABEL_PRICE_TOTAL_ALL_TAKA']='Total (Taka)';
 
 $lang['LABEL_PRICE_TOTAL_CURRENCY']='Total (Currency)';
 $lang['LABEL_STATUS_FORWARD']='Forward Status';
