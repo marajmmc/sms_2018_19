@@ -147,12 +147,13 @@ class Purchase_raw_foil extends Root_Controller
             {
                 $item_id=$this->input->post('id');
             }
-            $this->db->from($this->config->item('table_sms_purchase_raw_foil').' foil_purchase');
-            $this->db->select('foil_purchase.*');
+            $this->db->from($this->config->item('table_sms_purchase_raw_foil').' purchase_foil');
+            $this->db->select('purchase_foil.*');
             $this->db->select('supplier.name supplier_name');
-            $this->db->join($this->config->item('table_login_basic_setup_supplier').' supplier','supplier.id = foil_purchase.	supplier_id','LEFT');
+            $this->db->join($this->config->item('table_login_basic_setup_supplier').' supplier','supplier.id = purchase_foil.supplier_id','LEFT');
+            $this->db->where('purchase_foil.status !=',$this->config->item('system_status_delete'));
+            $this->db->where('purchase_foil.id',$item_id);
             $data['item']=$this->db->get()->row_array();
-
             if(!$data['item'])
             {
                 System_helper::invalid_try('Edit Non Exists',$item_id);
@@ -225,7 +226,7 @@ class Purchase_raw_foil extends Root_Controller
         /*--End-- Permission Checking */
 
         // Getting old value and current stocks and negative current stock checking
-        $current_stocks=System_helper::get_variety_stock(array($item['variety_id']));
+        $current_stocks=System_helper::get_raw_stock(array($item['variety_id']));
 
         $old_value=0;
         if($id>0)
@@ -242,7 +243,7 @@ class Purchase_raw_foil extends Root_Controller
                     if($variance>$current_stock)
                     {
                         $ajax['status']=false;
-                        $ajax['system_message']='This Transfer('.$item['variety_id'].'-'.$item['pack_size_id'].'-'.$packing_item.'-'.$old_value.'-'.$item['quantity_receive'].') will make current stock negative.';
+                        $ajax['system_message']='This Update('.$item['variety_id'].'-'.$item['pack_size_id'].'-'.$packing_item.'-'.$old_value.'-'.$item['quantity_receive'].') will make current stock negative.';
                         $this->json_return($ajax);
                     }
                 }
@@ -308,7 +309,7 @@ class Purchase_raw_foil extends Root_Controller
                 $data['current_stock']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$packing_item]['current_stock']+$item['quantity_receive'];
                 $data['date_updated'] = $time;
                 $data['user_updated'] = $user->user_id;
-                Query_helper::update($this->config->item('table_sms_stock_summary_raw'),$data,array('variety_id='.$item['variety_id'],'pack_size_id='.$item['pack_size_id'],'warehouse_id='.$item['destination_warehouse_id']));
+                Query_helper::update($this->config->item('table_sms_stock_summary_raw'),$data,array('variety_id='.$item['variety_id'],'pack_size_id='.$item['pack_size_id'],'packing_item= "'.$packing_item.'"'));
             }
             else
             {
@@ -350,6 +351,90 @@ class Purchase_raw_foil extends Root_Controller
     private function system_details($id)
     {
         $this->system_list();
+    }
+
+    private function system_delete($id)
+    {
+        if(isset($this->permissions['action3']) && ($this->permissions['action3']==1))
+        {
+            if($id>0)
+            {
+                $item_id=$id;
+            }
+            else
+            {
+                $item_id=$this->input->post('id');
+            }
+            $user = User_helper::get_user();
+            $time = time();
+            $packing_item=$this->config->item('system_common_foil');
+
+            $item=Query_helper::get_info($this->config->item('table_sms_purchase_raw_foil'),'*',array('status !="'.$this->config->item('system_status_delete').'"','id ='.$item_id),1);
+            if(!$item)
+            {
+                System_helper::invalid_try('Delete Not Exists',$item_id);
+                $ajax['status']=false;
+                $ajax['system_message']='Invalid Try.';
+                $this->json_return($ajax);
+            }
+            $item['variety_id']=0;
+            $item['pack_size_id']=0;
+            // Getting current stocks
+            $current_stocks=System_helper::get_raw_stock(array($item['variety_id']));
+            /*--Start-- Validation Checking */
+            //Negative Stock Checking
+            if(isset($current_stocks[$item['variety_id']][$item['pack_size_id']][$packing_item]))
+            {
+                $current_stock=$current_stocks[$item['variety_id']][$item['pack_size_id']][$packing_item]['current_stock'];
+                if($item['quantity_receive']>$current_stock)
+                {
+                    $ajax['status']=false;
+                    $ajax['system_message']='This Delete From Common Foil ('.$item['variety_id'].'-'.$item['pack_size_id'].'-'.$packing_item.'-'.$item['quantity_receive'].') will make current stock negative.';
+                    $this->json_return($ajax);
+                }
+            }
+            else
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='This Delete From Common Foil ('.$item['variety_id'].'-'.$item['pack_size_id'].'-'.$packing_item.' is absent in stock.)';
+                $this->json_return($ajax);
+            }
+
+            /*--End-- Validation Checking */
+
+            $this->db->trans_start();  //DB Transaction Handle START
+            $data=array();
+            $data['user_updated']=$user->user_id;
+            $data['date_updated']=$time;
+            $data['status']=$this->config->item('system_status_delete');
+            Query_helper::update($this->config->item('table_sms_purchase_raw_foil'),$data,array('id='.$item_id));
+
+            $data=array(); //Summary data
+            $data['current_stock']=($current_stocks[$item['variety_id']][$item['pack_size_id']][$packing_item]['current_stock']-$item['quantity_receive']);
+            $data['in_purchase']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$packing_item]['in_purchase']-$item['quantity_receive'];
+            $data['date_updated'] = $time;
+            $data['user_updated'] = $user->user_id;
+            Query_helper::update($this->config->item('table_sms_stock_summary_raw'),$data,array('variety_id='.$item['variety_id'],'pack_size_id='.$item['pack_size_id'],'packing_item= "'.$packing_item.'"'));
+
+            $this->db->trans_complete();   //DB Transaction Handle END
+            if ($this->db->trans_status()===true)
+            {
+                $this->message=$this->lang->line("MSG_DELETED_SUCCESS");
+                $this->system_list();
+            }
+            else
+            {
+                $ajax['status']=false;
+                $ajax['system_message']=$this->lang->line('MSG_SAVED_FAIL');
+                $this->json_return($ajax);
+            }
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
     }
 
     private function check_validation()
