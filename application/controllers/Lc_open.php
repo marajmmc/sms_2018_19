@@ -94,11 +94,9 @@ class Lc_open extends Root_Controller
             $data['system_preference_items']['currency_name']= 1;
             $data['system_preference_items']['lc_number']= 1;
             $data['system_preference_items']['consignment_name']= 1;
-            $data['system_preference_items']['price_other_cost_total_currency']= 1;
-            $data['system_preference_items']['quantity_total_kg']= 1;
-            $data['system_preference_items']['price_variety_total_currency']= 1;
-            $data['system_preference_items']['price_total_currency']= 1;
-            $data['system_preference_items']['status_forward']= 1;
+            $data['system_preference_items']['price_open_other_currency']= 1;
+            $data['system_preference_items']['quantity_open_kg']= 1;
+            $data['system_preference_items']['price_open_variety_currency']= 1;
             if($result)
             {
                 if($result['preferences']!=null)

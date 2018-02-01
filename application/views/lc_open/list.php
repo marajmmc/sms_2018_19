@@ -131,11 +131,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 { name: 'currency_name', type: 'string' },
                 { name: 'lc_number', type: 'string' },
                 { name: 'consignment_name', type: 'string' },
-                { name: 'price_other_cost_total_currency', type: 'string' },
-                { name: 'quantity_total_kg', type: 'string' },
-                { name: 'price_variety_total_currency', type: 'string' },
-                { name: 'price_total_currency', type: 'string' },
-                { name: 'status_forward', type: 'string' }
+                { name: 'price_open_other_currency', type: 'string' },
+                { name: 'quantity_open_kg', type: 'string' },
+                { name: 'price_open_variety_currency', type: 'string' }
             ],
             id: 'id',
             type: 'POST',
