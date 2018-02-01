@@ -290,29 +290,34 @@ $lang['LABEL_STOCK_OUT_DEMONSTRATION']='Demonstration';
 // Preference Lang added by maraj
 $lang['LABEL_FISCAL_YEAR_NAME']='Fiscal Year';
 $lang['LABEL_MONTH_NAME']='Month';
-$lang['LABEL_PRICE_OTHER_COST_TOTAL_CURRENCY']='LC Other Cost';
+
+/*$lang['LABEL_PRICE_OTHER_COST_TOTAL_CURRENCY']='LC Other Cost';
 $lang['LABEL_QUANTITY_TOTAL_KG']='Total (KG)';
-$lang['LABEL_PRICE_VARIETY_TOTAL_CURRENCY']='Total Variety (Currency)';
+$lang['LABEL_PRICE_VARIETY_TOTAL_CURRENCY']='Total Variety (Currency)';*/
+/*Open*/
+$lang['LABEL_QUANTITY_OPEN_KG']='LC Open Total (KG)';
+$lang['LABEL_PRICE_OPEN_OTHER_CURRENCY']='LC Open Other Cost (Currency)';
+$lang['LABEL_PRICE_OPEN_VARIETY_CURRENCY']='LC Open Variety (Currency)';
 
 /*release*/
-$lang['LABEL_PRICE_OTHER_COST_TOTAL_RELEASE_CURRENCY']='LC Release Other Cost';
+/*$lang['LABEL_PRICE_OTHER_COST_TOTAL_RELEASE_CURRENCY']='LC Release Other Cost';
 $lang['LABEL_QUANTITY_TOTAL_RELEASE_KG']='Release Total (KG)';
 $lang['LABEL_PRICE_VARIETY_TOTAL_RELEASE_CURRENCY']='Release Total Variety (Currency)';
 $lang['LABEL_PRICE_TOTAL_RELEASE_CURRENCY']='Release Total (Currency)';
-$lang['LABEL_PRICE_TOTAL_RELEASE_TAKA']='Release Total (Taka)';
+$lang['LABEL_PRICE_TOTAL_RELEASE_TAKA']='Release Total (Taka)';*/
 
 /*receive*/
-$lang['LABEL_QUANTITY_TOTAL_RECEIVE_KG']='Receive Total (KG)';
+/*$lang['LABEL_QUANTITY_TOTAL_RECEIVE_KG']='Receive Total (KG)';*/
 
 /*expense*/
-$lang['LABEL_PRICE_TOTAL_EXPENSE_HEAD_TAKA']='Expense Head (Taka)';
+/*$lang['LABEL_PRICE_TOTAL_EXPENSE_HEAD_TAKA']='Expense Head (Taka)';
 $lang['LABEL_PRICE_TOTAL_ALL_TAKA']='Total (Taka)';
 
 $lang['LABEL_PRICE_TOTAL_CURRENCY']='Total (Currency)';
 $lang['LABEL_STATUS_FORWARD']='Forward Status';
 $lang['LABEL_STATUS_RELEASE']='Release Status';
 $lang['LABEL_STATUS_RECEIVE']='Receive Status';
-$lang['LABEL_STATUS_LC']='LC Status';
+$lang['LABEL_STATUS_LC']='LC Status';*/
 
 // Raw Materials Lang added by Saiful
 

@@ -143,8 +143,8 @@ class Lc_open extends Root_Controller
         $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.id = lc.fiscal_year_id','INNER');
         $this->db->join($this->config->item('table_sms_setup_currency').' currency','currency.id = lc.currency_id','INNER');
         $this->db->join($this->config->item('table_login_basic_setup_principal').' principal','principal.id = lc.principal_id','INNER');
-        $this->db->where('lc.status_forward',$this->config->item('system_status_no'));
-        $this->db->where('lc.status !=',$this->config->item('system_status_delete'));
+        $this->db->where('lc.status_open_forward',$this->config->item('system_status_no'));
+        $this->db->where('lc.status_open !=',$this->config->item('system_status_delete'));
         $this->db->order_by('lc.fiscal_year_id','DESC');
         $this->db->order_by('lc.id','DESC');
         $results=$this->db->get()->result_array();
@@ -163,11 +163,10 @@ class Lc_open extends Root_Controller
             $item['currency_name']=$result['currency_name'];
             $item['lc_number']=$result['lc_number'];
             $item['consignment_name']=$result['consignment_name'];
-            $item['quantity_total_kg']=number_format($result['quantity_total_kg'],3);
-            $item['price_other_cost_total_currency']=number_format($result['price_other_cost_total_currency'],2);
-            $item['price_variety_total_currency']=number_format($result['price_variety_total_currency'],2);
-            $item['price_total_currency']=number_format($result['price_total_currency'],2);
-            $item['status_forward']=$result['status_forward'];
+            $item['quantity_open_kg']=number_format($result['quantity_open_kg'],3);
+            $item['price_open_other_currency']=number_format($result['price_open_other_currency'],2);
+            $item['price_open_variety_currency']=number_format($result['price_open_variety_currency'],2);
+            $item['status_open_forward']=$result['status_open_forward'];
             $items[]=$item;
         }
         $this->json_return($items);
@@ -1080,11 +1079,9 @@ class Lc_open extends Root_Controller
             $data['system_preference_items']['currency_name']= 1;
             $data['system_preference_items']['lc_number']= 1;
             $data['system_preference_items']['consignment_name']= 1;
-            $data['system_preference_items']['price_other_cost_total_currency']= 1;
-            $data['system_preference_items']['quantity_total_kg']= 1;
-            $data['system_preference_items']['price_variety_total_currency']= 1;
-            $data['system_preference_items']['price_total_currency']= 1;
-            $data['system_preference_items']['status_forward']= 1;
+            $data['system_preference_items']['price_open_other_currency']= 1;
+            $data['system_preference_items']['quantity_open_kg']= 1;
+            $data['system_preference_items']['price_open_variety_currency']= 1;
             if($result)
             {
                 if($result['preferences']!=null)

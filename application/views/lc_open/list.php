@@ -160,7 +160,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 columnsreorder: true,
                 columns:
                 [
-                    { text: '<?php echo $CI->lang->line('LABEL_BARCODE'); ?>', dataField: 'barcode',filtertype: 'list', width:80, hidden: <?php echo $system_preference_items['barcode']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_BARCODE'); ?>', dataField: 'barcode', width:80, hidden: <?php echo $system_preference_items['barcode']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_FISCAL_YEAR_NAME'); ?>', dataField: 'fiscal_year_name',filtertype: 'list', width:65, hidden: <?php echo $system_preference_items['fiscal_year_name']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_MONTH_NAME'); ?>', dataField: 'month_name',filtertype: 'list', width:60, hidden: <?php echo $system_preference_items['month_name']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_DATE_OPENING'); ?>', dataField: 'date_opening', width:90, hidden: <?php echo $system_preference_items['date_opening']?0:1;?>},
@@ -169,11 +169,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     { text: '<?php echo $CI->lang->line('LABEL_CURRENCY_NAME'); ?>', dataField: 'currency_name',filtertype: 'list', width:80, hidden: <?php echo $system_preference_items['currency_name']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_LC_NUMBER'); ?>', dataField: 'lc_number', hidden: <?php echo $system_preference_items['lc_number']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_CONSIGNMENT_NAME'); ?>', dataField: 'consignment_name', width:150, hidden: <?php echo $system_preference_items['consignment_name']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_PRICE_OTHER_COST_TOTAL_CURRENCY'); ?>', dataField: 'price_other_cost_total_currency', width:100, cellsalign: 'right',  hidden: <?php echo $system_preference_items['price_other_cost_total_currency']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL_KG'); ?>', dataField: 'quantity_total_kg', width:100, cellsalign: 'right', hidden: <?php echo $system_preference_items['quantity_total_kg']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_PRICE_VARIETY_TOTAL_CURRENCY'); ?>', dataField: 'price_variety_total_currency', cellsalign: 'right', width:100, hidden: <?php echo $system_preference_items['price_variety_total_currency']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_PRICE_TOTAL_CURRENCY');?>', dataField: 'price_total_currency', cellsalign: 'right', width:100, hidden: <?php echo $system_preference_items['price_total_currency']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_STATUS_FORWARD');?>', dataField: 'status_forward',cellsalign: 'center',filtertype: 'list', width:30, hidden: <?php echo $system_preference_items['status_forward']?0:1;?>}
+                    { text: '<?php echo $CI->lang->line('LABEL_PRICE_OPEN_OTHER_CURRENCY'); ?>', dataField: 'price_open_other_currency', width:100, cellsalign: 'right',  hidden: <?php echo $system_preference_items['price_open_other_currency']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_OPEN_KG'); ?>', dataField: 'quantity_open_kg', width:100, cellsalign: 'right', hidden: <?php echo $system_preference_items['quantity_open_kg']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_PRICE_OPEN_VARIETY_CURRENCY'); ?>', dataField: 'price_open_variety_currency', cellsalign: 'right', width:100, hidden: <?php echo $system_preference_items['price_open_variety_currency']?0:1;?>}
                 ]
             });
     });
