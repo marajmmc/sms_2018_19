@@ -37,24 +37,28 @@ class Barcode_helper
   //  Added By saiful
 
     // Raw Materials
-    public static function get_barcode_purchase_master($increment_id)
+    public static function get_barcode_raw_master_purchase($increment_id)
     {
-        return 'PM'.str_pad($increment_id,6,0,STR_PAD_LEFT);
+        return 'RMP'.str_pad($increment_id,5,0,STR_PAD_LEFT); //Raw Master Purchase
     }
-    public static function get_barcode_purchase_foil($increment_id)
+    public static function get_barcode_raw_foil_purchase($increment_id)
     {
-        return 'PF'.str_pad($increment_id,6,0,STR_PAD_LEFT);
+        return 'RFP'.str_pad($increment_id,5,0,STR_PAD_LEFT); //Raw Foil Purchase
     }
-    public static function get_barcode_purchase_sticker($increment_id)
+    public static function get_barcode_raw_sticker_purchase($increment_id)
     {
-        return 'PS'.str_pad($increment_id,6,0,STR_PAD_LEFT);
+        return 'RSP'.str_pad($increment_id,5,0,STR_PAD_LEFT); //Raw Sticker Purchase
     }
-    public static function get_barcode_stock_in_master($increment_id)
+    public static function get_barcode_raw_master_stock_in($increment_id)
     {
-        return 'MI'.str_pad($increment_id,6,0,STR_PAD_LEFT);
+        return 'RMI'.str_pad($increment_id,5,0,STR_PAD_LEFT); //Raw Master Stock In
     }
-    public static function get_barcode_stock_in_sticker($increment_id)
+    public static function get_barcode_raw_sticker_stock_in($increment_id)
     {
-        return 'MS'.str_pad($increment_id,6,0,STR_PAD_LEFT);
+        return 'RSI'.str_pad($increment_id,5,0,STR_PAD_LEFT); //Raw Sticker Stock In
+    }
+    public static function get_barcode_raw_foil_stock_in($increment_id)
+    {
+        return 'RFI'.str_pad($increment_id,5,0,STR_PAD_LEFT); //Raw Foil Stock In
     }
 }

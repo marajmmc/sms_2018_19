@@ -47,14 +47,6 @@ if(isset($CI->permissions['action4']) && ($CI->permissions['action4']==1))
         'data-print'=>true
     );
 }
-if(isset($CI->permissions['action6']) && ($CI->permissions['action6']==1))
-{
-    $action_buttons[]=array
-    (
-        'label'=>'Preference',
-        'href'=>site_url($CI->controller_url.'/index/set_preference')
-    );
-}
 if(isset($CI->permissions['action5']) && ($CI->permissions['action5']==1))
 {
     $action_buttons[]=array(
@@ -62,6 +54,14 @@ if(isset($CI->permissions['action5']) && ($CI->permissions['action5']==1))
         'label'=>$CI->lang->line("ACTION_DOWNLOAD"),
         'class'=>'button_action_download',
         'data-title'=>"Download"
+    );
+}
+if(isset($CI->permissions['action6']) && ($CI->permissions['action6']==1))
+{
+    $action_buttons[]=array
+    (
+        'label'=>'Preference',
+        'href'=>site_url($CI->controller_url.'/index/set_preference')
     );
 }
 $action_buttons[]=array(
@@ -112,7 +112,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 { name: 'barcode', type: 'string' },
                 { name: 'date_stock_in', type: 'string' },
                 { name: 'purpose', type: 'string' },
-                { name: 'quantity_total', type: 'string' },
+                { name: 'quantity', type: 'string' },
                 { name: 'remarks', type: 'string' }
             ],
             id: 'id',
@@ -142,7 +142,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     { text: '<?php echo $CI->lang->line('LABEL_BARCODE'); ?>', dataField: 'barcode',width:'110',hidden: <?php echo $system_preference_items['barcode']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_DATE_STOCK_IN'); ?>', filtertype: 'list',dataField: 'date_stock_in',width:'140',hidden: <?php echo $system_preference_items['date_stock_in']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_PURPOSE'); ?>', dataField: 'purpose',filtertype: 'list',width:'200',hidden: <?php echo $system_preference_items['purpose']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL'); ?>', cellsalign: 'right',dataField: 'quantity_total',width:'200',hidden: <?php echo $system_preference_items['quantity_total']?0:1;?>},
+
+                    { text: '<?php echo $CI->lang->line('LABEL_QUANTITY'); ?>', cellsalign: 'right',dataField: 'quantity',width:'200',hidden: <?php echo $system_preference_items['quantity']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_REMARKS'); ?>', dataField: 'remarks',hidden: <?php echo $system_preference_items['remarks']?0:1;?>}
                 ]
             });

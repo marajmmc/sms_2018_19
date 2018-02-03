@@ -3,7 +3,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Stock_in_raw_master extends Root_Controller
 {
-    private $message;
+    public $message;
     public $permissions;
     public $controller_url;
     public function __construct()
@@ -42,6 +42,14 @@ class Stock_in_raw_master extends Root_Controller
         {
             $this->system_save();
         }
+        elseif($action=="set_preference")
+        {
+            $this->system_set_preference();
+        }
+        elseif($action=="save_preference")
+        {
+            System_helper::save_preference();
+        }
         else
         {
             $this->system_list();
@@ -51,6 +59,32 @@ class Stock_in_raw_master extends Root_Controller
     {
         if(isset($this->permissions['action0']) && ($this->permissions['action0']==1))
         {
+            $user = User_helper::get_user();
+            $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
+            $data['system_preference_items']['barcode']= 1;
+            $data['system_preference_items']['date_stock_in']= 1;
+            $data['system_preference_items']['purpose']= 1;
+            $data['system_preference_items']['quantity_total']= 1;
+            $data['system_preference_items']['remarks']= 1;
+            if($result)
+            {
+                if($result['preferences']!=null)
+                {
+                    $preferences=json_decode($result['preferences'],true);
+                    foreach($data['system_preference_items'] as $key=>$value)
+                    {
+                        if(isset($preferences[$key]))
+                        {
+                            $data['system_preference_items'][$key]=$value;
+                        }
+                        else
+                        {
+                            $data['system_preference_items'][$key]=0;
+                        }
+                    }
+                }
+            }
+
             $data['title']='Stock In (Master Foil) List';
             $ajax['status']=true;
             $ajax['system_content'][]=array('id'=>'#system_content','html'=>$this->load->view($this->controller_url.'/list',$data,true));
@@ -88,19 +122,15 @@ class Stock_in_raw_master extends Root_Controller
 
         $this->db->from($this->config->item('table_sms_stock_in_raw_master').' stock_in_master');
         $this->db->select('stock_in_master.*');
-        //$this->db->select('supplier.name supplier_name');
-        //$this->db->join($this->config->item('table_login_basic_setup_supplier').' supplier','supplier.id = stock_in_master.supplier_id','INNER');
         $this->db->where('stock_in_master.status !=',$this->config->item('system_status_delete'));
         $this->db->order_by('stock_in_master.date_stock_in','DESC');
         $this->db->order_by('stock_in_master.id','DESC');
         $this->db->limit($pagesize,$current_records);
         $items=$this->db->get()->result_array();
-//        print_r($items);
-//        exit;
         foreach($items as &$item)
         {
             $item['date_stock_in']=System_helper::display_date($item['date_stock_in']);
-            $item['barcode']=Barcode_helper::get_barcode_stock_in_master($item['id']);
+            $item['barcode']=Barcode_helper::get_barcode_raw_master_stock_in($item['id']);
         }
         $this->json_return($items);
     }
@@ -117,8 +147,6 @@ class Stock_in_raw_master extends Root_Controller
                 'remarks' => ''
             );
             $data['crops']=Query_helper::get_info($this->config->item('table_login_setup_classification_crops'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
-            $data['crop_types']=array();
-            $data['varieties']=array();
             $data['packs']=Query_helper::get_info($this->config->item('table_login_setup_classification_vpack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $data['stock_in_master']=array();
             $ajax['system_page_url']=site_url($this->controller_url."/index/add");
@@ -297,7 +325,7 @@ class Stock_in_raw_master extends Root_Controller
 
         }
 
-        // When Stock in quantity entry (updating time) exceeded current stock quantity
+        // Negative Stock Checking
         if($id>0)
         {
             foreach($items as $item)
@@ -324,7 +352,7 @@ class Stock_in_raw_master extends Root_Controller
         if($id>0)
         {
             /* --Start-- Item saving (In three table consequently)*/
-            $data=array();
+            $data=array(); //Main data
             $data['date_stock_in']=System_helper::get_time($item_head['date_stock_in']);
             $data['remarks']=$item_head['remarks'];
             $data['quantity_total']=$quantity_total;
@@ -332,7 +360,7 @@ class Stock_in_raw_master extends Root_Controller
             $data['date_updated']=$time;
             Query_helper::update($this->config->item('table_sms_stock_in_raw_master'),$data,array('id='.$id));
 
-            $data=array();
+            $data=array(); //Details data
             $data['date_updated']=$time;
             $data['user_updated']=$user->user_id;
             Query_helper::update($this->config->item('table_sms_stock_in_raw_master_details'),$data,array('revision=1','stock_in_id='.$id));
@@ -343,7 +371,7 @@ class Stock_in_raw_master extends Root_Controller
 
             foreach($items as $item)
             {
-                $data=array();
+                $data=array(); //Details data
                 $data['stock_in_id']=$id;
                 $data['variety_id']=$item['variety_id'];
                 $data['pack_size_id']=$item['pack_size_id'];
@@ -354,7 +382,7 @@ class Stock_in_raw_master extends Root_Controller
                 Query_helper::add($this->config->item('table_sms_stock_in_raw_master_details'),$data,false);
 
                 //summary calculation
-                $data=array();
+                $data=array(); //Summary data
                 $data['in_stock']=0;
                 $data['in_excess']=0;
                 if(isset($old_quantities[$item['variety_id']][$item['pack_size_id']]))
@@ -536,6 +564,9 @@ class Stock_in_raw_master extends Root_Controller
             }
             $current_stocks=System_helper::get_raw_stock($variety_ids);
             /*--Start-- Validation Checking */
+
+            //Negative Stock Checking
+
             foreach($results as $result)
             {
                 if(isset($current_stocks[$result['variety_id']][$result['pack_size_id']][$packing_item]['current_stock']))
@@ -592,6 +623,51 @@ class Stock_in_raw_master extends Root_Controller
                 $ajax['system_message']=$this->lang->line('MSG_SAVED_FAIL');
                 $this->json_return($ajax);
             }
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+    }
+
+    private function system_set_preference()
+    {
+        if(isset($this->permissions['action6']) && ($this->permissions['action6']==1))
+        {
+            $user = User_helper::get_user();
+            $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
+            $data['system_preference_items']['barcode']= 1;
+            $data['system_preference_items']['date_stock_in']= 1;
+            $data['system_preference_items']['purpose']= 1;
+            $data['system_preference_items']['quantity_total']= 1;
+            $data['system_preference_items']['remarks']= 1;
+            if($result)
+            {
+                if($result['preferences']!=null)
+                {
+                    $preferences=json_decode($result['preferences'],true);
+                    foreach($data['system_preference_items'] as $key=>$value)
+                    {
+                        if(isset($preferences[$key]))
+                        {
+                            $data['system_preference_items'][$key]=$value;
+                        }
+                        else
+                        {
+                            $data['system_preference_items'][$key]=0;
+                        }
+                    }
+                }
+            }
+            $data['preference_method_name']='list';
+
+            $data['title']="Set Preference";
+            $ajax['status']=true;
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("preference_add_edit",$data,true));
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/set_preference');
+            $this->json_return($ajax);
         }
         else
         {

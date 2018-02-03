@@ -42,15 +42,15 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <?php if(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)){?>
                     <div class="row show-grid">
                         <div class="col-xs-4">
-                            <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_PURCHASE');?><span style="color:#FF0000">*</span></label>
+                            <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_STOCK_IN');?><span style="color:#FF0000">*</span></label>
                         </div>
                         <div class="col-sm-4 col-xs-8">
-                            <input type="text" name="item[date_purchase]" class="form-control datepicker" value="<?php echo System_helper::display_date($item['date_purchase']);?>"/>
+                            <input type="text" name="item[date_stock_in]" class="form-control datepicker" value="<?php echo System_helper::display_date($item['date_stock_in']);?>"/>
                         </div>
                     </div>
                 <?php } else{?>
                     <div class="col-sm-4 col-xs-8">
-                        <?php echo System_helper::display_date($item['date_purchase']);?>
+                        <?php echo System_helper::display_date($item['date_stock_in']);?>
 
                     </div>
                 <?php } ?>
@@ -58,47 +58,45 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         <?php }else{?>
             <div class="row show-grid">
                 <div class="col-xs-4">
-                    <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_PURCHASE');?><span style="color:#FF0000">*</span></label>
+                    <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_STOCK_IN');?><span style="color:#FF0000">*</span></label>
                 </div>
                 <div class="col-sm-4 col-xs-8">
-                    <input type="text" name="item[date_purchase]" class="form-control datepicker" value="<?php echo System_helper::display_date($item['date_purchase']);?>"/>
+                    <input type="text" name="item[date_stock_in]" class="form-control datepicker" value="<?php echo System_helper::display_date($item['date_stock_in']);?>"/>
                 </div>
             </div>
         <?php } ?>
 
-        <div style="" class="row show-grid">
+        <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_SUPPLIER_NAME');?><span style="color:#FF0000">*</span></label>
+                <label for="purpose" class="control-label pull-right"><?php echo $this->lang->line('LABEL_PURPOSE'); ?></label>
+
             </div>
-            <div class="col-sm-4 col-xs-8">
-                <select id="supplier_id" class="form-control" name="item[supplier_id]">
-                    <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                    <?php
-                    foreach($suppliers as $supplier)
-                    {?>
-                        <option value="<?php echo $supplier['value']?>" <?php if($supplier['value']==$item['supplier_id']){ echo "selected";}?>><?php echo $supplier['text'];?></option>
-                    <?php
-                    }
-                    ?>
-                </select>
-            </div>
+            <?php
+            if($item['purpose'])
+            {
+                ?>
+                <label for="purpose" class="control-label"><?php echo $item['purpose']; ?></label>
+            <?php
+            }
+            else
+            {
+                ?>
+                <div class="col-sm-4 col-xs-8">
+                    <select id="purpose" name="item[purpose]" class="form-control">
+                        <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                        <option value="<?php echo $CI->config->item('system_purpose_variety_stock_in');?>" <?php if(isset($item['purpose'])){if($item['purpose']==$CI->config->item('system_purpose_variety_stock_in')){echo "selected";}}?>><?php echo $this->lang->line('LABEL_STOCK_IN');?></option>
+                        <option value="<?php echo $CI->config->item('system_purpose_variety_excess');?>" <?php if(isset($item['purpose'])){if($item['purpose']==$CI->config->item('system_purpose_variety_excess')){echo "selected";}}?>><?php echo $this->lang->line('LABEL_EXCESS');?></option>
+                    </select>
+                </div>
+            <?php } ?>
         </div>
 
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label for="quantity_supply" class="control-label pull-right"><?php echo $this->lang->line('LABEL_QUANTITY_SUPPLY');?><span style="color:#FF0000">*</span></label>
+                <label for="quantity" class="control-label pull-right"><?php echo $this->lang->line('LABEL_QUANTITY');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <input type="text" name="item[quantity_supply]" class="form-control float_type_positive" value="<?php echo $item['quantity_supply'];?>"/>
-            </div>
-        </div>
-
-        <div class="row show-grid">
-            <div class="col-xs-4">
-                <label for="quantity_receive" class="control-label pull-right"><?php echo $this->lang->line('LABEL_QUANTITY_RECEIVE');?><span style="color:#FF0000">*</span></label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <input type="text" name="item[quantity_receive]" class="form-control float_type_positive" value="<?php echo $item['quantity_receive'];?>"/>
+                <input type="text" name="item[quantity]" class="form-control float_type_positive" value="<?php echo $item['quantity'];?>"/>
             </div>
         </div>
 

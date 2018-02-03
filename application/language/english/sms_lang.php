@@ -323,8 +323,10 @@ $lang['LABEL_STATUS_LC']='LC Status';*/
 
 // Raw Materials Lang added by Saiful
 
-$lang['LABEL_SUPPLIER']='Supplier';
+$lang['LABEL_SUPPLIER_NAME']='Supplier Name';
 $lang['LABEL_QUANTITY_SUPPLY']='Supply Quantity';
 $lang['LABEL_QUANTITY_RECEIVE']='Receive Quantity';
 
 $lang['LABEL_DATE_PURCHASE']='Purchase date';
+
+$lang['LABEL_QUANTITY_TOTAL_RECEIVE'] = 'Total Quantity (Receive)';
