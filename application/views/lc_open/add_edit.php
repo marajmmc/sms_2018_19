@@ -200,7 +200,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         </div>
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_OTHER_COST_CURRENCY');?><span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_PRICE_OPEN_OTHER_CURRENCY');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <input type="text" name="item[price_open_other_currency]" id="price_open_other_currency" class="form-control float_type_positive price_open_other_currency" value="<?php echo $item['price_open_other_currency'];?>"/>
@@ -304,7 +304,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <th class="text-right"></th>
                     </tr>
                     <tr>
-                        <th colspan="5" class="text-right"><?php echo $this->lang->line('LABEL_OTHER_COST_CURRENCY')?></th>
+                        <th colspan="5" class="text-right"><?php echo $this->lang->line('LABEL_PRICE_OPEN_OTHER_CURRENCY')?></th>
                         <th class="text-right">
                             <label class="control-label" id="lbl_price_open_other_currency"> <?php echo number_format(($item['price_open_other_currency']),2)?></label>
                         </th>

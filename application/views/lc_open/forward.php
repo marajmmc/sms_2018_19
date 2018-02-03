@@ -68,7 +68,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <th><label class="control-label"><?php echo $item['currency_name'];?></label></th>
                 </tr>
                 <tr>
-                    <th class="widget-header"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_OTHER_COST_CURRENCY');?></label></th>
+                    <th class="widget-header"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_PRICE_OPEN_OTHER_CURRENCY');?></label></th>
                     <th class="bg-danger"><label class="control-label"><?php echo number_format($item['price_open_other_currency'],2);?></label></th>
                     <th class="widget-header"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_CONSIGNMENT_NAME');?></label></th>
                     <th><label class="control-label"><?php echo $item['consignment_name'];?></label></th>
