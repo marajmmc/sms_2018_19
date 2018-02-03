@@ -203,7 +203,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_OTHER_COST_CURRENCY');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <input type="text" name="item[price_other_cost_total_currency]" id="price_other_cost_total_currency" class="form-control float_type_positive price_other_cost_total_currency" value="<?php echo $item['price_other_cost_total_currency'];?>"/>
+                <input type="text" name="item[price_open_other_currency]" id="price_open_other_currency" class="form-control float_type_positive price_open_other_currency" value="<?php echo $item['price_open_other_currency'];?>"/>
             </div>
         </div>
         <div class="row show-grid">
@@ -219,7 +219,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS_LC_OPEN');?> </label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <textarea name="item[remarks]" id="remarks" class="form-control" ><?php echo $item['remarks'];?></textarea>
+                <textarea name="item[remarks_open]" id="remarks_open" class="form-control" ><?php echo $item['remarks_open'];?></textarea>
             </div>
         </div>
 
@@ -237,7 +237,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_VARIETY'); ?></th>
                         <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
                         <th style="min-width: 100px; text-align: right  ;"><?php echo $CI->lang->line('LABEL_QUANTITY_KG_PACK'); ?></th>
-                        <th style="min-width: 100px; text-align: right;">KG</th>
+                        <th style="min-width: 100px; text-align: right;"><?php echo $CI->lang->line('LABEL_QUANTITY_OPEN_KG'); ?></th>
                         <th style="min-width: 100px; text-align: right;">Unit Price (Currency)</th>
                         <th style="min-width: 150px; text-align: right;">Total Price (Currency)</th>
                         <th>&nbsp;</th>
@@ -245,17 +245,22 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     </thead>
                     <tbody id="items_container">
                     <?php
-                    $quantity_lc_kg=number_format(0,3);
+                    $quantity_open_kg=0;
+                    $quantity_open_total_kg=0;
+                    $price_open_currency=0;
                     foreach($items as $index=>$value)
                     {
                         if($value['pack_size_id']==0)
                         {
-                            $quantity_lc_kg=number_format($value['quantity_lc'],3);
+                            $quantity_open_kg=number_format($value['quantity_open'],3);
                         }
                         else
                         {
-                            $quantity_lc_kg=number_format((($value['quantity_lc']*$value['pack_size_name'])/1000),3);
+                            $quantity_open_kg=number_format((($value['quantity_open']*$value['pack_size_name'])/1000),3);
                         }
+                        $price_open_currency=($value['quantity_open']*$value['price_unit_currency']);
+
+                        $quantity_open_total_kg+=$quantity_open_kg;
                         ?>
                         <tr>
                             <td>
@@ -267,19 +272,19 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                                 <input type="hidden" name="items[<?php echo $index+1;?>][pack_size_id]" id="pack_size_id_<?php echo $index+1;?>" value="<?php echo $value['pack_size_id']; ?>" class="pack_size_id" data-pack-size-name="<?php if($value['pack_size_id']==0){echo 0;}else{echo $value['pack_size_name'];} ?>">
                             </td>
                             <td>
-                                <input type="text" value="<?php echo $value['quantity_lc']; ?>" class="form-control float_type_positive quantity_lc" id="quantity_lc_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][quantity_lc]">
+                                <input type="text" value="<?php echo $value['quantity_open']; ?>" class="form-control float_type_positive quantity_open" id="quantity_open_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][quantity_open]">
                             </td>
                             <td class="text-right">
-                                <label class="control-label quantity_lc_kg" id="quantity_lc_kg_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>">
-                                    <?php echo $quantity_lc_kg; ?>
+                                <label class="control-label quantity_open_kg" id="quantity_open_kg_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>">
+                                    <?php echo $quantity_open_kg; ?>
                                 </label>
                             </td>
                             <td>
-                                <input type="text" value="<?php echo $value['price_unit_lc_currency']; ?>" class="form-control float_type_positive price_unit_lc_currency" id="price_unit_lc_currency_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][price_unit_lc_currency]">
+                                <input type="text" value="<?php echo $value['price_unit_currency']; ?>" class="form-control float_type_positive price_unit_currency" id="price_unit_currency_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][price_unit_currency]">
                             </td>
                             <td class="text-right">
-                                <label class="control-label price_total_lc_currency" id="price_total_lc_currency_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>">
-                                    <?php echo number_format($value['price_total_lc_currency'],2); ?>
+                                <label class="control-label price_open_currency" id="price_open_currency_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>">
+                                    <?php echo number_format($price_open_currency,2); ?>
                                 </label>
                             </td>
                             <td>
@@ -293,22 +298,22 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <tfoot>
                     <tr>
                         <th colspan="3" class="text-right"><?php echo $this->lang->line('LABEL_TOTAL_KG')?></th>
-                        <th class="text-right"><label class="control-label" id="lbl_quantity_total_kg"><?php echo number_format(($item['quantity_total_kg']),3)?></label></th>
+                        <th class="text-right"><label class="control-label" id="lbl_quantity_open_total_kg"><?php echo number_format(($quantity_open_total_kg),3)?></label></th>
                         <th class="text-right"><?php echo $this->lang->line('LABEL_TOTAL_CURRENCY')?></th>
-                        <th class="text-right"><label class="control-label" id="lbl_price_variety_total_currency"><?php echo number_format($item['price_variety_total_currency'],2)?></label></th>
+                        <th class="text-right"><label class="control-label" id="lbl_price_variety_total_currency"><?php echo number_format($item['price_open_variety_currency'],2)?></label></th>
                         <th class="text-right"></th>
                     </tr>
                     <tr>
                         <th colspan="5" class="text-right"><?php echo $this->lang->line('LABEL_OTHER_COST_CURRENCY')?></th>
                         <th class="text-right">
-                            <label class="control-label" id="lbl_price_other_cost_total_currency"> <?php echo number_format(($item['price_other_cost_total_currency']),2)?></label>
+                            <label class="control-label" id="lbl_price_open_other_currency"> <?php echo number_format(($item['price_open_other_currency']),2)?></label>
                         </th>
                         <th>&nbsp;</th>
                     </tr>
                     <tr>
                         <th colspan="5" class="text-right"><?php echo $this->lang->line('LABEL_GRAND_TOTAL_CURRENCY')?></th>
                         <th class="text-right">
-                            <label class="control-label" id="lbl_price_total_currency"> <?php echo number_format(($item['price_total_currency']),2)?></label>
+                            <label class="control-label" id="lbl_price_total_currency"> <?php echo number_format(($item['price_open_variety_currency']+$item['price_open_other_currency']),2)?></label>
                         </th>
                         <th>&nbsp;</th>
                     </tr>
@@ -367,16 +372,16 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 </select>
             </td>
             <td class="text-right">
-                <input type="text" class="form-control float_type_positive quantity_lc" value="" style="display: none;"/>
+                <input type="text" class="form-control float_type_positive quantity_open" value="" style="display: none;"/>
             </td>
             <td class="text-right">
-                <label class="control-label quantity_lc_kg">0.000</label>
+                <label class="control-label quantity_open_kg">0.000</label>
             </td>
             <td class="text-right">
-                <input type="text" class="form-control float_type_positive price_unit_lc_currency" value="" style="display: none;"/>
+                <input type="text" class="form-control float_type_positive price_unit_currency" value="" style="display: none;"/>
             </td>
             <td class="text-right">
-                <label class="control-label price_total_lc_currency">0.00</label>
+                <label class="control-label price_open_currency">0.00</label>
             </td>
             <td>
                 <button type="button" class="btn btn-danger system_button_add_delete"><?php echo $CI->lang->line('DELETE'); ?></button>
@@ -389,23 +394,23 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
     function calculate_total()
     {
-        var quantity_total_kg=0;
-        var price_total_lc_currency=0;
-        $('#items_container .quantity_lc_kg').each(function(index, element)
+        var quantity_open_total_kg=0;
+        var price_variety_total_currency=0;
+        $('#items_container .quantity_open_kg').each(function(index, element)
         {
             var current_id=parseInt($(this).attr('data-current-id'));
-            quantity_total_kg+=parseFloat($('#quantity_lc_kg_'+current_id).html().replace(/,/g,''));
-            price_total_lc_currency+=parseFloat($('#price_total_lc_currency_'+current_id).html().replace(/,/g,''));
+            quantity_open_total_kg+=parseFloat($('#quantity_open_kg_'+current_id).html().replace(/,/g,''));
+            price_variety_total_currency+=parseFloat($('#price_open_currency_'+current_id).html().replace(/,/g,''));
         });
-        $('#lbl_quantity_total_kg').html(number_format(quantity_total_kg,3));
-        $('#lbl_price_variety_total_currency').html(number_format(price_total_lc_currency,2));
-        if(isNaN($('#price_other_cost_total_currency').val()))
+        $('#lbl_quantity_open_total_kg').html(number_format(quantity_open_total_kg,3));
+        $('#lbl_price_variety_total_currency').html(number_format(price_variety_total_currency,2));
+        if(isNaN($('#price_open_other_currency').val()))
         {
-            var price_total_currency=price_total_lc_currency;
+            var price_total_currency=price_variety_total_currency;
         }
         else
         {
-            var price_total_currency=(parseFloat($('#price_other_cost_total_currency').val())+price_total_lc_currency);
+            var price_total_currency=(parseFloat($('#price_open_other_currency').val())+price_variety_total_currency);
         }
 
         $('#lbl_price_total_currency').html(number_format(price_total_currency,2));
@@ -466,20 +471,20 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             $(content_id+' .pack_size_id').attr('data-current-id',current_id);
             $(content_id+' .pack_size_id').attr('name','items['+current_id+'][pack_size_id]');
 
-            $(content_id+' .quantity_lc').attr('id','quantity_lc_'+current_id);
-            $(content_id+' .quantity_lc').attr('data-current-id',current_id);
-            $(content_id+' .quantity_lc').attr('name','items['+current_id+'][quantity_lc]');
+            $(content_id+' .quantity_open').attr('id','quantity_open_'+current_id);
+            $(content_id+' .quantity_open').attr('data-current-id',current_id);
+            $(content_id+' .quantity_open').attr('name','items['+current_id+'][quantity_open]');
 
-            $(content_id+' .quantity_lc_kg').attr('id','quantity_lc_kg_'+current_id);
-            $(content_id+' .quantity_lc_kg').attr('data-current-id',current_id);
+            $(content_id+' .quantity_open_kg').attr('id','quantity_open_kg_'+current_id);
+            $(content_id+' .quantity_open_kg').attr('data-current-id',current_id);
 
-            $(content_id+' .price_unit_lc_currency').attr('id','price_unit_lc_currency_'+current_id);
-            $(content_id+' .price_unit_lc_currency').attr('data-current-id',current_id);
-            $(content_id+' .price_unit_lc_currency').attr('name','items['+current_id+'][price_unit_lc_currency]');
+            $(content_id+' .price_unit_currency').attr('id','price_unit_currency_'+current_id);
+            $(content_id+' .price_unit_currency').attr('data-current-id',current_id);
+            $(content_id+' .price_unit_currency').attr('name','items['+current_id+'][price_unit_currency]');
 
-            $(content_id+' .price_total_lc_currency').attr('id','price_total_lc_currency_'+current_id);
-            $(content_id+' .price_total_lc_currency').attr('data-current-id',current_id);
-            $(content_id+' .price_total_lc_currency').attr('name','items['+current_id+'][price_total_lc_currency]');
+            $(content_id+' .price_open_currency').attr('id','price_open_currency_'+current_id);
+            $(content_id+' .price_open_currency').attr('data-current-id',current_id);
+            $(content_id+' .price_open_currency').attr('name','items['+current_id+'][price_open_currency]');
             var html=$(content_id).html();
             $("#items_container").append(html);
 
@@ -504,14 +509,14 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             {
                 $('#pack_size_id_'+current_id).hide();
             }
-            $('#quantity_lc_'+current_id).hide();
-            $('#price_unit_lc_currency_'+current_id).hide();
+            $('#quantity_open_'+current_id).hide();
+            $('#price_unit_currency_'+current_id).hide();
 
             $('#pack_size_id_'+current_id).val('-1');
-            $('#quantity_lc_'+current_id).val('');
-            $('#price_unit_lc_currency_'+current_id).val('');
-            $('#quantity_lc_kg_'+current_id).html('0.000');
-            $('#price_total_lc_currency_'+current_id).html('0.00');
+            $('#quantity_open_'+current_id).val('');
+            $('#price_unit_currency_'+current_id).val('');
+            $('#quantity_open_kg_'+current_id).html('0.000');
+            $('#price_open_currency_'+current_id).html('0.00');
             calculate_total();
         })
 
@@ -522,35 +527,35 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             var pack_size_id=parseInt($(this).val());
             if(pack_size_id!='-1')
             {
-                $('#quantity_lc_'+current_id).show();
-                $('#price_unit_lc_currency_'+current_id).show();
+                $('#quantity_open_'+current_id).show();
+                $('#price_unit_currency_'+current_id).show();
             }
             else
             {
-                $('#quantity_lc_'+current_id).hide();
-                $('#price_unit_lc_currency_'+current_id).hide();
+                $('#quantity_open_'+current_id).hide();
+                $('#price_unit_currency_'+current_id).hide();
             }
-            $('#quantity_lc_'+current_id).val('');
-            $('#price_unit_lc_currency_'+current_id).val('');
-            $('#quantity_lc_kg_'+current_id).html('0.000');
-            $('#price_total_lc_currency_'+current_id).html('0.00');
+            $('#quantity_open_'+current_id).val('');
+            $('#price_unit_currency_'+current_id).val('');
+            $('#quantity_open_kg_'+current_id).html('0.000');
+            $('#price_open_currency_'+current_id).html('0.00');
             calculate_total();
         })
 
-        $(document).off('input','#items_container .quantity_lc');
-        $(document).on('input', '#items_container .quantity_lc', function()
+        $(document).off('input','#items_container .quantity_open');
+        $(document).on('input', '#items_container .quantity_open', function()
         {
             var current_id=parseInt($(this).attr('data-current-id'));
-            var quantity_lc_kg=0;
-            var quantity_lc=parseFloat($(this).val());
-            var price_unit_lc_currency=parseFloat($("#price_unit_lc_currency_"+current_id).val());
-            if(isNaN(quantity_lc))
+            var quantity_open_kg=0;
+            var quantity_open=parseFloat($(this).val());
+            var price_unit_currency=parseFloat($("#price_unit_currency_"+current_id).val());
+            if(isNaN(quantity_open))
             {
-                quantity_lc=0;
+                quantity_open=0;
             }
-            if(isNaN(price_unit_lc_currency))
+            if(isNaN(price_unit_currency))
             {
-                var price_unit_lc_currency=0;
+                var price_unit_currency=0;
             }
             var pack_size=parseFloat($("#pack_size_id_"+current_id).attr('data-pack-size-name'));
             if($("#pack_size_id_"+current_id).attr('data-new-pack-size')==0)
@@ -559,47 +564,47 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             }
             if(pack_size==0)
             {
-                quantity_lc_kg=quantity_lc;
+                quantity_open_kg=quantity_open;
             }
             else
             {
-                quantity_lc_kg=parseFloat((pack_size*quantity_lc)/1000);
+                quantity_open_kg=parseFloat((pack_size*quantity_open)/1000);
             }
-            $("#quantity_lc_kg_"+current_id).html(number_format(quantity_lc_kg,3));
-            var price_total_lc_currency=(quantity_lc*price_unit_lc_currency);
-            $("#price_total_lc_currency_"+current_id).html(number_format(price_total_lc_currency,2));
+            $("#quantity_open_kg_"+current_id).html(number_format(quantity_open_kg,3));
+            var price_open_currency=(quantity_open*price_unit_currency);
+            $("#price_open_currency_"+current_id).html(number_format(price_open_currency,2));
             calculate_total();
         })
-        $(document).off('change','#items_container .price_unit_lc_currency');
-        $(document).on('input', '#items_container .price_unit_lc_currency', function()
+        $(document).off('change','#items_container .price_unit_currency');
+        $(document).on('input', '#items_container .price_unit_currency', function()
         {
             var current_id=parseInt($(this).attr('data-current-id'));
-            var quantity_lc=parseFloat($("#quantity_lc_"+current_id).val());
-            var price_unit_lc_currency=parseFloat($(this).val());
-            if(isNaN(quantity_lc))
+            var quantity_open=parseFloat($("#quantity_open_"+current_id).val());
+            var price_unit_currency=parseFloat($(this).val());
+            if(isNaN(quantity_open))
             {
-                quantity_lc=0;
+                quantity_open=0;
             }
-            if(isNaN(price_unit_lc_currency))
+            if(isNaN(price_unit_currency))
             {
-                var price_unit_lc_currency=0;
+                var price_unit_currency=0;
             }
-            var price_total_lc_currency=(quantity_lc*price_unit_lc_currency);
-            $("#price_total_lc_currency_"+current_id).html(number_format(price_total_lc_currency,2));
+            var price_open_currency=(quantity_open*price_unit_currency);
+            $("#price_open_currency_"+current_id).html(number_format(price_open_currency,2));
             calculate_total();
         })
-        $(document).off('input','#price_other_cost_total_currency');
-        $(document).on('input', '#price_other_cost_total_currency', function()
+        $(document).off('input','#price_open_other_currency');
+        $(document).on('input', '#price_open_other_currency', function()
         {
-            if(isNaN($('#price_other_cost_total_currency').val()))
+            if(isNaN($('#price_open_other_currency').val()))
             {
-                var price_other_cost_total_currency=0;
+                var price_open_other_currency=0;
             }
             else
             {
-                var price_other_cost_total_currency=parseFloat($('#price_other_cost_total_currency').val());
+                var price_open_other_currency=parseFloat($('#price_open_other_currency').val());
             }
-            $('#lbl_price_other_cost_total_currency').html(number_format(price_other_cost_total_currency,2))
+            $('#lbl_price_open_other_currency').html(number_format(price_open_other_currency,2))
             calculate_total();
         })
     })
