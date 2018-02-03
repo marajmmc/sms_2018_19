@@ -59,11 +59,8 @@ class Lc_expense extends Root_Controller
             $data['system_preference_items']['currency_name']= 1;
             $data['system_preference_items']['lc_number']= 1;
             $data['system_preference_items']['consignment_name']= 1;
-            $data['system_preference_items']['price_other_cost_total_release_currency']= 1;
-            $data['system_preference_items']['quantity_total_receive_kg']= 1;
-            $data['system_preference_items']['price_total_release_taka']= 1;
-            $data['system_preference_items']['price_total_expense_head_taka']= 1;
-            $data['system_preference_items']['price_total_all_taka']= 1;
+            $data['system_preference_items']['price_release_other_currency']= 1;
+            $data['system_preference_items']['quantity_receive_kg']= 1;
             if($result)
             {
                 if($result['preferences']!=null)
@@ -110,7 +107,7 @@ class Lc_expense extends Root_Controller
         $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.id = lco.fiscal_year_id','INNER');
         $this->db->join($this->config->item('table_sms_setup_currency').' currency','currency.id = lco.currency_id','INNER');
         $this->db->join($this->config->item('table_login_basic_setup_principal').' principal','principal.id = lco.principal_id','INNER');
-        $this->db->where('lco.status =',$this->config->item('system_status_active'));
+        $this->db->where('lco.status_open =',$this->config->item('system_status_active'));
         $this->db->order_by('lco.fiscal_year_id','DESC');
         $this->db->order_by('lco.id','DESC');
         $results=$this->db->get()->result_array();
@@ -128,11 +125,8 @@ class Lc_expense extends Root_Controller
             $item['currency_name']=$result['currency_name'];
             $item['lc_number']=$result['lc_number'];
             $item['consignment_name']=$result['consignment_name'];
-            $item['price_other_cost_total_release_currency']=number_format($result['price_other_cost_total_release_currency'],2);
-            $item['quantity_total_receive_kg']=number_format($result['quantity_total_receive_kg'],3);
-            $item['price_total_release_taka']=number_format($result['price_total_release_taka'],2);
-            $item['price_total_expense_head_taka']=number_format($result['price_total_expense_head_taka'],2);
-            $item['price_total_all_taka']=number_format($result['price_total_all_taka'],2);
+            $item['price_release_other_currency']=number_format($result['price_release_other_currency'],2);
+            $item['quantity_receive_kg']=number_format($result['quantity_receive_kg'],3);
             $items[]=$item;
         }
         $this->json_return($items);
@@ -162,7 +156,7 @@ class Lc_expense extends Root_Controller
             $this->db->join($this->config->item('table_login_setup_bank').' bank','bank.id = ba.bank_id','INNER');
             $this->db->select("CONCAT_WS(' ( ',ba.account_number,  CONCAT_WS('', bank.name,' - ',ba.branch_name,')')) bank_account_number");
             $this->db->where('lco.id',$item_id);
-            $this->db->where('lco.status =',$this->config->item('system_status_active'));
+            $this->db->where('lco.status_open =',$this->config->item('system_status_active'));
             $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
             {
@@ -174,10 +168,10 @@ class Lc_expense extends Root_Controller
 
             $data['items']=Query_helper::get_info($this->config->item('table_sms_direct_cost_items'),'*',array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('ordering ASC'));
             $results=Query_helper::get_info($this->config->item('table_sms_lc_expense'),'*',array('lc_id ='.$item_id),0,0,array(''));
-            $data['cost_item']=array();
+            $data['dc']=array();
             foreach($results as $result)
             {
-                $data['cost_item'][$result['cost_item_id']]=$result['amount'];
+                $data['dc'][$result['dc_id']]=$result['amount'];
             }
 
             $data['title']="LC Expense :: ".Barcode_helper::get_barcode_lc($item_id);
@@ -204,7 +198,6 @@ class Lc_expense extends Root_Controller
         $time=time();
         $item_head=$this->input->post('item');
         $items=$this->input->post('items');
-
         if($id>0)
         {
             if(!((isset($this->permissions['action1']) && ($this->permissions['action1']==1)) || (isset($this->permissions['action2']) && ($this->permissions['action2']==1))))
@@ -214,7 +207,7 @@ class Lc_expense extends Root_Controller
                 $this->json_return($ajax);
             }
 
-            $result=Query_helper::get_info($this->config->item('table_sms_lc_open'),'*',array('id ='.$id, 'status = "'.$this->config->item('system_status_active').'"'),1);
+            $result=Query_helper::get_info($this->config->item('table_sms_lc_open'),'*',array('id ='.$id, 'status_open = "'.$this->config->item('system_status_active').'"'),1);
             if(!$result)
             {
                 System_helper::invalid_try('Update Expense Non Exists',$id);
@@ -238,20 +231,16 @@ class Lc_expense extends Root_Controller
 
         $this->db->trans_start();  //DB Transaction Handle START
         $results=Query_helper::get_info($this->config->item('table_sms_lc_expense'),'*',array('lc_id ='.$id),0,0,array(''));
-        $cost_item=array();
+        $dc_item=array();
         foreach($results as $result)
         {
-            $cost_item[$result['cost_item_id']]=$result['amount'];
+            $dc_item[$result['dc_id']]=$result['amount'];
         }
-
-        $price_total_expense_head_taka=0;
         foreach($items as $item_id=>$item)
         {
-            $price_total_expense_head_taka+=$item['amount'];
-            if(isset($cost_item[$item_id]))
+            if(isset($dc_item[$item_id]))
             {
-
-                if($cost_item[$item_id]!=$item['amount'])
+                if($dc_item[$item_id]!=$item['amount'])
                 {
                     $data=array();
                     $data['amount']=$item['amount'];
@@ -265,7 +254,7 @@ class Lc_expense extends Root_Controller
             {
                 $data=array();
                 $data['lc_id']=$id;
-                $data['cost_item_id']=$item_id;
+                $data['dc_id']=$item_id;
                 $data['amount']=$item['amount'];
                 $data['revision_count']=1;
                 $data['date_created']=$time;
@@ -274,7 +263,6 @@ class Lc_expense extends Root_Controller
             }
         }
 
-        $item_head['price_total_expense_head_taka']=$price_total_expense_head_taka;
         $item_head['date_expense_updated']=$time;
         $item_head['user_expense_updated']=$user->user_id;
         $this->db->set('revision_expense_count', 'revision_expense_count+1', FALSE);
@@ -343,11 +331,8 @@ class Lc_expense extends Root_Controller
             $data['system_preference_items']['currency_name']= 1;
             $data['system_preference_items']['lc_number']= 1;
             $data['system_preference_items']['consignment_name']= 1;
-            $data['system_preference_items']['price_other_cost_total_release_currency']= 1;
-            $data['system_preference_items']['quantity_total_receive_kg']= 1;
-            $data['system_preference_items']['price_total_release_taka']= 1;
-            $data['system_preference_items']['price_total_expense_head_taka']= 1;
-            $data['system_preference_items']['price_total_all_taka']= 1;
+            $data['system_preference_items']['price_release_other_currency']= 1;
+            $data['system_preference_items']['quantity_receive_kg']= 1;
             if($result)
             {
                 if($result['preferences']!=null)

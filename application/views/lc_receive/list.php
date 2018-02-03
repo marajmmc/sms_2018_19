@@ -96,8 +96,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 { name: 'currency_name', type: 'string' },
                 { name: 'lc_number', type: 'string' },
                 { name: 'consignment_name', type: 'string' },
-                { name: 'quantity_total_release_kg', type: 'string' },
-                { name: 'quantity_total_receive_kg', type: 'string' }
+                { name: 'quantity_release_kg', type: 'string' },
+                { name: 'quantity_receive_kg', type: 'string' }
             ],
             id: 'id',
             url: url
@@ -132,8 +132,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         { text: '<?php echo $CI->lang->line('LABEL_CURRENCY_NAME'); ?>', dataField: 'currency_name',filtertype: 'list', width:80, hidden: <?php echo $system_preference_items['currency_name']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_LC_NUMBER'); ?>', dataField: 'lc_number', hidden: <?php echo $system_preference_items['lc_number']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_CONSIGNMENT_NAME'); ?>', dataField: 'consignment_name', width:150, hidden: <?php echo $system_preference_items['consignment_name']?0:1;?>},
-                        { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL_RELEASE_KG'); ?>', dataField: 'quantity_total_release_kg', width:100, cellsalign: 'right',  hidden: <?php echo $system_preference_items['quantity_total_release_kg']?0:1;?>},
-                        { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL_RECEIVE_KG'); ?>', dataField: 'quantity_total_receive_kg', width:100, cellsalign: 'right', hidden: <?php echo $system_preference_items['quantity_total_receive_kg']?0:1;?>}
+                        { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_RELEASE_KG'); ?>', dataField: 'quantity_release_kg', width:100, cellsalign: 'right',  hidden: <?php echo $system_preference_items['quantity_release_kg']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_RECEIVE_KG'); ?>', dataField: 'quantity_receive_kg', width:100, cellsalign: 'right', hidden: <?php echo $system_preference_items['quantity_receive_kg']?0:1;?>}
                     ]
             });
     });

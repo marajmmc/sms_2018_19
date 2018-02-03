@@ -67,8 +67,8 @@ class Lc_receive extends Root_Controller
             $data['system_preference_items']['currency_name']= 1;
             $data['system_preference_items']['lc_number']= 1;
             $data['system_preference_items']['consignment_name']= 1;
-            $data['system_preference_items']['quantity_total_release_kg']= 1;
-            $data['system_preference_items']['quantity_total_receive_kg']= 1;
+            $data['system_preference_items']['quantity_release_kg']= 1;
+            $data['system_preference_items']['quantity_receive_kg']= 1;
             if($result)
             {
                 if($result['preferences']!=null)
@@ -115,10 +115,10 @@ class Lc_receive extends Root_Controller
         $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.id = lco.fiscal_year_id','INNER');
         $this->db->join($this->config->item('table_sms_setup_currency').' currency','currency.id = lco.currency_id','INNER');
         $this->db->join($this->config->item('table_login_basic_setup_principal').' principal','principal.id = lco.principal_id','INNER');
-        $this->db->where('lco.status_forward',$this->config->item('system_status_yes'));
+        $this->db->where('lco.status_open_forward',$this->config->item('system_status_yes'));
         $this->db->where('lco.status_release',$this->config->item('system_status_complete'));
         $this->db->where('lco.status_receive',$this->config->item('system_status_pending'));
-        $this->db->where('lco.status !=',$this->config->item('system_status_delete'));
+        $this->db->where('lco.status_open !=',$this->config->item('system_status_delete'));
         $this->db->order_by('lco.fiscal_year_id','DESC');
         $this->db->order_by('lco.id','DESC');
         $results=$this->db->get()->result_array();
@@ -136,9 +136,8 @@ class Lc_receive extends Root_Controller
             $item['currency_name']=$result['currency_name'];
             $item['lc_number']=$result['lc_number'];
             $item['consignment_name']=$result['consignment_name'];
-            $item['quantity_total_release_kg']=number_format($result['quantity_total_release_kg'],3);
-            $item['quantity_total_receive_kg']=number_format($result['quantity_total_receive_kg'],3);
-            $item['status_receive']=$result['status_receive'];
+            $item['quantity_release_kg']=number_format($result['quantity_release_kg'],3);
+            $item['quantity_receive_kg']=number_format($result['quantity_receive_kg'],3);
             $items[]=$item;
         }
         $this->json_return($items);
@@ -170,9 +169,9 @@ class Lc_receive extends Root_Controller
             $this->db->join($this->config->item('table_login_setup_user_info').' ui','ui.user_id = lco.user_release_completed','INNER');
             $this->db->select('ui.name user_full_name');
             $this->db->where('lco.id',$item_id);
-            $this->db->where('lco.status_forward',$this->config->item('system_status_yes'));
+            $this->db->where('lco.status_open_forward',$this->config->item('system_status_yes'));
             $this->db->where('lco.status_release',$this->config->item('system_status_complete'));
-            $this->db->where('lco.status !=',$this->config->item('system_status_delete'));
+            $this->db->where('lco.status_open !=',$this->config->item('system_status_delete'));
             $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
             {
@@ -197,7 +196,7 @@ class Lc_receive extends Root_Controller
             $this->db->join($this->config->item('table_login_setup_variety_principals').' vp','vp.variety_id = v.id AND vp.principal_id = '.$data['item']['principal_id'].' AND vp.revision = 1','INNER');
             $this->db->join($this->config->item('table_login_setup_classification_vpack_size').' pack','pack.id = lcd.pack_size_id','LEFT');
             $this->db->where('lcd.lc_id',$item_id);
-            $this->db->where('lcd.quantity_lc >0');
+            $this->db->where('lcd.quantity_open >0');
             $data['items']=$this->db->get()->result_array();
 
             $data['warehouses']=Query_helper::get_info($this->config->item('table_login_basic_setup_warehouse'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
@@ -223,12 +222,29 @@ class Lc_receive extends Root_Controller
     {
         $id = $this->input->post("id");
         $user = User_helper::get_user();
+        $time=time();
+        $item_head=$this->input->post('item');
+        $items=$this->input->post('items');
         if($id>0)
         {
             if(!((isset($this->permissions['action1']) && ($this->permissions['action1']==1)) || (isset($this->permissions['action2']) && ($this->permissions['action2']==1))))
             {
                 $ajax['status']=false;
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+                $this->json_return($ajax);
+            }
+            $result=Query_helper::get_info($this->config->item('table_sms_lc_open'),'*',array('id ='.$id, 'status_open != "'.$this->config->item('system_status_delete').'"', 'status_open_forward = "'.$this->config->item('system_status_yes').'"', 'status_release = "'.$this->config->item('system_status_complete').'"'),1);
+            if(!$result)
+            {
+                System_helper::invalid_try('Update Receive Non Exists',$id);
+                $ajax['status']=false;
+                $ajax['system_message']='Invalid LC.';
+                $this->json_return($ajax);
+            }
+            if($result['status_receive']==$this->config->item('system_status_complete'))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='You Can Not Modify LC Because LC Receive Completed.';
                 $this->json_return($ajax);
             }
         }
@@ -245,22 +261,7 @@ class Lc_receive extends Root_Controller
             $this->json_return($ajax);
         }
 
-        $result=Query_helper::get_info($this->config->item('table_sms_lc_open'),'*',array('id ='.$id, 'status != "'.$this->config->item('system_status_delete').'"', 'status_forward = "'.$this->config->item('system_status_yes').'"', 'status_release = "'.$this->config->item('system_status_complete').'"'),1);
-        if(!$result)
-        {
-            System_helper::invalid_try('Update Receive Non Exists',$id);
-            $ajax['status']=false;
-            $ajax['system_message']='Invalid LC.';
-            $this->json_return($ajax);
-        }
-        if($result['status_receive']==$this->config->item('system_status_complete'))
-        {
-            $ajax['status']=false;
-            $ajax['system_message']='You Can Not Modify LC Because LC Receive Completed.';
-            $this->json_return($ajax);
-        }
-
-        $results=Query_helper::get_info($this->config->item('table_sms_lc_details'),'*',array('lc_id='.$id,'quantity_lc > 0'));
+        $results=Query_helper::get_info($this->config->item('table_sms_lc_details'),'*',array('lc_id='.$id,'quantity_open > 0'));
         $old_varieties=array();
         if($results)
         {
@@ -270,9 +271,6 @@ class Lc_receive extends Root_Controller
             }
         }
 
-        $time=time();
-        $item_head=$this->input->post('item');
-        $items=$this->input->post('items');
         $results=Query_helper::get_info($this->config->item('table_login_setup_classification_vpack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('id ASC'));
         $pack_sizes=array();
         foreach($results as $result)
@@ -293,7 +291,7 @@ class Lc_receive extends Root_Controller
 
         $this->db->trans_start();  //DB Transaction Handle START
 
-        $quantity_total_receive_kg=0;
+        $quantity_receive_kg=0;
         foreach($items as $item)
         {
             if(isset($old_varieties[$item['variety_id']][$item['pack_size_id']]))
@@ -303,13 +301,13 @@ class Lc_receive extends Root_Controller
 
                 if($item['pack_size_id']==0)
                 {
-                    $quantity_total_receive_kg+=$item['quantity_receive'];
+                    $quantity_receive_kg+=$item['quantity_receive'];
                 }
                 else
                 {
                     if(isset($pack_sizes[$item['pack_size_id']]['text']))
                     {
-                        $quantity_total_receive_kg+=(($pack_sizes[$item['pack_size_id']]['text']*$item['quantity_receive'])/1000);
+                        $quantity_receive_kg+=(($pack_sizes[$item['pack_size_id']]['text']*$item['quantity_receive'])/1000);
                     }
                 }
 
@@ -334,8 +332,7 @@ class Lc_receive extends Root_Controller
                 Query_helper::add($this->config->item('table_sms_lc_receive_histories'),$data, false);
             }
         }
-
-        $item_head['quantity_total_receive_kg']=$quantity_total_receive_kg;
+        $item_head['quantity_receive_kg']=$quantity_receive_kg;
         $item_head['date_receive_updated']=$time;
         $item_head['user_receive_updated']=$user->user_id;
         $this->db->set('revision_receive_count', 'revision_receive_count+1', FALSE);
@@ -378,15 +375,21 @@ class Lc_receive extends Root_Controller
             $this->db->join($this->config->item('table_login_setup_user_info').' ui','ui.user_id = lco.user_release_completed','INNER');
             $this->db->select('ui.name user_full_name');
             $this->db->where('lco.id',$item_id);
-            $this->db->where('lco.status_forward',$this->config->item('system_status_yes'));
+            $this->db->where('lco.status_open_forward',$this->config->item('system_status_yes'));
             $this->db->where('lco.status_release',$this->config->item('system_status_complete'));
-            $this->db->where('lco.status !=',$this->config->item('system_status_delete'));
+            $this->db->where('lco.status_open !=',$this->config->item('system_status_delete'));
             $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
             {
                 System_helper::invalid_try('Edit Receive Complete Non Exists',$item_id);
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid LC.';
+                $this->json_return($ajax);
+            }
+            if($data['item']['revision_receive_count']==0)
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='You have to complete your (LC) edit receive.';
                 $this->json_return($ajax);
             }
             if($data['item']['status_receive']==$this->config->item('system_status_complete'))
@@ -407,8 +410,23 @@ class Lc_receive extends Root_Controller
             $this->db->join($this->config->item('table_login_setup_classification_vpack_size').' pack','pack.id = lcd.pack_size_id','LEFT');
             $this->db->join($this->config->item('table_login_basic_setup_warehouse').' warehouse','warehouse.id = lcd.receive_warehouse_id','LEFT');
             $this->db->where('lcd.lc_id',$item_id);
-            $this->db->where('lcd.quantity_lc >0');
+            $this->db->where('lcd.quantity_open >0');
             $data['items']=$this->db->get()->result_array();
+            $item_zero_count=0;
+            foreach($data['items'] as $item)
+            {
+                if($item['quantity_receive']==0)
+                {
+                    ++$item_zero_count;
+                }
+            }
+            if(count($data['items']) == $item_zero_count)
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='You have to complete your (LC) edit receive.';
+                $this->json_return($ajax);
+            }
+
 
             $data['warehouses']=Query_helper::get_info($this->config->item('table_login_basic_setup_warehouse'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
 
@@ -443,6 +461,27 @@ class Lc_receive extends Root_Controller
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->json_return($ajax);
             }
+            $result=Query_helper::get_info($this->config->item('table_sms_lc_open'),'*',array('id ='.$id, 'status_open != "'.$this->config->item('system_status_delete').'"', 'status_open_forward = "'.$this->config->item('system_status_yes').'"', 'status_release = "'.$this->config->item('system_status_complete').'"', 'status_receive = "'.$this->config->item('system_status_pending').'"'),1);
+            if(!$result)
+            {
+                System_helper::invalid_try('Update Receive Completed LC Non Exists',$id);
+                $ajax['status']=false;
+                $ajax['system_message']='Invalid LC.';
+                $this->json_return($ajax);
+            }
+            if($result['revision_receive_count']==0)
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='You have to complete your (LC) edit receive.';
+                $this->json_return($ajax);
+            }
+            $result=Query_helper::get_info($this->config->item('table_sms_lc_details'),'*',array('lc_id ='.$id,'quantity_receive >0'),1);
+            if(!$result)
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='You have to complete your (LC) edit receive.';
+                $this->json_return($ajax);
+            }
         }
         else
         {
@@ -454,65 +493,48 @@ class Lc_receive extends Root_Controller
 
         if($item_head['status_receive']==$this->config->item('system_status_complete'))
         {
-            $result=Query_helper::get_info($this->config->item('table_sms_lc_open'),'*',array('id ='.$id, 'status != "'.$this->config->item('system_status_delete').'"', 'status_forward = "'.$this->config->item('system_status_yes').'"', 'status_release = "'.$this->config->item('system_status_complete').'"', 'status_receive = "'.$this->config->item('system_status_pending').'"'),1);
-            if(!$result)
+
+            $results=Query_helper::get_info($this->config->item('table_sms_lc_details'),'*',array('lc_id='.$id,'quantity_open > 0'));
+            if($results)
             {
-                System_helper::invalid_try('Update Receive Completed LC Non Exists',$id);
-                $ajax['status']=false;
-                $ajax['system_message']='Invalid LC.';
-                $this->json_return($ajax);
-            }
-            else
-            {
-                $results=Query_helper::get_info($this->config->item('table_sms_lc_details'),'*',array('lc_id='.$id,'quantity_lc > 0'));
-                if($results)
+                $this->db->trans_start();  //DB Transaction Handle START
+                foreach($results as $result)
                 {
-                    $this->db->trans_start();  //DB Transaction Handle START
-                    foreach($results as $result)
-                    {
-                        $variety_ids[$result['variety_id']]=$result['variety_id'];
-                    }
-                    $current_stocks=System_helper::get_variety_stock($variety_ids);
+                    $variety_ids[$result['variety_id']]=$result['variety_id'];
+                }
+                $current_stocks=System_helper::get_variety_stock($variety_ids);
 
-                    foreach($results as $result)
+                foreach($results as $result)
+                {
+                    if(isset($current_stocks[$result['variety_id']][$result['pack_size_id']][$result['receive_warehouse_id']]))
                     {
-                        if(isset($current_stocks[$result['variety_id']][$result['pack_size_id']][$result['receive_warehouse_id']]))
-                        {
-                            $data['current_stock']=$current_stocks[$result['variety_id']][$result['pack_size_id']][$result['receive_warehouse_id']]['current_stock']+$result['quantity_receive'];
-                            $data['in_lc']=$current_stocks[$result['variety_id']][$result['pack_size_id']][$result['receive_warehouse_id']]['in_lc']+$result['quantity_receive'];
-                            $data['date_updated'] = $time;
-                            $data['user_updated'] = $user->user_id;
-                            Query_helper::update($this->config->item('table_sms_stock_summary_variety'),$data,array('variety_id='.$result['variety_id'],'pack_size_id='.$result['pack_size_id'],'warehouse_id='.$result['receive_warehouse_id']));
-                        }
-                        else
-                        {
-                            $data['variety_id'] = $result['variety_id'];
-                            $data['pack_size_id'] = $result['pack_size_id'];
-                            $data['warehouse_id'] = $result['receive_warehouse_id'];
-                            $data['current_stock'] = $result['quantity_receive'];
-                            $data['in_lc'] = $result['quantity_receive'];
-                            $data['date_updated'] = $time;
-                            $data['user_updated'] = $user->user_id;
-                            Query_helper::add($this->config->item('table_sms_stock_summary_variety'),$data);
-                        }
-                    }
-                    $item_head['date_receive_completed']=$time;
-                    $item_head['user_receive_completed']=$user->user_id;
-                    Query_helper::update($this->config->item('table_sms_lc_open'),$item_head,array('id='.$id));
-
-                    $this->db->trans_complete();   //DB Transaction Handle END
-                    if ($this->db->trans_status() === TRUE)
-                    {
-                        $this->message=$this->lang->line("MSG_SAVED_SUCCESS");
-                        $this->system_list();
+                        $data['current_stock']=($current_stocks[$result['variety_id']][$result['pack_size_id']][$result['receive_warehouse_id']]['current_stock']+$result['quantity_receive']);
+                        $data['in_lc']=($current_stocks[$result['variety_id']][$result['pack_size_id']][$result['receive_warehouse_id']]['in_lc']+$result['quantity_receive']);
+                        $data['date_updated'] = $time;
+                        $data['user_updated'] = $user->user_id;
+                        Query_helper::update($this->config->item('table_sms_stock_summary_variety'),$data,array('variety_id='.$result['variety_id'],'pack_size_id='.$result['pack_size_id'],'warehouse_id='.$result['receive_warehouse_id']));
                     }
                     else
                     {
-                        $ajax['status']=false;
-                        $ajax['system_message']=$this->lang->line("MSG_SAVED_FAIL");
-                        $this->json_return($ajax);
+                        $data['variety_id'] = $result['variety_id'];
+                        $data['pack_size_id'] = $result['pack_size_id'];
+                        $data['warehouse_id'] = $result['receive_warehouse_id'];
+                        $data['current_stock'] = $result['quantity_receive'];
+                        $data['in_lc'] = $result['quantity_receive'];
+                        $data['date_updated'] = $time;
+                        $data['user_updated'] = $user->user_id;
+                        Query_helper::add($this->config->item('table_sms_stock_summary_variety'),$data);
                     }
+                }
+                $item_head['date_receive_completed']=$time;
+                $item_head['user_receive_completed']=$user->user_id;
+                Query_helper::update($this->config->item('table_sms_lc_open'),$item_head,array('id='.$id));
 
+                $this->db->trans_complete();   //DB Transaction Handle END
+                if ($this->db->trans_status() === TRUE)
+                {
+                    $this->message=$this->lang->line("MSG_SAVED_SUCCESS");
+                    $this->system_list();
                 }
                 else
                 {
@@ -521,8 +543,12 @@ class Lc_receive extends Root_Controller
                     $this->json_return($ajax);
                 }
 
-
-
+            }
+            else
+            {
+                $ajax['status']=false;
+                $ajax['system_message']=$this->lang->line("MSG_SAVED_FAIL");
+                $this->json_return($ajax);
             }
         }
         else
@@ -576,8 +602,8 @@ class Lc_receive extends Root_Controller
             $data['system_preference_items']['currency_name']= 1;
             $data['system_preference_items']['lc_number']= 1;
             $data['system_preference_items']['consignment_name']= 1;
-            $data['system_preference_items']['quantity_total_release_kg']= 1;
-            $data['system_preference_items']['quantity_total_receive_kg']= 1;
+            $data['system_preference_items']['quantity_release_kg']= 1;
+            $data['system_preference_items']['quantity_receive_kg']= 1;
             if($result)
             {
                 if($result['preferences']!=null)

@@ -66,10 +66,10 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <th><label class="control-label"><?php echo $item['currency_name'];?></label></th>
                 </tr>
                 <tr>
-                    <th class="widget-header"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_OTHER_COST_CURRENCY');?></label></th>
-                    <th class="bg-danger"><label class="control-label"><?php echo number_format($item['price_other_cost_total_currency'],2);?></label></th>
-                    <th class="widget-header"><label class="control-label pull-right">Release Others Costs (Currency)</label></th>
-                    <th class="bg-danger"><label class="control-label"><?php echo number_format($item['price_other_cost_total_release_currency'],2);?></label></th>
+                    <th class="widget-header"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_PRICE_OPEN_OTHER_CURRENCY');?></label></th>
+                    <th class="bg-danger"><label class="control-label"><?php echo number_format($item['price_open_other_currency'],2);?></label></th>
+                    <th class="widget-header"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_PRICE_RELEASE_OTHER_CURRENCY');?></label></th>
+                    <th class="bg-danger"><label class="control-label"><?php echo number_format($item['price_release_other_currency'],2);?></label></th>
                 </tr>
                 <tr>
                     <th class="widget-header"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_CONSIGNMENT_NAME');?></label></th>
@@ -77,7 +77,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 </tr>
                 <tr>
                     <th class="widget-header"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS_LC_OPEN');?></label></th>
-                    <th class="bg-danger" colspan="3"><label class="control-label"><?php echo $item['remarks'];?></label></th>
+                    <th class="bg-danger" colspan="3"><label class="control-label"><?php echo $item['remarks_open'];?></label></th>
                 </tr>
                 <tr>
                     <th class="widget-header"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS_LC_RELEASE');?></label></th>
@@ -99,10 +99,18 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             </div>
             <div class="row show-grid">
                 <div class="col-xs-4">
-                    <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_TOTAL_TAKA');?> </label>
+                    <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_PRICE_RELEASE_OTHER_VARIETY_TAKA');?> </label>
+                </div>
+                <div class="col-sm-4 col-xs-8 text-right">
+                    <label class="control-label"><?php echo number_format($item['price_release_other_variety_taka'],2);?></label>
+                </div>
+            </div>
+            <div class="row show-grid">
+                <div class="col-xs-4">
+                    <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_PRICE_COMPLETE_OTHER_VARIETY_TAKA');?> </label>
                 </div>
                 <div class="col-sm-4 col-xs-8">
-                    <input type="text" name="item[price_total_all_taka]" id="price_total_all_taka" class="form-control float_type_positive" value="<?php echo $item['price_total_all_taka'];?>" />
+                    <input type="text" name="item[price_complete_other_variety_taka]" id="price_complete_other_variety_taka" class="form-control float_type_positive" value="<?php echo $item['price_complete_other_variety_taka'];?>" />
                 </div>
             </div>
         </div>
@@ -120,12 +128,12 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <tbody>
                     <?php
                     $serial=1;
-                    $price_total_expense_head_taka=0;
+                    $price_complete_dc_taka=0;
                     $amount=0;
                     foreach($items as $row)
                     {
-                        $amount=isset($cost_item[$row['id']])?$cost_item[$row['id']]:0;
-                        $price_total_expense_head_taka+=$amount;
+                        $amount=isset($dc[$row['id']])?$dc[$row['id']]:0;
+                        $price_complete_dc_taka+=$amount;
                         ?>
                         <tr>
                             <td><?php echo $serial?></td>
@@ -143,19 +151,19 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <tr>
                         <th colspan="2" class="text-right">Total Expense(Taka): </th>
                         <th class="text-right">
-                            <label class="control-label" id="lbl_price_total_expense_head_taka"><?php echo number_format($price_total_expense_head_taka,2)?></label>
+                            <label class="control-label" id="lbl_price_complete_dc_taka"><?php echo number_format($price_complete_dc_taka,2)?></label>
                         </th>
                     </tr>
                     <tr>
-                        <th colspan="2" class="text-right">Total (Taka): </th>
+                        <th colspan="2" class="text-right"><?php echo $this->lang->line('LABEL_PRICE_COMPLETE_OTHER_VARIETY_TAKA');?>: </th>
                         <th class="text-right">
-                            <label class="control-label" id="lbl_price_total_all_taka"><?php echo number_format($item['price_total_all_taka'],2)?></label>
+                            <label class="control-label" id="lbl_price_complete_other_variety_taka"><?php echo number_format($item['price_complete_other_variety_taka'],2)?></label>
                         </th>
                     </tr>
                     <tr>
                         <th colspan="2" class="text-right">Grand Total (Taka): </th>
                         <th class="text-right">
-                            <label class="control-label" id="lbl_grand_total"><?php echo number_format(($item['price_total_all_taka']+$price_total_expense_head_taka),2)?></label>
+                            <label class="control-label" id="lbl_grand_total"><?php echo number_format(($item['price_complete_other_variety_taka']+$price_complete_dc_taka),2)?></label>
                         </th>
                     </tr>
                     </tfoot>
@@ -168,8 +176,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 <script>
     function calculate_total()
     {
-        var price_total_expense_head_taka=0;
-        var price_total_all_taka=0;
+        var price_complete_dc_taka=0;
+        var price_complete_other_variety_taka=0;
         var amount=0;
         $('.amount').each(function(index, element)
         {
@@ -177,20 +185,20 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             {
                 amount=parseFloat($(this).val());
             }
-            price_total_expense_head_taka+=parseFloat(amount);
+            price_complete_dc_taka+=parseFloat(amount);
         });
-        $('#lbl_price_total_expense_head_taka').html(number_format(price_total_expense_head_taka,2));
+        $('#lbl_price_complete_dc_taka').html(number_format(price_complete_dc_taka,2));
 
-        if(isNaN($('#price_total_all_taka').val()) || $('#price_total_all_taka').val()=='')
+        if(isNaN($('#price_complete_other_variety_taka').val()) || $('#price_complete_other_variety_taka').val()=='')
         {
-            var price_total_all_taka=price_total_expense_head_taka;
+            var price_complete_other_variety_taka=price_complete_dc_taka;
         }
         else
         {
-            var price_total_all_taka=(parseFloat($('#price_total_all_taka').val())+price_total_expense_head_taka);
+            var price_complete_other_variety_taka=(parseFloat($('#price_complete_other_variety_taka').val())+price_complete_dc_taka);
         }
 
-        $('#lbl_grand_total').html(number_format(price_total_all_taka,2));
+        $('#lbl_grand_total').html(number_format(price_complete_other_variety_taka,2));
     }
     $(document).ready(function()
     {
@@ -200,10 +208,10 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             calculate_total()
         })
 
-        $(document).off('input','#price_total_all_taka');
-        $(document).on('input', '#price_total_all_taka', function()
+        $(document).off('input','#price_complete_other_variety_taka');
+        $(document).on('input', '#price_complete_other_variety_taka', function()
         {
-            $("#lbl_price_total_all_taka").html(number_format($(this).val(),2))
+            $("#lbl_price_complete_other_variety_taka").html(number_format($(this).val(),2))
             calculate_total();
         })
     })

@@ -94,11 +94,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 { name: 'currency_name', type: 'string' },
                 { name: 'lc_number', type: 'string' },
                 { name: 'consignment_name', type: 'string' },
-                { name: 'price_other_cost_total_release_currency', type: 'string' },
-                { name: 'quantity_total_receive_kg', type: 'string' },
-                { name: 'price_total_release_taka', type: 'string' },
-                { name: 'price_total_expense_head_taka', type: 'string' },
-                { name: 'price_total_all_taka', type: 'string' }
+                { name: 'price_release_other_currency', type: 'string' },
+                { name: 'quantity_receive_kg', type: 'string' }
             ],
             id: 'id',
             url: url
@@ -133,11 +130,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         { text: '<?php echo $CI->lang->line('LABEL_CURRENCY_NAME'); ?>', dataField: 'currency_name',filtertype: 'list', width:80, hidden: <?php echo $system_preference_items['currency_name']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_LC_NUMBER'); ?>', dataField: 'lc_number', hidden: <?php echo $system_preference_items['lc_number']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_CONSIGNMENT_NAME'); ?>', dataField: 'consignment_name', width:150, hidden: <?php echo $system_preference_items['consignment_name']?0:1;?>},
-                        { text: '<?php echo $CI->lang->line('LABEL_PRICE_OTHER_COST_TOTAL_RELEASE_CURRENCY'); ?>', dataField: 'price_other_cost_total_release_currency', width:100, cellsalign: 'right',  hidden: <?php echo $system_preference_items['price_other_cost_total_release_currency']?0:1;?>},
-                        { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL_RECEIVE_KG'); ?>', dataField: 'quantity_total_receive_kg', width:100, cellsalign: 'right', hidden: <?php echo $system_preference_items['quantity_total_receive_kg']?0:1;?>},
-                        { text: '<?php echo $CI->lang->line('LABEL_PRICE_TOTAL_RELEASE_TAKA'); ?>', dataField: 'price_total_release_taka', cellsalign: 'right', width:100, hidden: <?php echo $system_preference_items['price_total_release_taka']?0:1;?>},
-                        { text: '<?php echo $CI->lang->line('LABEL_PRICE_TOTAL_EXPENSE_HEAD_TAKA');?>', dataField: 'price_total_expense_head_taka', cellsalign: 'right', width:100, hidden: <?php echo $system_preference_items['price_total_expense_head_taka']?0:1;?>},
-                        { text: '<?php echo $this->lang->line('LABEL_PRICE_TOTAL_ALL_TAKA')?>', dataField: 'price_total_all_taka',cellsalign: 'center',filtertype: 'list', width:100, hidden: <?php echo $system_preference_items['price_total_all_taka']?0:1;?>}
+                        { text: '<?php echo $CI->lang->line('LABEL_PRICE_RELEASE_OTHER_CURRENCY'); ?>', dataField: 'price_release_other_currency', width:100, cellsalign: 'right',  hidden: <?php echo $system_preference_items['price_release_other_currency']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_RECEIVE_KG'); ?>', dataField: 'quantity_receive_kg', width:100, cellsalign: 'right', hidden: <?php echo $system_preference_items['quantity_receive_kg']?0:1;?>}
                     ]
             });
     });

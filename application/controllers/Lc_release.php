@@ -327,6 +327,7 @@ class Lc_release extends Root_Controller
             }
         }
 
+        $item_head['price_release_other_variety_taka']=$item_head['price_complete_other_variety_taka'];
         $item_head['quantity_release_kg']=$quantity_release_kg;
         $item_head['price_release_variety_currency']=$price_release_variety_currency;
         $item_head['date_release_updated']=$time;
@@ -385,7 +386,26 @@ class Lc_release extends Root_Controller
                 $ajax['system_message']='Invalid LC.';
                 $this->json_return($ajax);
             }
-
+            if($data['item']['revision_release_count']==0)
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='You have to complete your (LC) edit release.';
+                $this->json_return($ajax);
+            }
+            $item_zero_count=0;
+            foreach($data['items'] as $item)
+            {
+                if($item['quantity_release']==0)
+                {
+                    ++$item_zero_count;
+                }
+            }
+            if(count($data['items']) == $item_zero_count)
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='You have to complete your (LC) edit release.';
+                $this->json_return($ajax);
+            }
             $this->db->from($this->config->item('table_sms_lc_details').' lcd');
             $this->db->select('lcd.*');
             $this->db->select('v.id variety_id, v.name variety_name');
@@ -435,6 +455,19 @@ class Lc_release extends Root_Controller
                 System_helper::invalid_try('Update Release Completed LC Non Exists',$id);
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid LC.';
+                $this->json_return($ajax);
+            }
+            if($result['revision_release_count']==0)
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='You have to complete your (LC) edit release.';
+                $this->json_return($ajax);
+            }
+            $result=Query_helper::get_info($this->config->item('table_sms_lc_details'),'*',array('lc_id ='.$id,'lcd.quantity_release >0'),1);
+            if(!$result)
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='You have to complete your (LC) edit release.';
                 $this->json_return($ajax);
             }
         }

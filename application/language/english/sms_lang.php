@@ -300,14 +300,16 @@ $lang['LABEL_PRICE_OPEN_OTHER_CURRENCY']='LC Open Other Cost (Currency)';
 $lang['LABEL_PRICE_OPEN_VARIETY_CURRENCY']='LC Open Variety (Currency)';
 
 /*release*/
-$lang['LABEL_PRICE_RELEASE_OTHER_CURRENCY']='LC Release Other Cost';
+$lang['LABEL_PRICE_RELEASE_OTHER_VARIETY_TAKA']='LC Release Total (Taka)';
+$lang['LABEL_PRICE_RELEASE_OTHER_CURRENCY']='LC Release Other Cost (Currency)';
 $lang['LABEL_QUANTITY_RELEASE_KG']='Release Total (KG)';
 $lang['LABEL_PRICE_RELEASE_VARIETY_CURRENCY']='Release Total Variety (Currency)';
 /*$lang['LABEL_PRICE_TOTAL_RELEASE_CURRENCY']='Release Total (Currency)';
 $lang['LABEL_PRICE_TOTAL_RELEASE_TAKA']='Release Total (Taka)';*/
 
 /*receive*/
-/*$lang['LABEL_QUANTITY_TOTAL_RECEIVE_KG']='Receive Total (KG)';*/
+$lang['LABEL_PRICE_COMPLETE_OTHER_VARIETY_TAKA']='LC Expense Total (Taka)';
+$lang['LABEL_QUANTITY_RECEIVE_KG']='Receive Total (KG)';
 
 /*expense*/
 /*$lang['LABEL_PRICE_TOTAL_EXPENSE_HEAD_TAKA']='Expense Head (Taka)';
