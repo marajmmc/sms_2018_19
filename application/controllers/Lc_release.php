@@ -392,6 +392,18 @@ class Lc_release extends Root_Controller
                 $ajax['system_message']='You have to complete your (LC) edit release.';
                 $this->json_return($ajax);
             }
+
+            $this->db->from($this->config->item('table_sms_lc_details').' lcd');
+            $this->db->select('lcd.*');
+            $this->db->select('v.id variety_id, v.name variety_name');
+            $this->db->select('vp.name_import variety_name_import');
+            $this->db->select('pack.name pack_size_name');
+            $this->db->join($this->config->item('table_login_setup_classification_varieties').' v','v.id = lcd.variety_id','INNER');
+            $this->db->join($this->config->item('table_login_setup_variety_principals').' vp','vp.variety_id = v.id AND vp.principal_id = '.$data['item']['principal_id'].' AND vp.revision = 1','INNER');
+            $this->db->join($this->config->item('table_login_setup_classification_vpack_size').' pack','pack.id = lcd.pack_size_id','LEFT');
+            $this->db->where('lcd.lc_id',$item_id);
+            $this->db->where('lcd.quantity_open >0');
+            $data['items']=$this->db->get()->result_array();
             $item_zero_count=0;
             foreach($data['items'] as $item)
             {
@@ -406,18 +418,6 @@ class Lc_release extends Root_Controller
                 $ajax['system_message']='You have to complete your (LC) edit release.';
                 $this->json_return($ajax);
             }
-            $this->db->from($this->config->item('table_sms_lc_details').' lcd');
-            $this->db->select('lcd.*');
-            $this->db->select('v.id variety_id, v.name variety_name');
-            $this->db->select('vp.name_import variety_name_import');
-            $this->db->select('pack.name pack_size_name');
-            $this->db->join($this->config->item('table_login_setup_classification_varieties').' v','v.id = lcd.variety_id','INNER');
-            $this->db->join($this->config->item('table_login_setup_variety_principals').' vp','vp.variety_id = v.id AND vp.principal_id = '.$data['item']['principal_id'].' AND vp.revision = 1','INNER');
-            $this->db->join($this->config->item('table_login_setup_classification_vpack_size').' pack','pack.id = lcd.pack_size_id','LEFT');
-            $this->db->where('lcd.lc_id',$item_id);
-            $this->db->where('lcd.quantity_open >0');
-            $data['items']=$this->db->get()->result_array();
-
             $data['title']="LC Release :: ".Barcode_helper::get_barcode_lc($item_id);
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/release_complete",$data,true));
@@ -463,7 +463,7 @@ class Lc_release extends Root_Controller
                 $ajax['system_message']='You have to complete your (LC) edit release.';
                 $this->json_return($ajax);
             }
-            $result=Query_helper::get_info($this->config->item('table_sms_lc_details'),'*',array('lc_id ='.$id,'lcd.quantity_release >0'),1);
+            $result=Query_helper::get_info($this->config->item('table_sms_lc_details'),'*',array('lc_id ='.$id,'quantity_release >0'),1);
             if(!$result)
             {
                 $ajax['status']=false;

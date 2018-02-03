@@ -252,11 +252,11 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     {
                         if($value['pack_size_id']==0)
                         {
-                            $quantity_open_kg=number_format($value['quantity_open'],3);
+                            $quantity_open_kg=$value['quantity_open'];
                         }
                         else
                         {
-                            $quantity_open_kg=number_format((($value['quantity_open']*$value['pack_size_name'])/1000),3);
+                            $quantity_open_kg=(($value['quantity_open']*$value['pack_size_name'])/1000);
                         }
                         $price_open_currency=($value['quantity_open']*$value['price_unit_currency']);
 
@@ -276,7 +276,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                             </td>
                             <td class="text-right">
                                 <label class="control-label quantity_open_kg" id="quantity_open_kg_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>">
-                                    <?php echo $quantity_open_kg; ?>
+                                    <?php echo number_format($quantity_open_kg,3,'.',''); ?>
                                 </label>
                             </td>
                             <td>
@@ -298,7 +298,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <tfoot>
                     <tr>
                         <th colspan="3" class="text-right"><?php echo $this->lang->line('LABEL_TOTAL_KG')?></th>
-                        <th class="text-right"><label class="control-label" id="lbl_quantity_open_total_kg"><?php echo number_format(($quantity_open_total_kg),3)?></label></th>
+                        <th class="text-right"><label class="control-label" id="lbl_quantity_open_total_kg"><?php echo number_format(($quantity_open_total_kg),3,'.','')?></label></th>
                         <th class="text-right"><?php echo $this->lang->line('LABEL_TOTAL_CURRENCY')?></th>
                         <th class="text-right"><label class="control-label" id="lbl_price_variety_total_currency"><?php echo number_format($item['price_open_variety_currency'],2)?></label></th>
                         <th class="text-right"></th>
@@ -402,7 +402,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             quantity_open_total_kg+=parseFloat($('#quantity_open_kg_'+current_id).html().replace(/,/g,''));
             price_variety_total_currency+=parseFloat($('#price_open_currency_'+current_id).html().replace(/,/g,''));
         });
-        $('#lbl_quantity_open_total_kg').html(number_format(quantity_open_total_kg,3));
+        $('#lbl_quantity_open_total_kg').html(number_format(quantity_open_total_kg,3,'.',''));
         $('#lbl_price_variety_total_currency').html(number_format(price_variety_total_currency,2));
         if(isNaN($('#price_open_other_currency').val()))
         {
@@ -570,7 +570,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             {
                 quantity_open_kg=parseFloat((pack_size*quantity_open)/1000);
             }
-            $("#quantity_open_kg_"+current_id).html(number_format(quantity_open_kg,3));
+            $("#quantity_open_kg_"+current_id).html(number_format(quantity_open_kg,3,'.',''));
             var price_open_currency=(quantity_open*price_unit_currency);
             $("#price_open_currency_"+current_id).html(number_format(price_open_currency,2));
             calculate_total();
@@ -596,6 +596,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         $(document).off('input','#price_open_other_currency');
         $(document).on('input', '#price_open_other_currency', function()
         {
+            calculate_total();
             if(isNaN($('#price_open_other_currency').val()))
             {
                 var price_open_other_currency=0;
@@ -605,7 +606,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 var price_open_other_currency=parseFloat($('#price_open_other_currency').val());
             }
             $('#lbl_price_open_other_currency').html(number_format(price_open_other_currency,2))
-            calculate_total();
         })
     })
 </script>

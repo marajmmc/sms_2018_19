@@ -206,7 +206,6 @@ class Lc_expense extends Root_Controller
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->json_return($ajax);
             }
-
             $result=Query_helper::get_info($this->config->item('table_sms_lc_open'),'*',array('id ='.$id, 'status_open = "'.$this->config->item('system_status_active').'"'),1);
             if(!$result)
             {
@@ -214,6 +213,10 @@ class Lc_expense extends Root_Controller
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid LC.';
                 $this->json_return($ajax);
+            }
+            if($result['status_release']==$this->config->item('system_status_pending'))
+            {
+                $item_head['price_release_other_variety_taka']=$item_head['price_complete_other_variety_taka'];
             }
         }
         else
@@ -267,7 +270,6 @@ class Lc_expense extends Root_Controller
         $item_head['user_expense_updated']=$user->user_id;
         $this->db->set('revision_expense_count', 'revision_expense_count+1', FALSE);
         Query_helper::update($this->config->item('table_sms_lc_open'),$item_head,array('id='.$id));
-
         $this->db->trans_complete();   //DB Transaction Handle END
         if ($this->db->trans_status() === TRUE)
         {
@@ -291,7 +293,6 @@ class Lc_expense extends Root_Controller
 
 
     }
-
     private function check_validation()
     {
        /*$items=$this->input->post('items');

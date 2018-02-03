@@ -149,10 +149,10 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                                 </td>
                                 <td class="text-center"> <?php if($data['pack_size_name']==0){echo "Bulk";}else{echo $data['pack_size_name'];}?></td>
                                 <td><?php echo $data['warehouse_name']?> </td>
-                                <td class="text-right"><label class="control-label" for=""><?php echo number_format($data['quantity_release'],3)?></label></td>
-                                <td class="text-right"><label class="control-label" for=""><?php echo number_format($quantity_release_kg,3)?></label></td>
-                                <td class="text-right"><label class="control-label" for=""><?php echo number_format($data['quantity_receive'],3); ?></label></td>
-                                <td class="text-right" ><label class="control-label "><?php echo number_format($quantity_receive_kg,3); ?></label></td>
+                                <td class="text-right"><label class="control-label" for=""><?php echo number_format($data['quantity_release'],3,'.','')?></label></td>
+                                <td class="text-right"><label class="control-label" for=""><?php echo number_format($quantity_release_kg,3,'.','')?></label></td>
+                                <td class="text-right"><label class="control-label" for=""><?php echo number_format($data['quantity_receive'],3,'.',''); ?></label></td>
+                                <td class="text-right" ><label class="control-label "><?php echo number_format($quantity_receive_kg,3,'.',''); ?></label></td>
                             </tr>
                         <?php
                         }
@@ -161,9 +161,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <tfoot>
                         <tr>
                             <th colspan="4" class="text-right"><?php echo $this->lang->line('LABEL_TOTAL_KG')?></th>
-                            <th class="text-right"><label class="control-label"><?php echo number_format($quantity_total_release_kg,3);?></label></th>
+                            <th class="text-right"><label class="control-label"><?php echo number_format($quantity_total_release_kg,3,'.','');?></label></th>
                             <th>&nbsp;</th>
-                            <th class="text-right"><label class="control-label" id="lbl_quantity_total_receive_kg"><?php echo number_format($quantity_total_receive_kg,3);?></label></th>
+                            <th class="text-right"><label class="control-label" id="lbl_quantity_total_receive_kg"><?php echo number_format($quantity_total_receive_kg,3,'.','');?></label></th>
                         </tr>
                         </tfoot>
                     <?php

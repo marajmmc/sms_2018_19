@@ -382,6 +382,7 @@ class Lc_open extends Root_Controller
             $this->db->join($this->config->item('table_login_setup_variety_principals').' vp','vp.variety_id = v.id AND vp.principal_id = '.$data['item']['principal_id'].' AND vp.revision = 1','INNER');
             $this->db->join($this->config->item('table_login_setup_classification_vpack_size').' pack','pack.id = lcd.pack_size_id','LEFT');
             $this->db->where('lcd.lc_id',$item_id);
+            $this->db->order_by('lcd.id','ASC');
             $data['items']=$this->db->get()->result_array();
 
             //get bank account

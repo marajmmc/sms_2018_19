@@ -167,15 +167,15 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                                     <?php echo $data['price_unit_currency']?>
                                     <input type="hidden" value="<?php echo $data['price_unit_currency']; ?>" class="form-control float_type_positive price_unit_currency" id="price_unit_currency_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][price_unit_currency]">
                                 </td>
-                                <td class="text-right"><label class="control-label" for=""><?php echo number_format($data['quantity_open'],3)?></label></td>
-                                <td class="text-right"><label class="control-label" for=""><?php echo number_format($quantity_open_kg,3)?></label></td>
+                                <td class="text-right"><label class="control-label" for=""><?php echo number_format($data['quantity_open'],3,'.','')?></label></td>
+                                <td class="text-right"><label class="control-label" for=""><?php echo number_format($quantity_open_kg,3,'.','')?></label></td>
                                 <td class="text-right"><label class="control-label" for=""><?php echo number_format(($data['quantity_open']*$data['price_unit_currency']),2)?></label></td>
                                 <td>
                                     <input type="text" value="<?php echo $quantity_release; ?>" class="form-control float_type_positive quantity_release" id="quantity_release_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][quantity_release]">
                                 </td>
                                 <td class="text-right" >
                                     <label class="control-label quantity_release_kg" id="quantity_release_kg_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>">
-                                        <?php echo number_format($quantity_release_kg,3); ?>
+                                        <?php echo number_format($quantity_release_kg,3,'.',''); ?>
                                     </label>
                                 </td>
                                 <td class="text-right">
@@ -191,10 +191,10 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <tfoot>
                         <tr>
                             <th colspan="4" class="text-right"><?php echo $this->lang->line('LABEL_TOTAL_KG')?> & <?php echo $this->lang->line('LABEL_TOTAL_CURRENCY')?></th>
-                            <th class="text-right"><label class="control-label"><?php echo number_format($quantity_open_total_kg,3);?></label></th>
+                            <th class="text-right"><label class="control-label"><?php echo number_format($quantity_open_total_kg,3,'.','');?></label></th>
                             <th class="text-right"><label class="control-label"><?php echo number_format($item['price_open_variety_currency'],2);?></label></th>
                             <th>&nbsp;</th>
-                            <th class="text-right"><label class="control-label" id="lbl_quantity_release_total_kg"><?php echo number_format($quantity_release_total_kg,3);?></label></th>
+                            <th class="text-right"><label class="control-label" id="lbl_quantity_release_total_kg"><?php echo number_format($quantity_release_total_kg,3,'.','');?></label></th>
                             <th class="text-right">
                                 <label class="control-label" id="lbl_price_variety_total_release_currency">
                                     <?php
@@ -286,7 +286,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             quantity_release_total_kg+=parseFloat($('#quantity_release_kg_'+current_id).html().replace(/,/g,''));
             price_release_currency+=parseFloat($('#price_release_currency_'+current_id).html().replace(/,/g,''));
         });
-        $('#lbl_quantity_release_total_kg').html(number_format(quantity_release_total_kg,3));
+        $('#lbl_quantity_release_total_kg').html(number_format(quantity_release_total_kg,3,'.',''));
         $('#lbl_price_variety_total_release_currency').html(number_format(price_release_currency,2));
         if(isNaN($('#price_release_other_currency').val()))
         {
@@ -326,7 +326,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             {
                 quantity_release_kg=parseFloat((pack_size*quantity_release)/1000);
             }
-            $("#quantity_release_kg_"+current_id).html(number_format(quantity_release_kg,3));
+            $("#quantity_release_kg_"+current_id).html(number_format(quantity_release_kg,3,'.',''));
             var price_release_currency=(quantity_release*price_unit_currency);
             $("#price_release_currency_"+current_id).html(number_format(price_release_currency,2));
             calculate_total()

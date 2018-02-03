@@ -197,6 +197,7 @@ class Lc_receive extends Root_Controller
             $this->db->join($this->config->item('table_login_setup_classification_vpack_size').' pack','pack.id = lcd.pack_size_id','LEFT');
             $this->db->where('lcd.lc_id',$item_id);
             $this->db->where('lcd.quantity_open >0');
+            $this->db->order_by('lcd.id','ASC');
             $data['items']=$this->db->get()->result_array();
 
             $data['warehouses']=Query_helper::get_info($this->config->item('table_login_basic_setup_warehouse'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
@@ -411,6 +412,7 @@ class Lc_receive extends Root_Controller
             $this->db->join($this->config->item('table_login_basic_setup_warehouse').' warehouse','warehouse.id = lcd.receive_warehouse_id','LEFT');
             $this->db->where('lcd.lc_id',$item_id);
             $this->db->where('lcd.quantity_open >0');
+            $this->db->order_by('lcd.id','ASC');
             $data['items']=$this->db->get()->result_array();
             $item_zero_count=0;
             foreach($data['items'] as $item)

@@ -160,13 +160,13 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                                 <td class="text-center">
                                     <?php echo $data['price_unit_currency']?>
                                 </td>
-                                <td class="text-right"><label class="control-label" for=""><?php echo number_format($data['quantity_open'],3)?></label></td>
-                                <td class="text-right"><label class="control-label" for=""><?php echo number_format($quantity_open_kg,3)?></label></td>
+                                <td class="text-right"><label class="control-label" for=""><?php echo number_format($data['quantity_open'],3,'.','')?></label></td>
+                                <td class="text-right"><label class="control-label" for=""><?php echo number_format($quantity_open_kg,3,'.','')?></label></td>
                                 <td class="text-right"><label class="control-label" for=""><?php echo number_format(($data['quantity_open']*$data['price_unit_currency']),2)?></label></td>
-                                <td class="text-right"><label class="control-label" for=""><?php echo number_format(($data['quantity_release']),3)?></label></td>
+                                <td class="text-right"><label class="control-label" for=""><?php echo number_format(($data['quantity_release']),3,'.','')?></label></td>
                                 <td class="text-right" >
                                     <label class="control-label quantity_release_kg" id="quantity_release_kg_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>">
-                                        <?php echo number_format($quantity_release_kg,3); ?>
+                                        <?php echo number_format($quantity_release_kg,3,'.',''); ?>
                                     </label>
                                 </td>
                                 <td class="text-right">
@@ -182,10 +182,10 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <tfoot>
                         <tr>
                             <th colspan="4" class="text-right"><?php echo $this->lang->line('LABEL_TOTAL_KG')?> & <?php echo $this->lang->line('LABEL_TOTAL_CURRENCY')?></th>
-                            <th class="text-right"><label class="control-label"><?php echo number_format($quantity_open_total_kg,3);?></label></th>
+                            <th class="text-right"><label class="control-label"><?php echo number_format($quantity_open_total_kg,3,'.','');?></label></th>
                             <th class="text-right"><label class="control-label"><?php echo number_format($item['price_open_variety_currency'],2);?></label></th>
                             <th>&nbsp;</th>
-                            <th class="text-right"><label class="control-label"><?php echo number_format($quantity_release_total_kg,3);?></label></th>
+                            <th class="text-right"><label class="control-label"><?php echo number_format($quantity_release_total_kg,3,'.','');?></label></th>
                             <th class="text-right"><label class="control-label"> <?php echo number_format($item['price_release_variety_currency'],2); ?></label>
                             </th>
                         </tr>
