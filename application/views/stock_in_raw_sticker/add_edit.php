@@ -37,25 +37,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             <div class="clearfix"></div>
         </div>
 
-        <?php if($item['id']>0){?>
-            <div class="row show-grid">
-                <?php if(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)){?>
-                    <div class="row show-grid">
-                        <div class="col-xs-4">
-                            <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_STOCK_IN');?><span style="color:#FF0000">*</span></label>
-                        </div>
-                        <div class="col-sm-4 col-xs-8">
-                            <input type="text" name="item[date_stock_in]" class="form-control datepicker" value="<?php echo System_helper::display_date($item['date_stock_in']);?>"/>
-                        </div>
-                    </div>
-                <?php } else{?>
-                    <div class="col-sm-4 col-xs-8">
-                        <?php echo System_helper::display_date($item['date_stock_in']);?>
-
-                    </div>
-                <?php } ?>
-            </div>
-        <?php }else{?>
+        <div class="row show-grid">
             <div class="row show-grid">
                 <div class="col-xs-4">
                     <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_STOCK_IN');?><span style="color:#FF0000">*</span></label>
@@ -64,7 +46,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <input type="text" name="item[date_stock_in]" class="form-control datepicker" value="<?php echo System_helper::display_date($item['date_stock_in']);?>"/>
                 </div>
             </div>
-        <?php } ?>
+        </div>
 
         <div class="row show-grid">
             <div class="col-xs-4">
@@ -130,7 +112,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                             <input type="hidden"  id="variety_id<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][variety_id]" value="<?php echo $sticker['variety_id']; ?>" />
                         </td>
                         <td>
-                            <label><?php if($sticker['pack_size_id']==0){echo 'Bulk';}else{echo $sticker['pack_size_name'];} ?></label>
+                            <label><?php echo $sticker['pack_size_name'];?></label>
                             <input type="hidden" id="pack_size_id<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][pack_size_id]" value="<?php echo $sticker['pack_size_id']; ?>" />
 
                         </td>
@@ -199,7 +181,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <div style="display: none;" class="pack_size_id_container">
                     <select class="form-control pack_size_id">
                         <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                        <option value="0">Bulk</option>
                         <?php
                         foreach($packs as $pack)
                         {?>

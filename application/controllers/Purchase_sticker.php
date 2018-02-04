@@ -208,10 +208,10 @@ class Purchase_sticker extends Root_Controller
             $this->db->order_by('sticker_details.id','ASC');
             $data['purchase_sticker']=$this->db->get()->result_array();
 
-            $data['suppliers']=Query_helper::get_info($this->config->item('table_login_basic_setup_supplier'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
-            $data['crops']=Query_helper::get_info($this->config->item('table_login_setup_classification_crops'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
-            $data['packs']=Query_helper::get_info($this->config->item('table_login_setup_classification_vpack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
-            $data['title']="Edit Purchase (Sticker Foil)";
+            $data['suppliers']=Query_helper::get_info($this->config->item('table_login_basic_setup_supplier'),array('id value','name text'),array('status !="'.$this->config->item('system_status_delete').'"'));
+            $data['crops']=Query_helper::get_info($this->config->item('table_login_setup_classification_crops'),array('id value','name text'),array('status !="'.$this->config->item('system_status_delete').'"'));
+            $data['packs']=Query_helper::get_info($this->config->item('table_login_setup_classification_vpack_size'),array('id value','name text'),array('status !="'.$this->config->item('system_status_delete').'"'));
+            $data['title']="Edit Purchase (Sticker)";
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/add_edit",$data,true));
             if($this->message)
@@ -666,7 +666,7 @@ class Purchase_sticker extends Root_Controller
         {
             $this->load->library('form_validation');
             $this->form_validation->set_rules('item[date_purchase]',$this->lang->line('LABEL_DATE_PURCHASE'),'required');
-            $this->form_validation->set_rules('item[supplier_id]',$this->lang->line('LABEL_SUPPLIER'),'required');
+            $this->form_validation->set_rules('item[supplier_id]',$this->lang->line('LABEL_SUPPLIER_NAME'),'required');
             if($this->form_validation->run() == FALSE)
             {
                 $this->message=validation_errors();

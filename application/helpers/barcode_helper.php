@@ -61,4 +61,8 @@ class Barcode_helper
     {
         return 'RFI'.str_pad($increment_id,5,0,STR_PAD_LEFT); //Raw Foil Stock In
     }
+    public static function get_barcode_raw_master_stock_out($increment_id)
+    {
+        return 'RMO'.str_pad($increment_id,5,0,STR_PAD_LEFT); //Raw Master Stock In
+    }
 }

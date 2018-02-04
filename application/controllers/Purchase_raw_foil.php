@@ -195,7 +195,7 @@ class Purchase_raw_foil extends Root_Controller
                 $ajax['system_message']='Invalid Try.';
                 $this->json_return($ajax);
             }
-            $data['suppliers']=Query_helper::get_info($this->config->item('table_login_basic_setup_supplier'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
+            $data['suppliers']=Query_helper::get_info($this->config->item('table_login_basic_setup_supplier'),array('id value','name text'),array('status !="'.$this->config->item('system_status_delete').'"'));
             $data['title']="Edit Purchase (Common Foil)";
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/add_edit",$data,true));
@@ -474,7 +474,7 @@ class Purchase_raw_foil extends Root_Controller
         {
             $this->load->library('form_validation');
             $this->form_validation->set_rules('item[date_purchase]',$this->lang->line('LABEL_DATE_PURCHASE'),'required');
-            $this->form_validation->set_rules('item[supplier_id]',$this->lang->line('LABEL_SUPPLIER'),'required');
+            $this->form_validation->set_rules('item[supplier_id]',$this->lang->line('LABEL_SUPPLIER_NAME'),'required');
             $this->form_validation->set_rules('item[quantity_supply]',$this->lang->line('LABEL_QUANTITY_SUPPLY'),'required');
             $this->form_validation->set_rules('item[quantity_receive]',$this->lang->line('LABEL_QUANTITY_RECEIVE'),'required');
             if($this->form_validation->run() == FALSE)
