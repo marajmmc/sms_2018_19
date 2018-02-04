@@ -119,7 +119,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 }
                 ?>
                 </tbody>
-
             </table>
         </div>
     </div>
@@ -137,7 +136,6 @@ $footer_image=base_url('images/print/footer.jpg');
         <tr>
             <th colspan="7">
                 <img src="<?php echo $header_image;  ?>" style="width: 100%">
-
             </th>
         </tr>
 <!--        <tr>-->

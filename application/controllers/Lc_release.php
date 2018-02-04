@@ -449,6 +449,12 @@ class Lc_release extends Root_Controller
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->json_return($ajax);
             }
+            if(!($item['status_release']>0) && !is_numeric($item['status_release']))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='Release LC is required.';
+                $this->json_return($ajax);
+            }
             $result=Query_helper::get_info($this->config->item('table_sms_lc_open'),'*',array('id ='.$id, 'status_open != "'.$this->config->item('system_status_delete').'"', 'status_open_forward = "'.$this->config->item('system_status_yes').'"', 'status_release = "'.$this->config->item('system_status_pending').'"'),1);
             if(!$result)
             {
@@ -478,28 +484,21 @@ class Lc_release extends Root_Controller
             $this->json_return($ajax);
         }
 
-        if($item['status_release']==$this->config->item('system_status_complete'))
+        $this->db->trans_start();  //DB Transaction Handle START
+        $item['date_release_completed']=$time;
+        $item['user_release_completed']=$user->user_id;
+        Query_helper::update($this->config->item('table_sms_lc_open'),$item,array('id='.$id));
+        $this->db->trans_complete();   //DB Transaction Handle END
+        if ($this->db->trans_status() === TRUE)
         {
-            $item['date_release_completed']=$time;
-            $item['user_release_completed']=$user->user_id;
-            $update_lc=Query_helper::update($this->config->item('table_sms_lc_open'),$item,array('id='.$id));
-            if($update_lc)
-            {
-                $this->message=$this->lang->line("MSG_SAVED_SUCCESS");
-                $this->system_list();
-            }
-            else
-            {
-                $ajax['status']=false;
-                $ajax['system_message']=$this->lang->line("MSG_SAVED_FAIL");
-                $this->json_return($ajax);
-            }
+            $this->message=$this->lang->line("MSG_SAVED_SUCCESS");
+            $this->system_list();
         }
         else
         {
             $ajax['status']=false;
-            $this->message=$this->lang->line("MSG_SAVED_SUCCESS");
-            $this->system_list();
+            $ajax['system_message']=$this->lang->line("MSG_SAVED_FAIL");
+            $this->json_return($ajax);
         }
     }
     private function check_validation()

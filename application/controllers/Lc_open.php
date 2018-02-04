@@ -633,16 +633,8 @@ class Lc_open extends Root_Controller
         $this->db->trans_complete();   //DB Transaction Handle END
         if ($this->db->trans_status() === TRUE)
         {
-            $save_and_new=$this->input->post('system_save_new_status');
             $this->message=$this->lang->line("MSG_SAVED_SUCCESS");
-            if($save_and_new==1)
-            {
-                $this->system_add();
-            }
-            else
-            {
-                $this->system_list();
-            }
+            $this->system_list();
         }
         else
         {
@@ -906,7 +898,7 @@ class Lc_open extends Root_Controller
         $id = $this->input->post("id");
         $user = User_helper::get_user();
         $time=time();
-        $data=$this->input->post('item');
+        $item_head=$this->input->post('item');
         if($id>0)
         {
             if(!((isset($this->permissions['action7']) && ($this->permissions['action7']==1))))
@@ -914,21 +906,26 @@ class Lc_open extends Root_Controller
                 $ajax['status']=false;
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->json_return($ajax);
-
-                $result=Query_helper::get_info($this->config->item('table_sms_lc_open'),'*',array('id ='.$id, 'status_open != "'.$this->config->item('system_status_delete').'"'),1);
-                if(!$result)
-                {
-                    System_helper::invalid_try('Update Forwarded LC Non Exists',$id);
-                    $ajax['status']=false;
-                    $ajax['system_message']='Invalid LC.';
-                    $this->json_return($ajax);
-                }
-                if($result['status_open_forward']==$this->config->item('system_status_yes'))
-                {
-                    $ajax['status']=false;
-                    $ajax['system_message']='Already LC Forwarded.';
-                    $this->json_return($ajax);
-                }
+            }
+            if(!($item_head['status_open_forward']>0) && !is_numeric($item_head['status_open_forward']))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='Forward LC is required.';
+                $this->json_return($ajax);
+            }
+            $result=Query_helper::get_info($this->config->item('table_sms_lc_open'),'*',array('id ='.$id, 'status_open != "'.$this->config->item('system_status_delete').'"'),1);
+            if(!$result)
+            {
+                System_helper::invalid_try('Update Forwarded LC Non Exists',$id);
+                $ajax['status']=false;
+                $ajax['system_message']='Invalid LC.';
+                $this->json_return($ajax);
+            }
+            if($result['status_open_forward']==$this->config->item('system_status_yes'))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='Already LC Forwarded.';
+                $this->json_return($ajax);
             }
         }
         else
@@ -938,29 +935,23 @@ class Lc_open extends Root_Controller
             $this->json_return($ajax);
         }
 
-        if($data['status_open_forward']==$this->config->item('system_status_yes'))
+        $this->db->trans_start();  //DB Transaction Handle START
+
+        $item_head['date_open_forward']=$time;
+        $item_head['user_open_forward']=$user->user_id;
+        Query_helper::update($this->config->item('table_sms_lc_open'),$item_head,array('id='.$id));
+
+        $this->db->trans_complete();   //DB Transaction Handle END
+        if ($this->db->trans_status() === TRUE)
         {
-            $data['date_open_forward']=$time;
-            $data['user_open_forward']=$user->user_id;
-            //$this->db->set('revision_count', 'revision_count+1', FALSE);
-            $update_lc=Query_helper::update($this->config->item('table_sms_lc_open'),$data,array('id='.$id));
-            if($update_lc)
-            {
-                $this->message=$this->lang->line("MSG_SAVED_SUCCESS");
-                $this->system_list();
-            }
-            else
-            {
-                $ajax['status']=false;
-                $ajax['system_message']=$this->lang->line("MSG_SAVED_FAIL");
-                $this->json_return($ajax);
-            }
+            $this->message=$this->lang->line("MSG_SAVED_SUCCESS");
+            $this->system_list();
         }
         else
         {
             $ajax['status']=false;
-            $this->message=$this->lang->line("MSG_SAVED_SUCCESS");
-            $this->system_list();
+            $ajax['system_message']=$this->lang->line("MSG_SAVED_FAIL");
+            $this->json_return($ajax);
         }
     }
     private function check_validation()

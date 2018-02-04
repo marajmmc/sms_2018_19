@@ -273,16 +273,8 @@ class Lc_expense extends Root_Controller
         $this->db->trans_complete();   //DB Transaction Handle END
         if ($this->db->trans_status() === TRUE)
         {
-            $save_and_new=$this->input->post('system_save_new_status');
             $this->message=$this->lang->line("MSG_SAVED_SUCCESS");
-            if($save_and_new==1)
-            {
-                $this->system_add();
-            }
-            else
-            {
-                $this->system_list();
-            }
+            $this->system_list();
         }
         else
         {
@@ -290,8 +282,6 @@ class Lc_expense extends Root_Controller
             $ajax['system_message']=$this->lang->line("MSG_SAVED_FAIL");
             $this->json_return($ajax);
         }
-
-
     }
     private function check_validation()
     {
