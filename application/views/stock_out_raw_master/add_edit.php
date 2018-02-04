@@ -40,10 +40,10 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         <div class="row show-grid">
             <div class="row show-grid">
                 <div class="col-xs-4">
-                    <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_STOCK_IN');?><span style="color:#FF0000">*</span></label>
+                    <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_STOCK_OUT');?><span style="color:#FF0000">*</span></label>
                 </div>
                 <div class="col-sm-4 col-xs-8">
-                    <input type="text" name="item[date_stock_in]" class="form-control datepicker" value="<?php echo System_helper::display_date($item['date_stock_in']);?>"/>
+                    <input type="text" name="item[date_stock_out]" class="form-control datepicker" value="<?php echo System_helper::display_date($item['date_stock_out']);?>"/>
                 </div>
             </div>
         </div>
@@ -51,23 +51,16 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         <div class="row show-grid">
             <div class="col-xs-4">
                 <label for="purpose" class="control-label pull-right"><?php echo $this->lang->line('LABEL_PURPOSE'); ?></label>
-
             </div>
-            <?php
-            if($item['purpose'])
-            {
-                ?>
-                <label for="purpose" class="control-label"><?php echo $item['purpose']; ?></label>
-            <?php
-            }
-            else
-            {
-                ?>
+            <?php if($item['purpose']){?>
+                <div class="col-sm-4 col-xs-8">
+                    <label class="control-label"><?php echo $item['purpose']; ?></label>
+                </div>
+            <?php } else{?>
                 <div class="col-sm-4 col-xs-8">
                     <select id="purpose" name="item[purpose]" class="form-control">
                         <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                        <option value="<?php echo $CI->config->item('system_purpose_variety_stock_in');?>" <?php if(isset($item['purpose'])){if($item['purpose']==$CI->config->item('system_purpose_variety_stock_in')){echo "selected";}}?>><?php echo $this->lang->line('LABEL_STOCK_IN');?></option>
-                        <option value="<?php echo $CI->config->item('system_purpose_variety_excess');?>" <?php if(isset($item['purpose'])){if($item['purpose']==$CI->config->item('system_purpose_variety_excess')){echo "selected";}}?>><?php echo $this->lang->line('LABEL_EXCESS');?></option>
+                        <option value="<?php echo $CI->config->item('system_purpose_raw_stock_damage');?>" <?php if(isset($item['purpose'])){if($item['purpose']==$CI->config->item('system_purpose_raw_stock_damage')){echo "selected";}}?>><?php echo $this->lang->line('LABEL_RAW_STOCK_OUT_DAMAGE');?></option>
                     </select>
                 </div>
             <?php } ?>
@@ -97,7 +90,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 </thead>
                 <tbody>
                 <?php
-                foreach($stock_in_master as $index=>$master)
+                foreach($stock_out_master as $index=>$master)
                 {
                     ?>
                     <tr>
@@ -135,7 +128,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
             </div>
             <div class="col-xs-4">
-                <button type="button" class="btn btn-warning system_button_add_more" data-current-id="<?php echo sizeof($stock_in_master);?>"><?php echo $CI->lang->line('LABEL_ADD_MORE');?></button>
+                <button type="button" class="btn btn-warning system_button_add_more" data-current-id="<?php echo sizeof($stock_out_master);?>"><?php echo $CI->lang->line('LABEL_ADD_MORE');?></button>
             </div>
             <div class="col-xs-4">
 

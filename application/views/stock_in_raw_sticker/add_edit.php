@@ -294,8 +294,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             $("#variety_id_"+active_id).val("");
             $("#pack_size_id_"+active_id).val("");
             $("#stock_current_"+active_id).html("");
-            $("#quantity_supply_"+active_id).val("");
-            $("#quantity_receive_"+active_id).val("");
+            $("#quantity_"+active_id).val("");
             var crop_type_id=$('#crop_type_id_'+active_id).val();
             $('#pack_size_id_container_'+active_id).hide();
             if(crop_type_id>0)
@@ -316,8 +315,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
             $("#pack_size_id_"+active_id).val("");
             $("#stock_current_"+active_id).html("");
-            $("#quantity_supply_"+active_id).val("");
-            $("#quantity_receive_"+active_id).val("");
+            $("#quantity_"+active_id).val("");
             var variety_id=$('#variety_id_'+active_id).val();
 
             if(variety_id>0)
@@ -336,8 +334,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             var active_id=$(this).attr('data-current-id');
 
             $("#stock_current_"+active_id).html("");
-            $("#quantity_supply_"+active_id).val("");
-            $("#quantity_receive_"+active_id).val("");
+            $("#quantity_"+active_id).val("");
             var variety_id=$('#variety_id_'+active_id).val();
             var pack_size_id=$('#pack_size_id_'+active_id).val();
             var packing_item='<?php echo $CI->config->item('system_sticker')?>';

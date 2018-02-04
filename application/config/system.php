@@ -37,3 +37,8 @@ $config['system_bank_account_purpose']['sale_receive']='Sale Receive';
 $config['system_master_foil']='Master';
 $config['system_common_foil']='Foil';
 $config['system_sticker']='Sticker';
+
+//Stock out purpose
+$config['system_purpose_raw_stock_damage']='Damage';
+
+

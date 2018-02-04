@@ -40,10 +40,10 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         <div class="row show-grid">
             <div class="row show-grid">
                 <div class="col-xs-4">
-                    <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_STOCK_IN');?><span style="color:#FF0000">*</span></label>
+                    <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_STOCK_OUT');?><span style="color:#FF0000">*</span></label>
                 </div>
                 <div class="col-sm-4 col-xs-8">
-                    <input type="text" name="item[date_stock_in]" class="form-control datepicker" value="<?php echo System_helper::display_date($item['date_stock_in']);?>"/>
+                    <input type="text" name="item[date_stock_out]" class="form-control datepicker" value="<?php echo System_helper::display_date($item['date_stock_out']);?>"/>
                 </div>
             </div>
         </div>
@@ -51,23 +51,16 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         <div class="row show-grid">
             <div class="col-xs-4">
                 <label for="purpose" class="control-label pull-right"><?php echo $this->lang->line('LABEL_PURPOSE'); ?></label>
-
             </div>
-            <?php
-            if($item['purpose'])
-            {
-                ?>
-                <label for="purpose" class="control-label"><?php echo $item['purpose']; ?></label>
-            <?php
-            }
-            else
-            {
-                ?>
+            <?php if($item['purpose']){?>
+                <div class="col-sm-4 col-xs-8">
+                    <label class="control-label"><?php echo $item['purpose']; ?></label>
+                </div>
+            <?php } else{?>
                 <div class="col-sm-4 col-xs-8">
                     <select id="purpose" name="item[purpose]" class="form-control">
                         <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                        <option value="<?php echo $CI->config->item('system_purpose_variety_stock_in');?>" <?php if(isset($item['purpose'])){if($item['purpose']==$CI->config->item('system_purpose_variety_stock_in')){echo "selected";}}?>><?php echo $this->lang->line('LABEL_STOCK_IN');?></option>
-                        <option value="<?php echo $CI->config->item('system_purpose_variety_excess');?>" <?php if(isset($item['purpose'])){if($item['purpose']==$CI->config->item('system_purpose_variety_excess')){echo "selected";}}?>><?php echo $this->lang->line('LABEL_EXCESS');?></option>
+                        <option value="<?php echo $CI->config->item('system_purpose_raw_stock_damage');?>" <?php if(isset($item['purpose'])){if($item['purpose']==$CI->config->item('system_purpose_raw_stock_damage')){echo "selected";}}?>><?php echo $this->lang->line('LABEL_RAW_STOCK_OUT_DAMAGE');?></option>
                     </select>
                 </div>
             <?php } ?>
@@ -97,30 +90,30 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 </thead>
                 <tbody>
                 <?php
-                foreach($stock_in_master as $index=>$master)
+                foreach($stock_out_sticker as $index=>$sticker)
                 {
                     ?>
                     <tr>
                         <td>
-                            <label><?php echo $master['crop_name']; ?></label>
+                            <label><?php echo $sticker['crop_name']; ?></label>
                         </td>
                         <td>
-                            <label><?php echo $master['crop_type_name']; ?></label>
+                            <label><?php echo $sticker['crop_type_name']; ?></label>
                         </td>
                         <td>
-                            <label><?php echo $master['variety_name']; ?></label>
-                            <input type="hidden"  id="variety_id<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][variety_id]" value="<?php echo $master['variety_id']; ?>" />
+                            <label><?php echo $sticker['variety_name']; ?></label>
+                            <input type="hidden"  id="variety_id<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][variety_id]" value="<?php echo $sticker['variety_id']; ?>" />
                         </td>
                         <td>
-                            <label><?php echo $master['pack_size_name']; ?></label>
-                            <input type="hidden" id="pack_size_id<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][pack_size_id]" value="<?php echo $master['pack_size_id']; ?>" />
+                            <label><?php echo $sticker['pack_size_name']; ?></label>
+                            <input type="hidden" id="pack_size_id<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][pack_size_id]" value="<?php echo $sticker['pack_size_id']; ?>" />
 
                         </td>
                         <td class="text-right">
-                            <label><?php $current_stock=System_helper::get_raw_stock(array($master['variety_id'])); if(isset($current_stock)){echo $current_stock[$master['variety_id']][$master['pack_size_id']][$CI->config->item('system_master_foil')]['current_stock'];}else{echo 0;}?></label>
+                            <label><?php $current_stock=System_helper::get_raw_stock(array($sticker['variety_id'])); if(isset($current_stock)){echo $current_stock[$sticker['variety_id']][$sticker['pack_size_id']][$CI->config->item('system_sticker')]['current_stock'];}else{echo 0;}?></label>
                         </td>
                         <td class="text-right">
-                            <input type="text" id="quantity_<?php echo $index+1;?>" value="<?php echo $master['quantity']; ?>" class="form-control text-right float_type_positive quantity" data-current-id="<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][quantity]">
+                            <input type="text" id="quantity_<?php echo $index+1;?>" value="<?php echo $sticker['quantity']; ?>" class="form-control text-right float_type_positive quantity" data-current-id="<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][quantity]">
                         </td>
                     </tr>
                 <?php
@@ -135,7 +128,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
             </div>
             <div class="col-xs-4">
-                <button type="button" class="btn btn-warning system_button_add_more" data-current-id="<?php echo sizeof($stock_in_master);?>"><?php echo $CI->lang->line('LABEL_ADD_MORE');?></button>
+                <button type="button" class="btn btn-warning system_button_add_more" data-current-id="<?php echo sizeof($stock_out_sticker);?>"><?php echo $CI->lang->line('LABEL_ADD_MORE');?></button>
             </div>
             <div class="col-xs-4">
 
@@ -336,7 +329,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             $("#quantity_"+active_id).val("");
             var variety_id=$('#variety_id_'+active_id).val();
             var pack_size_id=$('#pack_size_id_'+active_id).val();
-            var packing_item='<?php echo $CI->config->item('system_master_foil')?>';
+            var packing_item='<?php echo $CI->config->item('system_sticker')?>';
 
             if(variety_id>0 && pack_size_id!='' && packing_item!='')
             {

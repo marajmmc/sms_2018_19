@@ -63,6 +63,10 @@ class Barcode_helper
     }
     public static function get_barcode_raw_master_stock_out($increment_id)
     {
-        return 'RMO'.str_pad($increment_id,5,0,STR_PAD_LEFT); //Raw Master Stock In
+        return 'RMO'.str_pad($increment_id,5,0,STR_PAD_LEFT); //Raw Master Stock Out
+    }
+    public static function get_barcode_raw_sticker_stock_out($increment_id)
+    {
+        return 'RSO'.str_pad($increment_id,5,0,STR_PAD_LEFT); //Raw Sticker Stock Out
     }
 }

@@ -321,7 +321,7 @@ $lang['LABEL_STATUS_RELEASE']='Release Status';
 $lang['LABEL_STATUS_RECEIVE']='Receive Status';
 $lang['LABEL_STATUS_LC']='LC Status';*/
 
-// Raw Materials Lang added by Saiful
+// Raw Stock Lang added by Saiful
 
 $lang['LABEL_SUPPLIER_NAME']='Supplier Name';
 $lang['LABEL_QUANTITY_SUPPLY']='Supply Quantity';
@@ -330,3 +330,6 @@ $lang['LABEL_QUANTITY_RECEIVE']='Receive Quantity';
 $lang['LABEL_DATE_PURCHASE']='Purchase date';
 
 $lang['LABEL_QUANTITY_TOTAL_RECEIVE'] = 'Total Quantity (Receive)';
+
+//Raw stock out purpose lang
+$lang['LABEL_RAW_STOCK_OUT_DAMAGE'] = 'Damage';

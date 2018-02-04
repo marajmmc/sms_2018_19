@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Stock_in_raw_master extends Root_Controller
+class Stock_out_raw_sticker extends Root_Controller
 {
     public $message;
     public $permissions;
@@ -9,8 +9,8 @@ class Stock_in_raw_master extends Root_Controller
     public function __construct()
     {
         parent::__construct();
-        $this->permissions=User_helper::get_permission('Stock_in_raw_master');
-        $this->controller_url='stock_in_raw_master';
+        $this->permissions=User_helper::get_permission('Stock_out_raw_sticker');
+        $this->controller_url='stock_out_raw_sticker';
     }
     public function index($action='list',$id=0)
     {
@@ -26,7 +26,7 @@ class Stock_in_raw_master extends Root_Controller
         {
             $this->system_add();
         }
-        elseif($action=="edit")
+        elseif($action=='edit')
         {
             $this->system_edit($id);
         }
@@ -62,7 +62,7 @@ class Stock_in_raw_master extends Root_Controller
             $user = User_helper::get_user();
             $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
             $data['system_preference_items']['barcode']= 1;
-            $data['system_preference_items']['date_stock_in']= 1;
+            $data['system_preference_items']['date_stock_out']= 1;
             $data['system_preference_items']['purpose']= 1;
             $data['system_preference_items']['quantity_total']= 1;
             $data['system_preference_items']['remarks']= 1;
@@ -85,7 +85,7 @@ class Stock_in_raw_master extends Root_Controller
                 }
             }
 
-            $data['title']='Stock In (Master Foil) List';
+            $data['title']='Stock Out (Sticker) List';
             $ajax['status']=true;
             $ajax['system_content'][]=array('id'=>'#system_content','html'=>$this->load->view($this->controller_url.'/list',$data,true));
             if($this->message)
@@ -119,18 +119,17 @@ class Stock_in_raw_master extends Root_Controller
         {
             $pagesize=$pagesize*2;
         }
-
-        $this->db->from($this->config->item('table_sms_stock_in_raw_master').' stock_in_master');
-        $this->db->select('stock_in_master.*');
-        $this->db->where('stock_in_master.status !=',$this->config->item('system_status_delete'));
-        $this->db->order_by('stock_in_master.date_stock_in','DESC');
-        $this->db->order_by('stock_in_master.id','DESC');
+        $this->db->from($this->config->item('table_sms_stock_out_raw_sticker').' stock_out');
+        $this->db->select('stock_out.*');
+        $this->db->where('stock_out.status !=',$this->config->item('system_status_delete'));
+        $this->db->order_by('stock_out.date_stock_out','DESC');
+        $this->db->order_by('stock_out.id','DESC');
         $this->db->limit($pagesize,$current_records);
         $items=$this->db->get()->result_array();
         foreach($items as &$item)
         {
-            $item['date_stock_in']=System_helper::display_date($item['date_stock_in']);
-            $item['barcode']=Barcode_helper::get_barcode_raw_master_stock_in($item['id']);
+            $item['date_stock_out']=System_helper::display_date($item['date_stock_out']);
+            $item['barcode']=Barcode_helper::get_barcode_raw_sticker_stock_out($item['id']);
         }
         $this->json_return($items);
     }
@@ -139,16 +138,16 @@ class Stock_in_raw_master extends Root_Controller
         if(isset($this->permissions['action1']) && ($this->permissions['action1']==1))
         {
             $time=time();
-            $data['title']="Stock In Master Foil";
+            $data['title']="Stock Out (Sticker)";
             $data["item"] = Array(
                 'id'=>'',
-                'date_stock_in' => $time,
+                'date_stock_out' => $time,
                 'purpose' => '',
-                'remarks' => ''
+                'remarks' => '',
             );
             $data['crops']=Query_helper::get_info($this->config->item('table_login_setup_classification_crops'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $data['packs']=Query_helper::get_info($this->config->item('table_login_setup_classification_vpack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
-            $data['stock_in_master']=array();
+            $data['stock_out_sticker']=array();
             $ajax['system_page_url']=site_url($this->controller_url."/index/add");
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/add_edit",$data,true));
@@ -177,7 +176,7 @@ class Stock_in_raw_master extends Root_Controller
             {
                 $item_id=$this->input->post('id');
             }
-            $data['item']=Query_helper::get_info($this->config->item('table_sms_stock_in_raw_master'),'*',array('status !="'.$this->config->item('system_status_delete').'"','id ='.$item_id),1);
+            $data['item']=Query_helper::get_info($this->config->item('table_sms_stock_out_raw_sticker'),'*',array('status !="'.$this->config->item('system_status_delete').'"','id ='.$item_id),1);
             if(!$data['item'])
             {
                 System_helper::invalid_try('Edit Non Exists',$item_id);
@@ -185,26 +184,27 @@ class Stock_in_raw_master extends Root_Controller
                 $ajax['system_message']='Invalid Try.';
                 $this->json_return($ajax);
             }
-            $this->db->from($this->config->item('table_sms_stock_in_raw_master').' master_stock_in');
-            $this->db->select('master_stock_in.*');
-            $this->db->select('master_details.variety_id, master_details.pack_size_id, master_details.quantity');
-            $this->db->join($this->config->item('table_sms_stock_in_raw_master_details').' master_details','master_details.stock_in_id = master_stock_in.id','INNER');
+
+            $this->db->from($this->config->item('table_sms_stock_out_raw_sticker').' sticker_stock_out');
+            $this->db->select('sticker_stock_out.*');
+            $this->db->select('sticker_details.variety_id, sticker_details.pack_size_id, sticker_details.quantity');
+            $this->db->join($this->config->item('table_sms_stock_out_raw_sticker_details').' sticker_details','sticker_details.stock_out_id = sticker_stock_out.id','INNER');
             $this->db->select('variety.name variety_name');
-            $this->db->join($this->config->item('table_login_setup_classification_varieties').' variety','variety.id = master_details.variety_id','INNER');
+            $this->db->join($this->config->item('table_login_setup_classification_varieties').' variety','variety.id = sticker_details.variety_id','INNER');
             $this->db->select('v_pack_size.name pack_size_name');
-            $this->db->join($this->config->item('table_login_setup_classification_vpack_size').' v_pack_size','v_pack_size.id = master_details.pack_size_id','LEFT');
+            $this->db->join($this->config->item('table_login_setup_classification_vpack_size').' v_pack_size','v_pack_size.id = sticker_details.pack_size_id','LEFT');
             $this->db->select('type.name crop_type_name');
             $this->db->join($this->config->item('table_login_setup_classification_crop_types').' type','type.id = variety.crop_type_id','INNER');
             $this->db->select('crop.name crop_name');
             $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = type.crop_id','INNER');
-            $this->db->where('master_stock_in.id',$item_id);
-            $this->db->where('master_details.revision',1);
-            $this->db->order_by('master_details.id','ASC');
-            $data['stock_in_master']=$this->db->get()->result_array();
+            $this->db->where('sticker_stock_out.id',$item_id);
+            $this->db->where('sticker_details.revision',1);
+            $this->db->order_by('sticker_details.id','ASC');
+            $data['stock_out_sticker']=$this->db->get()->result_array();
 
             $data['crops']=Query_helper::get_info($this->config->item('table_login_setup_classification_crops'),array('id value','name text'),array('status !="'.$this->config->item('system_status_delete').'"'));
             $data['packs']=Query_helper::get_info($this->config->item('table_login_setup_classification_vpack_size'),array('id value','name text'),array('status !="'.$this->config->item('system_status_delete').'"'));
-            $data['title']="Edit Stock In (Master Foil)";
+            $data['title']="Edit Stock Out (Sticker)";
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/add_edit",$data,true));
             if($this->message)
@@ -229,9 +229,10 @@ class Stock_in_raw_master extends Root_Controller
         $old_item=array();
         $items=$this->input->post('items');
         $item_head = $this->input->post('item');
-        $packing_item=$this->config->item('system_master_foil');
+        $packing_item=$this->config->item('system_sticker');
 
         /*--Start-- Permission Checking */
+
         if($id>0)
         {
             if(!(isset($this->permissions['action2']) && ($this->permissions['action2']==1)))
@@ -240,7 +241,7 @@ class Stock_in_raw_master extends Root_Controller
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->json_return($ajax);
             }
-            $old_item=Query_helper::get_info($this->config->item('table_sms_stock_in_raw_master'),'*',array('status !="'.$this->config->item('system_status_delete').'"','id ='.$id),1);
+            $old_item=Query_helper::get_info($this->config->item('table_sms_stock_out_raw_sticker'),'*',array('status !="'.$this->config->item('system_status_delete').'"','id ='.$id),1);
             if(!$old_item)
             {
                 System_helper::invalid_try('Save Non Exists',$id);
@@ -266,7 +267,7 @@ class Stock_in_raw_master extends Root_Controller
         }
         /*--End-- Permission Checking */
 
-        // Getting old quantities and current stocks and counting total quantity
+        // Getting old quantities and current stocks and counting total
         $variety_ids=array();
         $old_quantities=array();
         $current_stocks=array();
@@ -279,10 +280,9 @@ class Stock_in_raw_master extends Root_Controller
                 $quantity_total+=$item['quantity'];
             }
             $current_stocks=System_helper::get_raw_stock($variety_ids);
-
             if($id>0)
             {
-                $results=Query_helper::get_info($this->config->item('table_sms_stock_in_raw_master_details'),'*',array('stock_in_id ='.$id,'revision ='.'1'));
+                $results=Query_helper::get_info($this->config->item('table_sms_stock_out_raw_sticker_details'),'*',array('stock_out_id ='.$id,'revision ='.'1'));
                 foreach($results as $result)
                 {
                     $old_quantities[$result['variety_id']][$result['pack_size_id']]=$result;
@@ -291,60 +291,73 @@ class Stock_in_raw_master extends Root_Controller
         }
         else
         {
-            //Minimum variety entry checking
+            /*--Start-- Minimum variety entry checking*/
             $ajax['status']=false;
-            $ajax['system_message']='At least one variety need to stock in.';
+            $ajax['system_message']='At least one variety need to stock out.';
             $this->json_return($ajax);
+            /*--End-- Minimum variety entry checking*/
         }
+
         /*--Start-- Validation Checking*/
-        //checking incomplete entry (add more row) & Duplicate Entry Checking
+        //checking incomplete entry (add more row) & Duplicate Entry Checking & Negative current stock checking
         $duplicate_entry_checker=array();
         foreach($items as $item)
         {
             if($item['variety_id']==0 || $item['pack_size_id']<0 || $item['quantity']=='' ||(!($item['quantity']>=0)))
             {
                 $ajax['status']=false;
-                $ajax['system_message']='Unfinished stock in entry.';
+                $ajax['system_message']='Unfinished stock Out entry.';
                 $this->json_return($ajax);
             }
-
             if(isset($duplicate_entry_checker[$item['variety_id']][$item['pack_size_id']]))
             {
                 $duplicate_entry_checker[$item['variety_id']][$item['pack_size_id']]=false;
-            }
-            else
+            }else
             {
                 $duplicate_entry_checker[$item['variety_id']][$item['pack_size_id']]=true;
             }
             if($duplicate_entry_checker[$item['variety_id']][$item['pack_size_id']]==false)
             {
                 $ajax['status']=false;
-                $ajax['system_message']='You are trying to entry duplicate variety.';
+                $ajax['system_message']='Please You are trying to entry duplicate variety.';
                 $this->json_return($ajax);
             }
 
-        }
 
-        // Negative Stock Checking
-        if($id>0)
-        {
-            foreach($items as $item)
+            // Negative current stock checking
+
+            if(isset($current_stocks[$item['variety_id']][$item['pack_size_id']][$packing_item]))
             {
+                $current_stock=$current_stocks[$item['variety_id']][$item['pack_size_id']][$packing_item]['current_stock'];
                 if(isset($old_quantities[$item['variety_id']][$item['pack_size_id']]))
                 {
                     $old_value=$old_quantities[$item['variety_id']][$item['pack_size_id']]['quantity'];
-                    if($old_value>$item['quantity'])
+                    if($item['quantity']>$old_value)
                     {
-                        $variance=$old_value-$item['quantity'];
-                        $current_stock=$current_stocks[$item['variety_id']][$item['pack_size_id']][$packing_item]['current_stock'];
+                        $variance=$item['quantity']-$old_value;
                         if($variance>$current_stock)
                         {
                             $ajax['status']=false;
-                            $ajax['system_message']='This Update('.$item['variety_id'].'-'.$item['pack_size_id'].'-'.$packing_item.'-'.$old_value.'-'.$item['quantity'].') will make current stock negative.';
+                            $ajax['system_message']='This Update('.$item['variety_id'].'-'.$item['pack_size_id'].'-'.$old_value.'-'.$item['quantity'].') will make current stock negative.';
                             $this->json_return($ajax);
                         }
                     }
                 }
+                else
+                {
+                    if($item['quantity']>$current_stock)
+                    {
+                        $ajax['status']=false;
+                        $ajax['system_message']='This Insert('.$item['variety_id'].'-'.$item['pack_size_id'].'-'.$item['quantity'].' will make current stock negative.)';
+                        $this->json_return($ajax);
+                    }
+                }
+            }
+            else
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='This Item('.$item['variety_id'].'-'.$item['pack_size_id'].'-'.$item['quantity'].' is absent in stock.)';
+                $this->json_return($ajax);
             }
         }
 
@@ -352,81 +365,64 @@ class Stock_in_raw_master extends Root_Controller
         if($id>0)
         {
             /* --Start-- Item saving (In three table consequently)*/
-            $data=array(); //Main data
-            $data['date_stock_in']=System_helper::get_time($item_head['date_stock_in']);
+
+            $data=array();//main data
+            $data['date_stock_out']=System_helper::get_time($item_head['date_stock_out']);
             $data['remarks']=$item_head['remarks'];
             $data['quantity_total']=$quantity_total;
             $data['user_updated']=$user->user_id;
             $data['date_updated']=$time;
-            Query_helper::update($this->config->item('table_sms_stock_in_raw_master'),$data,array('id='.$id));
+            Query_helper::update($this->config->item('table_sms_stock_out_raw_sticker'),$data,array('id='.$id));
 
-            $data=array(); //Details data
+            $data=array();//Details data
             $data['date_updated']=$time;
             $data['user_updated']=$user->user_id;
-            Query_helper::update($this->config->item('table_sms_stock_in_raw_master_details'),$data,array('revision=1','stock_in_id='.$id));
+            Query_helper::update($this->config->item('table_sms_stock_out_raw_sticker_details'),$data,array('revision=1','stock_out_id='.$id));
 
-            $this->db->where('stock_in_id',$id);
+            $this->db->where('stock_out_id',$id);
             $this->db->set('revision', 'revision+1', FALSE);
-            $this->db->update($this->config->item('table_sms_stock_in_raw_master_details'));
+            $this->db->update($this->config->item('table_sms_stock_out_raw_sticker_details'));
 
             foreach($items as $item)
             {
-                $data=array(); //Details data
-                $data['stock_in_id']=$id;
+                $data=array();//Details data
+                $data['stock_out_id']=$id;
                 $data['variety_id']=$item['variety_id'];
                 $data['pack_size_id']=$item['pack_size_id'];
                 $data['quantity']=$item['quantity'];
                 $data['revision']=1;
                 $data['user_created']=$user->user_id;
                 $data['date_created']=$time;
-                Query_helper::add($this->config->item('table_sms_stock_in_raw_master_details'),$data,false);
-
-                //summary calculation
-                $data=array(); //Summary data
-                $data['in_stock']=0;
-                $data['in_excess']=0;
-                if(isset($old_quantities[$item['variety_id']][$item['pack_size_id']]))
-                {
-                    $variance=$item['quantity']-$old_quantities[$item['variety_id']][$item['pack_size_id']]['quantity'];
-                    if($old_item['purpose']==$this->config->item('system_purpose_variety_excess'))
-                    {
-                        $data['in_excess']=$variance;
-                    }
-                    else
-                    {
-                        $data['in_stock']=$variance;
-                    }
-                }
-                else//new entry
-                {
-                    if($old_item['purpose']==$this->config->item('system_purpose_variety_excess'))
-                    {
-                        $data['in_excess']=$item['quantity'];
-                    }
-                    else
-                    {
-                        $data['in_stock']=$item['quantity'];
-                    }
-                }
-                //fixing current stock table
+                Query_helper::add($this->config->item('table_sms_stock_out_raw_sticker_details'),$data);
+                $data=array(); //summary data
                 if(isset($current_stocks[$item['variety_id']][$item['pack_size_id']][$packing_item]))
                 {
-                    $data['current_stock']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$packing_item]['current_stock']+$data['in_excess']+$data['in_stock'];
-                    $data['in_excess']=$data['in_excess']+$current_stocks[$item['variety_id']][$item['pack_size_id']][$packing_item]['in_excess'];
-                    $data['in_stock']=$data['in_stock']+$current_stocks[$item['variety_id']][$item['pack_size_id']][$packing_item]['in_stock'];
+                    $current_stock=$current_stocks[$item['variety_id']][$item['pack_size_id']][$packing_item]['current_stock'];
+                    if(isset($old_quantities[$item['variety_id']][$item['pack_size_id']]))
+                    {
+                        $old_value=$old_quantities[$item['variety_id']][$item['pack_size_id']]['quantity'];
+                        if($old_item['purpose']==$this->config->item('system_purpose_raw_stock_damage'))
+                        {
+                            $data['out_stock_damage']=($current_stocks[$item['variety_id']][$item['pack_size_id']][$packing_item]['out_stock_damage']-$old_value+$item['quantity']);
+                        }
+                        $data['current_stock']=($current_stock-$item['quantity']+$old_value);
+                    }else
+                    {
+                        if($old_item['purpose']==$this->config->item('system_purpose_raw_stock_damage'))
+                        {
+                            $data['out_stock_damage']=($current_stocks[$item['variety_id']][$item['pack_size_id']][$packing_item]['out_stock_damage']+$item['quantity']);
+                        }
+                        $data['current_stock']=($current_stock-$item['quantity']);
+                    }
                     $data['date_updated'] = $time;
                     $data['user_updated'] = $user->user_id;
                     Query_helper::update($this->config->item('table_sms_stock_summary_raw'),$data,array('variety_id='.$item['variety_id'],'pack_size_id='.$item['pack_size_id'],'packing_item= "'.$packing_item.'"'));
                 }
                 else
                 {
-                    $data['variety_id'] = $item['variety_id'];
-                    $data['pack_size_id'] = $item['pack_size_id'];
-                    $data['packing_item'] = $packing_item;
-                    $data['current_stock'] = $data['in_excess']+$data['in_stock'];
-                    $data['date_updated'] = $time;
-                    $data['user_updated'] = $user->user_id;
-                    Query_helper::add($this->config->item('table_sms_stock_summary_raw'),$data);
+                    $ajax['status']=false;
+                    $ajax['system_message']='This Item:('.$item['variety_id'].'-'.$item['pack_size_id'].'-'.$item['quantity'].' is absent in stock.)';
+                    $this->json_return($ajax);
                 }
             }
             /* --End-- Item saving (In three table consequently)*/
@@ -434,63 +430,36 @@ class Stock_in_raw_master extends Root_Controller
         else
         {
             /* --Start-- Item saving (In three table consequently)*/
-            $data=array(); //Main Data
-            $data['date_stock_in']=System_helper::get_time($item_head['date_stock_in']);
+            $data=array();//Main Data
+            $data['date_stock_out']=System_helper::get_time($item_head['date_stock_out']);
             $data['purpose']=$item_head['purpose'];
             $data['remarks']=$item_head['remarks'];
             $data['quantity_total']=$quantity_total;
             $data['user_created']=$user->user_id;
             $data['date_created']=$time;
             $data['status']=$this->config->item('system_status_active');
-            $item_id=Query_helper::add($this->config->item('table_sms_stock_in_raw_master'),$data);
-
+            $item_id=Query_helper::add($this->config->item('table_sms_stock_out_raw_sticker'),$data);
             foreach($items as $item)
             {
                 $data=array(); //Details Data
-                $data['stock_in_id']=$item_id;
+                $data['stock_out_id']=$item_id;
                 $data['variety_id']=$item['variety_id'];
                 $data['pack_size_id']=$item['pack_size_id'];
                 $data['quantity']=$item['quantity'];
-                $data['revision']=1;
                 $data['user_created']=$user->user_id;
                 $data['date_created']=$time;
-                Query_helper::add($this->config->item('table_sms_stock_in_raw_master_details'),$data,false);
+                Query_helper::add($this->config->item('table_sms_stock_out_raw_sticker_details'),$data);
+                $data=array(); //Summary Data
+                if($item_head['purpose']==$this->config->item('system_purpose_raw_stock_damage'))
+                {
+                    $data['out_stock_damage']=($item['quantity']+$current_stocks[$item['variety_id']][$item['pack_size_id']][$packing_item]['out_stock_damage']);
+                }
 
-                if(isset($current_stocks[$item['variety_id']][$item['pack_size_id']][$packing_item]))
-                {
-                    $data=array(); //Summary Data
-                    if($item_head['purpose']==$this->config->item('system_purpose_variety_stock_in'))
-                    {
-                        $data['in_stock']=($item['quantity']+$current_stocks[$item['variety_id']][$item['pack_size_id']][$packing_item]['in_stock']);
-                    }
-                    elseif($item_head['purpose']==$this->config->item('system_purpose_variety_excess'))
-                    {
-                        $data['in_excess']=($item['quantity']+$current_stocks[$item['variety_id']][$item['pack_size_id']][$packing_item]['in_excess']);
-                    }
-                    $data['current_stock'] = ($item['quantity']+$current_stocks[$item['variety_id']][$item['pack_size_id']][$packing_item]['current_stock']);
-                    $data['date_updated'] = $time;
-                    $data['user_updated'] = $user->user_id;
-                    Query_helper::update($this->config->item('table_sms_stock_summary_raw'),$data,array('variety_id='.$item['variety_id'],'pack_size_id='.$item['pack_size_id'],'packing_item= "'.$packing_item.'"'));
-                }
-                else
-                {
-                    $data=array(); //Summary Data
-                    $data['variety_id'] = $item['variety_id'];
-                    $data['pack_size_id'] = $item['pack_size_id'];
-                    $data['packing_item'] = $packing_item;
-                    if($item_head['purpose']==$this->config->item('system_purpose_variety_stock_in'))
-                    {
-                        $data['in_stock']=$item['quantity'];
-                    }
-                    elseif($item_head['purpose']==$this->config->item('system_purpose_variety_excess'))
-                    {
-                        $data['in_excess']=$item['quantity'];
-                    }
-                    $data['current_stock'] = $item['quantity'];
-                    $data['date_updated'] = $time;
-                    $data['user_updated'] = $user->user_id;
-                    Query_helper::add($this->config->item('table_sms_stock_summary_raw'),$data);
-                }
+                $current_stock=$current_stocks[$item['variety_id']][$item['pack_size_id']][$packing_item]['current_stock'];
+                $data['current_stock']=($current_stock-$item['quantity']);
+                $data['date_updated']=$time;
+                $data['user_updated']=$user->user_id;
+                Query_helper::update($this->config->item('table_sms_stock_summary_raw'),$data,array('variety_id='.$item['variety_id'],'pack_size_id='.$item['pack_size_id'],'packing_item= "'.$packing_item.'"'));
             }
             /* --End-- Item saving (In three table consequently)*/
         }
@@ -533,13 +502,11 @@ class Stock_in_raw_master extends Root_Controller
             {
                 $item_id=$this->input->post('id');
             }
-
             $user = User_helper::get_user();
             $time = time();
             $packing_item=$this->config->item('system_master_foil');
-            $item_head=Query_helper::get_info($this->config->item('table_sms_stock_in_raw_master'),'*',array('status !="'.$this->config->item('system_status_delete').'"','id ='.$item_id),1);
-
-            if(!$item_head)
+            $item=Query_helper::get_info($this->config->item('table_sms_stock_out_raw_sticker'),'*',array('status !="'.$this->config->item('system_status_delete').'"','id ='.$item_id),1);
+            if(!$item)
             {
                 System_helper::invalid_try('Delete Not Exists',$item_id);
                 $ajax['status']=false;
@@ -547,13 +514,13 @@ class Stock_in_raw_master extends Root_Controller
                 $this->json_return($ajax);
             }
 
-            $this->db->from($this->config->item('table_sms_stock_in_raw_master').' master_stock_in');
-            $this->db->select('master_stock_in.*');
-            $this->db->select('master_details.variety_id, master_details.pack_size_id,master_details.quantity');
-            $this->db->join($this->config->item('table_sms_stock_in_raw_master_details').' master_details','master_details.stock_in_id = master_stock_in.id','INNER');
-            $this->db->where('master_stock_in.id',$item_id);
-            $this->db->where('master_details.revision',1);
-            $this->db->order_by('master_details.id','ASC');
+            $this->db->from($this->config->item('table_sms_stock_out_raw_sticker').' stock_out');
+            $this->db->select('stock_out.*');
+            $this->db->select('stock_out_details.variety_id, stock_out_details.pack_size_id,stock_out_details.quantity');
+            $this->db->join($this->config->item('table_sms_stock_out_raw_sticker_details').' stock_out_details','stock_out_details.stock_out_id = stock_out.id','INNER');
+            $this->db->where('stock_out.id',$item_id);
+            $this->db->where('stock_out_details.revision',1);
+            $this->db->order_by('stock_out_details.id','ASC');
             $results=$this->db->get()->result_array();
 
             // Getting current stocks
@@ -563,52 +530,34 @@ class Stock_in_raw_master extends Root_Controller
                 $variety_ids[$result['variety_id']]=$result['variety_id'];
             }
             $current_stocks=System_helper::get_raw_stock($variety_ids);
-            /*--Start-- Validation Checking */
 
-            //Negative Stock Checking
-
+            // Validation Checking
             foreach($results as $result)
             {
-                if(isset($current_stocks[$result['variety_id']][$result['pack_size_id']][$packing_item]['current_stock']))
-                {
-                    $current_stock=$current_stocks[$result['variety_id']][$result['pack_size_id']][$packing_item]['current_stock'];
-                    if($result['quantity']>$current_stock)
-                    {
-                        $ajax['status']=false;
-                        $ajax['system_message']='This Delete('.$result['variety_id'].'-'.$result['pack_size_id'].'-'.$packing_item.'-'.$result['quantity'].') will make current stock negative.';
-                        $this->json_return($ajax);
-                    }
-                }
-                else
+                if(!(isset($current_stocks[$result['variety_id']][$result['pack_size_id']][$packing_item]['current_stock'])))
                 {
                     $ajax['status']=false;
-                    $ajax['system_message']='This Delete('.$result['variety_id'].'-'.$result['pack_size_id'].'-'.$packing_item.'-'.$result['quantity'].' is absent in stock.)';
+                    $ajax['system_message']='This Delete('.$result['variety_id'].'-'.$result['pack_size_id'].'-'.$result['quantity'].' is absent in stock.)';
                     $this->json_return($ajax);
                 }
             }
-
-            /*--End-- Validation Checking */
 
             $this->db->trans_start();  //DB Transaction Handle START
             $data=array();
             $data['user_updated']=$user->user_id;
             $data['date_updated']=$time;
             $data['status']=$this->config->item('system_status_delete');
-            Query_helper::update($this->config->item('table_sms_stock_in_raw_master'),$data,array('id='.$item_id));
+            Query_helper::update($this->config->item('table_sms_stock_out_raw_sticker'),$data,array('id='.$item_id));
 
             foreach($results as $result)
             {
                 $data=array();
-                $data['current_stock']=($current_stocks[$result['variety_id']][$result['pack_size_id']][$packing_item]['current_stock']-$result['quantity']);
-                if($result['purpose']==$this->config->item('system_purpose_variety_stock_in'))
+                $data['current_stock']=($current_stocks[$result['variety_id']][$result['pack_size_id']][$packing_item]['current_stock']+$result['quantity']);
+                if($result['purpose']==$this->config->item('system_purpose_raw_stock_damage'))
                 {
-                    $data['in_stock']=$current_stocks[$result['variety_id']][$result['pack_size_id']][$packing_item]['in_stock']-$result['quantity'];
+                    $data['out_stock_damage']=$current_stocks[$result['variety_id']][$result['pack_size_id']][$packing_item]['out_stock_damage']-$result['quantity'];
                 }
-                elseif($result['purpose']==$this->config->item('system_purpose_variety_excess'))
-                {
-                    $data['in_excess']=$current_stocks[$result['variety_id']][$result['pack_size_id']][$packing_item]['in_excess']-$result['quantity'];
-                }
-                Query_helper::update($this->config->item('table_sms_stock_summary_raw'),$data,array('variety_id='.$result['variety_id'],'pack_size_id='.$result['pack_size_id'],'packing_item="'.$packing_item.'"'));
+                Query_helper::update($this->config->item('table_sms_stock_summary_sticker'),$data,array('variety_id='.$result['variety_id'],'pack_size_id='.$result['pack_size_id'],'packing_item="'.$packing_item.'"'));
             }
 
             $this->db->trans_complete();   //DB Transaction Handle END
@@ -639,7 +588,7 @@ class Stock_in_raw_master extends Root_Controller
             $user = User_helper::get_user();
             $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
             $data['system_preference_items']['barcode']= 1;
-            $data['system_preference_items']['date_stock_in']= 1;
+            $data['system_preference_items']['date_stock_out']= 1;
             $data['system_preference_items']['purpose']= 1;
             $data['system_preference_items']['quantity_total']= 1;
             $data['system_preference_items']['remarks']= 1;
@@ -683,7 +632,7 @@ class Stock_in_raw_master extends Root_Controller
         if(!($id>0))
         {
             $this->load->library('form_validation');
-            $this->form_validation->set_rules('item[date_stock_in]',$this->lang->line('LABEL_DATE_STOCK_IN'),'required');
+            $this->form_validation->set_rules('item[date_stock_out]',$this->lang->line('LABEL_DATE_STOCK_OUT'),'required');
             $this->form_validation->set_rules('item[purpose]',$this->lang->line('LABEL_PURPOSE'),'required');
             if($this->form_validation->run() == FALSE)
             {
@@ -693,4 +642,5 @@ class Stock_in_raw_master extends Root_Controller
         }
         return true;
     }
+
 }
