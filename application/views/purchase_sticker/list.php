@@ -139,8 +139,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 enablebrowserselection:true,
                 columnsreorder: true,
                 columns: [
-                    { text: '<?php echo $CI->lang->line('LABEL_BARCODE'); ?>', dataField: 'barcode',width:'110',hidden: <?php echo $system_preference_items['barcode']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_DATE_PURCHASE'); ?>', filtertype: 'list',dataField: 'date_purchase',width:'140',hidden: <?php echo $system_preference_items['date_purchase']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_BARCODE'); ?>', dataField: 'barcode',width:'80',hidden: <?php echo $system_preference_items['barcode']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_DATE_PURCHASE'); ?>', filtertype: 'list',dataField: 'date_purchase',width:'80',hidden: <?php echo $system_preference_items['date_purchase']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_SUPPLIER_NAME'); ?>', filtertype: 'list',dataField: 'supplier_name',width:'140',hidden: <?php echo $system_preference_items['supplier_name']?0:1;?>},
 
                     { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL_RECEIVE'); ?>', cellsalign: 'right',dataField: 'quantity_total_receive',width:'200',hidden: <?php echo $system_preference_items['quantity_total_receive']?0:1;?>},

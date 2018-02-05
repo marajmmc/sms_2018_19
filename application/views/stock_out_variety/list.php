@@ -57,6 +57,14 @@ if(isset($CI->permissions['action5']) && ($CI->permissions['action5']==1))
         'data-title'=>"Download"
     );
 }
+if(isset($CI->permissions['action6']) && ($CI->permissions['action6']==1))
+{
+    $action_buttons[]=array
+    (
+        'label'=>'Preference',
+        'href'=>site_url($CI->controller_url.'/index/set_preference')
+    );
+}
 $action_buttons[]=array(
     'label'=>$CI->lang->line("ACTION_REFRESH"),
     'href'=>site_url($CI->controller_url.'/index/list')
@@ -82,15 +90,12 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
     if(isset($CI->permissions['action6']) && ($CI->permissions['action6']==1))
     {
         ?>
-        <div class="col-xs-12" style="margin-bottom: 20px;">
-            <div class="col-xs-12" style="margin-bottom: 20px;">
-                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column" checked value="barcode"><?php echo $CI->lang->line('LABEL_BARCODE'); ?></label>
-                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column" checked value="date_stock_out"><?php echo $CI->lang->line('LABEL_DATE_STOCK_OUT'); ?></label>
-                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column" checked value="purpose"><?php echo $CI->lang->line('LABEL_PURPOSE'); ?></label>
-                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column" checked value="quantity_total"><?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL'); ?></label>
-                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column" checked value="remarks"><?php echo $CI->lang->line('LABEL_REMARKS'); ?></label>
-            </div>
-        </div>
+        <?php
+        if(isset($CI->permissions['action6']) && ($CI->permissions['action6']==1))
+        {
+            $CI->load->view('preference',array('system_preference_items'=>$system_preference_items));
+        }
+        ?>
         <?php
     }
     ?>
@@ -141,11 +146,11 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 altrows: true,
                 autoheight: true,
                 columns: [
-                    { text: '<?php echo $CI->lang->line('LABEL_BARCODE'); ?>', dataField: 'barcode',width:'110'},
-                    { text: '<?php echo $CI->lang->line('LABEL_DATE_STOCK_OUT'); ?>', dataField: 'date_stock_out',width:'140',filtertype: 'list'},
-                    { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL'); ?> (KG)', dataField: 'quantity_total',width:'200',cellsalign: 'right'},
-                    { text: '<?php echo $CI->lang->line('LABEL_PURPOSE'); ?>', dataField: 'purpose',filtertype: 'list',width:'200'},
-                    { text: '<?php echo $CI->lang->line('LABEL_REMARKS'); ?>', dataField: 'remarks'}
+                    { text: '<?php echo $CI->lang->line('LABEL_BARCODE'); ?>', dataField: 'barcode',width:'80',hidden: <?php echo $system_preference_items['barcode']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_DATE_STOCK_OUT'); ?>', dataField: 'date_stock_out',width:'80',filtertype: 'list',hidden: <?php echo $system_preference_items['date_stock_out']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL'); ?> (KG)', dataField: 'quantity_total',width:'200',cellsalign: 'right',hidden: <?php echo $system_preference_items['quantity_total']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_PURPOSE'); ?>', dataField: 'purpose',filtertype: 'list',width:'200',hidden: <?php echo $system_preference_items['purpose']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_REMARKS'); ?>', dataField: 'remarks',hidden: <?php echo $system_preference_items['remarks']?0:1;?>}
                 ]
             });
     });

@@ -69,4 +69,8 @@ class Barcode_helper
     {
         return 'RSO'.str_pad($increment_id,5,0,STR_PAD_LEFT); //Raw Sticker Stock Out
     }
+    public static function get_barcode_raw_foil_stock_out($increment_id)
+    {
+        return 'RSO'.str_pad($increment_id,5,0,STR_PAD_LEFT); //Raw Sticker Stock Out
+    }
 }

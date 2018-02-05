@@ -47,6 +47,14 @@ if(isset($CI->permissions['action4']) && ($CI->permissions['action4']==1))
         'data-print'=>true
     );
 }
+if(isset($CI->permissions['action6']) && ($CI->permissions['action6']==1))
+{
+    $action_buttons[]=array
+    (
+        'label'=>'Preference',
+        'href'=>site_url($CI->controller_url.'/index/set_preference')
+    );
+}
 if(isset($CI->permissions['action5']) && ($CI->permissions['action5']==1))
 {
     $action_buttons[]=array(
@@ -76,14 +84,12 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         </div>
         <div class="clearfix"></div>
     </div>
-    <div class="col-xs-12" style="margin-bottom: 20px;">
-        <div class="col-xs-12" style="margin-bottom: 20px;">
-            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column" checked value="barcode"><?php echo $CI->lang->line('LABEL_BARCODE'); ?></label>
-            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column" checked value="date_transfer">Transfer Date</label>
-            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column" checked value="quantity"><?php echo $CI->lang->line('LABEL_QUANTITY'); ?></label>
-            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column" checked value="remarks"><?php echo $CI->lang->line('LABEL_REMARKS'); ?></label>
-        </div>
-    </div>
+    <?php
+    if(isset($CI->permissions['action6']) && ($CI->permissions['action6']==1))
+    {
+        $CI->load->view('preference',array('system_preference_items'=>$system_preference_items));
+    }
+    ?>
     <div class="col-xs-12" id="system_jqx_container">
 
     </div>
@@ -132,10 +138,10 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 enablebrowserselection:true,
                 columnsreorder: true,
                 columns: [
-                    { text: '<?php echo $CI->lang->line('LABEL_BARCODE'); ?>', dataField: 'barcode',width:'110'},
-                    { text: 'Transfer Date', filtertype: 'list',dataField: 'date_transfer',width:'90'},
-                    { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL'); ?> (KG)', cellsalign: 'right',dataField: 'quantity',width:'100'},
-                    { text: '<?php echo $CI->lang->line('LABEL_REMARKS'); ?>', dataField: 'remarks'}
+                    { text: '<?php echo $CI->lang->line('LABEL_BARCODE'); ?>', dataField: 'barcode',width:'80',hidden: <?php echo $system_preference_items['barcode']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_DATE_TRANSFER'); ?>', filtertype: 'list',dataField: 'date_transfer',width:'80',hidden: <?php echo $system_preference_items['date_transfer']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL'); ?> (KG)', cellsalign: 'right',dataField: 'quantity',width:'100',hidden: <?php echo $system_preference_items['quantity']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_REMARKS'); ?>', dataField: 'remarks',hidden: <?php echo $system_preference_items['remarks']?0:1;?>}
                 ]
             });
     });

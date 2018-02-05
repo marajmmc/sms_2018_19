@@ -368,6 +368,7 @@ class Purchase_raw_master extends Root_Controller
             $data['quantity_total_receive']=$quantity_total_receive;
             $data['user_updated']=$user->user_id;
             $data['date_updated']=$time;
+            $this->db->set('revision_count', 'revision_count+1', FALSE);
             Query_helper::update($this->config->item('table_sms_purchase_raw_master'),$data,array('id='.$id));
 
             $data=array(); //Details data

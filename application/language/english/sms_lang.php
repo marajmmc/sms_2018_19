@@ -327,6 +327,8 @@ $lang['LABEL_SUPPLIER_NAME']='Supplier Name';
 $lang['LABEL_QUANTITY_SUPPLY']='Supply Quantity';
 $lang['LABEL_QUANTITY_RECEIVE']='Receive Quantity';
 
+$lang['LABEL_DATE_TRANSFER']='Transfer date';
+
 $lang['LABEL_DATE_PURCHASE']='Purchase date';
 
 $lang['LABEL_QUANTITY_TOTAL_RECEIVE'] = 'Total Quantity (Receive)';

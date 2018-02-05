@@ -110,9 +110,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             dataFields: [
                 { name: 'id', type: 'int' },
                 { name: 'barcode', type: 'string' },
-                { name: 'date_stock_in', type: 'string' },
+                { name: 'date_stock_out', type: 'string' },
                 { name: 'purpose', type: 'string' },
-                { name: 'quantity_total', type: 'string' },
+                { name: 'quantity', type: 'string' },
                 { name: 'remarks', type: 'string' }
             ],
             id: 'id',
@@ -140,9 +140,10 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 columnsreorder: true,
                 columns: [
                     { text: '<?php echo $CI->lang->line('LABEL_BARCODE'); ?>', dataField: 'barcode',width:'80',hidden: <?php echo $system_preference_items['barcode']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_DATE_STOCK_IN'); ?>', filtertype: 'list',dataField: 'date_stock_in',width:'80',hidden: <?php echo $system_preference_items['date_stock_in']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_DATE_STOCK_OUT'); ?>', filtertype: 'list',dataField: 'date_stock_out',width:'80',hidden: <?php echo $system_preference_items['date_stock_out']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_PURPOSE'); ?>', dataField: 'purpose',filtertype: 'list',width:'200',hidden: <?php echo $system_preference_items['purpose']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL'); ?>', cellsalign: 'right',dataField: 'quantity_total',width:'200',hidden: <?php echo $system_preference_items['quantity_total']?0:1;?>},
+
+                    { text: '<?php echo $CI->lang->line('LABEL_QUANTITY'); ?>', cellsalign: 'right',dataField: 'quantity',width:'200',hidden: <?php echo $system_preference_items['quantity']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_REMARKS'); ?>', dataField: 'remarks',hidden: <?php echo $system_preference_items['remarks']?0:1;?>}
                 ]
             });

@@ -3,7 +3,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Transfer_ww extends Root_Controller
 {
-    private $message;
+    public $message;
     public $permissions;
     public $controller_url;
     public function __construct()
@@ -42,6 +42,14 @@ class Transfer_ww extends Root_Controller
         {
             $this->system_save();
         }
+        elseif($action=="set_preference")
+        {
+            $this->system_set_preference();
+        }
+        elseif($action=="save_preference")
+        {
+            System_helper::save_preference();
+        }
         else
         {
             $this->system_list();
@@ -51,6 +59,31 @@ class Transfer_ww extends Root_Controller
     {
         if(isset($this->permissions['action0']) && ($this->permissions['action0']==1))
         {
+            $user = User_helper::get_user();
+            $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
+            $data['system_preference_items']['barcode']= 1;
+            $data['system_preference_items']['date_transfer']= 1;
+            $data['system_preference_items']['quantity']= 1;
+            $data['system_preference_items']['remarks']= 1;
+            if($result)
+            {
+                if($result['preferences']!=null)
+                {
+                    $preferences=json_decode($result['preferences'],true);
+                    foreach($data['system_preference_items'] as $key=>$value)
+                    {
+                        if(isset($preferences[$key]))
+                        {
+                            $data['system_preference_items'][$key]=$value;
+                        }
+                        else
+                        {
+                            $data['system_preference_items'][$key]=0;
+                        }
+                    }
+                }
+            }
+
             $data['title']='Transfer (Warehouse to Warehouse) List';
             $ajax['status']=true;
             $ajax['system_content'][]=array('id'=>'#system_content','html'=>$this->load->view($this->controller_url.'/list',$data,true));
@@ -577,6 +610,50 @@ class Transfer_ww extends Root_Controller
                 $ajax['system_message']=$this->lang->line('MSG_SAVED_FAIL');
                 $this->json_return($ajax);
             }
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+    }
+
+    private function system_set_preference()
+    {
+        if(isset($this->permissions['action6']) && ($this->permissions['action6']==1))
+        {
+            $user = User_helper::get_user();
+            $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
+            $data['system_preference_items']['barcode']= 1;
+            $data['system_preference_items']['date_transfer']= 1;
+            $data['system_preference_items']['quantity']= 1;
+            $data['system_preference_items']['remarks']= 1;
+            if($result)
+            {
+                if($result['preferences']!=null)
+                {
+                    $preferences=json_decode($result['preferences'],true);
+                    foreach($data['system_preference_items'] as $key=>$value)
+                    {
+                        if(isset($preferences[$key]))
+                        {
+                            $data['system_preference_items'][$key]=$value;
+                        }
+                        else
+                        {
+                            $data['system_preference_items'][$key]=0;
+                        }
+                    }
+                }
+            }
+            $data['preference_method_name']='list';
+
+            $data['title']="Set Preference";
+            $ajax['status']=true;
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("preference_add_edit",$data,true));
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/set_preference');
+            $this->json_return($ajax);
         }
         else
         {

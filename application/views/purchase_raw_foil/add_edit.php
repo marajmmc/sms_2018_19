@@ -66,6 +66,15 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             </div>
         </div>
 
+        <div style="<?php if(!($item['id']>0)){echo 'display:none';} ?>" class="row show-grid" id="current_stock_container">
+            <div class="col-xs-4">
+                <label for="current_stock_id" class="control-label pull-right">Current Stock</label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <label id="current_stock_id"><?php echo $item['current_stock'];?></label>
+            </div>
+        </div>
+
         <div class="row show-grid">
             <div class="col-xs-4">
                 <label for="quantity_supply" class="control-label pull-right"><?php echo $this->lang->line('LABEL_QUANTITY_SUPPLY');?><span style="color:#FF0000">*</span></label>
@@ -103,5 +112,42 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
     {
         system_preset({controller:'<?php echo $CI->router->class; ?>'});
         $(".datepicker").datepicker({dateFormat : display_date_format});
+
+        $(document).off('change','#supplier_id');
+        $(document).on("change","#supplier_id",function()
+        {
+            $("#current_stock_id").text("");
+            var supplier_id=$('#supplier_id').val();
+            var variety_id=0;
+            var pack_size_id=0;
+            var packing_item='<?php echo $CI->config->item('system_common_foil')?>';
+            if(supplier_id>0)
+            {
+                $('#current_stock_container').show();
+                $.ajax({
+                    url: base_url+"common_controller/get_raw_current_stock/",
+                    type: 'POST',
+                    datatype: "JSON",
+                    data:{
+                        pack_size_id:variety_id,
+                        variety_id:pack_size_id,
+                        packing_item:packing_item
+                    },
+                    success: function (data, status)
+                    {
+                        $("#current_stock_id").text(data);
+                    },
+                    error: function (xhr, desc, err)
+                    {
+                        console.log("error");
+
+                    }
+                });
+            }
+            else
+            {
+                $('#current_stock_container').hide();
+            }
+        });
     });
 </script>

@@ -372,6 +372,7 @@ class Stock_out_raw_sticker extends Root_Controller
             $data['quantity_total']=$quantity_total;
             $data['user_updated']=$user->user_id;
             $data['date_updated']=$time;
+            $this->db->set('revision_count', 'revision_count+1', FALSE);
             Query_helper::update($this->config->item('table_sms_stock_out_raw_sticker'),$data,array('id='.$id));
 
             $data=array();//Details data

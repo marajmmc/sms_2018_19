@@ -181,6 +181,10 @@ class Purchase_raw_foil extends Root_Controller
             {
                 $item_id=$this->input->post('id');
             }
+            $item['variety_id']=0;
+            $item['pack_size_id']=0;
+            $packing_item=$this->config->item('system_common_foil');
+
             $this->db->from($this->config->item('table_sms_purchase_raw_foil').' purchase_foil');
             $this->db->select('purchase_foil.*');
             $this->db->select('supplier.name supplier_name');
@@ -195,6 +199,11 @@ class Purchase_raw_foil extends Root_Controller
                 $ajax['system_message']='Invalid Try.';
                 $this->json_return($ajax);
             }
+
+            $current_stocks=System_helper::get_raw_stock(array($item['variety_id']));
+
+            $data['item']['current_stock']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$packing_item]['current_stock'];
+
             $data['suppliers']=Query_helper::get_info($this->config->item('table_login_basic_setup_supplier'),array('id value','name text'),array('status !="'.$this->config->item('system_status_delete').'"'));
             $data['title']="Edit Purchase (Common Foil)";
             $ajax['status']=true;
@@ -291,6 +300,7 @@ class Purchase_raw_foil extends Root_Controller
             $data['quantity_receive']=$item['quantity_receive'];
             $data['user_updated']=$user->user_id;
             $data['date_updated']=$time;
+            $this->db->set('revision_count', 'revision_count+1', FALSE);
             Query_helper::update($this->config->item('table_sms_purchase_raw_foil'),$data,array('id='.$id));
 
             $data=array(); //Summary data
