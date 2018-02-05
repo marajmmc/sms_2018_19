@@ -186,6 +186,12 @@ class Lc_receive extends Root_Controller
                 $ajax['system_message']='LC Already Received Completed.';
                 $this->json_return($ajax);
             }
+            if($data['item']['status_open']==$this->config->item('system_status_closed'))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='LC Already Closed.';
+                $this->json_return($ajax);
+            }
 
             $this->db->from($this->config->item('table_sms_lc_details').' lcd');
             $this->db->select('lcd.*');
@@ -248,6 +254,12 @@ class Lc_receive extends Root_Controller
                 $ajax['system_message']='You Can Not Modify LC Because LC Receive Completed.';
                 $this->json_return($ajax);
             }
+            if($result['status_open']==$this->config->item('system_status_closed'))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='LC Already Closed.';
+                $this->json_return($ajax);
+            }
         }
         else
         {
@@ -255,6 +267,7 @@ class Lc_receive extends Root_Controller
             $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
             $this->json_return($ajax);
         }
+
         if(!$this->check_validation())
         {
             $ajax['status']=false;
@@ -272,7 +285,7 @@ class Lc_receive extends Root_Controller
             }
         }
 
-        $results=Query_helper::get_info($this->config->item('table_login_setup_classification_vpack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('id ASC'));
+        $results=Query_helper::get_info($this->config->item('table_login_setup_classification_vpack_size'),array('id value','name text'),array('status !="'.$this->config->item('system_status_delete').'"'),0,0,array('id ASC'));
         $pack_sizes=array();
         foreach($results as $result)
         {
@@ -354,7 +367,7 @@ class Lc_receive extends Root_Controller
     }
     private function system_receive_complete($id)
     {
-        if((isset($this->permissions['action1']) && ($this->permissions['action1']==1)) || (isset($this->permissions['action2']) && ($this->permissions['action2']==1)))
+        if((isset($this->permissions['action7']) && ($this->permissions['action7']==1)))
         {
             if($id>0)
             {
@@ -399,6 +412,12 @@ class Lc_receive extends Root_Controller
                 $ajax['system_message']='LC Already Received Completed.';
                 $this->json_return($ajax);
             }
+            if($data['item']['status_open']==$this->config->item('system_status_closed'))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='LC Already Closed.';
+                $this->json_return($ajax);
+            }
 
             $this->db->from($this->config->item('table_sms_lc_details').' lcd');
             $this->db->select('lcd.*');
@@ -414,7 +433,7 @@ class Lc_receive extends Root_Controller
             $this->db->where('lcd.quantity_open >0');
             $this->db->order_by('lcd.id','ASC');
             $data['items']=$this->db->get()->result_array();
-            $item_zero_count=0;
+            /*$item_zero_count=0;
             foreach($data['items'] as $item)
             {
                 if($item['quantity_receive']==0)
@@ -427,7 +446,7 @@ class Lc_receive extends Root_Controller
                 $ajax['status']=false;
                 $ajax['system_message']='You have to complete your (LC) edit receive.';
                 $this->json_return($ajax);
-            }
+            }*/
 
             $data['warehouses']=Query_helper::get_info($this->config->item('table_login_basic_setup_warehouse'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
 
@@ -462,7 +481,7 @@ class Lc_receive extends Root_Controller
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->json_return($ajax);
             }
-            if(!($item_head['status_receive']>0) && !is_numeric($item_head['status_receive']))
+            if($item_head['status_receive']!=$this->config->item('system_status_complete'))
             {
                 $ajax['status']=false;
                 $ajax['system_message']='Receive LC is required.';
@@ -562,7 +581,7 @@ class Lc_receive extends Root_Controller
                     $this->message='Warehouse is empty (variety info :: '.$item['variety_id'].').';
                     return false;
                 }
-                if(!(($item['quantity_receive']>=0)))
+                if(!(($item['quantity_receive']>0)))
                 {
                     $this->message='Invalid input (variety info :: '.$item['variety_id'].').';
                     return false;

@@ -252,7 +252,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <tr>
                             <th colspan="8" class="text-right"><?php echo $this->lang->line('LABEL_TOTAL_TAKA')?></th>
                             <th>
-                                <input type="text" name="item[price_complete_other_variety_taka]" id="price_complete_other_variety_taka" class="form-control float_type_positive" value="<?php echo $item['price_complete_other_variety_taka'];?>"/>
+                                <input type="text" name="item[price_release_other_variety_taka]" id="price_release_other_variety_taka" class="form-control float_type_positive" value="<?php echo $item['price_release_other_variety_taka'];?>"/>
                             </th>
                         </tr>
                         </tfoot>

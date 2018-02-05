@@ -126,7 +126,7 @@ class Lc_expense extends Root_Controller
             $item['lc_number']=$result['lc_number'];
             $item['consignment_name']=$result['consignment_name'];
             $item['price_release_other_currency']=number_format($result['price_release_other_currency'],2);
-            $item['quantity_receive_kg']=number_format($result['quantity_receive_kg'],3);
+            $item['quantity_receive_kg']=number_format($result['quantity_receive_kg'],3,'.','');
             $items[]=$item;
         }
         $this->json_return($items);
@@ -214,10 +214,6 @@ class Lc_expense extends Root_Controller
                 $ajax['system_message']='Invalid LC.';
                 $this->json_return($ajax);
             }
-            if($result['status_release']==$this->config->item('system_status_pending'))
-            {
-                $item_head['price_release_other_variety_taka']=$item_head['price_complete_other_variety_taka'];
-            }
         }
         else
         {
@@ -239,6 +235,7 @@ class Lc_expense extends Root_Controller
         {
             $dc_item[$result['dc_id']]=$result['amount'];
         }
+
         foreach($items as $item_id=>$item)
         {
             if(isset($dc_item[$item_id]))
@@ -250,7 +247,7 @@ class Lc_expense extends Root_Controller
                     $data['date_updated']=$time;
                     $data['user_updated']=$user->user_id;
                     $this->db->set('revision_count', 'revision_count+1', FALSE);
-                    Query_helper::update($this->config->item('table_sms_lc_expense'),$data,array('id='.$item_id));
+                    Query_helper::update($this->config->item('table_sms_lc_expense'),$data,array('lc_id='.$id,'dc_id='.$item_id));
                 }
             }
             else
@@ -265,7 +262,6 @@ class Lc_expense extends Root_Controller
                 Query_helper::add($this->config->item('table_sms_lc_expense'),$data);
             }
         }
-
         $item_head['date_expense_updated']=$time;
         $item_head['user_expense_updated']=$user->user_id;
         $this->db->set('revision_expense_count', 'revision_expense_count+1', FALSE);

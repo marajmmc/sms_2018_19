@@ -501,6 +501,7 @@ class Lc_open extends Root_Controller
                     $old_varieties[$result['variety_id']][$result['pack_size_id']]=$result;
                 }
             }
+
             $data=array();
             $data['date_updated'] = $time;
             $data['user_updated'] = $user->user_id;
@@ -776,13 +777,13 @@ class Lc_open extends Root_Controller
     {
         if(isset($this->permissions['action3']) && ($this->permissions['action3']==1))
         {
-            if(($this->input->post('id')))
+            if($id>0)
             {
-                $item_id=$this->input->post('id');
+                $item_id=$id;
             }
             else
             {
-                $item_id=$id;
+                $item_id=$this->input->post('id');
             }
 
             $result=Query_helper::get_info($this->config->item('table_sms_lc_open'),'*',array('id ='.$item_id, 'status_open != "'.$this->config->item('system_status_delete').'"'),1);
@@ -796,7 +797,13 @@ class Lc_open extends Root_Controller
             if($result['status_open_release']==$this->config->item('system_status_complete'))
             {
                 $ajax['status']=false;
-                $ajax['system_message']='Already LC Released.';
+                $ajax['system_message']='LC Already Released.';
+                $this->json_return($ajax);
+            }
+            if($result['status_open']==$this->config->item('system_status_closed'))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='LC Already Closed.';
                 $this->json_return($ajax);
             }
             $this->db->trans_start();  //DB Transaction Handle START
@@ -860,6 +867,12 @@ class Lc_open extends Root_Controller
             {
                 $ajax['status']=false;
                 $ajax['system_message']='Already forwarded this LC :: '. Barcode_helper::get_barcode_lc($item_id);
+                $this->json_return($ajax);
+            }
+            if($data['item']['status_open']==$this->config->item('system_status_closed'))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='Already closed this LC :: '. Barcode_helper::get_barcode_lc($item_id);
                 $this->json_return($ajax);
             }
 
@@ -927,6 +940,12 @@ class Lc_open extends Root_Controller
                 $ajax['system_message']='Already LC Forwarded.';
                 $this->json_return($ajax);
             }
+            if($result['status_open']==$this->config->item('system_status_closed'))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='LC Already Closed.';
+                $this->json_return($ajax);
+            }
         }
         else
         {
@@ -956,6 +975,38 @@ class Lc_open extends Root_Controller
     }
     private function check_validation()
     {
+        $this->load->library('form_validation');
+        $id = $this->input->post("id");
+        $item = $this->input->post("item");
+        if($id==0)
+        {
+            $this->form_validation->set_rules('item[fiscal_year_id]',$this->lang->line('LABEL_FISCAL_YEAR'),'required');
+            $this->form_validation->set_rules('item[month_id]',$this->lang->line('LABEL_MONTH'),'required');
+            $this->form_validation->set_rules('item[date_opening]',$this->lang->line('LABEL_DATE_OPENING'),'required');
+            $this->form_validation->set_rules('item[principal_id]',$this->lang->line('LABEL_PRINCIPAL_NAME'),'required');
+            if(!isset($item['date_opening']) || !strtotime($item['date_opening']))
+            {
+                $this->message='LC opening date is not correct formation.';
+                return false;
+            }
+        }
+        if(!isset($item['date_expected']) || !strtotime($item['date_expected']))
+        {
+            $this->message='LC expected date is not correct formation.';
+            return false;
+        }
+        $this->form_validation->set_rules('item[date_expected]',$this->lang->line('LABEL_DATE_EXPECTED'),'required');
+        $this->form_validation->set_rules('item[lc_number]',$this->lang->line('LABEL_LC_NUMBER'),'required');
+        $this->form_validation->set_rules('item[bank_account_id]',$this->lang->line('LABEL_BANK_NAME'),'required');
+        $this->form_validation->set_rules('item[currency_id]',$this->lang->line('LABEL_CURRENCY_NAME'),'required');
+        $this->form_validation->set_rules('item[consignment_name]',$this->lang->line('LABEL_CONSIGNMENT_NAME'),'required');
+        $this->form_validation->set_rules('item[price_open_other_currency]',$this->lang->line('LABEL_OTHER_COST_CURRENCY'),'required');
+        if($this->form_validation->run() == FALSE)
+        {
+            $this->message=validation_errors();
+            return false;
+        }
+
         $items=$this->input->post('items');
         if((sizeof($items)>0))
         {
@@ -992,37 +1043,6 @@ class Lc_open extends Root_Controller
             return false;
         }
 
-        $this->load->library('form_validation');
-        $id = $this->input->post("id");
-        $item = $this->input->post("item");
-        if($id==0)
-        {
-            $this->form_validation->set_rules('item[fiscal_year_id]',$this->lang->line('LABEL_FISCAL_YEAR'),'required');
-            $this->form_validation->set_rules('item[month_id]',$this->lang->line('LABEL_MONTH'),'required');
-            $this->form_validation->set_rules('item[date_opening]',$this->lang->line('LABEL_DATE_OPENING'),'required');
-            $this->form_validation->set_rules('item[principal_id]',$this->lang->line('LABEL_PRINCIPAL_NAME'),'required');
-            if(!isset($item['date_opening']) || !strtotime($item['date_opening']))
-            {
-                $this->message='LC opening date is not correct formation.';
-                return false;
-            }
-        }
-        if(!isset($item['date_expected']) || !strtotime($item['date_expected']))
-        {
-            $this->message='LC expected date is not correct formation.';
-            return false;
-        }
-        $this->form_validation->set_rules('item[date_expected]',$this->lang->line('LABEL_DATE_EXPECTED'),'required');
-        $this->form_validation->set_rules('item[lc_number]',$this->lang->line('LABEL_LC_NUMBER'),'required');
-        $this->form_validation->set_rules('item[bank_account_id]',$this->lang->line('LABEL_BANK_NAME'),'required');
-        $this->form_validation->set_rules('item[currency_id]',$this->lang->line('LABEL_CURRENCY_NAME'),'required');
-        $this->form_validation->set_rules('item[consignment_name]',$this->lang->line('LABEL_CONSIGNMENT_NAME'),'required');
-        $this->form_validation->set_rules('item[price_open_other_currency]',$this->lang->line('LABEL_OTHER_COST_CURRENCY'),'required');
-        if($this->form_validation->run() == FALSE)
-        {
-            $this->message=validation_errors();
-            return false;
-        }
         return true;
     }
     public function get_dropdown_arm_varieties_by_principal_id()

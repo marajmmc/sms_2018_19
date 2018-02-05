@@ -105,14 +105,35 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <label class="control-label"><?php echo number_format($item['price_release_other_variety_taka'],2);?></label>
                 </div>
             </div>
-            <div class="row show-grid">
-                <div class="col-xs-4">
-                    <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_PRICE_COMPLETE_OTHER_VARIETY_TAKA');?> </label>
+            <?php
+            if($item['status_release']==$this->config->item('system_status_complete'))
+            {
+                ?>
+                <div class="row show-grid">
+                    <div class="col-xs-4">
+                        <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_PRICE_COMPLETE_OTHER_VARIETY_TAKA');?> </label>
+                    </div>
+                    <div class="col-sm-4 col-xs-8">
+                        <input type="text" name="item[price_complete_other_variety_taka]" id="price_complete_other_variety_taka" class="form-control float_type_positive" value="<?php echo $item['price_complete_other_variety_taka'];?>" />
+                    </div>
                 </div>
-                <div class="col-sm-4 col-xs-8">
-                    <input type="text" name="item[price_complete_other_variety_taka]" id="price_complete_other_variety_taka" class="form-control float_type_positive" value="<?php echo $item['price_complete_other_variety_taka'];?>" />
+            <?php
+            }
+            else
+            {
+                ?>
+                <div class="row show-grid">
+                    <div class="col-xs-4">
+                        <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_PRICE_COMPLETE_OTHER_VARIETY_TAKA');?> </label>
+                    </div>
+                    <div class="col-sm-4 col-xs-8 text-right">
+                        <label class="control-label"><?php echo number_format($item['price_complete_other_variety_taka'],2);?></label>
+                    </div>
                 </div>
-            </div>
+            <?php
+            }
+            ?>
+
         </div>
         <div class="clearfix"></div>
         <div class="row show-grid">

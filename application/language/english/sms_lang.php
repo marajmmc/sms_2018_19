@@ -33,6 +33,7 @@ $lang['ACTION_DOCUMENT'] = 'Documents';
 $lang['ACTION_ASSIGN_GROUP_ROLE'] = 'Assign Group Role';
 $lang['ACTION_ASSIGN_USER_GROUP'] = 'Assign User Group';
 $lang['ACTION_SET_PACKING_COST'] = 'Set Packing Cost';
+$lang['ACTION_REPORT'] = 'Report View';
 
 //Action buttons for LC
 $lang['ACTION_EXPENSE'] = 'Expense';
@@ -262,7 +263,6 @@ $lang['LABEL_REMARKS_LC_RELEASE']='Release Remarks';
 $lang['LABEL_REMARKS_LC_RECEIVE']='Receive Remarks';
 $lang['LABEL_REMARKS_LC_EXPENSE']='Expense Remarks';
 
-
 //crop classification
 $lang['LABEL_CROP_NAME']='Crop';
 $lang['LABEL_CROP_TYPE']='Crop Type';
@@ -279,21 +279,16 @@ $lang['LABEL_CURRENT_STOCK'] = 'Current Stock (Pack/Kg)';
 $lang['LABEL_PURPOSE'] = 'Purpose';
 $lang['LABEL_BARCODE'] = 'Barcode';
 
-
 //Stock out purpose
 $lang['LABEL_STOCK_OUT_SHORT_INVENTORY']='Short Inventory';
 $lang['LABEL_STOCK_OUT_RND']='R&D Purpose';
 $lang['LABEL_STOCK_OUT_SAMPLE_PURPOSE']='Sample Purpose';
 $lang['LABEL_STOCK_OUT_DEMONSTRATION']='Demonstration';
 
-
 // Preference Lang added by maraj
 $lang['LABEL_FISCAL_YEAR_NAME']='Fiscal Year';
 $lang['LABEL_MONTH_NAME']='Month';
 
-/*$lang['LABEL_PRICE_OTHER_COST_TOTAL_CURRENCY']='LC Other Cost';
-$lang['LABEL_QUANTITY_TOTAL_KG']='Total (KG)';
-$lang['LABEL_PRICE_VARIETY_TOTAL_CURRENCY']='Total Variety (Currency)';*/
 /*Open*/
 $lang['LABEL_QUANTITY_OPEN_KG']='LC Open Total (KG)';
 $lang['LABEL_PRICE_OPEN_OTHER_CURRENCY']='LC Open Other Cost (Currency)';
@@ -304,22 +299,10 @@ $lang['LABEL_PRICE_RELEASE_OTHER_VARIETY_TAKA']='LC Release Total (Taka)';
 $lang['LABEL_PRICE_RELEASE_OTHER_CURRENCY']='LC Release Other Cost (Currency)';
 $lang['LABEL_QUANTITY_RELEASE_KG']='Release Total (KG)';
 $lang['LABEL_PRICE_RELEASE_VARIETY_CURRENCY']='Release Total Variety (Currency)';
-/*$lang['LABEL_PRICE_TOTAL_RELEASE_CURRENCY']='Release Total (Currency)';
-$lang['LABEL_PRICE_TOTAL_RELEASE_TAKA']='Release Total (Taka)';*/
 
 /*receive*/
 $lang['LABEL_PRICE_COMPLETE_OTHER_VARIETY_TAKA']='LC Expense Total (Taka)';
 $lang['LABEL_QUANTITY_RECEIVE_KG']='Receive Total (KG)';
-
-/*expense*/
-/*$lang['LABEL_PRICE_TOTAL_EXPENSE_HEAD_TAKA']='Expense Head (Taka)';
-$lang['LABEL_PRICE_TOTAL_ALL_TAKA']='Total (Taka)';
-
-$lang['LABEL_PRICE_TOTAL_CURRENCY']='Total (Currency)';
-$lang['LABEL_STATUS_FORWARD']='Forward Status';
-$lang['LABEL_STATUS_RELEASE']='Release Status';
-$lang['LABEL_STATUS_RECEIVE']='Receive Status';
-$lang['LABEL_STATUS_LC']='LC Status';*/
 
 // Raw Stock Lang added by Saiful
 

@@ -181,6 +181,12 @@ class Lc_release extends Root_Controller
                 $ajax['system_message']='Invalid LC.';
                 $this->json_return($ajax);
             }
+            if($data['item']['status_open']==$this->config->item('system_status_closed'))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='LC Already Closed.';
+                $this->json_return($ajax);
+            }
 
             $this->db->from($this->config->item('table_sms_lc_details').' lcd');
             $this->db->select('lcd.*');
@@ -192,6 +198,7 @@ class Lc_release extends Root_Controller
             $this->db->join($this->config->item('table_login_setup_classification_vpack_size').' pack','pack.id = lcd.pack_size_id','LEFT');
             $this->db->where('lcd.lc_id',$item_id);
             $this->db->where('lcd.quantity_open >0');
+            $this->db->order_by('lcd.id','ASC');
             $data['items']=$this->db->get()->result_array();
 
             $data['title']="LC Release :: ".Barcode_helper::get_barcode_lc($item_id);
@@ -235,11 +242,16 @@ class Lc_release extends Root_Controller
                 $ajax['system_message']='Invalid LC.';
                 $this->json_return($ajax);
             }
-
             if($result['status_release']==$this->config->item('system_status_complete'))
             {
                 $ajax['status']=false;
                 $ajax['system_message']='You Can Not Modify LC Because LC Release Completed.';
+                $this->json_return($ajax);
+            }
+            if($result['status_open']==$this->config->item('system_status_closed'))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='LC Already Closed.';
                 $this->json_return($ajax);
             }
         }
@@ -273,6 +285,8 @@ class Lc_release extends Root_Controller
             $pack_sizes[$result['value']]['text']=$result['text'];
         }
 
+        $this->db->trans_start();  //DB Transaction Handle START
+
         $data=array();
         $data['date_updated'] = $time;
         $data['user_updated'] = $user->user_id;
@@ -281,9 +295,6 @@ class Lc_release extends Root_Controller
         $this->db->where('lc_id',$id);
         $this->db->set('revision', 'revision+1', FALSE);
         $this->db->update($this->config->item('table_sms_lc_release_histories'));
-
-
-        $this->db->trans_start();  //DB Transaction Handle START
 
         $quantity_release_kg=0;
         $price_release_variety_currency=0;
@@ -327,7 +338,7 @@ class Lc_release extends Root_Controller
             }
         }
 
-        $item_head['price_release_other_variety_taka']=$item_head['price_complete_other_variety_taka'];
+        $item_head['price_complete_other_variety_taka']=$item_head['price_release_other_variety_taka'];
         $item_head['quantity_release_kg']=$quantity_release_kg;
         $item_head['price_release_variety_currency']=$price_release_variety_currency;
         $item_head['date_release_updated']=$time;
@@ -404,6 +415,11 @@ class Lc_release extends Root_Controller
             $this->db->where('lcd.lc_id',$item_id);
             $this->db->where('lcd.quantity_open >0');
             $data['items']=$this->db->get()->result_array();
+
+            /*if save to release quantity zero value.
+            how to make validation 2 way
+            1. a single query checking or 2. below code.
+            i think below code is right way because 2nd time no need to run same query.*/
             $item_zero_count=0;
             foreach($data['items'] as $item)
             {
@@ -449,7 +465,7 @@ class Lc_release extends Root_Controller
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->json_return($ajax);
             }
-            if(!($item['status_release']>0) && !is_numeric($item['status_release']))
+            if($item['status_release']!=$this->config->item('system_status_complete'))
             {
                 $ajax['status']=false;
                 $ajax['system_message']='Release LC is required.';
