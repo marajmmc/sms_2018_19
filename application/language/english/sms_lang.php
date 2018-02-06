@@ -320,3 +320,11 @@ $lang['LABEL_QUANTITY_TOTAL_RECEIVE'] = 'Total Quantity (Receive)';
 
 //Raw stock out purpose lang
 $lang['LABEL_RAW_STOCK_OUT_DAMAGE'] = 'Damage';
+
+//Reports Lang added by saiful
+$lang['LABEL_STARTING_STOCK'] = 'Starting Stock';
+$lang['LABEL_TOTAL_STOCK_IN'] = 'Total Stock In';
+$lang['LABEL_TOTAL_STOCK_OUT'] = 'Total Stock Out';
+$lang['LABEL_CURRENT_STOCK'] = 'Current Stock';
+
+
