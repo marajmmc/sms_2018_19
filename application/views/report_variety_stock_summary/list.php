@@ -77,36 +77,30 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             </thead>
             <tbody>
             <?php
-            foreach($items as $crop)
+            foreach($items as $variety)
             {
-                foreach($crop['crop_type'] as $crop_type)
+                foreach($variety['pack_size'] as $pack)
                 {
-                    foreach($crop_type['variety'] as $variety)
-                    {
-                        foreach($variety['pack_size'] as $pack)
+                    ?>
+                    <tr>
+                        <td><?php echo $variety['crop_name']?></td>
+                        <td><?php echo $variety['crop_type_name']?></td>
+                        <td><?php echo $variety['variety_name']?></td>
+                        <td><?php echo $pack['pack_size_name']?></td>
+                        <?php
+                        foreach($warehouse as $warehouse_id=>$warehouse_name)
                         {
                             ?>
-                            <tr>
-                                <td><?php echo $crop['crop_name']?></td>
-                                <td><?php echo $crop_type['crop_type_name']?></td>
-                                <td><?php echo $variety['variety_name']?></td>
-                                <td><?php echo $pack['pack_size_name']?></td>
+                            <td class="text-center">
                                 <?php
-                                foreach($warehouse as $warehouse_id=>$warehouse_name)
-                                {
-                                    ?>
-                                    <td class="text-center">
-                                        <?php
-                                        echo isset($pack['warehouse'][$warehouse_id]['current_stock'])?$pack['warehouse'][$warehouse_id]['current_stock']:'--';
-                                        ?>
-                                    </td>
-                                <?php
-                                }
+                                echo isset($pack['warehouse'][$warehouse_id]['current_stock'])?$pack['warehouse'][$warehouse_id]['current_stock']:'--';
                                 ?>
-                            </tr>
+                            </td>
                         <?php
                         }
-                    }
+                        ?>
+                    </tr>
+                <?php
                 }
             }
             ?>

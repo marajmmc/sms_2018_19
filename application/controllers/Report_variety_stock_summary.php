@@ -78,7 +78,7 @@ class Report_variety_stock_summary extends Root_Controller
         {
             $user = User_helper::get_user();
             $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
-            $data['system_preference_items']['barcode']= 1;
+            /*$data['system_preference_items']['barcode']= 1;
             $data['system_preference_items']['fiscal_year_name']= 1;
             $data['system_preference_items']['month_name']= 1;
             $data['system_preference_items']['date_opening']= 1;
@@ -107,7 +107,7 @@ class Report_variety_stock_summary extends Root_Controller
                         }
                     }
                 }
-            }
+            }*/
 
             $item_head = $this->input->post('report');
 
@@ -167,7 +167,7 @@ class Report_variety_stock_summary extends Root_Controller
                     $pack_size_name=$result['pack_size_name'];
                 }
                 $warehouse[$result['warehouse_id']]=$result['warehouse_name'];
-                $items[$result['crop_id']]['crop_name']=$result['crop_name'];
+                /*$items[$result['crop_id']]['crop_name']=$result['crop_name'];
                 $items[$result['crop_id']]['crop_type'][$result['crop_type_id']]['crop_type_name']=$result['crop_type_name'];
                 $items[$result['crop_id']]['crop_type'][$result['crop_type_id']]['variety'][$result['variety_id']]['variety_name']=$result['variety_name'];
                 $items[$result['crop_id']]['crop_type'][$result['crop_type_id']]['variety'][$result['variety_id']]['pack_size'][$result['pack_size_id']]['pack_size_name']=$pack_size_name;
@@ -185,7 +185,29 @@ class Report_variety_stock_summary extends Root_Controller
                 $items[$result['crop_id']]['crop_type'][$result['crop_type_id']]['variety'][$result['variety_id']]['pack_size'][$result['pack_size_id']]['warehouse'][$result['warehouse_id']]['out_transfer_warehouse']=$result['out_transfer_warehouse'];
                 $items[$result['crop_id']]['crop_type'][$result['crop_type_id']]['variety'][$result['variety_id']]['pack_size'][$result['pack_size_id']]['warehouse'][$result['warehouse_id']]['out_convert_bulk_pack']=$result['out_convert_bulk_pack'];
                 $items[$result['crop_id']]['crop_type'][$result['crop_type_id']]['variety'][$result['variety_id']]['pack_size'][$result['pack_size_id']]['warehouse'][$result['warehouse_id']]['out_sales']=$result['out_sales'];
-                $items[$result['crop_id']]['crop_type'][$result['crop_type_id']]['variety'][$result['variety_id']]['pack_size'][$result['pack_size_id']]['warehouse'][$result['warehouse_id']]['current_stock']=$result['current_stock'];
+                $items[$result['crop_id']]['crop_type'][$result['crop_type_id']]['variety'][$result['variety_id']]['pack_size'][$result['pack_size_id']]['warehouse'][$result['warehouse_id']]['current_stock']=$result['current_stock'];*/
+
+
+                $items[$result['variety_id']]['crop_name']=$result['crop_name'];
+                $items[$result['variety_id']]['crop_type_name']=$result['crop_type_name'];
+                $items[$result['variety_id']]['variety_name']=$result['variety_name'];
+                $items[$result['variety_id']]['pack_size'][$result['pack_size_id']]['pack_size_name']=$pack_size_name;
+                $items[$result['variety_id']]['pack_size'][$result['pack_size_id']]['warehouse'][$result['warehouse_id']]['warehouse_name']=$result['warehouse_name'];
+                $items[$result['variety_id']]['pack_size'][$result['pack_size_id']]['warehouse'][$result['warehouse_id']]['in_stock']=$result['in_stock'];
+                $items[$result['variety_id']]['pack_size'][$result['pack_size_id']]['warehouse'][$result['warehouse_id']]['in_excess']=$result['in_excess'];
+                $items[$result['variety_id']]['pack_size'][$result['pack_size_id']]['warehouse'][$result['warehouse_id']]['in_transfer_warehouse']=$result['in_transfer_warehouse'];
+                $items[$result['variety_id']]['pack_size'][$result['pack_size_id']]['warehouse'][$result['warehouse_id']]['in_convert_bulk_pack']=$result['in_convert_bulk_pack'];
+                $items[$result['variety_id']]['pack_size'][$result['pack_size_id']]['warehouse'][$result['warehouse_id']]['in_purchase']=$result['in_purchase'];
+                $items[$result['variety_id']]['pack_size'][$result['pack_size_id']]['warehouse'][$result['warehouse_id']]['in_sales_return']=$result['in_sales_return'];
+                $items[$result['variety_id']]['pack_size'][$result['pack_size_id']]['warehouse'][$result['warehouse_id']]['out_stock_sample']=$result['out_stock_sample'];
+                $items[$result['variety_id']]['pack_size'][$result['pack_size_id']]['warehouse'][$result['warehouse_id']]['out_stock_rnd']=$result['out_stock_rnd'];
+                $items[$result['variety_id']]['pack_size'][$result['pack_size_id']]['warehouse'][$result['warehouse_id']]['out_stock_demonstration']=$result['out_stock_demonstration'];
+                $items[$result['variety_id']]['pack_size'][$result['pack_size_id']]['warehouse'][$result['warehouse_id']]['out_stock_short_inventory']=$result['out_stock_short_inventory'];
+                $items[$result['variety_id']]['pack_size'][$result['pack_size_id']]['warehouse'][$result['warehouse_id']]['out_transfer_warehouse']=$result['out_transfer_warehouse'];
+                $items[$result['variety_id']]['pack_size'][$result['pack_size_id']]['warehouse'][$result['warehouse_id']]['out_convert_bulk_pack']=$result['out_convert_bulk_pack'];
+                $items[$result['variety_id']]['pack_size'][$result['pack_size_id']]['warehouse'][$result['warehouse_id']]['out_sales']=$result['out_sales'];
+                $items[$result['variety_id']]['pack_size'][$result['pack_size_id']]['warehouse'][$result['warehouse_id']]['current_stock']=$result['current_stock'];
+
             }
             $data['items']=$items;
             $data['warehouse']=$warehouse;
