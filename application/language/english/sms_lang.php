@@ -303,7 +303,9 @@ $lang['LABEL_PRICE_RELEASE_VARIETY_CURRENCY']='Release Total Variety (Currency)'
 /*receive*/
 $lang['LABEL_PRICE_COMPLETE_OTHER_VARIETY_TAKA']='LC Expense Total (Taka)';
 $lang['LABEL_QUANTITY_RECEIVE_KG']='Receive Total (KG)';
-
+/*report*/
+// variety stock summery report
+$lang['LABEL_CURRENT_STOCK_KG']='Current Stock (KG)';
 // Raw Stock Lang added by Saiful
 
 $lang['LABEL_SUPPLIER_NAME']='Supplier Name';

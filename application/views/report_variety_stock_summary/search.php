@@ -72,7 +72,8 @@
                     </div>
                     <div class="col-xs-6">
                         <select id="pack_size_id" name="report[pack_size_id]" class="form-control">
-                            <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                            <option value="-1"><?php echo $this->lang->line('SELECT');?></option>
+                            <option value="0">Bulk</option>
                             <?php
                             foreach($pack_sizes as $pack_size)
                             {?>

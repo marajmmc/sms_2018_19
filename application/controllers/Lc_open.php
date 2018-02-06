@@ -461,7 +461,12 @@ class Lc_open extends Root_Controller
                 $ajax['status']=false;
                 $ajax['system_message']='LC already forwarded.';
                 $this->json_return($ajax);
-                die();
+            }
+            if($result['status_open']==$this->config->item('system_status_closed'))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='LC already closed.';
+                $this->json_return($ajax);
             }
         }
         else
@@ -920,7 +925,7 @@ class Lc_open extends Root_Controller
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->json_return($ajax);
             }
-            if($item_head['status_open_forward']==$this->config->item('system_status_yes'))
+            if($item_head['status_open_forward']!=$this->config->item('system_status_yes'))
             {
                 $ajax['status']=false;
                 $ajax['system_message']='Forward LC is required.';
