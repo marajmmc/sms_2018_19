@@ -201,6 +201,9 @@ class Report_variety_stock_summary extends Root_Controller
         }
         $results=$this->db->get()->result_array();
 
+
+
+
         $items=array();
         $warehouse_quantity=array();
 
@@ -210,6 +213,7 @@ class Report_variety_stock_summary extends Root_Controller
         $crop_name='';
         $crop_type_name='';
         $variety_name='';
+        $crop_warehouse=array();
         foreach($results as $result)
         {
             if($result['pack_size_name']==0)
@@ -227,24 +231,25 @@ class Report_variety_stock_summary extends Root_Controller
                 $item['crop_type']=$result['crop_type_name'];
                 $item['variety']=$result['variety_name'];
                 $crop_name=$result['crop_name'];
-                $items[]=$this->get_quantity_total_variety('crop',$result['warehouse_id'],$current_stock);
+                $crop_type_name=$result['crop_type_name'];
+
+                $items[]=$this->get_quantity_total_variety('crop',$result['warehouse_name'], $current_stock);
                 $current_stock=0;
             }
             else if($crop_type_name!=$result['crop_type_name'])
             {
-                $item['crop_type']=$result['crop_type_name'];
                 $crop_type_name=$result['crop_type_name'];
+                $variety_name=$result['variety_name'];
             }
             else if($variety_name!=$result['variety_name'])
             {
-                $item['variety']=$result['variety_name'];
                 $variety_name=$result['variety_name'];
             }
             else
             {
-                $item['crop_name']='';
+                /*$item['crop_name']='';
                 $item['crop_type']='';
-                $item['variety']='';
+                $item['variety']='';*/
             }
 
 
@@ -294,6 +299,13 @@ class Report_variety_stock_summary extends Root_Controller
 
         $item['variety']='';
         $item['pack_size']='';
+        /*foreach($crop_warehouse as $crop)
+        {
+            foreach($crop as $warehouse)
+            {
+                //$item[$warehouse]=$quantity;
+            }
+        }*/
         $item[$warehouse_name]=$quantity;
 
         return $item;
