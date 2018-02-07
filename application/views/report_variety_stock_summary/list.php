@@ -92,7 +92,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         var cellsrenderer = function(row, column, value, defaultHtml, columnSettings, record)
         {
             var element = $(defaultHtml);
-             console.log(defaultHtml);
+             //console.log(defaultHtml);
 
             if (record.crop_type=="Crop Total")
             {
@@ -129,7 +129,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         };
         var aggregatesrenderer=function (aggregates)
         {
-            console.log(aggregates);
+            //console.log(aggregates);
             return '<div style="position: relative; margin: 0px;padding: 5px;width: 100%;height: 100%; overflow: hidden;background-color:'+grand_total_color+';">' +aggregates['total']+'</div>';
 
         };
