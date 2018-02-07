@@ -148,7 +148,7 @@ $CI = & get_instance();
     {
         system_preset({controller:'<?php echo $CI->router->class; ?>'});
 
-        $(".datepicker").datepicker({dateFormat : display_date_format});
+        $(".date_large").datepicker({dateFormat : display_date_format,changeMonth: true,changeYear: true,yearRange: "2015:+0"});
 
         $(document).off("change","#crop_id");
         $(document).on("change","#crop_id",function()
