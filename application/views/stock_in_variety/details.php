@@ -27,7 +27,7 @@ if(isset($CI->permissions['action5']) && ($CI->permissions['action5']==1))
 }
 $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 ?>
-<form class="hidden-print" id="save_form" action="<?php echo site_url($CI->controller_url.'/index/save');?>" method="post">
+<form class="hidden" id="save_form" action="<?php echo site_url($CI->controller_url.'/index/save');?>" method="post">
     <input type="hidden" id="id" name="id" value="<?php echo $item['id']; ?>" />
     <input type="hidden" id="system_save_new_status" name="system_save_new_status" value="0" />
     <div class="row widget">
@@ -131,9 +131,16 @@ $header_image=base_url('images/print/header.jpg');
 $footer_image=base_url('images/print/footer.jpg');
 ?>
 <style>
+    #system_report_container .report_sub_header_barcode
+    {
+        width: 20%;
+        /*border: 1px solid red;*/
+        float: left;
+        min-height: 40px;
+    }
     #system_report_container .report_sub_header
     {
-        width: 50%;
+        width: 40%;
         /*border: 1px solid red;*/
         float: left;
     }
@@ -142,7 +149,7 @@ $footer_image=base_url('images/print/footer.jpg');
         font-weight: bold;
         width: 30%;
         float: left;
-        text-align: right;
+        text-align: left;
         /*border: 1px solid green;*/
     }
     #system_report_container .report_sub_header .caption-value
@@ -161,9 +168,14 @@ $footer_image=base_url('images/print/footer.jpg');
         </tr>
         <tr>
             <th colspan="7">
+                <div class="report_sub_header_barcode">
+                    <img src="<?php echo site_url('barcode/index/stock_in/'.$item['id'].'/150/40');  ?>">
+                </div>
                 <div class="report_sub_header">
                     <label class="caption">Serial #: </label>
-                    <label class="caption-value"><?php echo Barcode_helper::get_barcode_stock_out($item['id']);?></label>
+                    <label class="caption-value">
+                        <?php echo Barcode_helper::get_barcode_stock_out($item['id']);?>
+                    </label>
                     <label class="caption">Purpose: </label>
                     <label class="caption-value"><?php echo $item['purpose']; ?></label>
                 </div>
