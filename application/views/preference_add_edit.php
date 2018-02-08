@@ -42,7 +42,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 ?>
                 <div class="col-xs-4">
                     <div class="checkbox">
-                        <label><input type="checkbox" class="system_jqx_column" name="system_preference_items[<?php echo $key;?>]" value="<?php echo $key;?>" <?php if($value){echo 'checked';}?>><span class="label label-success"><?php echo $CI->lang->line('LABEL_'.strtoupper($key)); ?></span></label>
+                        <label><input type="checkbox" name="system_preference_items[<?php echo $key;?>]" value="1" <?php if($value){echo 'checked';}?>><span class="label label-success"><?php echo $CI->lang->line('LABEL_'.strtoupper($key)); ?></span></label>
                     </div>
                 </div>
                 <?php

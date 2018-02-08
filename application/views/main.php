@@ -36,12 +36,12 @@ foreach($results as $result)
     $system_districts[$result['territory_id']][]=$result;
 }
 
-$this->db->from($this->config->item('table_login_csetup_customer').' customer');
-$this->db->join($this->config->item('table_login_csetup_cus_info').' cus_info','cus_info.customer_id = customer.id','LEFT');
-$this->db->select('customer.id');
-$this->db->select('cus_info.type, cus_info.district_id, cus_info.customer_id value, cus_info.name text');
-$this->db->where('customer.status',$CI->config->item('system_status_active'));
-$results=$this->db->get()->result_array();
+$CI->db->from($CI->config->item('table_login_csetup_customer').' customer');
+$CI->db->join($CI->config->item('table_login_csetup_cus_info').' cus_info','cus_info.customer_id = customer.id','LEFT');
+$CI->db->select('customer.id');
+$CI->db->select('cus_info.type, cus_info.district_id, cus_info.customer_id value, cus_info.name text');
+$CI->db->where('customer.status',$CI->config->item('system_status_active'));
+$results=$CI->db->get()->result_array();
 $system_customers=array();
 $system_outlets=array();
 $system_all_customers=array();
@@ -57,6 +57,7 @@ foreach($results as $result)
     }
     $system_all_customers[]=$result;
 }
+$system_warehouses=Query_helper::get_info($CI->config->item('table_login_basic_setup_warehouse'),array('id value','name text'),array('status ="'.$CI->config->item('system_status_active').'"'));
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -126,6 +127,10 @@ foreach($results as $result)
             var system_districts=JSON.parse('<?php echo json_encode($system_districts);?>');
             var system_customers=JSON.parse('<?php echo json_encode($system_customers);?>');
             var system_outlets=JSON.parse('<?php echo json_encode($system_outlets);?>');
+            var system_warehouses=JSON.parse('<?php echo json_encode($system_warehouses);?>');
+            var system_report_color_grand='#AEC2DD';
+            var system_report_color_crop='#0CA2C5';
+            var system_report_color_type='#6CAB44';
         </script>
         <header class="hidden-print">
 

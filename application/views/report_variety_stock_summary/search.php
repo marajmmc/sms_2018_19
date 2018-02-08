@@ -1,5 +1,11 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
     $CI = & get_instance();
+    $action_buttons=array();
+    $action_buttons[]=array(
+    'label'=>$CI->lang->line("ACTION_REFRESH"),
+    'href'=>site_url($CI->controller_url.'/index')
+    );
+    $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
 ?>
 <form id="save_form" action="<?php echo site_url($CI->controller_url.'/index/list');?>" method="post">
@@ -12,23 +18,6 @@
         </div>
         <div class="row show-grid">
             <div class="col-xs-8">
-                <div class="row show-grid">
-                    <div class="col-xs-6">
-                        <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_WAREHOUSE');?></label>
-                    </div>
-                    <div class="col-xs-6">
-                        <select id="warehouse_id" name="report[warehouse_id]" class="form-control">
-                            <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                            <?php
-                            foreach($warehouses as $warehouse)
-                            {?>
-                                <option value="<?php echo $warehouse['value']?>"><?php echo $warehouse['text'];?></option>
-                            <?php
-                            }
-                            ?>
-                        </select>
-                    </div>
-                </div>
                 <div style="" class="row show-grid" id="crop_id_container">
                     <div class="col-xs-6">
                         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CROP_NAME');?></label>
@@ -66,7 +55,7 @@
                         </select>
                     </div>
                 </div>
-                <div style="" id="pack_size_id_container">
+                <div style="" class="row show-grid" id="pack_size_id_container">
                     <div class="col-xs-6">
                         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PACK_NAME');?></label>
                     </div>
@@ -95,6 +84,9 @@
                     </div>
                 </div>
             </div>
+            <div class="col-xs-4">
+
+            </div>
         </div>
     </div>
 
@@ -112,115 +104,43 @@
         $(document).off('change','#crop_id');
         $(document).off('change','#crop_type_id');
         $(document).off('change','#variety_id');
+        $(document).off('change','#pack_size_id');
+
+        $('#crop_id').html(get_dropdown_with_select(system_crops));
 
         $(document).on("change","#crop_id",function()
         {
-            $("#crop_type_id").val("");
-            $("#variety_id").val("");
+            $('#system_report_container').html('');
+            $('#crop_type_id').val("");
+            $('#variety_id').val("");
 
             var crop_id=$('#crop_id').val();
+            $('#crop_type_id_container').hide();
+            $('#variety_id_container').hide();
             if(crop_id>0)
             {
                 $('#crop_type_id_container').show();
-                $('#variety_id_container').hide();
-
-                $.ajax({
-                    url: base_url+"common_controller/get_dropdown_croptypes_by_cropid/",
-                    type: 'POST',
-                    datatype: "JSON",
-                    data:{crop_id:crop_id},
-                    success: function (data, status)
-                    {
-
-                    },
-                    error: function (xhr, desc, err)
-                    {
-                        console.log("error");
-
-                    }
-                });
-            }
-            else
-            {
-                $('#crop_type_id_container').hide();
-                $('#variety_id_container').hide();
-
+                if(system_types[crop_id]!==undefined)
+                {
+                    $('#crop_type_id').html(get_dropdown_with_select(system_types[crop_id]));
+                }
             }
         });
         $(document).on("change","#crop_type_id",function()
         {
-
-            $("#variety_id").val("");
-
+            $('#system_report_container').html('');
+            $('#variety_id').val("");
             var crop_type_id=$('#crop_type_id').val();
+            $('#variety_id_container').hide();
             if(crop_type_id>0)
             {
                 $('#variety_id_container').show();
-
-                $.ajax({
-                    url: base_url+"common_controller/get_dropdown_armvarieties_by_croptypeid/",
-                    type: 'POST',
-                    datatype: "JSON",
-                    data:{crop_type_id:crop_type_id},
-                    success: function (data, status)
-                    {
-
-                    },
-                    error: function (xhr, desc, err)
-                    {
-                        console.log("error");
-
-                    }
-                });
-            }
-            else
-            {
-                $('#variety_id_container').hide();
-
+                if(system_varieties[crop_type_id]!==undefined)
+                {
+                    $('#variety_id').html(get_dropdown_with_select(system_varieties[crop_type_id]));
+                }
             }
         });
-        /*$(document).on("change","#variety_id",function()
-        {
-            $("#pack_size_id").val("");
-            var variety_id=$('#variety_id').val();
-            var warehouse_id=$('#warehouse_id').val();
-            if(variety_id>0)
-            {
-
-                $.ajax({
-                    url: base_url+"common_controller/get_dropdown_packsizes_by_variety_warehouse/",
-                    type: 'POST',
-                    datatype: "JSON",
-                    data:{variety_id:variety_id,warehouse_id:warehouse_id},
-                    success: function (data, status)
-                    {
-
-                    },
-                    error: function (xhr, desc, err)
-                    {
-                        console.log("error");
-
-                    }
-                });
-            }
-            else
-            {
-                $.ajax({
-                    url: base_url+"common_controller/get_dropdown_allpack_sizes/",
-                    type: 'POST',
-                    datatype: "JSON",
-                    success: function (data, status)
-                    {
-
-                    },
-                    error: function (xhr, desc, err)
-                    {
-                        console.log("error");
-
-                    }
-                });
-            }
-        });*/
 
     });
 </script>

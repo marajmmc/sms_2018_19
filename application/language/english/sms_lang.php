@@ -327,4 +327,13 @@ $lang['LABEL_TOTAL_STOCK_IN'] = 'Total Stock In';
 $lang['LABEL_TOTAL_STOCK_OUT'] = 'Total Stock Out';
 $lang['LABEL_CURRENT_STOCK'] = 'Current Stock';
 
+$lang['LABEL_WAREHOUSE_1_PKT'] = '1(pkt)';
+$lang['LABEL_WAREHOUSE_1_KG'] = '1(kg)';
+$lang['LABEL_WAREHOUSE_2_PKT'] = '2(pkt)';
+$lang['LABEL_WAREHOUSE_2_KG'] = '2(kg)';
+$lang['LABEL_WAREHOUSE_3_PKT'] = '3(pkt)';
+$lang['LABEL_WAREHOUSE_3_KG'] = '3(kg)';
+$lang['LABEL_WAREHOUSE_4_PKT'] = '4(pkt)';
+$lang['LABEL_WAREHOUSE_4_KG'] = '4(kg)';
+
 

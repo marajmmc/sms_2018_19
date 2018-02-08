@@ -22,18 +22,14 @@ if(isset($CI->permissions['action5']) && ($CI->permissions['action5']==1))
         'data-title'=>"Download"
     );
 }
-/*if(isset($CI->permissions['action6']) && ($CI->permissions['action6']==1))
+if(isset($CI->permissions['action6']) && ($CI->permissions['action6']==1))
 {
     $action_buttons[]=array
     (
         'label'=>'Preference',
         'href'=>site_url($CI->controller_url.'/index/set_preference')
     );
-}*/
-$action_buttons[]=array(
-    'label'=>$CI->lang->line("ACTION_REFRESH"),
-    'href'=>site_url($CI->controller_url.'/index/list')
-);
+}
 $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
 ?>
@@ -59,7 +55,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 <script type="text/javascript">
     $(document).ready(function ()
     {
-        var grand_total_color='#AEC2DD';
         system_preset({controller:'<?php echo $CI->router->class; ?>'});
         var url = "<?php echo site_url($CI->controller_url.'/index/get_items');?>";
 
@@ -76,35 +71,42 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 foreach($warehouses as $warehouse_id=>$warehouse)
                 {
                 ?>
-                { name: '<?php echo $warehouse_id?>', type: 'string' },
+                { name: 'warehouse_<?php echo $warehouse_id?>_pkt', type: 'string' },
+                { name: 'warehouse_<?php echo $warehouse_id?>_kg', type: 'string' },
             <?php
                 }
                 ?>
-                //{ name: 'current_stock', type: 'string' },
+                { name: 'current_stock_pkt', type: 'string' },
                 { name: 'current_stock_kg', type: 'string' }
             ],
             id: 'id',
             type: 'POST',
             url: url,
-            data:{<?php echo $keys; ?>}
+            data:JSON.parse('<?php echo json_encode($options);?>')
         };
 
         var cellsrenderer = function(row, column, value, defaultHtml, columnSettings, record)
         {
             var element = $(defaultHtml);
              //console.log(defaultHtml);
-
-            if (record.crop_type=="Crop Total")
+            if (record.variety_name=="Type Total")
+            {
+                if(!((column=='crop_name')||(column=='type_name')))
+                {
+                    element.css({ 'background-color': system_report_color_type,'margin': '0px','width': '100%', 'height': '100%',padding:'5px','line-height':'25px'});
+                }
+            }
+            else if (record.crop_type=="Crop Total")
             {
                 if(column!='crop_name')
                 {
-                    element.css({ 'background-color': '#6CAB44','margin': '0px','width': '100%', 'height': '100%',padding:'5px','line-height':'25px'});
+                    element.css({ 'background-color': system_report_color_crop,'margin': '0px','width': '100%', 'height': '100%',padding:'5px','line-height':'25px'});
                 }
             }
             else if (record.crop_name=="Grand Total")
             {
 
-                element.css({ 'background-color': grand_total_color,'margin': '0px','width': '100%', 'height': '100%',padding:'5px','line-height':'25px'});
+                element.css({ 'background-color': system_report_color_grand,'margin': '0px','width': '100%', 'height': '100%',padding:'5px','line-height':'25px'});
 
             }
             else
@@ -130,7 +132,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         var aggregatesrenderer=function (aggregates)
         {
             //console.log(aggregates);
-            return '<div style="position: relative; margin: 0px;padding: 5px;width: 100%;height: 100%; overflow: hidden;background-color:'+grand_total_color+';">' +aggregates['total']+'</div>';
+            return '<div style="position: relative; margin: 0px;padding: 5px;width: 100%;height: 100%; overflow: hidden;background-color:'+system_report_color_grand+';">' +aggregates['total']+'</div>';
 
         };
         var dataAdapter = new $.jqx.dataAdapter(source);
@@ -148,9 +150,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 showstatusbar: true,
                 rowsheight: 35,
 
-                filterable: true,
-                sortable: true,
-                showfilterrow: true,
+                filterable: false,
+                sortable: false,
+                showfilterrow: false,
                 pageable: false,
                 pagesize:50,
                 pagesizeoptions: ['20', '50', '100', '200','300','500'],
@@ -167,12 +169,12 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 foreach($warehouses as $warehouse_id=>$warehouse)
                 {
                 ?>
-                    { text: '<?php echo $warehouse_id; ?>', dataField: '<?php echo $warehouse_id?>',cellsrenderer: cellsrenderer, aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer, width:'100'},
+                    { text: '<?php echo $CI->lang->line('LABEL_'.'WAREHOUSE_'.$warehouse['value'].'_PKT'); ?>', dataField: 'warehouse_<?php echo $warehouse['value']?>_pkt',cellsrenderer: cellsrenderer, aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer, width:'100'},
+                    { text: '<?php echo $CI->lang->line('LABEL_'.'WAREHOUSE_'.$warehouse['value'].'_KG'); ?>', dataField: 'warehouse_<?php echo $warehouse['value']?>_kg',cellsrenderer: cellsrenderer, aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer, width:'100'},
                     <?php
                         }
                         ?>
-
-                    //{ text: '<?php echo $CI->lang->line('LABEL_CURRENT_STOCK'); ?>', dataField: 'current_stock', hidden: <?php //echo $system_preference_items['current_stock']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_CURRENT_STOCK_PKT'); ?>', dataField: 'current_stock_pkt',cellsrenderer: cellsrenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer, hidden: <?php echo $system_preference_items['current_stock_pkt']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_CURRENT_STOCK_KG'); ?>', dataField: 'current_stock_kg',cellsrenderer: cellsrenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer, hidden: <?php echo $system_preference_items['current_stock_kg']?0:1;?>}
                 ]
             });
