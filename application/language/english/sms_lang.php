@@ -22,6 +22,7 @@ $lang['ACTION_SAVE'] = 'Save';
 $lang['ACTION_FORWARD'] = 'Forward';
 $lang['ACTION_SAVE_NEW'] = 'Save and New';
 $lang['ACTION_DETAILS'] = 'Details';
+$lang['ACTION_DETAILS_PRINT'] = 'Print View';
 $lang['ACTION_REFRESH'] = 'Refresh';
 $lang['ACTION_CLEAR'] = 'Clear';
 $lang['ACTION_DELETE'] = 'Delete';

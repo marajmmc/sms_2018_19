@@ -35,6 +35,10 @@ class Stock_in_variety extends Root_Controller
         {
             $this->system_details($id);
         }
+        elseif($action=="details_print")
+        {
+            $this->system_details_print($id);
+        }
         elseif($action=="delete")
         {
             $this->system_delete($id);
@@ -603,7 +607,62 @@ class Stock_in_variety extends Root_Controller
             $this->json_return($ajax);
         }
     }
+    private function system_details_print($id)
+    {
+        if(isset($this->permissions['action4']) && ($this->permissions['action4']==1))
+        {
+            if($id>0)
+            {
+                $item_id=$id;
+            }
+            else
+            {
+                $item_id=$this->input->post('id');
+            }
+            $data['item']=Query_helper::get_info($this->config->item('table_sms_stock_in_variety'),'*',array('status !="'.$this->config->item('system_status_delete').'"','id ='.$item_id),1);
+            if(!$data['item'])
+            {
+                System_helper::invalid_try('Details Not Exists',$item_id);
+                $ajax['status']=false;
+                $ajax['system_message']='Invalid Try.';
+                $this->json_return($ajax);
+            }
 
+            $this->db->from($this->config->item('table_sms_stock_in_variety').' stock_in');
+            $this->db->select('stock_in.*');
+            $this->db->select('stock_in_details.variety_id, stock_in_details.pack_size_id, stock_in_details.warehouse_id, stock_in_details.quantity');
+            $this->db->join($this->config->item('table_sms_stock_in_variety_details').' stock_in_details','stock_in_details.stock_in_id = stock_in.id','INNER');
+            $this->db->select('variety.name variety_name');
+            $this->db->join($this->config->item('table_login_setup_classification_varieties').' variety','variety.id = stock_in_details.variety_id','INNER');
+            $this->db->select('v_pack_size.name pack_size_name');
+            $this->db->join($this->config->item('table_login_setup_classification_vpack_size').' v_pack_size','v_pack_size.id = stock_in_details.pack_size_id','LEFT');
+            $this->db->select('ware_house.name ware_house_name');
+            $this->db->join($this->config->item('table_login_basic_setup_warehouse').' ware_house','ware_house.id = stock_in_details.warehouse_id','INNER');
+            $this->db->select('type.name crop_type_name');
+            $this->db->join($this->config->item('table_login_setup_classification_crop_types').' type','type.id = variety.crop_type_id','INNER');
+            $this->db->select('crop.name crop_name');
+            $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = type.crop_id','INNER');
+            $this->db->where('stock_in.id',$item_id);
+            $this->db->where('stock_in_details.revision',1);
+            $this->db->order_by('stock_in_details.id','ASC');
+            $data['items']=$this->db->get()->result_array();
+            $data['title']="Details Stock In";
+            $ajax['status']=true;
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/details_print",$data,true));
+            if($this->message)
+            {
+                $ajax['system_message']=$this->message;
+            }
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/details_print/'.$item_id);
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+    }
     private function system_delete($id)
     {
         if(isset($this->permissions['action3']) && ($this->permissions['action3']==1))
