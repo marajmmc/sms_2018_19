@@ -16,6 +16,7 @@ $config['system_status_pending']='Pending';
 $config['system_status_complete']='Complete';
 
 $config['system_base_url_profile_picture']='http://50.116.76.180/login/';
+$config['system_base_url_picture_setup_print']='http://localhost/sms_2018_19/';
 
 //Stock
 $config['system_purpose_variety_stock_in']='Stock-In';
