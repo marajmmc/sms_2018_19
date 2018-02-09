@@ -18,15 +18,24 @@ if(isset($CI->permissions['action4']) && ($CI->permissions['action4']==1))
 $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 ?>
 <?php
-//$width=8.27*100;
-$height=8.27*100;
-//$height=11.69*100/2;
-$width=11.69*100/2;
-$total_records=sizeof($items);
+$width=8.27*100;
+$height=11.69*100/2;
 $row_per_page=20;
-$num_pages=ceil($total_records/$row_per_page);
 $header_image=base_url('images/print/header.jpg');
 $footer_image=base_url('images/print/footer.jpg');
+$result=Query_helper::get_info($CI->config->item('table_sms_setup_print'),'*',array('controller ="' .$this->controller_url.'"','method ="details_print"'),1);
+if($result)
+{
+    $width=$result['width']*100;
+    $height=$result['height']*100;
+    $row_per_page=$result['row_per_page'];
+    $header_image=$CI->config->item('system_base_url_picture_setup_print').$result['image_header_location'];
+    $footer_image=$CI->config->item('system_base_url_picture_setup_print').$result['image_footer_location'];
+}
+
+$total_records=sizeof($items);
+$num_pages=ceil($total_records/$row_per_page);
+
 ?>
 
 <div id="system_print_container" style="width:<?php echo $width;?>px;">
@@ -36,6 +45,43 @@ $footer_image=base_url('images/print/footer.jpg');
             ?>
             <div class="page page_no_<?php echo $page; ?>" style="width:<?php echo $width;?>px;height:<?php echo $height; ?>px;position: relative;">
                 <img src="<?php echo $header_image;  ?>" style="width: 100%">
+                <div class="row show-grid">
+                    <div class="col-xs-6">
+                        <div class="row show-grid">
+                            <div class="col-xs-6">
+                                <label class="control-label pull-right">ID :</label>
+                            </div>
+                            <div class="col-xs-6">
+                                <?php echo Barcode_helper::get_barcode_stock_out($item['id']);?>
+                            </div>
+                        </div>
+                        <div class="row show-grid">
+                            <div class="col-xs-3">
+
+                            </div>
+                            <div class="col-xs-9">
+                                <img src="<?php echo site_url('barcode/index/stock_in/'.$item['id']);  ?>">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+                        <div class="row show-grid">
+                            <div class="col-xs-6">
+                                <label class="control-label pull-right">Purpose :</label>
+                            </div>
+                            <div class="col-xs-6">
+                                <?php echo $item['purpose']; ?>
+                            </div>
+                        </div><div class="row show-grid">
+                            <div class="col-xs-6">
+                                <label class="control-label pull-right">Date :</label>
+                            </div>
+                            <div class="col-xs-6">
+                                <?php echo System_helper::display_date($item['date_stock_in']);?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <table style="width:<?php echo $width;?>px;">
                     <thead>
                         <tr>
