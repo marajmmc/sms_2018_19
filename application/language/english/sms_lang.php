@@ -159,8 +159,8 @@ $lang['LABEL_UNION_NAME'] = 'Union';
 
 //crop classification
 $lang['LABEL_CROP_NAME']='Crop';
-$lang['LABEL_CROP_TYPE']='Crop Type';
-$lang['LABEL_VARIETY']='Variety';
+$lang['LABEL_CROP_TYPE_NAME']='Crop Type';
+$lang['LABEL_VARIETY_NAME']='Variety';
 $lang['LABEL_WHOSE']='Variety Category';
 $lang['LABEL_COMPETITOR_NAME']='Competitor';
 $lang['LABEL_STOCK_ID']='Stock Id';
@@ -264,9 +264,6 @@ $lang['LABEL_REMARKS_LC_RECEIVE']='Receive Remarks';
 $lang['LABEL_REMARKS_LC_EXPENSE']='Expense Remarks';
 
 //crop classification
-$lang['LABEL_CROP_NAME']='Crop';
-$lang['LABEL_CROP_TYPE']='Crop Type';
-$lang['LABEL_VARIETY']='Variety';
 $lang['LABEL_DATE_STOCK_IN']='Stock In date';
 $lang['LABEL_DATE_STOCK_OUT']='Stock Out date';
 $lang['LABEL_STOCK_IN']='Stock In';
@@ -327,13 +324,17 @@ $lang['LABEL_TOTAL_STOCK_IN'] = 'Total Stock In';
 $lang['LABEL_TOTAL_STOCK_OUT'] = 'Total Stock Out';
 $lang['LABEL_CURRENT_STOCK'] = 'Current Stock';
 
-$lang['LABEL_WAREHOUSE_1_PKT'] = '1(pkt)';
-$lang['LABEL_WAREHOUSE_1_KG'] = '1(kg)';
-$lang['LABEL_WAREHOUSE_2_PKT'] = '2(pkt)';
-$lang['LABEL_WAREHOUSE_2_KG'] = '2(kg)';
-$lang['LABEL_WAREHOUSE_3_PKT'] = '3(pkt)';
-$lang['LABEL_WAREHOUSE_3_KG'] = '3(kg)';
-$lang['LABEL_WAREHOUSE_4_PKT'] = '4(pkt)';
-$lang['LABEL_WAREHOUSE_4_KG'] = '4(kg)';
+$lang['LABEL_WAREHOUSE_1_PKT'] = '1st Floor(pkt)';
+$lang['LABEL_WAREHOUSE_1_KG'] = '1st Floor(kg)';
+$lang['LABEL_WAREHOUSE_2_PKT'] = '2nd Floor(pkt)';
+$lang['LABEL_WAREHOUSE_2_KG'] = '2nd Floor(kg)';
+$lang['LABEL_WAREHOUSE_3_PKT'] = '3rd Floor(pkt)';
+$lang['LABEL_WAREHOUSE_3_KG'] = '3rd Floor(kg)';
+$lang['LABEL_WAREHOUSE_4_PKT'] = '4th Floor(pkt)';
+$lang['LABEL_WAREHOUSE_4_KG'] = '4th Floor(kg)';
+$lang['LABEL_WAREHOUSE_5_PKT'] = 'Siddique Bazar(pkt)';
+$lang['LABEL_WAREHOUSE_5_KG'] = 'Siddique Bazar(kg)';
+$lang['LABEL_CURRENT_STOCK_KG'] = 'CT(kg))';
+$lang['LABEL_CURRENT_STOCK_PKT'] = 'CT(pkt))';
 
 

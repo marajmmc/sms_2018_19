@@ -37,7 +37,7 @@
                 </div>
                 <div style="display: none;" class="row show-grid" id="crop_type_id_container">
                     <div class="col-xs-6">
-                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CROP_TYPE');?></label>
+                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME');?></label>
                     </div>
                     <div class="col-xs-6">
                         <select id="crop_type_id" name="report[crop_type_id]" class="form-control">
@@ -47,7 +47,7 @@
                 </div>
                 <div style="display: none;" class="row show-grid" id="variety_id_container">
                     <div class="col-xs-6">
-                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_VARIETY');?></label>
+                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_VARIETY_NAME');?></label>
                     </div>
                     <div class="col-xs-6">
                         <select id="variety_id" name="report[variety_id]" class="form-control">

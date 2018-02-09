@@ -72,8 +72,8 @@ class Report_variety_stock_summary extends Root_Controller
 
             $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="search"'),1);
             $data['system_preference_items']['crop_name']= 1;
-            $data['system_preference_items']['crop_type']= 1;
-            $data['system_preference_items']['variety']= 1;
+            $data['system_preference_items']['crop_type_name']= 1;
+            $data['system_preference_items']['variety_name']= 1;
             $data['system_preference_items']['pack_size']= 1;
             foreach($data['warehouses'] as $warehouse)
             {
@@ -126,7 +126,7 @@ class Report_variety_stock_summary extends Root_Controller
         $pack_size_id=$this->input->post('pack_size_id');
         $items=array();
 
-        $warehouses=Query_helper::get_info($this->config->item('table_login_basic_setup_warehouse'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
+        $warehouses=Query_helper::get_info($this->config->item('table_login_basic_setup_warehouse'),array('id value','name text'),array('status !="'.$this->config->item('system_status_delete').'"'));
 
         $this->db->from($this->config->item('table_sms_stock_summary_variety').' stock_summary_variety');
         $this->db->select('stock_summary_variety.*');
@@ -162,18 +162,22 @@ class Report_variety_stock_summary extends Root_Controller
         foreach($results as $result)
         {
             $varieties[$result['variety_id']][$result['pack_size_id']]['crop_name']=$result['crop_name'];
-            $varieties[$result['variety_id']][$result['pack_size_id']]['crop_type']=$result['crop_type_name'];
+            $varieties[$result['variety_id']][$result['pack_size_id']]['crop_type_name']=$result['crop_type_name'];
             $varieties[$result['variety_id']][$result['pack_size_id']]['variety_name']=$result['variety_name'];
             if($result['pack_size_id']==0)
             {
-                $varieties[$result['variety_id']][0]['pack_size']='Bulk';
+                $varieties[$result['variety_id']][$result['pack_size_id']]['pack_size']='Bulk';
+                $varieties[$result['variety_id']][$result['pack_size_id']]['warehouse_'.$result['warehouse_id'].'_pkt']=0;
+                $varieties[$result['variety_id']][$result['pack_size_id']]['warehouse_'.$result['warehouse_id'].'_kg']=$result['current_stock'];
             }
             else
             {
                 $varieties[$result['variety_id']][$result['pack_size_id']]['pack_size']=$result['pack_size'];
+                $varieties[$result['variety_id']][$result['pack_size_id']]['warehouse_'.$result['warehouse_id'].'_pkt']=$result['current_stock'];
+                $varieties[$result['variety_id']][$result['pack_size_id']]['warehouse_'.$result['warehouse_id'].'_kg']=$result['current_stock']*$result['pack_size']/1000;
             }
 
-            $varieties[$result['variety_id']][$result['pack_size_id']]['warehouse_'.$result['warehouse_id'].'_current_stock']=$result['current_stock'];
+
         }
 
 
@@ -181,18 +185,18 @@ class Report_variety_stock_summary extends Root_Controller
         $crop_total=array();
         $grand_total=array();
         $type_total['crop_name']='';
-        $type_total['crop_type']='';
+        $type_total['crop_type_name']='';
         $type_total['variety_name']='Total Type';
 
         $crop_total['crop_name']='';
-        $crop_total['crop_type']='Total Crop';
+        $crop_total['crop_type_name']='Total Crop';
         $crop_total['variety_name']='';
 
         $grand_total['crop_name']='Grand Total';
-        $grand_total['crop_type']='';
+        $grand_total['crop_type_name']='';
         $grand_total['variety_name']='';
 
-        $grand_total['pack_size']=$crop_total['pack_size']=$type_total['pack_size']='*';
+        $grand_total['pack_size']=$crop_total['pack_size']=$type_total['pack_size']='';
         foreach($warehouses as $warehouse)
         {
             $grand_total['warehouse_'.$warehouse['value'].'_pkt']=$crop_total['warehouse_'.$warehouse['value'].'_pkt']=$type_total['warehouse_'.$warehouse['value'].'_pkt']=0;
@@ -209,118 +213,130 @@ class Report_variety_stock_summary extends Root_Controller
         {
             foreach($variety as $pack_size_id=>$pack)
             {
+                if(!$first_row)
+                {
+                    if($prev_crop_name!=$pack['crop_name'])
+                    {
+                        $items[]=$this->get_row($type_total,$warehouses);
+                        $type_total=$this->reset_row($type_total,$warehouses);
+                        $items[]=$this->get_row($crop_total,$warehouses);
+                        $crop_total=$this->reset_row($crop_total,$warehouses);
+                        $prev_crop_name=$pack['crop_name'];
+                        $prev_type_name=$pack['crop_type_name'];
+                    }
+                    elseif($prev_type_name!=$pack['crop_type_name'])
+                    {
+                        $items[]=$this->get_row($type_total,$warehouses);
+                        $type_total=$this->reset_row($type_total,$warehouses);
+                        $pack['crop_name']='';
+                        $prev_type_name=$pack['crop_type_name'];
+                    }
+                    else
+                    {
+                        $pack['crop_name']='';
+                        $pack['crop_type_name']='';
+                    }
+                }
+                else
+                {
+                    $prev_crop_name=$pack['crop_name'];
+                    $prev_type_name=$pack['crop_type_name'];
+                    $first_row=false;
+                }
+                foreach($warehouses as $warehouse)
+                {
+                    if(isset($pack['warehouse_'.$warehouse['value'].'_pkt'])&&($pack['warehouse_'.$warehouse['value'].'_pkt']>0))
+                    {
+                        $type_total['warehouse_'.$warehouse['value'].'_pkt']+=$pack['warehouse_'.$warehouse['value'].'_pkt'];
+                        $crop_total['warehouse_'.$warehouse['value'].'_pkt']+=$pack['warehouse_'.$warehouse['value'].'_pkt'];
+                        $grand_total['warehouse_'.$warehouse['value'].'_pkt']+=$pack['warehouse_'.$warehouse['value'].'_pkt'];
+                    }
+                    if(isset($pack['warehouse_'.$warehouse['value'].'_kg'])&&($pack['warehouse_'.$warehouse['value'].'_kg']>0))
+                    {
+                        $type_total['warehouse_'.$warehouse['value'].'_kg']+=$pack['warehouse_'.$warehouse['value'].'_kg'];
+                        $crop_total['warehouse_'.$warehouse['value'].'_kg']+=$pack['warehouse_'.$warehouse['value'].'_kg'];
+                        $grand_total['warehouse_'.$warehouse['value'].'_kg']+=$pack['warehouse_'.$warehouse['value'].'_kg'];
+                    }
+                }
                 $items[]=$this->get_row($pack,$warehouses);
             }
         }
-
-
+        $items[]=$this->get_row($type_total,$warehouses);
+        $items[]=$this->get_row($crop_total,$warehouses);
+        $items[]=$this->get_row($grand_total,$warehouses);
         $this->json_return($items);
         die();
 
 
     }
-    private function get_variety($info,$warehouses)
-    {
-        $row=array();
-        $row['crop_name']=$info['crop_name'];
-        $row['crop_type']=$info['crop_type_name'];
-        $row['variety']=$info['variety_name'];
-        $row['pack_size']=$info['pack_size_name'];
-        //$row['current_stock']='';//$info['current_stock'];
-        foreach($warehouses as $warehouse_name=>$stock)
-        {
-            if(isset($info[$warehouse_name]))
-            {
-                $row[$warehouse_name]=$info[$warehouse_name];
-            }
-            else
-            {
-                $row[$warehouse_name]='--';
-            }
-        }
-        return $row;
-    }
     private function get_row($info,$warehouses)
     {
         $row=array();
         $row['crop_name']=$info['crop_name'];
-        $row['crop_type']=$info['crop_type'];
+        $row['crop_type_name']=$info['crop_type_name'];
         $row['variety_name']=$info['variety_name'];
         $row['pack_size']=$info['pack_size'];
-
+        $row['current_stock_pkt']=0;
+        $row['current_stock_kg']=0;
         foreach($warehouses as $warehouse)
         {
-            if(isset($info['warehouse_'.$warehouse['value'].'_current_stock']))
+            if(isset($info['warehouse_'.$warehouse['value'].'_pkt'])&&($info['warehouse_'.$warehouse['value'].'_pkt']>0))
             {
-                if($info['pack_size']=='bulk')
-                {
-                    $row['warehouse_'.$warehouse['value'].'_pkt']='';
-                    $row['warehouse_'.$warehouse['value'].'_kg']=$info['warehouse_'.$warehouse['value'].'_current_stock'];
-                }
-                else
-                {
-                    $row['warehouse_'.$warehouse['value'].'_pkt']=$info['warehouse_'.$warehouse['value'].'_current_stock'];
-                    $row['warehouse_'.$warehouse['value'].'_kg']=$info['warehouse_'.$warehouse['value'].'_current_stock']*$info['pack_size']/1000;
-                }
+                $row['current_stock_pkt']+=$info['warehouse_'.$warehouse['value'].'_pkt'];
+                $row['warehouse_'.$warehouse['value'].'_pkt']=$info['warehouse_'.$warehouse['value'].'_pkt'];
+
             }
             else
             {
                 $row['warehouse_'.$warehouse['value'].'_pkt']='';
-                $row['warehouse_'.$warehouse['value'].'_kg']='';
             }
-            //$grand_total['warehouse_'.$warehouse['value'].'_pkt']=$crop_total['warehouse_'.$warehouse['value'].'_pkt']=$type_total['warehouse_'.$warehouse['value'].'_pkt']=0;
-            //$grand_total['warehouse_'.$warehouse['value'].'_kg']=$crop_total['warehouse_'.$warehouse['value'].'_kg']=$type_total['warehouse_'.$warehouse['value'].'_kg']=0;
-        }
-        return $row;
 
-
-    }
-    private function get_total_crop($crop_id,$warehouses,$warehouse_crop_stock)
-    {
-        $info=array();
-        $info['crop_name']='';
-        $info['crop_type']='Crop Total';
-        $info['variety']='';
-        $info['pack_size']='';
-        foreach($warehouses as $warehouse_name=>$stock)
-        {
-            if(isset($warehouse_crop_stock[$crop_id][$warehouse_name]))
+            if(isset($info['warehouse_'.$warehouse['value'].'_kg'])&&($info['warehouse_'.$warehouse['value'].'_kg']>0))
             {
-                $info[$warehouse_name]=$warehouse_crop_stock[$crop_id][$warehouse_name];
+                $row['current_stock_kg']+=$info['warehouse_'.$warehouse['value'].'_kg'];
+                $row['warehouse_'.$warehouse['value'].'_kg']=number_format($info['warehouse_'.$warehouse['value'].'_kg'],3,'.','');
             }
             else
             {
-                $info[$warehouse_name]='--';
+                $row['warehouse_'.$warehouse['value'].'_kg']='';
             }
         }
-        $info['current_stock_kg']='';
-        return $info;
-    }
-    private function get_grand_total_variety($warehouse_db, $warehouse_stock)
-    {
-        $row=array();
-        $row['crop_name']='Grand Total';
-        $row['crop_type']='';
-        $row['variety']='';
-        $row['pack_size']='';
-        foreach($warehouse_db as $result)
+        if($row['current_stock_pkt']==0)
         {
-            $row[$result['name']]=isset($warehouse_stock[$result['name']])?$warehouse_stock[$result['name']]:'--';
+            $row['current_stock_pkt']='';
         }
-        $row['current_stock_kg']=0;//number_format($current_stock_kg,3,'.','');
+        if($row['current_stock_kg']==0)
+        {
+            $row['current_stock_kg']='';
+        }
+        else
+        {
+            $row['current_stock_kg']=number_format($row['current_stock_kg'],3,'.','');
+        }
         return $row;
+
+
+    }
+    private function reset_row($info, $warehouses)
+    {
+        foreach($warehouses as $warehouse)
+        {
+            $info['warehouse_'.$warehouse['value'].'_pkt']=0;
+            $info['warehouse_'.$warehouse['value'].'_kg']=0;
+        }
+        return $info;
     }
     private function system_set_preference()
     {
         if(isset($this->permissions['action6']) && ($this->permissions['action6']==1))
         {
             $user = User_helper::get_user();
-            $data['warehouses']=Query_helper::get_info($this->config->item('table_login_basic_setup_warehouse'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
+            $data['warehouses']=Query_helper::get_info($this->config->item('table_login_basic_setup_warehouse'),array('id value','name text'),array('status =!"'.$this->config->item('system_status_delete').'"'));
 
             $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="search"'),1);
             $data['system_preference_items']['crop_name']= 1;
-            $data['system_preference_items']['crop_type']= 1;
-            $data['system_preference_items']['variety']= 1;
+            $data['system_preference_items']['crop_type_name']= 1;
+            $data['system_preference_items']['variety_name']= 1;
             $data['system_preference_items']['pack_size']= 1;
             foreach($data['warehouses'] as $warehouse)
             {
