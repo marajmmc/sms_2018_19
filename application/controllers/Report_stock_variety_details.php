@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Report_variety_stock_details extends Root_Controller
+class Report_stock_variety_details extends Root_Controller
 {
     public $message;
     public $permissions;
@@ -9,8 +9,8 @@ class Report_variety_stock_details extends Root_Controller
     public function __construct()
     {
         parent::__construct();
-        $this->permissions=User_helper::get_permission('Report_variety_stock_details');
-        $this->controller_url='report_variety_stock_details';
+        $this->permissions=User_helper::get_permission('Report_stock_variety_details');
+        $this->controller_url='report_stock_variety_details';
     }
     public function index($action='search')
     {
@@ -44,7 +44,6 @@ class Report_variety_stock_details extends Root_Controller
     {
         if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
         {
-            $data['crops']=Query_helper::get_info($this->config->item('table_login_setup_classification_crops'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $data['warehouses']=Query_helper::get_info($this->config->item('table_login_basic_setup_warehouse'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $data['pack_sizes']=Query_helper::get_info($this->config->item('table_login_setup_classification_vpack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $fiscal_years=Query_helper::get_info($this->config->item('table_login_basic_setup_fiscal_year'),'*',array());

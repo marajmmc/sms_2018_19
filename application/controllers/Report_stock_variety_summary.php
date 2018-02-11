@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Report_variety_stock_summary extends Root_Controller
+class Report_stock_variety_summary extends Root_Controller
 {
     public $message;
     public $permissions;
@@ -9,8 +9,8 @@ class Report_variety_stock_summary extends Root_Controller
     {
         parent::__construct();
         $this->message="";
-        $this->permissions=User_helper::get_permission('Report_variety_stock_summary');
-        $this->controller_url='report_variety_stock_summary';
+        $this->permissions=User_helper::get_permission('Report_stock_variety_summary');
+        $this->controller_url='report_stock_variety_summary';
     }
     public function index($action="search")
     {
@@ -44,7 +44,7 @@ class Report_variety_stock_summary extends Root_Controller
         if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
         {
             $data['pack_sizes']=Query_helper::get_info($this->config->item('table_login_setup_classification_vpack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('name ASC'));
-            $data['title']="Variety Stock Summary Report Search";
+            $data['title']="Variety Current Stock Report Search";
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/search",$data,true));
             if($this->message)
@@ -68,7 +68,7 @@ class Report_variety_stock_summary extends Root_Controller
             $reports=$this->input->post('report');
             $user = User_helper::get_user();
             $data['options']=$reports;
-            $data['warehouses']=Query_helper::get_info($this->config->item('table_login_basic_setup_warehouse'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
+            $data['warehouses']=Query_helper::get_info($this->config->item('table_login_basic_setup_warehouse'),array('id value','name text'),array('status !="'.$this->config->item('system_status_delete').'"'));
 
             $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="search"'),1);
             $data['system_preference_items']['crop_name']= 1;
@@ -101,7 +101,7 @@ class Report_variety_stock_summary extends Root_Controller
                     }
                 }
             }
-            $data['title']="Variety Stock Summary Report";
+            $data['title']="Variety Current Stock Report";
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_report_container","html"=>$this->load->view($this->controller_url."/list",$data,true));
             if($this->message)
@@ -331,7 +331,7 @@ class Report_variety_stock_summary extends Root_Controller
         if(isset($this->permissions['action6']) && ($this->permissions['action6']==1))
         {
             $user = User_helper::get_user();
-            $data['warehouses']=Query_helper::get_info($this->config->item('table_login_basic_setup_warehouse'),array('id value','name text'),array('status =!"'.$this->config->item('system_status_delete').'"'));
+            $data['warehouses']=Query_helper::get_info($this->config->item('table_login_basic_setup_warehouse'),array('id value','name text'),array('status !="'.$this->config->item('system_status_delete').'"'));
 
             $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="search"'),1);
             $data['system_preference_items']['crop_name']= 1;

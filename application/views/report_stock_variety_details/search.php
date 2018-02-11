@@ -1,14 +1,14 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-    $CI = & get_instance();
-    $action_buttons=array();
-    $action_buttons[]=array(
+$CI = & get_instance();
+$action_buttons=array();
+$action_buttons[]=array(
     'label'=>$CI->lang->line("ACTION_REFRESH"),
     'href'=>site_url($CI->controller_url.'/index')
-    );
-    $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
+);
+$CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
 ?>
-<form id="save_form" action="<?php echo site_url($CI->controller_url.'/index/list');?>" method="post">
+<form class="form_valid" id="save_form" action="<?php echo site_url($CI->controller_url.'/index/list');?>" method="post">
     <div class="row widget">
         <div class="widget-header">
             <div class="title">
@@ -17,7 +17,24 @@
             <div class="clearfix"></div>
         </div>
         <div class="row show-grid">
-            <div class="col-xs-8">
+            <div class="col-xs-6">
+                <div class="row show-grid">
+                    <div class="col-xs-6">
+                        <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_WAREHOUSE_NAME');?></label>
+                    </div>
+                    <div class="col-xs-6">
+                        <select name="report[warehouse_id]" class="form-control">
+                            <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                            <?php
+                            foreach($warehouses as $warehouse)
+                            {?>
+                                <option value="<?php echo $warehouse['value']?>"><?php echo $warehouse['text'];?></option>
+                            <?php
+                            }
+                            ?>
+                        </select>
+                    </div>
+                </div>
                 <div style="" class="row show-grid" id="crop_id_container">
                     <div class="col-xs-6">
                         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CROP_NAME');?></label>
@@ -25,13 +42,6 @@
                     <div class="col-xs-6">
                         <select id="crop_id" name="report[crop_id]" class="form-control">
                             <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                            <?php
-                            foreach($crops as $crop)
-                            {?>
-                                <option value="<?php echo $crop['value']?>"><?php echo $crop['text'];?></option>
-                            <?php
-                            }
-                            ?>
                         </select>
                     </div>
                 </div>
@@ -55,14 +65,13 @@
                         </select>
                     </div>
                 </div>
-                <div style="" class="row show-grid" id="pack_size_id_container">
+                <div style="" id="pack_size_id_container">
                     <div class="col-xs-6">
-                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PACK_NAME');?></label>
+                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PACK_SIZE');?></label>
                     </div>
                     <div class="col-xs-6">
-                        <select id="pack_size_id" name="report[pack_size_id]" class="form-control">
-                            <option value="-1"><?php echo $this->lang->line('SELECT');?></option>
-                            <option value="0">Bulk</option>
+                        <select name="report[pack_size_id]" class="form-control">
+                            <option value=""><?php echo $this->lang->line('SELECT');?></option>
                             <?php
                             foreach($pack_sizes as $pack_size)
                             {?>
@@ -73,16 +82,53 @@
                         </select>
                     </div>
                 </div>
+            </div>
+            <div class="col-xs-6">
                 <div class="row show-grid">
                     <div class="col-xs-6">
-                        &nbsp;
+                        <select id="fiscal_year_id" name="report[fiscal_year_id]" class="form-control">
+                            <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                            <?php
+                            foreach($fiscal_years as $year)
+                            {?>
+                                <option value="<?php echo $year['value']?>"><?php echo $year['text'];?></option>
+                            <?php
+                            }
+                            ?>
+                        </select>
+
                     </div>
                     <div class="col-xs-6">
-                        <div class="action_button pull-right">
-                            <button id="button_action_report" type="button" class="btn" data-form="#save_form"><?php echo $CI->lang->line("ACTION_REPORT"); ?></button>
-                        </div>
+                        <label class="control-label"><?php echo $this->lang->line('LABEL_FISCAL_YEAR');?></label>
                     </div>
                 </div>
+                <div class="row show-grid">
+                    <div class="col-xs-6">
+                        <input type="text" id="date_start" name="report[date_start]" class="form-control date_large" value="<?php echo $date_start; ?>">
+                    </div>
+                    <div class="col-xs-6">
+                        <label class="control-label"><?php echo $this->lang->line('LABEL_DATE_START');?></label>
+                    </div>
+                </div>
+                <div class="row show-grid">
+                    <div class="col-xs-6">
+                        <input type="text" id="date_end" name="report[date_end]" class="form-control date_large" value="<?php echo $date_end; ?>">
+                    </div>
+                    <div class="col-xs-6">
+                        <label class="control-label"><?php echo $this->lang->line('LABEL_DATE_END');?></label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row show-grid">
+            <div class="col-xs-4">
+
+            </div>
+            <div class="col-xs-4">
+                <div class="action_button pull-right">
+                    <button id="button_action_report" type="button" class="btn" data-form="#save_form"><?php echo $CI->lang->line("ACTION_REPORT_VIEW"); ?></button>
+                </div>
+
             </div>
             <div class="col-xs-4">
 
@@ -100,11 +146,16 @@
 
     jQuery(document).ready(function()
     {
+        system_preset({controller:'<?php echo $CI->router->class; ?>'});
+
+        $(".date_large").datepicker({dateFormat : display_date_format,changeMonth: true,changeYear: true,yearRange: "2015:+0"});
+
         $(document).off('change','#warehouse_id');
         $(document).off('change','#crop_id');
         $(document).off('change','#crop_type_id');
         $(document).off('change','#variety_id');
         $(document).off('change','#pack_size_id');
+        $(document).off("change","#fiscal_year_id");
 
         $('#crop_id').html(get_dropdown_with_select(system_crops));
 
@@ -126,6 +177,7 @@
                 }
             }
         });
+
         $(document).on("change","#crop_type_id",function()
         {
             $('#system_report_container').html('');
@@ -141,6 +193,17 @@
                 }
             }
         });
+        $(document).on("change","#fiscal_year_id",function()
+        {
 
+            var fiscal_year_ranges=$('#fiscal_year_id').val();
+            if(fiscal_year_ranges!='')
+            {
+                var dates = fiscal_year_ranges.split("/");
+                $("#date_start").val(dates[0]);
+                $("#date_end").val(dates[1]);
+
+            }
+        });
     });
 </script>
