@@ -67,6 +67,7 @@ $system_warehouses=Query_helper::get_info($CI->config->item('table_login_basic_s
         <meta charset="utf-8">
         <link rel="stylesheet" href="<?php echo base_url('css/bootstrap.min.css');?>">
         <link rel="stylesheet" href="<?php echo base_url('css/style.css');?>">
+        <link rel="stylesheet" href="<?php echo base_url('css/print.css');?>">
         <link rel="stylesheet" href="<?php echo base_url('css/jquery-ui/jquery-ui.min.css'); ?>">
         <link rel="stylesheet" href="<?php echo base_url('css/jquery-ui/jquery-ui.theme.css'); ?>">
 

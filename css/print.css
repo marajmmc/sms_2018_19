@@ -1,0 +1,9 @@
+/*head view table css*/
+.system_header_view_table .header_caption
+{
+    width: 20%;
+}
+.system_header_view_table .header_value
+{
+    width: 30%;
+}
