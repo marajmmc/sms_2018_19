@@ -77,54 +77,25 @@ class Report_stock_variety_details extends Root_Controller
     {
         if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
         {
-            $user = User_helper::get_user();
-            $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
-            $data['system_preference_items']['crop_name']= 1;
-            $data['system_preference_items']['crop_type']= 1;
-            $data['system_preference_items']['variety']= 1;
-            $data['system_preference_items']['barcode']= 1;
-            $data['system_preference_items']['pack_size']= 1;
-            $data['system_preference_items']['starting_stock']= 1;
-            $data['system_preference_items']['total_stock_in']= 1;
-            $data['system_preference_items']['total_stock_out']= 1;
-            $data['system_preference_items']['current_stock']= 1;
-            if($result)
-            {
-                if($result['preferences']!=null)
-                {
-                    $preferences=json_decode($result['preferences'],true);
-                    foreach($data['system_preference_items'] as $key=>$value)
-                    {
-                        if(isset($preferences[$key]))
-                        {
-                            $data['system_preference_items'][$key]=$value;
-                        }
-                        else
-                        {
-                            $data['system_preference_items'][$key]=0;
-                        }
-                    }
-                }
-            }
-
             $reports=$this->input->post('report');
-
-            if($reports)
+            $reports['date_end']=System_helper::get_time($reports['date_end'])+3600*24-1;
+            $reports['date_start']=System_helper::get_time($reports['date_start']);
+            if($reports['date_start']>=$reports['date_end'])
             {
-                $reports['date_end']=System_helper::get_time($reports['date_end']);
-                $reports['date_end']=$reports['date_end']+3600*24-1;
-                $reports['date_start']=System_helper::get_time($reports['date_start']);
-                if($reports['date_start']>=$reports['date_end'])
-                {
-                    $ajax['status']=false;
-                    $ajax['system_message']='Starting Date should be less than End date';
-                    $this->json_return($ajax);
-                }
-
-                $data['options']=$reports;
+                $ajax['status']=false;
+                $ajax['system_message']='Starting Date should be less than End date';
+                $this->json_return($ajax);
             }
-
-            $data['title']="Stock Report In Details";
+            if(!($reports['variety_id']>0))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='Variety Selection Mandatory';
+                $this->json_return($ajax);
+            }
+            $data['options']=$reports;
+            $data['warehouses']=Query_helper::get_info($this->config->item('table_login_basic_setup_warehouse'),array('id value','name text'),array('status !="'.$this->config->item('system_status_delete').'"'));
+            $data['system_preference_items']= $this->get_preference();
+            $data['title']="Variety Details Stock Report";
             $ajax['status']=true;
             $ajax['system_content'][]=array('id'=>'#system_report_container','html'=>$this->load->view($this->controller_url.'/list',$data,true));
 
@@ -142,87 +113,14 @@ class Report_stock_variety_details extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
-    private function system_set_preference()
-    {
-        if(isset($this->permissions['action6']) && ($this->permissions['action6']==1))
-        {
-            $user = User_helper::get_user();
-            $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
-            $data['system_preference_items']['crop_name']= 1;
-            $data['system_preference_items']['crop_type']= 1;
-            $data['system_preference_items']['variety']= 1;
-            $data['system_preference_items']['barcode']= 1;
-            $data['system_preference_items']['pack_size']= 1;
-            $data['system_preference_items']['starting_stock']= 1;
-            $data['system_preference_items']['total_stock_in']= 1;
-            $data['system_preference_items']['total_stock_out']= 1;
-            $data['system_preference_items']['current_stock']= 1;
-            if($result)
-            {
-                if($result['preferences']!=null)
-                {
-                    $preferences=json_decode($result['preferences'],true);
-                    foreach($data['system_preference_items'] as $key=>$value)
-                    {
-                        if(isset($preferences[$key]))
-                        {
-                            $data['system_preference_items'][$key]=$value;
-                        }
-                        else
-                        {
-                            $data['system_preference_items'][$key]=0;
-                        }
-                    }
-                }
-            }
-            $data['preference_method_name']='list';
-
-            $data['title']="Set Preference";
-            $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("preference_add_edit",$data,true));
-            $ajax['system_page_url']=site_url($this->controller_url.'/index/set_preference');
-            $this->json_return($ajax);
-        }
-        else
-        {
-            $ajax['status']=false;
-            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
-            $this->json_return($ajax);
-        }
-    }
-
     private function system_get_items()
     {
-        $warehouse_id=$this->input->post('warehouse_id');
-        $crop_id=$this->input->post('crop_id');
-        $crop_type_id=$this->input->post('crop_type_id');
         $variety_id=$this->input->post('variety_id');
         $pack_size_id=$this->input->post('pack_size_id');
         $date_end=$this->input->post('date_end');
         $date_start=$this->input->post('date_start');
-        $fiscal_year_id=$this->input->post('fiscal_year_id');  // may not be used
-
-        $starting_items=$this->get_stocks($date_end,$warehouse_id,$crop_id,$crop_type_id,$variety_id,$pack_size_id);
-
-//        print_r($starting_items);
-//        exit;
-
-        //$items=array();
-
-        if(sizeof($starting_items)>0)
-        {
-            //have to complete current price task
-            //$prices=$this->get_current_price($warehouse_id,$crop_id,$crop_type_id,$variety_id,$pack_size_id);
-            $initial_items=$this->get_stocks($date_start,$warehouse_id,$crop_id,$crop_type_id,$variety_id,$pack_size_id);
-
-            //print_r($initial_items);
-           // exit;
-        }
 
         $items=array();
-
-
         $this->json_return($items);
 
 
@@ -498,5 +396,60 @@ class Report_stock_variety_details extends Root_Controller
 
         return $stocks;
 
+    }
+    private function system_set_preference()
+    {
+        if(isset($this->permissions['action6']) && ($this->permissions['action6']==1))
+        {
+            $data['system_preference_items']= $this->get_preference();
+            $data['preference_method_name']='search';
+            $data['title']="Set Preference";
+            $ajax['status']=true;
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("preference_add_edit",$data,true));
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/set_preference');
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+    }
+    private function get_preference()
+    {
+        $user = User_helper::get_user();
+        $warehouses=Query_helper::get_info($this->config->item('table_login_basic_setup_warehouse'),array('id value','name text'),array('status !="'.$this->config->item('system_status_delete').'"'));
+
+        $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="search"'),1);
+        $data['pack_size']= 1;
+        $data['type']= 1;
+        foreach($warehouses as $warehouse)
+        {
+            $data['warehouse_'.$warehouse['value'].'_pkt']= 1;
+            $data['warehouse_'.$warehouse['value'].'_kg']= 1;
+        }
+        //$data['system_preference_items']['current_stock']= 1;
+        $data['total_pkt']= 1;
+        $data['total_kg']= 1;
+        if($result)
+        {
+            if($result['preferences']!=null)
+            {
+                $preferences=json_decode($result['preferences'],true);
+                foreach($data as $key=>$value)
+                {
+                    if(isset($preferences[$key]))
+                    {
+                        $data[$key]=$value;
+                    }
+                    else
+                    {
+                        $data[$key]=0;
+                    }
+                }
+            }
+        }
+        return $data;
     }
 }

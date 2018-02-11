@@ -18,26 +18,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         </div>
         <div class="row show-grid">
             <div class="col-xs-6">
-                <div class="row show-grid">
-                    <div class="col-xs-6">
-                        <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_WAREHOUSE_NAME');?></label>
-                    </div>
-                    <div class="col-xs-6">
-                        <select name="report[warehouse_id]" class="form-control">
-                            <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                            <?php
-                            foreach($warehouses as $warehouse)
-                            {?>
-                                <option value="<?php echo $warehouse['value']?>"><?php echo $warehouse['text'];?></option>
-                            <?php
-                            }
-                            ?>
-                        </select>
-                    </div>
-                </div>
                 <div style="" class="row show-grid" id="crop_id_container">
                     <div class="col-xs-6">
-                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CROP_NAME');?></label>
+                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CROP_NAME');?><span style="color:#FF0000">*</span></label>
                     </div>
                     <div class="col-xs-6">
                         <select id="crop_id" name="report[crop_id]" class="form-control">
@@ -47,7 +30,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 </div>
                 <div style="display: none;" class="row show-grid" id="crop_type_id_container">
                     <div class="col-xs-6">
-                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME');?></label>
+                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME');?><span style="color:#FF0000">*</span></label>
                     </div>
                     <div class="col-xs-6">
                         <select id="crop_type_id" name="report[crop_type_id]" class="form-control">
@@ -57,7 +40,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 </div>
                 <div style="display: none;" class="row show-grid" id="variety_id_container">
                     <div class="col-xs-6">
-                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_VARIETY_NAME');?></label>
+                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_VARIETY_NAME');?><span style="color:#FF0000">*</span></label>
                     </div>
                     <div class="col-xs-6">
                         <select id="variety_id" name="report[variety_id]" class="form-control">
@@ -65,7 +48,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         </select>
                     </div>
                 </div>
-                <div style="" id="pack_size_id_container">
+                <div style="" class="row show-grid" id="pack_size_id_container">
                     <div class="col-xs-6">
                         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PACK_SIZE');?></label>
                     </div>
@@ -148,7 +131,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
     {
         system_preset({controller:'<?php echo $CI->router->class; ?>'});
 
-        $(".date_large").datepicker({dateFormat : display_date_format,changeMonth: true,changeYear: true,yearRange: "2015:+0"});
+        $(".date_large").datepicker({dateFormat : display_date_format,changeMonth: true,changeYear: true,yearRange: "c-2:c+2"});
 
         $(document).off('change','#warehouse_id');
         $(document).off('change','#crop_id');

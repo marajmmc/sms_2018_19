@@ -214,8 +214,9 @@ $lang['LABEL_QUANTITY_TOTAL'] = 'Total Quantity';
 // Total, Currency, Percentage - kg/pkt/taka/currency
 /* Total */
 $lang['LABEL_TOTAL'] = 'Total';
-$lang['LABEL_TOTAL_KG']='Total (KG)';
-$lang['LABEL_GRAND_TOTAL_KG']='Grand Total (KG)';
+$lang['LABEL_TOTAL_KG']='Total (Kg)';
+$lang['LABEL_TOTAL_PKT']='Total (pkt)';
+$lang['LABEL_GRAND_TOTAL_KG']='Grand Total (Kg)';
 $lang['LABEL_TOTAL_CURRENCY']='Total (Currency)';
 $lang['LABEL_GRAND_TOTAL_CURRENCY']='Grand Total (Currency)';
 $lang['LABEL_QUANTITY_KG_PACK']='Quantity (packet / Kg)';

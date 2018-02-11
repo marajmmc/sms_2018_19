@@ -66,41 +66,10 @@ class Report_stock_variety_summary extends Root_Controller
         if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
         {
             $reports=$this->input->post('report');
-            $user = User_helper::get_user();
             $data['options']=$reports;
             $data['warehouses']=Query_helper::get_info($this->config->item('table_login_basic_setup_warehouse'),array('id value','name text'),array('status !="'.$this->config->item('system_status_delete').'"'));
 
-            $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="search"'),1);
-            $data['system_preference_items']['crop_name']= 1;
-            $data['system_preference_items']['crop_type_name']= 1;
-            $data['system_preference_items']['variety_name']= 1;
-            $data['system_preference_items']['pack_size']= 1;
-            foreach($data['warehouses'] as $warehouse)
-            {
-                $data['system_preference_items']['warehouse_'.$warehouse['value'].'_pkt']= 1;
-                $data['system_preference_items']['warehouse_'.$warehouse['value'].'_kg']= 1;
-            }
-            //$data['system_preference_items']['current_stock']= 1;
-            $data['system_preference_items']['current_stock_pkt']= 1;
-            $data['system_preference_items']['current_stock_kg']= 1;
-            if($result)
-            {
-                if($result['preferences']!=null)
-                {
-                    $preferences=json_decode($result['preferences'],true);
-                    foreach($data['system_preference_items'] as $key=>$value)
-                    {
-                        if(isset($preferences[$key]))
-                        {
-                            $data['system_preference_items'][$key]=$value;
-                        }
-                        else
-                        {
-                            $data['system_preference_items'][$key]=0;
-                        }
-                    }
-                }
-            }
+            $data['system_preference_items']= $this->get_preference();
             $data['title']="Variety Current Stock Report";
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_report_container","html"=>$this->load->view($this->controller_url."/list",$data,true));
@@ -330,40 +299,7 @@ class Report_stock_variety_summary extends Root_Controller
     {
         if(isset($this->permissions['action6']) && ($this->permissions['action6']==1))
         {
-            $user = User_helper::get_user();
-            $data['warehouses']=Query_helper::get_info($this->config->item('table_login_basic_setup_warehouse'),array('id value','name text'),array('status !="'.$this->config->item('system_status_delete').'"'));
-
-            $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="search"'),1);
-            $data['system_preference_items']['crop_name']= 1;
-            $data['system_preference_items']['crop_type_name']= 1;
-            $data['system_preference_items']['variety_name']= 1;
-            $data['system_preference_items']['pack_size']= 1;
-            foreach($data['warehouses'] as $warehouse)
-            {
-                $data['system_preference_items']['warehouse_'.$warehouse['value'].'_pkt']= 1;
-                $data['system_preference_items']['warehouse_'.$warehouse['value'].'_kg']= 1;
-            }
-            //$data['system_preference_items']['current_stock']= 1;
-            $data['system_preference_items']['current_stock_pkt']= 1;
-            $data['system_preference_items']['current_stock_kg']= 1;
-            if($result)
-            {
-                if($result['preferences']!=null)
-                {
-                    $preferences=json_decode($result['preferences'],true);
-                    foreach($data['system_preference_items'] as $key=>$value)
-                    {
-                        if(isset($preferences[$key]))
-                        {
-                            $data['system_preference_items'][$key]=$value;
-                        }
-                        else
-                        {
-                            $data['system_preference_items'][$key]=0;
-                        }
-                    }
-                }
-            }
+            $data['system_preference_items']= $this->get_preference();
             $data['preference_method_name']='search';
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("preference_add_edit",$data,true));
@@ -376,5 +312,43 @@ class Report_stock_variety_summary extends Root_Controller
             $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
             $this->json_return($ajax);
         }
+    }
+    private function get_preference()
+    {
+        $user = User_helper::get_user();
+        $warehouses=Query_helper::get_info($this->config->item('table_login_basic_setup_warehouse'),array('id value','name text'),array('status !="'.$this->config->item('system_status_delete').'"'));
+
+        $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="search"'),1);
+        $data['crop_name']= 1;
+        $data['crop_type_name']= 1;
+        $data['variety_name']= 1;
+        $data['pack_size']= 1;
+        foreach($warehouses as $warehouse)
+        {
+            $data['warehouse_'.$warehouse['value'].'_pkt']= 1;
+            $data['warehouse_'.$warehouse['value'].'_kg']= 1;
+        }
+        //$data['system_preference_items']['current_stock']= 1;
+        $data['current_stock_pkt']= 1;
+        $data['current_stock_kg']= 1;
+        if($result)
+        {
+            if($result['preferences']!=null)
+            {
+                $preferences=json_decode($result['preferences'],true);
+                foreach($data as $key=>$value)
+                {
+                    if(isset($preferences[$key]))
+                    {
+                        $data[$key]=$value;
+                    }
+                    else
+                    {
+                        $data[$key]=0;
+                    }
+                }
+            }
+        }
+        return $data;
     }
 }
