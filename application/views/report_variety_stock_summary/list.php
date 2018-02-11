@@ -120,8 +120,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
         var aggregates=function (total, column, element, record)
         {
-            console.log(record);
-            console.log(record['warehouse_5_pkt']);
+            //console.log(record);
+            //console.log(record['warehouse_5_pkt']);
             if(record.crop_name=="Grand Total")
             {
                 return record[element];
@@ -131,7 +131,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         };
         var aggregatesrenderer=function (aggregates)
         {
-            console.log('here');
+            //console.log('here');
             return '<div style="position: relative; margin: 0px;padding: 5px;width: 100%;height: 100%; overflow: hidden;background-color:'+system_report_color_grand+';">' +aggregates['total']+'</div>';
 
         };
