@@ -49,6 +49,9 @@ $lang['ACTION_ASSIGN_USER_GROUP'] = 'Assign User Group';
 $lang['ACTION_SET_PACKING_COST'] = 'Set Packing Cost';
 $lang['ACTION_REPORT_VIEW'] = 'Report View';
 
+/*System Action Massage*/
+$lang['SELECT_ONE_ITEM'] = 'Select an item';
+
 //Action buttons for LC /*remove by maraj*/
 /*$lang['ACTION_EXPENSE'] = 'Expense';
 $lang['ACTION_RECEIVE'] = 'Receive';*/
@@ -201,6 +204,9 @@ $lang['LABEL_REMARKS_LC_RELEASE']='Release Remarks';
 $lang['LABEL_REMARKS_LC_RECEIVE']='Receive Remarks';
 $lang['LABEL_REMARKS_LC_EXPENSE']='Expense Remarks';
 
+// Unit
+$lang['LABEL_PACK'] = 'Pkt';
+$lang['LABEL_KG'] = 'Kg';
 // Quantity
 $lang['LABEL_QUANTITY'] = 'Quantity';
 $lang['LABEL_QUANTITY_TOTAL'] = 'Total Quantity';
@@ -288,24 +294,6 @@ $lang['LABEL_STOCK_OUT_SAMPLE_PURPOSE']='Sample Purpose';
 $lang['LABEL_STOCK_OUT_DEMONSTRATION']='Demonstration';
 $lang['LABEL_RAW_STOCK_OUT_DAMAGE'] = 'Damage';
 
-/* LC Common */
-$lang['LABEL_LC_NUMBER']='LC Number';
-/*LC Open*/
-$lang['LABEL_CONSIGNMENT_NAME']='Consignment File Number';
-$lang['LABEL_LC_FORWARD']='Forward LC';
-$lang['LABEL_QUANTITY_OPEN_KG']='LC Open Total (KG)';
-$lang['LABEL_PRICE_OPEN_OTHER_CURRENCY']='LC Open Other Cost (Currency)';
-$lang['LABEL_PRICE_OPEN_VARIETY_CURRENCY']='LC Open Variety (Currency)';
-
-/*LC release*/
-$lang['LABEL_PRICE_RELEASE_OTHER_VARIETY_TAKA']='LC Release Total (Taka)';
-$lang['LABEL_PRICE_RELEASE_OTHER_CURRENCY']='LC Release Other Cost (Currency)';
-$lang['LABEL_QUANTITY_RELEASE_KG']='Release Total (KG)';
-$lang['LABEL_PRICE_RELEASE_VARIETY_CURRENCY']='Release Total Variety (Currency)';
-/*LC receive*/
-$lang['LABEL_PRICE_COMPLETE_OTHER_VARIETY_TAKA']='LC Expense Total (Taka)';
-$lang['LABEL_QUANTITY_RECEIVE_KG']='Receive Total (KG)';
-
 //users
 $lang['LABEL_RE_USERNAME'] = 'Re-type User name';
 $lang['LABEL_OGANOGRAM_VIEW'] = 'Organogram View';
@@ -335,3 +323,25 @@ $lang['LABEL_OUTLET_NAME'] = 'Outlet';
 $lang['LABEL_STOCK_ID']='Stock Id';
 $lang['LABEL_TRIAL_COMPLETED']='Number of Trials Completed';
 
+/* LC Common */
+$lang['LABEL_LC_NUMBER']='LC Number';
+/*LC Open*/
+$lang['LABEL_CONSIGNMENT_NAME']='Consignment File Number';
+$lang['LABEL_LC_FORWARD']='Forward LC';
+$lang['LABEL_QUANTITY_OPEN_KG']='LC Open Total (KG)';
+$lang['LABEL_PRICE_OPEN_OTHER_CURRENCY']='LC Open Other Cost (Currency)';
+$lang['LABEL_PRICE_OPEN_VARIETY_CURRENCY']='LC Open Variety (Currency)';
+
+/*LC release*/
+$lang['LABEL_PRICE_RELEASE_OTHER_VARIETY_TAKA']='LC Release Total (Taka)';
+$lang['LABEL_PRICE_RELEASE_OTHER_CURRENCY']='LC Release Other Cost (Currency)';
+$lang['LABEL_QUANTITY_RELEASE_KG']='Release Total (KG)';
+$lang['LABEL_PRICE_RELEASE_VARIETY_CURRENCY']='Release Total Variety (Currency)';
+/*LC receive*/
+$lang['LABEL_PRICE_COMPLETE_OTHER_VARIETY_TAKA']='LC Release Actual Total (Taka)';
+$lang['LABEL_QUANTITY_RECEIVE_KG']='Receive Total (KG)';
+$lang['LABEL_DATE_PACKING_LIST']='Packing List Date';
+$lang['LABEL_NUMBER_PACKING_LIST']='Packing List Number';
+$lang['LABEL_NUMBER_LOT']='Lot Number';
+$lang['LABEL_CARTON_NUMBER']='Carton Number';
+$lang['LABEL_CARTON_SIZE']='Carton Size';

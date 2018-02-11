@@ -63,8 +63,8 @@ class Lc_receive extends Root_Controller
             $user = User_helper::get_user();
             $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
             $data['system_preference_items']['barcode']= 1;
-            $data['system_preference_items']['fiscal_year_name']= 1;
-            $data['system_preference_items']['month_name']= 1;
+            $data['system_preference_items']['fiscal_year']= 1;
+            $data['system_preference_items']['month']= 1;
             $data['system_preference_items']['date_opening']= 1;
             $data['system_preference_items']['date_expected']= 1;
             $data['system_preference_items']['principal_name']= 1;
@@ -113,12 +113,12 @@ class Lc_receive extends Root_Controller
     {
         $this->db->from($this->config->item('table_sms_lc_open').' lco');
         $this->db->select('lco.*');
-        $this->db->select('fy.name fiscal_year_name');
-        $this->db->select('principal.name principal_name');
-        $this->db->select('currency.name currency_name');
         $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.id = lco.fiscal_year_id','INNER');
+        $this->db->select('fy.name fiscal_year');
         $this->db->join($this->config->item('table_sms_setup_currency').' currency','currency.id = lco.currency_id','INNER');
+        $this->db->select('currency.name currency_name');
         $this->db->join($this->config->item('table_login_basic_setup_principal').' principal','principal.id = lco.principal_id','INNER');
+        $this->db->select('principal.name principal_name');
         $this->db->where('lco.status_open_forward',$this->config->item('system_status_yes'));
         $this->db->where('lco.status_release',$this->config->item('system_status_complete'));
         $this->db->where('lco.status_receive',$this->config->item('system_status_pending'));
@@ -132,8 +132,8 @@ class Lc_receive extends Root_Controller
             $item=array();
             $item['id']=$result['id'];
             $item['barcode']=Barcode_helper::get_barcode_lc($result['id']);
-            $item['fiscal_year_name']=$result['fiscal_year_name'];
-            $item['month_name']=$this->lang->line("LABEL_MONTH_$result[month_id]");
+            $item['fiscal_year']=$result['fiscal_year'];
+            $item['month']=$this->lang->line("LABEL_MONTH_$result[month_id]");
             $item['date_opening']=System_helper::display_date($result['date_opening']);
             $item['date_expected']=System_helper::display_date($result['date_expected']);
             $item['principal_name']=$result['principal_name'];
@@ -231,6 +231,7 @@ class Lc_receive extends Root_Controller
     }
     private function system_save()
     {
+
         $id = $this->input->post("id");
         $user = User_helper::get_user();
         $time=time();
@@ -315,7 +316,6 @@ class Lc_receive extends Root_Controller
             if(isset($old_varieties[$item['variety_id']][$item['pack_size_id']]))
             {
                 $lc_detail_id=$old_varieties[$item['variety_id']][$item['pack_size_id']]['id'];
-                $old_variety_quantity_receive=$old_varieties[$item['variety_id']][$item['pack_size_id']]['quantity_receive'];
 
                 if($item['pack_size_id']==0)
                 {
@@ -329,14 +329,13 @@ class Lc_receive extends Root_Controller
                     }
                 }
 
-                if(($old_variety_quantity_receive!=$item['quantity_receive']))
-                {
-                    $data=array();
-                    $data['receive_warehouse_id']=$item['receive_warehouse_id'];
-                    $data['quantity_receive']=$item['quantity_receive'];
-                    $this->db->set('revision_receive_count', 'revision_receive_count+1', FALSE);
-                    Query_helper::update($this->config->item('table_sms_lc_details'),$data, array('id='.$lc_detail_id), false);
-                }
+                $data=array();
+                $data['receive_warehouse_id']=$item['receive_warehouse_id'];
+                $data['quantity_receive']=$item['quantity_receive'];
+                $data['carton_number_receive']=$item['carton_number_receive'];
+                $data['carton_size_receive']=$item['carton_size_receive'];
+                $this->db->set('revision_receive_count', 'revision_receive_count+1', FALSE);
+                Query_helper::update($this->config->item('table_sms_lc_details'),$data, array('id='.$lc_detail_id), false);
 
                 $data=array();
                 $data['lc_id']=$id;
@@ -350,6 +349,7 @@ class Lc_receive extends Root_Controller
                 Query_helper::add($this->config->item('table_sms_lc_receive_histories'),$data, false);
             }
         }
+        $item_head['date_packing_list']=System_helper::get_time($item_head['date_packing_list']);
         $item_head['quantity_receive_kg']=$quantity_receive_kg;
         $item_head['date_receive_updated']=$time;
         $item_head['user_receive_updated']=$user->user_id;
@@ -682,6 +682,9 @@ class Lc_receive extends Root_Controller
         }
         $this->load->library('form_validation');
         $this->form_validation->set_rules('id','ID','required');
+        $this->form_validation->set_rules('item[date_packing_list]',$this->lang->line('LABEL_DATE_PACKING_LIST'),'required');
+        $this->form_validation->set_rules('item[packing_list_number]',$this->lang->line('LABEL_NUMBER_PACKING_LIST'),'required');
+        $this->form_validation->set_rules('item[lot_number]',$this->lang->line('LABEL_NUMBER_LOT'),'required');
         if($this->form_validation->run() == FALSE)
         {
             $this->message=validation_errors();
@@ -696,8 +699,8 @@ class Lc_receive extends Root_Controller
             $user = User_helper::get_user();
             $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
             $data['system_preference_items']['barcode']= 1;
-            $data['system_preference_items']['fiscal_year_name']= 1;
-            $data['system_preference_items']['month_name']= 1;
+            $data['system_preference_items']['fiscal_year']= 1;
+            $data['system_preference_items']['month']= 1;
             $data['system_preference_items']['date_opening']= 1;
             $data['system_preference_items']['date_expected']= 1;
             $data['system_preference_items']['principal_name']= 1;

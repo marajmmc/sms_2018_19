@@ -27,7 +27,7 @@ $action_buttons[]=array
 $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
 ?>
-<form id="save_form" action="<?php echo site_url($CI->controller_url.'/index/save_release_complete');?>" method="post">
+<form id="save_form" action="<?php echo site_url($CI->controller_url.'/index/save_expense_complete');?>" method="post">
     <input type="hidden" id="id" name="id" value="<?php echo $item['id']; ?>" />
     <input type="hidden" id="system_save_new_status" name="system_save_new_status" value="0" />
     <div class="row widget">
@@ -37,28 +37,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             </div>
             <div class="clearfix"></div>
         </div>
-        <div class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right">LC Release<span style="color:#FF0000">*</span></label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <select id="status_release" class="form-control" name="item[status_release]">
-                    <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                    <option value="<?php echo $this->config->item('system_status_complete')?>"><?php echo $this->config->item('system_status_complete')?></option>
-                </select>
-            </div>
-        </div>
+
         <div class="col-md-12">
-            <table class="table table-bordered table-responsive ">
-                <thead>
-                <tr>
-                    <th class="widget-header"><label class="control-label pull-right">Forward By</label></th>
-                    <th class="bg-danger"><label class="control-label"><?php echo $item['user_full_name']?></label></th>
-                    <th class="widget-header"><label class="control-label pull-right">Forwarded Time</label></th>
-                    <th class="bg-danger"><label class="control-label"><?php echo System_helper::display_date_time($item['date_forward_updated']);?></label></th>
-                </tr>
-                </thead>
-            </table>
             <table class="table table-bordered table-responsive ">
                 <thead>
                 <tr>
@@ -86,143 +66,128 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <th><label class="control-label"><?php echo $item['currency_name'];?></label></th>
                 </tr>
                 <tr>
-                    <th class="widget-header"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_OTHER_COST_CURRENCY');?></label></th>
-                    <th class="bg-danger"><label class="control-label"><?php echo number_format($item['price_other_cost_total_currency'],2);?></label></th>
+                    <th class="widget-header"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_PRICE_OPEN_OTHER_CURRENCY');?></label></th>
+                    <th class="bg-danger"><label class="control-label"><?php echo number_format($item['price_open_other_currency'],2);?></label></th>
+                    <th class="widget-header"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_PRICE_RELEASE_OTHER_CURRENCY');?></label></th>
+                    <th class="bg-danger"><label class="control-label"><?php echo number_format($item['price_release_other_currency'],2);?></label></th>
+                </tr>
+                <tr>
                     <th class="widget-header"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_CONSIGNMENT_NAME');?></label></th>
-                    <th><label class="control-label"><?php echo $item['consignment_name'];?></label></th>
+                    <th class="bg-danger" colspan="3"><label class="control-label"><?php echo $item['consignment_name'];?></label></th>
                 </tr>
                 <tr>
                     <th class="widget-header"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS_LC_OPEN');?></label></th>
-                    <th class="bg-danger" colspan="3"><label class="control-label"><?php echo $item['remarks'];?></label></th>
+                    <th class="bg-danger" colspan="3"><label class="control-label"><?php echo $item['remarks_open'];?></label></th>
                 </tr>
                 <tr>
                     <th class="widget-header"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS_LC_RELEASE');?></label></th>
                     <th class="bg-danger" colspan="3"><label class="control-label"><?php echo $item['remarks_release'];?></label></th>
                 </tr>
+                <tr>
+                    <th class="widget-header"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS_LC_RECEIVE');?></label></th>
+                    <th class="bg-danger" colspan="3"><label class="control-label"><?php echo $item['remarks_receive'];?></label></th>
+                </tr>
                 </thead>
             </table>
+            <div class="row show-grid">
+                <div class="col-xs-4">
+                    <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS_LC_EXPENSE');?> </label>
+                </div>
+                <div class="col-sm-4 col-xs-8">
+                    <textarea name="item[remarks_expense]" id="remarks_expense" class="form-control" ><?php echo $item['remarks_expense'];?></textarea>
+                </div>
+            </div>
+            <div class="row show-grid">
+                <div class="col-xs-4">
+                    <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_PRICE_RELEASE_OTHER_VARIETY_TAKA');?> </label>
+                </div>
+                <div class="col-sm-4 col-xs-8 text-right">
+                    <label class="control-label"><?php echo number_format($item['price_release_other_variety_taka'],2);?></label>
+                </div>
+            </div>
+            <?php
+            if($item['status_release']==$this->config->item('system_status_complete'))
+            {
+                ?>
+                <div class="row show-grid">
+                    <div class="col-xs-4">
+                        <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_PRICE_COMPLETE_OTHER_VARIETY_TAKA');?> </label>
+                    </div>
+                    <div class="col-sm-4 col-xs-8">
+                        <input type="text" name="item[price_complete_other_variety_taka]" id="price_complete_other_variety_taka" class="form-control float_type_positive" value="<?php echo $item['price_complete_other_variety_taka'];?>" />
+                    </div>
+                </div>
+            <?php
+            }
+            else
+            {
+                ?>
+                <div class="row show-grid">
+                    <div class="col-xs-4">
+                        <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_PRICE_COMPLETE_OTHER_VARIETY_TAKA');?> </label>
+                    </div>
+                    <div class="col-sm-4 col-xs-8 text-right">
+                        <label class="control-label"><?php echo number_format($item['price_complete_other_variety_taka'],2);?></label>
+                    </div>
+                </div>
+            <?php
+            }
+            ?>
+
         </div>
         <div class="clearfix"></div>
         <div class="row show-grid">
-            <div style="overflow-x: auto;" class="row show-grid">
+            <div style="overflow-x: auto;" class="col-xs-offset-2 col-xs-8">
                 <table class="table table-bordered">
                     <thead>
                     <tr>
-                        <th class="widget-header text-center" colspan="21">LC (<?php echo Barcode_helper::get_barcode_lc($item['id']);?>) Product & Price Details :: ( Completed Status: <?php echo $item['status_release']?> )</th>
-                    </tr>
-                    <tr>
-                        <th class="label-info" rowspan="2"><?php echo $CI->lang->line('LABEL_VARIETY'); ?></th>
-                        <th class="label-info text-center" rowspan="2"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
-                        <th class="label-info text-center" rowspan="2">Unit Price (Currency)</th>
-                        <th class="label-primary text-center" colspan="3">Order Information</th>
-                        <th class="label-warning text-center" colspan="3">Actual Information</th>
-                    </tr>
-                    <tr>
-                        <th class="label-primary text-center"><?php echo $CI->lang->line('LABEL_QUANTITY_KG_PACK'); ?></th>
-                        <th class="label-primary text-center">KG</th>
-                        <th class="label-primary text-center">Total Price (Currency)</th>
-
-                        <th class="label-warning text-center"><?php echo $CI->lang->line('LABEL_QUANTITY_KG_PACK'); ?></th>
-                        <th class="label-warning text-center">KG</th>
-                        <th class="label-warning text-center">Total Price (Currency)</th>
+                        <th>Serial</th>
+                        <th>Expense Head</th>
+                        <th>Amount (Taka)</th>
                     </tr>
                     </thead>
+                    <tbody>
                     <?php
-                    if(!empty($items))
+                    $serial=1;
+                    $price_complete_dc_taka=0;
+                    $amount=0;
+                    foreach($items as $row)
                     {
+                        $amount=isset($dc[$row['id']])?$dc[$row['id']]:0;
+                        $price_complete_dc_taka+=$amount;
                         ?>
-                        <tbody>
+                        <tr>
+                            <td><?php echo $serial?></td>
+                            <td><?php echo $row['name']?></td>
+                            <td>
+                                <input type="text" name="items[<?php echo $row['id']?>][amount]" id="amount" class="form-control float_type_positive amount" value="<?php echo $amount;?>" />
+                            </td>
+                        </tr>
                         <?php
-                        $quantity_total_lc_kg=0;
-                        $quantity_total_release_kg=0;
-                        foreach($items as $index=>$data)
-                        {
-                            $price_total_release_currency=$data['price_total_release_currency'];
-                            if($data['pack_size_id']==0)
-                            {
-                                $quantity_lc_kg=$data['quantity_lc'];
-                                $quantity_release_kg=$data['quantity_release'];
-                            }
-                            else
-                            {
-                                $quantity_lc_kg=(($data['pack_size_name']*$data['quantity_lc'])/1000);
-                                $quantity_release_kg=(($data['pack_size_name']*$data['quantity_release'])/1000);
-                            }
-                            $quantity_total_lc_kg+=$quantity_lc_kg;
-                            $quantity_total_release_kg+=$quantity_release_kg;
-                            ?>
-                            <tr>
-                                <td><strong class="text-success"><?php echo $data['variety_name']?> (<?php echo $data['variety_name_import']?>)</strong></td>
-                                <td class="text-center"><?php if($data['pack_size_name']==0){echo "Bulk";}else{echo $data['pack_size_name'];}?></td>
-                                <td class="text-center"><?php echo $data['price_unit_lc_currency']?></td>
-                                <td class="text-right"><label class="control-label" for=""><?php echo number_format($data['quantity_lc'],3)?></label></td>
-                                <td class="text-right"><label class="control-label" for=""><?php echo number_format($quantity_lc_kg,3)?></label></td>
-                                <td class="text-right"><label class="control-label" for=""><?php echo number_format($data['price_total_lc_currency'],2)?></label></td>
-                                <td class="text-right"><label class="control-label" for=""><?php echo number_format($data['quantity_release'],3); ?></label></td>
-                                <td class="text-right" ><label class="control-label"><?php echo number_format($quantity_release_kg,3); ?></label></td>
-                                <td class="text-right"><label class="control-label"><?php echo number_format($data['price_total_release_currency'],2); ?></label></td>
-                            </tr>
-                        <?php
-                        }
-                        ?>
-                        </tbody>
-                        <tfoot>
-                        <tr>
-                            <th colspan="4" class="text-right"><?php echo $this->lang->line('LABEL_TOTAL_KG')?> & <?php echo $this->lang->line('LABEL_TOTAL_CURRENCY')?></th>
-                            <th class="text-right"><label class="control-label"><?php echo number_format($quantity_total_lc_kg,3);?></label></th>
-                            <th class="text-right"><label class="control-label"><?php echo number_format($item['price_variety_total_currency'],2);?></label></th>
-                            <th>&nbsp;</th>
-                            <th class="text-right"><label class="control-label" id="lbl_quantity_total_release_kg"><?php echo number_format($quantity_total_release_kg,3);?></label></th>
-                            <th class="text-right">
-                                <label class="control-label" id="lbl_price_variety_total_release_currency">
-                                    <?php
-                                    echo number_format($item['price_variety_total_release_currency'],2);
-                                    ?>
-                                </label>
-                            </th>
-                        </tr>
-                        <tr>
-                            <th colspan="5" class="text-right"><?php echo $this->lang->line('LABEL_OTHER_COST_CURRENCY')?></th>
-                            <th class="text-right"><label class="control-label"><?php echo number_format($item['price_other_cost_total_currency'],2)?></label></th>
-                            <th colspan="2">&nbsp;</th>
-                            <th class="text-right">
-                                <label class="control-label" for=""><?php echo number_format($item['price_other_cost_total_release_currency'],2)?></label>
-                            </th>
-                        </tr>
-                        <tr>
-                            <th colspan="5" class="text-right"><?php echo $this->lang->line('LABEL_GRAND_TOTAL_CURRENCY')?></th>
-                            <th class="text-right">
-                                <label class="control-label"><?php echo number_format($item['price_total_currency'],2);?></label>
-                            </th>
-                            <th colspan="2">&nbsp;</th>
-                            <th class="text-right">
-                                <label class="control-label" id="lbl_price_total_release_currency">
-                                    <?php
-                                    echo number_format($item['price_total_release_currency'],2);
-                                    ?>
-                                </label>
-                            </th>
-                        </tr>
-                        <tr>
-                            <th colspan="8" class="text-right"><?php echo $this->lang->line('LABEL_TOTAL_TAKA')?></th>
-                            <th class="text-right">
-                                <label class="control-label" for=""><?php echo number_format($item['price_total_release_taka'],2);?></label>
-                            </th>
-                        </tr>
-                        </tfoot>
-                    <?php
-                    }
-                    else
-                    {
-                        ?>
-                        <tfoot>
-                        <tr>
-                            <td class="widget-header text-center" colspan="21"><strong>Data Not Found</strong></td>
-                        </tr>
-                        </tfoot>
-                    <?php
+                        ++$serial;
                     }
                     ?>
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                        <th colspan="2" class="text-right">Total Expense(Taka): </th>
+                        <th class="text-right">
+                            <label class="control-label" id="lbl_price_complete_dc_taka"><?php echo number_format($price_complete_dc_taka,2)?></label>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th colspan="2" class="text-right"><?php echo $this->lang->line('LABEL_PRICE_COMPLETE_OTHER_VARIETY_TAKA');?>: </th>
+                        <th class="text-right">
+                            <label class="control-label" id="lbl_price_complete_other_variety_taka"><?php echo number_format($item['price_complete_other_variety_taka'],2)?></label>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th colspan="2" class="text-right">Grand Total (Taka): </th>
+                        <th class="text-right">
+                            <label class="control-label" id="lbl_grand_total"><?php echo number_format(($item['price_complete_other_variety_taka']+$price_complete_dc_taka),2)?></label>
+                        </th>
+                    </tr>
+                    </tfoot>
                 </table>
             </div>
         </div>

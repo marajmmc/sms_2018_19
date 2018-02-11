@@ -31,6 +31,14 @@ class Lc_expense extends Root_Controller
         {
             $this->system_save();
         }
+        elseif($action=="expense_complete")
+        {
+            $this->system_expense_complete($id);
+        }
+        elseif($action=="save_expense_complete")
+        {
+            $this->system_save_expense_complete();
+        }
         elseif($action=="set_preference")
         {
             $this->system_set_preference();
@@ -51,8 +59,8 @@ class Lc_expense extends Root_Controller
             $user = User_helper::get_user();
             $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
             $data['system_preference_items']['barcode']= 1;
-            $data['system_preference_items']['fiscal_year_name']= 1;
-            $data['system_preference_items']['month_name']= 1;
+            $data['system_preference_items']['fiscal_year']= 1;
+            $data['system_preference_items']['month']= 1;
             $data['system_preference_items']['date_opening']= 1;
             $data['system_preference_items']['date_expected']= 1;
             $data['system_preference_items']['principal_name']= 1;
@@ -101,7 +109,7 @@ class Lc_expense extends Root_Controller
     {
         $this->db->from($this->config->item('table_sms_lc_open').' lco');
         $this->db->select('lco.*');
-        $this->db->select('fy.name fiscal_year_name');
+        $this->db->select('fy.name fiscal_year');
         $this->db->select('principal.name principal_name');
         $this->db->select('currency.name currency_name');
         $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.id = lco.fiscal_year_id','INNER');
@@ -117,8 +125,8 @@ class Lc_expense extends Root_Controller
             $item=array();
             $item['id']=$result['id'];
             $item['barcode']=Barcode_helper::get_barcode_lc($result['id']);
-            $item['fiscal_year_name']=$result['fiscal_year_name'];
-            $item['month_name']=$this->lang->line("LABEL_MONTH_$result[month_id]");
+            $item['fiscal_year']=$result['fiscal_year'];
+            $item['month']=$this->lang->line("LABEL_MONTH_$result[month_id]");
             $item['date_opening']=System_helper::display_date($result['date_opening']);
             $item['date_expected']=System_helper::display_date($result['date_expected']);
             $item['principal_name']=$result['principal_name'];
@@ -147,7 +155,7 @@ class Lc_expense extends Root_Controller
             $this->db->from($this->config->item('table_sms_lc_open').' lco');
             $this->db->select('lco.*');
             $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.id = lco.fiscal_year_id','INNER');
-            $this->db->select('fy.name fiscal_year_name');
+            $this->db->select('fy.name fiscal_year');
             $this->db->join($this->config->item('table_sms_setup_currency').' currency','currency.id = lco.currency_id','INNER');
             $this->db->select('currency.name currency_name');
             $this->db->join($this->config->item('table_login_basic_setup_principal').' principal','principal.id = lco.principal_id','INNER');
@@ -279,6 +287,108 @@ class Lc_expense extends Root_Controller
             $this->json_return($ajax);
         }
     }
+    private function system_expense_complete($id)
+    {
+        if((isset($this->permissions['action7']) && ($this->permissions['action7']==1)))
+        {
+            if($id>0)
+            {
+                $item_id=$id;
+            }
+            else
+            {
+                $item_id=$this->input->post('id');
+            }
+
+            $this->db->from($this->config->item('table_sms_lc_open').' lco');
+            $this->db->select('lco.*');
+            $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.id = lco.fiscal_year_id','INNER');
+            $this->db->select('fy.name fiscal_year');
+            $this->db->join($this->config->item('table_sms_setup_currency').' currency','currency.id = lco.currency_id','INNER');
+            $this->db->select('currency.name currency_name');
+            $this->db->join($this->config->item('table_login_basic_setup_principal').' principal','principal.id = lco.principal_id','INNER');
+            $this->db->select('principal.name principal_name');
+            $this->db->join($this->config->item('table_login_setup_bank_account').' ba','ba.id = lco.bank_account_id','INNER');
+            $this->db->join($this->config->item('table_login_setup_bank').' bank','bank.id = ba.bank_id','INNER');
+            $this->db->select("CONCAT_WS(' ( ',ba.account_number,  CONCAT_WS('', bank.name,' - ',ba.branch_name,')')) bank_account_number");
+            $this->db->where('lco.id',$item_id);
+            $this->db->where('lco.status_open =',$this->config->item('system_status_active'));
+            $data['item']=$this->db->get()->row_array();
+            if(!$data['item'])
+            {
+                System_helper::invalid_try('Edit Expense Non Exists',$item_id);
+                $ajax['status']=false;
+                $ajax['system_message']='Invalid LC.';
+                $this->json_return($ajax);
+            }
+
+            $data['items']=Query_helper::get_info($this->config->item('table_sms_direct_cost_items'),'*',array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('ordering ASC'));
+            $results=Query_helper::get_info($this->config->item('table_sms_lc_expense'),'*',array('lc_id ='.$item_id),0,0,array(''));
+            $data['dc']=array();
+            foreach($results as $result)
+            {
+                $data['dc'][$result['dc_id']]=$result['amount'];
+            }
+
+            $data['title']="LC Expense :: ".Barcode_helper::get_barcode_lc($item_id);
+            $ajax['status']=true;
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/edit",$data,true));
+            if($this->message)
+            {
+                $ajax['system_message']=$this->message;
+            }
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/edit/'.$item_id);
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+    }
+    private function system_save_expense_complete($id=null)
+    {
+        if((isset($this->permissions['action7']) && ($this->permissions['action7']==1)))
+        {
+            $user = User_helper::get_user();
+            $time=time();
+            $item_head=$this->input->post('item');
+            if($id>0)
+            {
+                $item_id=$id;
+            }
+            else
+            {
+                $item_id=$this->input->post('id');
+            }
+            die('ok');
+            $this->db->trans_start();  //DB Transaction Handle START
+
+            /*$item_head['']=$time;
+            $item_head['']=$user->user_id;
+            Query_helper::update($this->config->item(''),$item_head,array('id='.$item_id));*/
+
+            $this->db->trans_complete();   //DB Transaction Handle END
+            if ($this->db->trans_status() === TRUE)
+            {
+                $this->message=$this->lang->line("MSG_SAVED_SUCCESS");
+                $this->system_list();
+            }
+            else
+            {
+                $ajax['status']=false;
+                $ajax['system_message']=$this->lang->line("MSG_SAVED_FAIL");
+                $this->json_return($ajax);
+            }
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+    }
     private function check_validation()
     {
        /*$items=$this->input->post('items');
@@ -310,8 +420,8 @@ class Lc_expense extends Root_Controller
             $user = User_helper::get_user();
             $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
             $data['system_preference_items']['barcode']= 1;
-            $data['system_preference_items']['fiscal_year_name']= 1;
-            $data['system_preference_items']['month_name']= 1;
+            $data['system_preference_items']['fiscal_year']= 1;
+            $data['system_preference_items']['month']= 1;
             $data['system_preference_items']['date_opening']= 1;
             $data['system_preference_items']['date_expected']= 1;
             $data['system_preference_items']['principal_name']= 1;

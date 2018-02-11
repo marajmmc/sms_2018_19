@@ -86,8 +86,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             dataFields: [
                 { name: 'id', type: 'int' },
                 { name: 'barcode', type: 'string' },
-                { name: 'fiscal_year_name', type: 'string' },
-                { name: 'month_name', type: 'string' },
+                { name: 'fiscal_year', type: 'string' },
+                { name: 'month', type: 'string' },
                 { name: 'date_opening', type: 'string' },
                 { name: 'date_expected', type: 'string' },
                 { name: 'principal_name', type: 'string' },
@@ -122,8 +122,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 columns:
                     [
                         { text: '<?php echo $CI->lang->line('LABEL_BARCODE'); ?>', dataField: 'barcode',filtertype: 'list', width:80, hidden: <?php echo $system_preference_items['barcode']?0:1;?>},
-                        { text: '<?php echo $CI->lang->line('LABEL_FISCAL_YEAR'); ?>', dataField: 'fiscal_year_name',filtertype: 'list', width:65, hidden: <?php echo $system_preference_items['fiscal_year_name']?0:1;?>},
-                        { text: '<?php echo $CI->lang->line('LABEL_MONTH'); ?>', dataField: 'month_name',filtertype: 'list', width:60, hidden: <?php echo $system_preference_items['month_name']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_FISCAL_YEAR'); ?>', dataField: 'fiscal_year',filtertype: 'list', width:65, hidden: <?php echo $system_preference_items['fiscal_year']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_MONTH'); ?>', dataField: 'month',filtertype: 'list', width:60, hidden: <?php echo $system_preference_items['month']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_DATE_OPENING'); ?>', dataField: 'date_opening', width:90, hidden: <?php echo $system_preference_items['date_opening']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_DATE_EXPECTED'); ?>', dataField: 'date_expected', width:90, hidden: <?php echo $system_preference_items['date_expected']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_PRINCIPAL_NAME'); ?>', dataField: 'principal_name',filtertype: 'list', width:80, hidden: <?php echo $system_preference_items['principal_name']?0:1;?>},
