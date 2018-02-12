@@ -317,7 +317,6 @@ class Report_stock_variety_summary extends Root_Controller
     {
         $user = User_helper::get_user();
         $warehouses=Query_helper::get_info($this->config->item('table_login_basic_setup_warehouse'),array('id value','name text'),array('status !="'.$this->config->item('system_status_delete').'"'));
-
         $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="search"'),1);
         $data['crop_name']= 1;
         $data['crop_type_name']= 1;
