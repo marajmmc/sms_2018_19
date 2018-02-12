@@ -17,7 +17,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         <div class="clearfix"></div>
     </div>
     <div class="col-md-12">
-        <table class="table table-bordered table-responsive system_header_view_table">
+        <table class="table table-bordered table-responsive system_table_details_view">
             <thead>
             <tr>
                 <th class="widget-header header_caption"><label class="control-label pull-right">Release Completed By</label></th>
@@ -27,7 +27,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             </tr>
             </thead>
         </table>
-        <table class="table table-bordered table-responsive system_header_view_table">
+        <table class="table table-bordered table-responsive system_table_details_view">
             <thead>
             <tr>
                 <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_FISCAL_YEAR');?></label></th>
@@ -58,6 +58,11 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <th class=" header_value"><label class="control-label"><?php echo System_helper::display_date($item['date_packing_list']);?></label></th>
                 <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_NUMBER_PACKING_LIST');?></label></th>
                 <th class=" header_value"><label class="control-label"><?php echo $item['packing_list_number'];?></label></th>
+            </tr>
+            <tr>
+                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_RECEIVE');?></label></th>
+                <th class=" header_value"><label class="control-label"><?php echo System_helper::display_date($item['date_receive']);?></label></th>
+                <th colspan="2">&nbsp;</th>
             </tr>
             <tr>
                 <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS_LC_OPEN');?></label></th>
@@ -120,8 +125,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         }
                         else
                         {
-                            $quantity_release_kg=(($data['pack_size_name']*$data['quantity_release'])/1000);
-                            $quantity_receive_kg=(($data['pack_size_name']*$data['quantity_receive'])/1000);
+                            $quantity_release_kg=(($data['pack_size']*$data['quantity_release'])/1000);
+                            $quantity_receive_kg=(($data['pack_size']*$data['quantity_receive'])/1000);
                         }
                         $quantity_total_release+=$data['quantity_release'];
                         $quantity_total_release_kg+=$quantity_release_kg;
@@ -132,7 +137,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                             <td>
                                 <strong class="text-success"><?php echo $data['variety_name']?> (<?php echo $data['variety_name_import']?>)</strong>
                             </td>
-                            <td class="text-center"> <?php if($data['pack_size_name']==0){echo "Bulk";}else{echo $data['pack_size_name'];}?></td>
+                            <td class="text-center"> <?php if($data['pack_size']==0){echo "Bulk";}else{echo $data['pack_size'];}?></td>
                             <td class="text-right"><?php echo $data['carton_number_receive']; ?></td>
                             <td class="text-right"><?php echo $data['carton_size_receive']; ?></td>
                             <td><?php echo $data['warehouse_name']?> </td>

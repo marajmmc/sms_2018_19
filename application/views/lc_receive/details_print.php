@@ -39,77 +39,118 @@ $num_pages=ceil($total_records/$row_per_page);
 ?>
 <div id="system_print_container" style="width:<?php echo $width;?>px;">
     <?php
+    $quantity_total_release=0;
+    $quantity_total_release_kg=0;
+    $quantity_total_receive=0;
+    $quantity_total_receive_kg=0;
     for($page=0;$page<$num_pages;$page++)
     {
         ?>
         <div class="page page_no_<?php echo $page; ?>" style="width:<?php echo $width;?>px;height:<?php echo $height; ?>px;position: relative;">
             <img src="<?php echo $header_image;  ?>" style="width: 100%">
             <div class="row show-grid">
-                <div class="col-xs-6">
+                <div class="col-xs-4">
                     <div class="row show-grid">
-                        <div class="col-xs-6">
-                            <label class="control-label pull-right">ID :</label>
+                        <div class="col-xs-6 text-right">
+                            <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_BARCODE');?>:</label>
                         </div>
-                        <div class="col-xs-6">
-                            <?php echo Barcode_helper::get_barcode_stock_out($item['id']);?>
-                        </div>
-                    </div>
-                    <div class="row show-grid">
-                        <div class="col-xs-3">
-
-                        </div>
-                        <div class="col-xs-9">
+                        <div class="col-xs-6 text-right">
                             <img src="<?php echo site_url('barcode/index/stock_in/'.$item['id']);  ?>">
                         </div>
                     </div>
-                </div>
-                <div class="col-xs-6">
                     <div class="row show-grid">
                         <div class="col-xs-6">
-                            <label class="control-label pull-right">Purpose :</label>
+                            <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_ID');?>:</label>
                         </div>
                         <div class="col-xs-6">
-                            <?php //echo $item['purpose']; ?>
+                            <?php echo Barcode_helper::get_barcode_lc($item['id']);?>
                         </div>
-                    </div><div class="row show-grid">
+                    </div>
+                    <div class="row show-grid">
                         <div class="col-xs-6">
-                            <label class="control-label pull-right">Date :</label>
+                            <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_PRINCIPAL_NAME');?>:</label>
                         </div>
                         <div class="col-xs-6">
-                            <?php //echo System_helper::display_date($item['date_stock_in']);?>
+                            <?php echo $item['principal_name'];?>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-4">
+                    <div class="row show-grid">
+                        <div class="col-xs-6">
+                            <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_LC_NUMBER');?>:</label>
+                        </div>
+                        <div class="col-xs-6">
+                            <?php echo $item['lc_number']; ?>
+                        </div>
+                    </div>
+                    <div class="row show-grid">
+                        <div class="col-xs-6">
+                            <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_NUMBER_PACKING_LIST');?>:</label>
+                        </div>
+                        <div class="col-xs-6">
+                            <?php echo $item['packing_list_number']; ?>
+                        </div>
+                    </div>
+                    <div class="row show-grid">
+                        <div class="col-xs-6">
+                            <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_NUMBER_LOT');?>:</label>
+                        </div>
+                        <div class="col-xs-6">
+                            <?php echo $item['lot_number']; ?>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-4">
+                    <div class="row show-grid">
+                        <div class="col-xs-6">
+                            <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_RECEIVE');?>:</label>
+                        </div>
+                        <div class="col-xs-6">
+                            <?php echo System_helper::display_date($item['date_receive']);?>
+                        </div>
+                    </div>
+                    <div class="row show-grid">
+                        <div class="col-xs-6">
+                            <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_PACKING_LIST');?>:</label>
+                        </div>
+                        <div class="col-xs-6">
+                            <?php echo System_helper::display_date($item['date_packing_list']);?>
                         </div>
                     </div>
                 </div>
             </div>
-            <table style="width:<?php echo $width;?>px;">
+            <table style="width:<?php echo $width;?>px;" class="system_table_report_container">
                 <thead>
                 <tr>
-                    <th class="label-info" rowspan="2"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
-                    <th class="label-info text-center" rowspan="2"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
-                    <th class="label-info text-center" rowspan="2"><?php echo $CI->lang->line('LABEL_CARTON_NUMBER')?></th>
-                    <th class="label-info text-center" rowspan="2"><?php echo $CI->lang->line('LABEL_CARTON_SIZE')?></th>
-                    <th class="label-info text-center" rowspan="2"><?php echo $CI->lang->line('LABEL_WAREHOUSE_NAME'); ?></th>
-                    <th class="label-primary text-center" colspan="2">Release Information</th>
-                    <th class="label-warning text-center" colspan="2">Receive Information</th>
-                    <th class="label-success text-center" colspan="2">Deference Information</th>
+                    <th rowspan="2" style="width: 5px"><?php echo $CI->lang->line('LABEL_SL_NO'); ?></th>
+                    <th rowspan="2"><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></th>
+                    <th rowspan="2"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?></th>
+                    <th rowspan="2"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
+                    <th rowspan="2"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
+                    <th rowspan="2"><?php echo $CI->lang->line('LABEL_CARTON_NUMBER')?></th>
+                    <th rowspan="2"><?php echo $CI->lang->line('LABEL_CARTON_SIZE')?></th>
+                    <th rowspan="2"><?php echo $CI->lang->line('LABEL_WAREHOUSE_NAME'); ?></th>
+                    <th colspan="2">Release Information</th>
+                    <th colspan="2">Receive Information</th>
+                    <th colspan="2">Deference Information</th>
                 </tr>
                 <tr>
-                    <th class="label-primary text-center"><?php echo $CI->lang->line('LABEL_QUANTITY_KG_PACK'); ?></th>
-                    <th class="label-primary text-center"><?php echo $CI->lang->line('KG');?></th>
-                    <th class="label-warning text-center"><?php echo $CI->lang->line('LABEL_QUANTITY_KG_PACK'); ?></th>
-                    <th class="label-warning text-center"><?php echo $CI->lang->line('KG');?></th>
-                    <th class="label-success text-center"><?php echo $CI->lang->line('LABEL_QUANTITY_KG_PACK'); ?></th>
-                    <th class="label-success text-center"><?php echo $CI->lang->line('KG');?></th>
+                    <th><?php echo $CI->lang->line('LABEL_QUANTITY_KG_PACK'); ?></th>
+                    <th><?php echo $CI->lang->line('KG');?></th>
+                    <th><?php echo $CI->lang->line('LABEL_QUANTITY_KG_PACK'); ?></th>
+                    <th><?php echo $CI->lang->line('KG');?></th>
+                    <th><?php echo $CI->lang->line('LABEL_QUANTITY_KG_PACK'); ?></th>
+                    <th><?php echo $CI->lang->line('KG');?></th>
                 </tr>
                 </thead>
                 <tbody>
                 <?php
-                $quantity_total_release=0;
-                $quantity_total_release_kg=0;
-                $quantity_total_receive=0;
-                $quantity_total_receive_kg=0;
+                $serial=0;
+
                 for($index=$page*$row_per_page;($index<(($page+1)*$row_per_page))&&($index<sizeof($items));$index++)
                 {
+                    $serial=($index+1);
                     $data=$items[$index];
                     if($data['pack_size_id']==0)
                     {
@@ -118,8 +159,8 @@ $num_pages=ceil($total_records/$row_per_page);
                     }
                     else
                     {
-                        $quantity_release_kg=(($data['pack_size_name']*$data['quantity_release'])/1000);
-                        $quantity_receive_kg=(($data['pack_size_name']*$data['quantity_receive'])/1000);
+                        $quantity_release_kg=(($data['pack_size']*$data['quantity_release'])/1000);
+                        $quantity_receive_kg=(($data['pack_size']*$data['quantity_receive'])/1000);
                     }
                     $quantity_total_release+=$data['quantity_release'];
                     $quantity_total_release_kg+=$quantity_release_kg;
@@ -127,21 +168,44 @@ $num_pages=ceil($total_records/$row_per_page);
                     $quantity_total_receive_kg+=$quantity_receive_kg;
                     ?>
                     <tr>
-                        <td>
-                            <strong class="text-success"><?php echo $data['variety_name']?> (<?php echo $data['variety_name_import']?>)</strong>
-                        </td>
-                        <td class="text-center"> <?php if($data['pack_size_name']==0){echo "Bulk";}else{echo $data['pack_size_name'];}?></td>
+                        <td><?php echo $serial; ?></td>
+                        <td><?php echo $data['crop_name']?></td>
+                        <td><?php echo $data['crop_type_name']?></td>
+                        <td><?php echo $data['variety_name']?> (<?php echo $data['variety_name_import']?>)</td>
+                        <td class="text-center"> <?php if($data['pack_size']==0){echo "Bulk";}else{echo $data['pack_size'];}?></td>
                         <td class="text-right"><?php echo $data['carton_number_receive']; ?></td>
                         <td class="text-right"><?php echo $data['carton_size_receive']; ?></td>
                         <td><?php echo $data['warehouse_name']?> </td>
-                        <td class="text-right"><label class="control-label" for=""><?php echo $data['quantity_release'];?></label></td>
-                        <td class="text-right"><label class="control-label" for=""><?php echo number_format($quantity_release_kg,3,'.','')?></label></td>
-                        <td class="text-right"><label class="control-label" for=""><?php echo $data['quantity_receive']; ?></label></td>
-                        <td class="text-right" ><label class="control-label "><?php echo number_format($quantity_receive_kg,3,'.',''); ?></label></td>
-                        <td class="text-right"><label class="control-label"><?php echo ($data['quantity_release']-$data['quantity_receive'])?></label></td>
-                        <td class="text-right"><label class="control-label"><?php echo number_format(($quantity_release_kg-$quantity_receive_kg),3,'.','')?></label></td>
+                        <td class="text-right"><?php echo $data['quantity_release'];?></td>
+                        <td class="text-right"><?php echo number_format($quantity_release_kg,3,'.','')?></td>
+                        <td class="text-right"><?php echo $data['quantity_receive']; ?></td>
+                        <td class="text-right" ><?php echo number_format($quantity_receive_kg,3,'.',''); ?></td>
+                        <td class="text-right"><?php echo ($data['quantity_release']-$data['quantity_receive'])?></td>
+                        <td class="text-right"><?php echo number_format(($quantity_release_kg-$quantity_receive_kg),3,'.','')?></td>
                     </tr>
-                <?php
+                    <?php
+                    if($total_records==$index+1)
+                    {
+                        if($item['remarks_receive'])
+                        {
+                            ?>
+                            <tr>
+                                <td colspan="8" class="text-right"><label class="control-label"><?php echo $this->lang->line('LABEL_TOTAL_KG')?></label></td>
+                                <td class="text-right"><label class="control-label"><?php echo number_format($quantity_total_release,3,'.','');?></label></td>
+                                <td class="text-right"><label class="control-label"><?php echo number_format($quantity_total_release_kg,3,'.','');?></label></td>
+                                <td class="text-right"><label class="control-label"><?php echo $quantity_total_receive;?></label></td>
+                                <td class="text-right"><label class="control-label"><?php echo number_format($quantity_total_receive_kg,3,'.','');?></label></td>
+                                <td class="text-right"><label class="control-label"><?php echo ($quantity_total_release-$quantity_total_receive);?></label></td>
+                                <td class="text-right"><label class="control-label"><?php echo number_format(($quantity_total_release_kg-$quantity_total_receive_kg),3,'.','');?></label></td>
+                            </tr>
+                            <tr>
+                                <td colspan="21">
+                                    <strong>Note: </strong><?php echo $item['remarks_receive'];?>
+                                </td>
+                            </tr>
+                            <?php
+                        }
+                    }
                 }
                 ?>
                 </tbody>

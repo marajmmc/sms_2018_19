@@ -1,9 +1,19 @@
 /*head view table css*/
-.system_header_view_table .header_caption
+.system_table_details_view .header_caption
 {
     width: 20%;
 }
-.system_header_view_table .header_value
+.system_table_details_view .header_value
 {
     width: 30%;
+}
+.system_table_report_container thead tr th
+{
+    border: 1px solid #000000;
+    padding: 2px;
+}
+.system_table_report_container tbody tr td
+{
+    border: 1px solid #000000;
+    padding: 2px;
 }

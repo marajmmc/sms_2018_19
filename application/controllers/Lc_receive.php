@@ -174,7 +174,7 @@ class Lc_receive extends Root_Controller
             $this->db->select('lcd.*');
             $this->db->select('v.id variety_id, v.name variety_name');
             $this->db->select('vp.name_import variety_name_import');
-            $this->db->select('pack.name pack_size_name');
+            $this->db->select('pack.name pack_size');
             $this->db->join($this->config->item('table_login_setup_classification_varieties').' v','v.id = lcd.variety_id','INNER');
             $this->db->join($this->config->item('table_login_setup_variety_principals').' vp','vp.variety_id = v.id AND vp.principal_id = '.$data['item']['principal_id'].' AND vp.revision = 1','INNER');
             $this->db->join($this->config->item('table_login_setup_classification_vpack_size').' pack','pack.id = lcd.pack_size_id','LEFT');
@@ -321,6 +321,7 @@ class Lc_receive extends Root_Controller
                 Query_helper::add($this->config->item('table_sms_lc_receive_histories'),$data, false);
             }
         }
+        $item_head['date_receive']=System_helper::get_time($item_head['date_receive']);
         $item_head['date_packing_list']=System_helper::get_time($item_head['date_packing_list']);
         $item_head['quantity_receive_kg']=$quantity_receive_kg;
         $item_head['date_receive_updated']=$time;
@@ -400,7 +401,7 @@ class Lc_receive extends Root_Controller
             $this->db->select('v.id variety_id, v.name variety_name');
             $this->db->select('vp.name_import variety_name_import');
             $this->db->select('warehouse.name warehouse_name');
-            $this->db->select('pack.name pack_size_name');
+            $this->db->select('pack.name pack_size');
             $this->db->join($this->config->item('table_login_setup_classification_varieties').' v','v.id = lcd.variety_id','INNER');
             $this->db->join($this->config->item('table_login_setup_variety_principals').' vp','vp.variety_id = v.id AND vp.principal_id = '.$data['item']['principal_id'].' AND vp.revision = 1','INNER');
             $this->db->join($this->config->item('table_login_setup_classification_vpack_size').' pack','pack.id = lcd.pack_size_id','LEFT');
@@ -504,7 +505,7 @@ class Lc_receive extends Root_Controller
             $this->db->join($this->config->item('table_login_setup_variety_principals').' vp','vp.variety_id = v.id AND vp.principal_id = '.$data['item']['principal_id'].' AND vp.revision = 1','INNER');
             $this->db->select('vp.name_import variety_name_import');
             $this->db->join($this->config->item('table_login_setup_classification_vpack_size').' pack','pack.id = lcd.pack_size_id','LEFT');
-            $this->db->select('pack.name pack_size_name');
+            $this->db->select('pack.name pack_size');
             $this->db->join($this->config->item('table_login_basic_setup_warehouse').' warehouse','warehouse.id = lcd.receive_warehouse_id','LEFT');
             $this->db->select('warehouse.name warehouse_name');
             $this->db->where('lcd.lc_id',$item_id);
@@ -580,14 +581,18 @@ class Lc_receive extends Root_Controller
             $this->db->join($this->config->item('table_login_setup_variety_principals').' vp','vp.variety_id = v.id AND vp.principal_id = '.$data['item']['principal_id'].' AND vp.revision = 1','INNER');
             $this->db->select('vp.name_import variety_name_import');
             $this->db->join($this->config->item('table_login_setup_classification_vpack_size').' pack','pack.id = lcd.pack_size_id','LEFT');
-            $this->db->select('pack.name pack_size_name');
+            $this->db->select('pack.name pack_size');
+            $this->db->join($this->config->item('table_login_setup_classification_crop_types').' crop_type','crop_type.id = v.crop_type_id','LEFT');
+            $this->db->select('crop_type.name crop_type_name');
+            $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = crop_type.crop_id','LEFT');
+            $this->db->select('crop.name crop_name');
+
             $this->db->join($this->config->item('table_login_basic_setup_warehouse').' warehouse','warehouse.id = lcd.receive_warehouse_id','LEFT');
             $this->db->select('warehouse.name warehouse_name');
             $this->db->where('lcd.lc_id',$item_id);
             $this->db->where('lcd.quantity_open >0');
             $this->db->order_by('lcd.id','ASC');
             $data['items']=$this->db->get()->result_array();
-
             $data['warehouses']=Query_helper::get_info($this->config->item('table_login_basic_setup_warehouse'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
 
             $data['title']="LC Receive :: ".Barcode_helper::get_barcode_lc($item_id);

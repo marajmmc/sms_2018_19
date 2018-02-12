@@ -39,7 +39,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         </div>
 
         <div class="col-md-12">
-            <table class="table table-bordered table-responsive system_header_view_table">
+            <table class="table table-bordered table-responsive system_table_details_view">
                 <thead>
                 <tr>
                     <th class="widget-header header_caption"><label class="control-label pull-right">Release Completed By</label></th>
@@ -49,7 +49,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 </tr>
                 </thead>
             </table>
-            <table class="table table-bordered table-responsive system_header_view_table">
+            <table class="table table-bordered table-responsive system_table_details_view">
                 <thead>
                 <tr>
                     <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_FISCAL_YEAR');?></label></th>
@@ -84,6 +84,14 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 </tr>
                 </thead>
             </table>
+            <div class="row show-grid">
+                <div class="col-xs-4">
+                    <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_RECEIVE');?> <span style="color:#FF0000">*</span></label>
+                </div>
+                <div class="col-sm-4 col-xs-8">
+                    <input type="text" name="item[date_receive]" id="date_receive" class="form-control datepicker" value="<?php echo System_helper::display_date($item['date_receive']);?>" readonly="readonly" />
+                </div>
+            </div>
             <div class="row show-grid">
                 <div class="col-xs-4">
                     <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_PACKING_LIST');?> <span style="color:#FF0000">*</span></label>
@@ -171,8 +179,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                             }
                             else
                             {
-                                $quantity_release_kg=(($data['pack_size_name']*$data['quantity_release'])/1000);
-                                $quantity_receive_kg=(($data['pack_size_name']*$quantity_receive)/1000);
+                                $quantity_release_kg=(($data['pack_size']*$data['quantity_release'])/1000);
+                                $quantity_receive_kg=(($data['pack_size']*$quantity_receive)/1000);
                             }
                             $quantity_total_release+=$data['quantity_release'];
                             $quantity_total_release_kg+=$quantity_release_kg;
@@ -185,8 +193,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                                     <input type="hidden" name="items[<?php echo $index+1;?>][variety_id]" value="<?php echo $data['variety_id']; ?>">
                                 </td>
                                 <td class="text-center">
-                                    <?php if($data['pack_size_name']==0){echo "Bulk";}else{echo $data['pack_size_name'];}?>
-                                    <input type="hidden" name="items[<?php echo $index+1;?>][pack_size_id]" id="pack_size_id_<?php echo $index+1;?>" value="<?php echo $data['pack_size_id']; ?>" class="pack_size_id" data-pack-size-name="<?php if($data['pack_size_name']==0){echo 0;}else{echo $data['pack_size_name'];}?>">
+                                    <?php if($data['pack_size']==0){echo "Bulk";}else{echo $data['pack_size'];}?>
+                                    <input type="hidden" name="items[<?php echo $index+1;?>][pack_size_id]" id="pack_size_id_<?php echo $index+1;?>" value="<?php echo $data['pack_size_id']; ?>" class="pack_size_id" data-pack-size-name="<?php if($data['pack_size']==0){echo 0;}else{echo $data['pack_size'];}?>">
                                 </td>
                                 <td>
                                     <input type="text" value="<?php echo $data['carton_number_receive']; ?>" class="form-control text-right" id="carton_number_receive_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][carton_number_receive]">

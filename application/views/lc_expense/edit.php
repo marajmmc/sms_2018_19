@@ -39,7 +39,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         </div>
 
         <div class="col-md-12">
-            <table class="table table-bordered table-responsive system_header_view_table">
+            <table class="table table-bordered table-responsive system_table_details_view">
                 <thead>
                 <tr>
                     <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_FISCAL_YEAR');?></label></th>

@@ -137,8 +137,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                             }
                             else
                             {
-                                $quantity_release_kg=(($data['pack_size_name']*$data['quantity_release'])/1000);
-                                $quantity_receive_kg=(($data['pack_size_name']*$data['quantity_receive'])/1000);
+                                $quantity_release_kg=(($data['pack_size']*$data['quantity_release'])/1000);
+                                $quantity_receive_kg=(($data['pack_size']*$data['quantity_receive'])/1000);
                             }
                             $quantity_total_release_kg+=$quantity_release_kg;
                             $quantity_total_receive_kg+=$quantity_receive_kg;
@@ -147,7 +147,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                                 <td>
                                     <strong class="text-success"><?php echo $data['variety_name']?> (<?php echo $data['variety_name_import']?>)</strong>
                                 </td>
-                                <td class="text-center"> <?php if($data['pack_size_name']==0){echo "Bulk";}else{echo $data['pack_size_name'];}?></td>
+                                <td class="text-center"> <?php if($data['pack_size']==0){echo "Bulk";}else{echo $data['pack_size'];}?></td>
                                 <td><?php echo $data['warehouse_name']?> </td>
                                 <td class="text-right"><label class="control-label" for=""><?php echo number_format($data['quantity_release'],3,'.','')?></label></td>
                                 <td class="text-right"><label class="control-label" for=""><?php echo number_format($quantity_release_kg,3,'.','')?></label></td>

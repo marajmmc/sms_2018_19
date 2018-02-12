@@ -91,6 +91,7 @@ $lang['LABEL_NO'] = 'No';
 $lang['LABEL_SL_NO'] = 'SL#';
 $lang['ACTION'] = 'Action';
 
+$lang['LABEL_ID'] = 'ID';
 $lang['LABEL_ORDER'] = 'Ordering';
 $lang['LABEL_ADD_MORE'] = 'Add more';
 $lang['LABEL_SEARCH'] = 'Search';
@@ -332,7 +333,6 @@ $lang['LABEL_LC_FORWARD']='Forward LC';
 $lang['LABEL_QUANTITY_OPEN_KG']='LC Open Total (KG)';
 $lang['LABEL_PRICE_OPEN_OTHER_CURRENCY']='LC Open Other Cost (Currency)';
 $lang['LABEL_PRICE_OPEN_VARIETY_CURRENCY']='LC Open Variety (Currency)';
-
 /*LC release*/
 $lang['LABEL_PRICE_RELEASE_OTHER_VARIETY_TAKA']='LC Release Total (Taka)';
 $lang['LABEL_PRICE_RELEASE_OTHER_CURRENCY']='LC Release Other Cost (Currency)';
@@ -341,8 +341,9 @@ $lang['LABEL_PRICE_RELEASE_VARIETY_CURRENCY']='Release Total Variety (Currency)'
 /*LC receive*/
 $lang['LABEL_PRICE_COMPLETE_OTHER_VARIETY_TAKA']='LC Release Actual Total (Taka)';
 $lang['LABEL_QUANTITY_RECEIVE_KG']='Receive Total (KG)';
+$lang['LABEL_DATE_RECEIVE']='Receive Date';
 $lang['LABEL_DATE_PACKING_LIST']='Packing List Date';
 $lang['LABEL_NUMBER_PACKING_LIST']='Packing List Number';
 $lang['LABEL_NUMBER_LOT']='Lot Number';
-$lang['LABEL_CARTON_NUMBER']='Carton Number';
+$lang['LABEL_CARTON_NUMBER']='Number or Carton';
 $lang['LABEL_CARTON_SIZE']='Carton Size';
