@@ -11,6 +11,7 @@ class Report_stock_variety_details extends Root_Controller
         parent::__construct();
         $this->permissions=User_helper::get_permission('Report_stock_variety_details');
         $this->controller_url='report_stock_variety_details';
+        $this->lang->load('report_stock_variety_details');
     }
     public function index($action='search')
     {
@@ -120,283 +121,214 @@ class Report_stock_variety_details extends Root_Controller
         $date_end=$this->input->post('date_end');
         $date_start=$this->input->post('date_start');
 
+        $warehouses=Query_helper::get_info($this->config->item('table_login_basic_setup_warehouse'),array('id value','name text'),array('status !="'.$this->config->item('system_status_delete').'"'));
+        $pack_sizes=array();
+        $results=Query_helper::get_info($this->config->item('table_login_setup_classification_vpack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
+        foreach($results as $result)
+        {
+            $pack_sizes[$result['value']]=$result['text'];
+        }
+
+        //new pack size can be stock in,lc and convert
+
+        //stock in calculation
+        //purpose == in stock and in excess
+        $this->db->from($this->config->item('table_sms_stock_in_variety_details').' details');
+        $this->db->select('details.variety_id,details.pack_size_id,details.warehouse_id');
+        $this->db->select('SUM(CASE WHEN stock_in.date_stock_in<'.$date_start.' then details.quantity ELSE 0 END) in_opening',false);
+
+        $this->db->select('SUM(CASE WHEN stock_in.date_stock_in>='.$date_start.' and stock_in.date_stock_in<='.$date_end.' and purpose="'.$this->config->item('system_purpose_variety_stock_in').'" then details.quantity ELSE 0 END) in_stock',false);
+        $this->db->select('SUM(CASE WHEN stock_in.date_stock_in>='.$date_start.' and stock_in.date_stock_in<='.$date_end.' and purpose="'.$this->config->item('system_purpose_variety_excess').'" then details.quantity ELSE 0 END) in_excess',false);
+
+
+        $this->db->join($this->config->item('table_sms_stock_in_variety').' stock_in','stock_in.id=details.stock_in_id','INNER');
+        $this->db->where('stock_in.status !=',$this->config->item('system_status_delete'));
+        $this->db->where('details.revision',1);
+        $this->db->where('details.variety_id',$variety_id);
+        if($pack_size_id>-1)
+        {
+            $this->db->where('details.pack_size_id',$pack_size_id);
+        }
+        $this->db->group_by('details.variety_id');
+        $this->db->group_by('details.pack_size_id');
+        $this->db->group_by('details.warehouse_id');
+        $results=$this->db->get()->result_array();
+
+        $packs=array();
+        foreach($results as $result)
+        {
+            if(!(isset($packs[$result['pack_size_id']])))
+            {
+                $packs[$result['pack_size_id']]=$this->initialize_row($warehouses);
+            }
+            $packs[$result['pack_size_id']]['stock_opening'][$result['warehouse_id']]=$result['in_opening'];
+            $packs[$result['pack_size_id']]['in_stock'][$result['warehouse_id']]=$result['in_stock'];
+            $packs[$result['pack_size_id']]['in_excess'][$result['warehouse_id']]=$result['in_excess'];
+            $packs[$result['pack_size_id']]['stock_current'][$result['warehouse_id']]=$result['in_opening']+$result['in_stock']+$result['in_excess'];
+        }
+
+        //lc calculation
+
+        $grand_total=array();
+        $grand_total['pack_size']='Total End Stock';
+        $grand_total['type']='';
+        foreach($warehouses as $warehouse)
+        {
+            $grand_total['warehouse_'.$warehouse['value'].'_pkt']=0;
+            $grand_total['warehouse_'.$warehouse['value'].'_kg']=0;
+        }
+        $grand_total['total_pkt']=0;
+        $grand_total['total_kg']=0;
         $items=array();
+
+        foreach($packs as $pack_size_id=>$pack)
+        {
+            $item=array();
+
+            $count=0;
+            foreach($pack as $type=>$warehouse_quantity)
+            {
+                if($count==0)
+                {
+                    if($pack_size_id==0)
+                    {
+                        $item['pack_size']='Bulk';
+                    }
+                    else
+                    {
+                        $item['pack_size']=$pack_sizes[$pack_size_id];
+                    }
+
+                }
+                else
+                {
+                    $item['pack_size']='';
+                }
+                $count++;
+                $item['type']=$this->lang->line('LABEL_'.strtoupper($type));
+                $item['total_pkt']=0;
+                $item['total_kg']=0;
+                foreach($warehouse_quantity as $warehouse_id=>$quantity)
+                {
+                    if($pack_size_id==0)
+                    {
+                        $item['warehouse_'.$warehouse_id.'_pkt']='';
+                        if($quantity>0)
+                        {
+                            $item['warehouse_'.$warehouse_id.'_kg']=number_format($quantity,3,'.','');
+                        }
+                        else
+                        {
+                            $item['warehouse_'.$warehouse_id.'_kg']='';
+                        }
+
+                        $item['total_kg']+=$quantity;
+                        if($type=='stock_current')
+                        {
+                            $grand_total['warehouse_'.$warehouse_id.'_kg']+=$quantity;
+                            $grand_total['total_kg']+=$quantity;
+                        }
+                    }
+                    else
+                    {
+
+                        if($quantity>0)
+                        {
+                            $item['warehouse_'.$warehouse_id.'_pkt']=$quantity;
+                            $item['warehouse_'.$warehouse_id.'_kg']=$quantity*$pack_sizes[$pack_size_id]/1000;
+                        }
+                        else
+                        {
+                            $item['warehouse_'.$warehouse_id.'_pkt']='';
+                            $item['warehouse_'.$warehouse_id.'_kg']='';
+                        }
+                        $item['total_pkt']+=$quantity;
+                        $item['total_kg']+=$quantity*$pack_sizes[$pack_size_id]/1000;
+
+                        if($type=='stock_current')
+                        {
+                            $grand_total['warehouse_'.$warehouse_id.'_pkt']+=$quantity;
+                            $grand_total['total_pkt']+=$quantity;
+                            $grand_total['warehouse_'.$warehouse_id.'_kg']+=$quantity*$pack_sizes[$pack_size_id]/1000;
+                            $grand_total['total_kg']+=$quantity*$pack_sizes[$pack_size_id]/1000;
+
+                        }
+                    }
+                    if($item['total_kg']>0)
+                    {
+                        $item['total_kg']=number_format($item['total_kg'],3,'.','');
+                    }
+                    else
+                    {
+                        $item['total_kg']='';
+                    }
+                    if(!($item['total_pkt']>0))
+                    {
+                        $item['total_pkt']='';
+                    }
+
+                }
+                $items[]=$item;
+            }
+
+        }
+
+        foreach($warehouses as $warehouse)
+        {
+
+            if($grand_total['warehouse_'.$warehouse['value'].'_kg']>0)
+            {
+                $grand_total['warehouse_'.$warehouse['value'].'_kg']=number_format($grand_total['warehouse_'.$warehouse['value'].'_kg'],3,'.','');
+            }
+            else
+            {
+                $grand_total['warehouse_'.$warehouse['value'].'_kg']='';
+            }
+            if(!($grand_total['warehouse_'.$warehouse['value'].'_pkt']>0))
+            {
+                $grand_total['warehouse_'.$warehouse['value'].'_pkt']='';
+            }
+        }
+        if($grand_total['total_kg']>0)
+        {
+            $grand_total['total_kg']=number_format($grand_total['total_kg'],3,'.','');
+        }
+        else
+        {
+            $grand_total['total_kg']='';
+        }
+        if(!($grand_total['total_pkt']>0))
+        {
+            $grand_total['total_pkt']='';
+        }
+        $items[]=$grand_total;
         $this->json_return($items);
 
 
     }
-    private function get_stocks($time,$warehouse_id,$crop_id,$crop_type_id,$variety_id,$pack_size_id)
+    private function initialize_row($warehouses)
     {
-        $stocks=array();
-        if($time==0)
+        $data=array();
+        foreach($warehouses as $warehouse)
         {
-            return $stocks;
-        }
-        //Stock In(By LC)
-        $this->db->from($this->config->item('table_sms_lc_open').' lco');
-        $this->db->select('lco.*');
-        $this->db->select('lcd.variety_id, lcd.pack_size_id,lcd.receive_warehouse_id,lcd.quantity_receive');
-        $this->db->join($this->config->item('table_sms_lc_details').' lcd','lcd.lc_id = lco.id','INNER');
-        $this->db->select('variety.name variety_name');
-        $this->db->join($this->config->item('table_login_setup_classification_varieties').' variety','variety.id = lcd.variety_id','INNER');
-        $this->db->select('v_pack_size.name pack_size_name, v_pack_size.id pack_id');
-        $this->db->join($this->config->item('table_login_setup_classification_vpack_size').' v_pack_size','v_pack_size.id = lcd.pack_size_id','LEFT');
-        $this->db->select('ware_house.name ware_house_name');
-        $this->db->join($this->config->item('table_login_basic_setup_warehouse').' ware_house','ware_house.id = lcd.receive_warehouse_id','INNER');
-        $this->db->select('type.name crop_type_name, type.id type_id');
-        $this->db->join($this->config->item('table_login_setup_classification_crop_types').' type','type.id = variety.crop_type_id','INNER');
-        $this->db->select('crop.name crop_name, crop.id crop_id');
-        $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = type.crop_id','INNER');
-        $this->db->select('SUM(lcd.quantity_receive)');
-        $this->db->select('SUM(quantity_receive) in_lc');
-        $this->db->group_by(array('variety_id','pack_size_id'));
-
-        $this->db->where('lco.date_receive_completed <=',$time);
-        if($warehouse_id>0)
-        {
-            $this->db->where('lcd.receive_warehouse_id',$warehouse_id);
-        }
-        if($crop_id>0)
-        {
-            $this->db->where('crop.id',$crop_id);
-        }
-        if($crop_type_id>0)
-        {
-            $this->db->where('type.id',$crop_type_id);
-        }
-        if($variety_id>0)
-        {
-            $this->db->where('lcd.variety_id',$variety_id);
-        }
-        if($pack_size_id>0)
-        {
-            $this->db->where('v_pack_size.id',$pack_size_id);
-        }
-        $this->db->order_by('crop.ordering');
-        $this->db->order_by('type.ordering');
-        $this->db->order_by('variety.ordering');
-        $results=$this->db->get()->result_array();
-
-        foreach($results as $result)
-        {
-            $stocks[$result['variety_id']][$result['pack_size_id']]['in_lc']=$result['in_lc'];
-            $stocks[$result['variety_id']][$result['pack_size_id']]['in_stock']=0;
-            $stocks[$result['variety_id']][$result['pack_size_id']]['in_excess']=0;
-            $stocks[$result['variety_id']][$result['pack_size_id']]['in_transfer_warehouse']=0;
-            $stocks[$result['variety_id']][$result['pack_size_id']]['in_convert_bulk_pack']=0;
-            $stocks[$result['variety_id']][$result['pack_size_id']]['in_sales_return']=0;
-            $stocks[$result['variety_id']][$result['pack_size_id']]['out_sales']=0;
-            $stocks[$result['variety_id']][$result['pack_size_id']]['out_stock_sample']=0;
-            $stocks[$result['variety_id']][$result['pack_size_id']]['out_stock_rnd']=0;
-            $stocks[$result['variety_id']][$result['pack_size_id']]['out_stock_demonstration']=0;
-            $stocks[$result['variety_id']][$result['pack_size_id']]['out_stock_short_inventory']=0;
-            $stocks[$result['variety_id']][$result['pack_size_id']]['out_transfer_warehouse']=0;
-            $stocks[$result['variety_id']][$result['pack_size_id']]['out_convert_pack_bulk']=0;
-            $stocks[$result['variety_id']][$result['pack_size_id']]['pack_size_name']=$result['pack_size_name'];
-            $stocks[$result['variety_id']][$result['pack_size_id']]['variety_name']=$result['variety_name'];
-            $stocks[$result['variety_id']][$result['pack_size_id']]['crop_type_name']=$result['crop_type_name'];
-            $stocks[$result['variety_id']][$result['pack_size_id']]['crop_name']=$result['crop_name'];
-        }
-
-
-        //Stock In (By in_stock and in_excess purpose)
-
-        $this->db->from($this->config->item('table_sms_stock_in_variety').' stock_in');
-        $this->db->select('stock_in.*');
-        $this->db->select('stock_in_details.variety_id, stock_in_details.pack_size_id, stock_in_details.warehouse_id, stock_in_details.quantity');
-        $this->db->join($this->config->item('table_sms_stock_in_variety_details').' stock_in_details','stock_in_details.stock_in_id = stock_in.id','INNER');
-        $this->db->select('variety.name variety_name');
-        $this->db->join($this->config->item('table_login_setup_classification_varieties').' variety','variety.id = stock_in_details.variety_id','INNER');
-        $this->db->select('v_pack_size.name pack_size_name, v_pack_size.id pack_id');
-        $this->db->join($this->config->item('table_login_setup_classification_vpack_size').' v_pack_size','v_pack_size.id = stock_in_details.pack_size_id','LEFT');
-        $this->db->select('ware_house.name ware_house_name');
-        $this->db->join($this->config->item('table_login_basic_setup_warehouse').' ware_house','ware_house.id = stock_in_details.warehouse_id','INNER');
-        $this->db->select('type.name crop_type_name, type.id type_id');
-        $this->db->join($this->config->item('table_login_setup_classification_crop_types').' type','type.id = variety.crop_type_id','INNER');
-        $this->db->select('crop.name crop_name, crop.id crop_id');
-        $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = type.crop_id','INNER');
-        $this->db->select('SUM(quantity) in_stock_excess');
-        $this->db->group_by(array('variety_id','pack_size_id','stock_in.purpose'));
-
-        $this->db->where('stock_in.date_stock_in <=',$time);
-        if($warehouse_id>0)
-        {
-            $this->db->where('stock_in_details.warehouse_id',$warehouse_id);
-        }
-        if($crop_id>0)
-        {
-            $this->db->where('crop.id',$crop_id);
-        }
-        if($crop_type_id>0)
-        {
-            $this->db->where('type.id',$crop_type_id);
-        }
-        if($variety_id>0)
-        {
-            $this->db->where('stock_in_details.variety_id',$variety_id);
-        }
-        if($pack_size_id>0)
-        {
-            $this->db->where('v_pack_size.id',$pack_size_id);
-        }
-        $this->db->order_by('crop.ordering');
-        $this->db->order_by('type.ordering');
-        $this->db->order_by('variety.ordering');
-        $results=$this->db->get()->result_array();
-
-        foreach($results as $result)
-        {
-            if(isset($stocks[$result['variety_id']][$result['pack_size_id']]))
-            {
-                if($result['purpose']==$this->config->item('system_purpose_variety_stock_in'))
-                {
-                    $stocks[$result['variety_id']][$result['pack_size_id']]['in_stock']=$result['in_stock_excess'];
-                }
-                elseif($result['purpose']==$this->config->item('system_purpose_variety_excess'))
-                {
-                    $stocks[$result['variety_id']][$result['pack_size_id']]['in_excess']=$result['in_stock_excess'];
-                }
-            }
-        }
-
-
-        //Stock In (By Transfer warehouse to warehouse)
-
-        $this->db->from($this->config->item('table_sms_transfer_warehouse_variety').' transfer_warehouse');
-        $this->db->select('transfer_warehouse.*');
-        $this->db->select('variety.name variety_name');
-        $this->db->join($this->config->item('table_login_setup_classification_varieties').' variety','variety.id = transfer_warehouse.variety_id','LEFT');
-        $this->db->select('v_pack_size.name pack_size_name');
-        $this->db->join($this->config->item('table_login_setup_classification_vpack_size').' v_pack_size','v_pack_size.id = transfer_warehouse.pack_size_id','LEFT');
-        $this->db->select('source_ware_house.name source_ware_house_name');
-        $this->db->join($this->config->item('table_login_basic_setup_warehouse').' source_ware_house','source_ware_house.id = transfer_warehouse.source_warehouse_id','LEFT');
-        $this->db->select('destination_ware_house.name destination_ware_house_name');
-        $this->db->join($this->config->item('table_login_basic_setup_warehouse').' destination_ware_house','destination_ware_house.id = transfer_warehouse.destination_warehouse_id','LEFT');
-        $this->db->select('type.name crop_type_name');
-        $this->db->join($this->config->item('table_login_setup_classification_crop_types').' type','type.id = variety.crop_type_id','LEFT');
-        $this->db->select('crop.name crop_name');
-        $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = type.crop_id','LEFT');
-        $this->db->select('SUM(quantity) in_transfer_warehouse');
-        $this->db->group_by(array('variety_id','pack_size_id'));
-        $this->db->where('transfer_warehouse.date_transfer <=',$time);
-        if($warehouse_id>0)
-        {
-            $this->db->where('transfer_warehouse.destination_warehouse_id',$warehouse_id);
-        }
-        if($crop_id>0)
-        {
-            $this->db->where('crop.id',$crop_id);
-        }
-        if($crop_type_id>0)
-        {
-            $this->db->where('type.id',$crop_type_id);
-        }
-        if($variety_id>0)
-        {
-            $this->db->where('transfer_warehouse.variety_id',$variety_id);
-        }
-        if($pack_size_id>0)
-        {
-            $this->db->where('v_pack_size.id',$pack_size_id);
-        }
-        $this->db->order_by('crop.ordering');
-        $this->db->order_by('type.ordering');
-        $this->db->order_by('variety.ordering');
-        $results=$this->db->get()->result_array();
-
-        foreach($results as $result)
-        {
-            if(isset($stocks[$result['variety_id']][$result['pack_size_id']]))
-            {
-                $stocks[$result['variety_id']][$result['pack_size_id']]['in_transfer_warehouse']=$result['in_transfer_warehouse'];
-            }
-        }
-
-        /* Stock In (By convert bulk to packet) have to do when convert task will complete. */
-
-
-        /* Stock In (By sales return) have to do when transfer outlet to warehouse task will complete. */
-
-
-
-        //stock out (By short, rnd, demonstration and sample purposes)
-
-        $this->db->from($this->config->item('table_sms_stock_out_variety').' stock_out');
-        $this->db->select('stock_out.*');
-        $this->db->select('stock_out_details.variety_id, stock_out_details.pack_size_id, stock_out_details.warehouse_id, stock_out_details.quantity');
-        $this->db->join($this->config->item('table_sms_stock_out_variety_details').' stock_out_details','stock_out_details.stock_out_id = stock_out.id','INNER');
-        $this->db->select('variety.name variety_name');
-        $this->db->join($this->config->item('table_login_setup_classification_varieties').' variety','variety.id = stock_out_details.variety_id','INNER');
-        $this->db->select('v_pack_size.name pack_size_name');
-        $this->db->join($this->config->item('table_login_setup_classification_vpack_size').' v_pack_size','v_pack_size.id = stock_out_details.pack_size_id','LEFT');
-        $this->db->select('ware_house.name ware_house_name');
-        $this->db->join($this->config->item('table_login_basic_setup_warehouse').' ware_house','ware_house.id = stock_out_details.warehouse_id','INNER');
-        $this->db->select('type.name crop_type_name');
-        $this->db->join($this->config->item('table_login_setup_classification_crop_types').' type','type.id = variety.crop_type_id','INNER');
-        $this->db->select('crop.name crop_name');
-        $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = type.crop_id','INNER');
-        $this->db->select('SUM(quantity) stock_out');
-        $this->db->group_by(array('variety_id','pack_size_id','stock_out.purpose'));
-
-        $this->db->where('stock_out.date_stock_out <=',$time);
-        if($warehouse_id>0)
-        {
-            $this->db->where('stock_out_details.warehouse_id',$warehouse_id);
-        }
-        if($crop_id>0)
-        {
-            $this->db->where('type.crop_id',$crop_id);
-        }
-        if($crop_type_id>0)
-        {
-            $this->db->where('type.id',$crop_type_id);
-        }
-        if($variety_id>0)
-        {
-            $this->db->where('stock_out_details.variety_id',$variety_id);
-        }
-        if($pack_size_id>0)
-        {
-            $this->db->where('v_pack_size.id',$pack_size_id);
-        }
-        $results=$this->db->get()->result_array();
-
-        foreach($results as $result)
-        {
-            if(isset($stocks[$result['variety_id']][$result['pack_size_id']]))
-            {
-                if($result['purpose']==$this->config->item('system_purpose_variety_short_inventory'))
-                {
-                    $stocks[$result['variety_id']][$result['pack_size_id']]['out_stock_short_inventory']=$result['stock_out'];
-                }
-                elseif($result['purpose']==$this->config->item('system_purpose_variety_rnd'))
-                {
-                    $stocks[$result['variety_id']][$result['pack_size_id']]['out_stock_rnd']=$result['stock_out'];
-                }
-                elseif($result['purpose']==$this->config->item('system_purpose_variety_sample'))
-                {
-                    $stocks[$result['variety_id']][$result['pack_size_id']]['out_stock_sample']=$result['stock_out'];
-                }
-                elseif($result['purpose']==$this->config->item('system_purpose_variety_demonstration'))
-                {
-                    $stocks[$result['variety_id']][$result['pack_size_id']]['out_stock_demonstration']=$result['stock_out'];
-                }
-            }
+            $data['stock_opening'][$warehouse['value']]=0;
+            $data['in_stock'][$warehouse['value']]=0;
+            $data['in_excess'][$warehouse['value']]=0;
+            //$data['in_transfer_warehouse'][$warehouse['value']]=0;
+            //$data['in_convert_bulk_pack'][$warehouse['value']]=0;
+            $data['in_lc'][$warehouse['value']]=0;
+            //others will be included when task finished
+            $data['stock_current'][$warehouse['value']]=0;
 
         }
-
-
-        /* stock out (By Sales) have to do when POS task will complete */
-
-
-        /* stock out (By Transfer) have to do when Transfer Warehouse to Outlet will complete */
-
-
-        /* stock out (By Convert) have to do when Convert Pack to Bulk will complete */
-
-        return $stocks;
+        return $data;
 
     }
+    private function get_row($info)
+    {
+
+    }
+
     private function system_set_preference()
     {
         if(isset($this->permissions['action6']) && ($this->permissions['action6']==1))

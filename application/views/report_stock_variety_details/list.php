@@ -81,14 +81,14 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         var cellsrenderer = function(row, column, value, defaultHtml, columnSettings, record)
         {
             var element = $(defaultHtml);
-            if (record.type=="Total Pack")
+            if (record.type=="End Stock")
             {
                 if(column!='pack_size')
                 {
                     element.css({ 'background-color': system_report_color_crop,'margin': '0px','width': '100%', 'height': '100%',padding:'5px','line-height':'25px'});
                 }
             }
-            else if (record.pack_size=="Grand Total")
+            else if (record.pack_size=="Total End Stock")
             {
 
                 element.css({ 'background-color': system_report_color_grand,'margin': '0px','width': '100%', 'height': '100%',padding:'5px','line-height':'25px'});
@@ -107,7 +107,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         };
         var aggregates=function (total, column, element, record)
         {
-            if(record.pack_size=="Grand Total")
+            if(record.pack_size=="Total End Stock")
             {
                 //console.log(element);
                 return record[element];
@@ -138,8 +138,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 rowsheight: 35,
                 columns:
                     [
-                        { text: '<?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?>', dataField: 'pack_size',pinned:true,width:'100',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['pack_size']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
-                        { text: '<?php echo $CI->lang->line('LABEL_TYPE'); ?>', dataField: 'type',pinned:true,width:'100',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['type']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                        { text: '<?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?>', dataField: 'pack_size',pinned:true,width:'100',cellsalign: 'right',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['pack_size']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                        { text: '<?php echo $CI->lang->line('LABEL_TYPE'); ?>', dataField: 'type',pinned:true,width:'200',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['type']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
                         <?php
                     foreach($warehouses as $warehouse)
                     {
