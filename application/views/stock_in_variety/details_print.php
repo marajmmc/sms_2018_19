@@ -40,6 +40,7 @@ $num_pages=ceil($total_records/$row_per_page);
 
 <div id="system_print_container" style="width:<?php echo $width;?>px;">
     <?php
+        $quantity_total_kg=0;
         for($page=0;$page<$num_pages;$page++)
         {
             ?>
@@ -104,6 +105,7 @@ $num_pages=ceil($total_records/$row_per_page);
                     for($index=$page*$row_per_page;($index<(($page+1)*$row_per_page))&&($index<sizeof($items));$index++)
                     {
                         $serial=($index+1);
+                        $quantity_total_kg+=($items[$index]['quantity']/1000);
                         ?>
                         <tr>
                             <td><?php echo $serial; ?></td>
@@ -116,6 +118,26 @@ $num_pages=ceil($total_records/$row_per_page);
                             <td class="text-right"> <?php echo $items[$index]['quantity']/1000;?> </td>
                         </tr>
                     <?php
+                        if($total_records==$index+1)
+                        {
+                            ?>
+                            <tr>
+                                <td colspan="5" class="text-right"><label class="control-label"><?php echo $this->lang->line('LABEL_TOTAL')?></label></td>
+                                <td class="text-right"><label class="control-label"><?php echo number_format($item['quantity_total'],3,'.','');?></label></td>
+                                <td class="text-right"><label class="control-label"><?php echo number_format($quantity_total_kg,3,'.','');?></label></td>
+                            </tr>
+                            <?php
+                            if($item['remarks'])
+                            {
+                                ?>
+                                <tr>
+                                    <td colspan="21">
+                                        <strong><?php echo $CI->lang->line('LABEL_REMARKS');?>: </strong><?php echo $item['remarks'];?>
+                                    </td>
+                                </tr>
+                            <?php
+                            }
+                        }
                     }
                     ?>
                     </tbody>

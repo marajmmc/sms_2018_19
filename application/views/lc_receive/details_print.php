@@ -183,18 +183,20 @@ $num_pages=ceil($total_records/$row_per_page);
                     <?php
                     if($total_records==$index+1)
                     {
+                        ?>
+                        <tr>
+                            <td colspan="7" class="text-right"><label class="control-label"><?php echo $this->lang->line('LABEL_TOTAL')?></label></td>
+                            <td class="text-right"><label class="control-label"><?php echo $quantity_total_release;?></label></td>
+                            <td class="text-right"><label class="control-label"><?php echo number_format($quantity_total_release_kg,3,'.','');?></label></td>
+                            <td class="text-right"><label class="control-label"><?php echo $quantity_total_receive;?></label></td>
+                            <td class="text-right"><label class="control-label"><?php echo number_format($quantity_total_receive_kg,3,'.','');?></label></td>
+                            <td class="text-right"><label class="control-label"><?php echo ($quantity_total_release-$quantity_total_receive);?></label></td>
+                            <td class="text-right"><label class="control-label"><?php echo number_format(($quantity_total_release_kg-$quantity_total_receive_kg),3,'.','');?></label></td>
+                        </tr>
+                        <?php
                         if($item['remarks_receive'])
                         {
                             ?>
-                            <tr>
-                                <td colspan="7" class="text-right"><label class="control-label"><?php echo $this->lang->line('LABEL_TOTAL')?></label></td>
-                                <td class="text-right"><label class="control-label"><?php echo $quantity_total_release;?></label></td>
-                                <td class="text-right"><label class="control-label"><?php echo number_format($quantity_total_release_kg,3,'.','');?></label></td>
-                                <td class="text-right"><label class="control-label"><?php echo $quantity_total_receive;?></label></td>
-                                <td class="text-right"><label class="control-label"><?php echo number_format($quantity_total_receive_kg,3,'.','');?></label></td>
-                                <td class="text-right"><label class="control-label"><?php echo ($quantity_total_release-$quantity_total_receive);?></label></td>
-                                <td class="text-right"><label class="control-label"><?php echo number_format(($quantity_total_release_kg-$quantity_total_receive_kg),3,'.','');?></label></td>
-                            </tr>
                             <tr>
                                 <td colspan="21">
                                     <strong><?php echo $CI->lang->line('LABEL_REMARKS');?>: </strong><?php echo $item['remarks_receive'];?>
