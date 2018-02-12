@@ -34,6 +34,10 @@ class Purchase_raw_foil extends Root_Controller
         {
             $this->system_details($id);
         }
+        elseif($action=="details_print")
+        {
+            $this->system_details_print($id);
+        }
         elseif($action=="delete")
         {
             $this->system_delete($id);
@@ -62,8 +66,10 @@ class Purchase_raw_foil extends Root_Controller
             $user = User_helper::get_user();
             $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
             $data['system_preference_items']['barcode']= 1;
-            $data['system_preference_items']['date_purchase']= 1;
+            $data['system_preference_items']['date_receive']= 1;
             $data['system_preference_items']['supplier_name']= 1;
+            $data['system_preference_items']['date_challan']= 1;
+            $data['system_preference_items']['challan_number']= 1;
             $data['system_preference_items']['quantity_receive']= 1;
             $data['system_preference_items']['remarks']= 1;
             if($result)
@@ -125,16 +131,20 @@ class Purchase_raw_foil extends Root_Controller
         $this->db->select('supplier.name supplier_name');
         $this->db->join($this->config->item('table_login_basic_setup_supplier').' supplier','supplier.id = purchase_foil.supplier_id','INNER');
         $this->db->where('purchase_foil.status !=',$this->config->item('system_status_delete'));
-        $this->db->order_by('purchase_foil.date_purchase','DESC');
+        $this->db->order_by('purchase_foil.date_receive','DESC');
         $this->db->order_by('purchase_foil.id','DESC');
         $this->db->limit($pagesize,$current_records);
         $items=$this->db->get()->result_array();
 
         foreach($items as &$item)
         {
-            $item['date_purchase']=System_helper::display_date($item['date_purchase']);
+            $item['date_receive']=System_helper::display_date($item['date_receive']);
+            $item['date_challan']=System_helper::display_date($item['date_challan']);
             $item['barcode']=Barcode_helper::get_barcode_raw_foil_purchase($item['id']);
         }
+
+//        print_r($items);
+//        exit;
         $this->json_return($items);
     }
     private function system_add()
@@ -145,11 +155,14 @@ class Purchase_raw_foil extends Root_Controller
             $data['title']="Purchase Common Foil";
             $data["item"] = Array(
                 'id'=>'',
-                'date_purchase' => $time,
+                'date_receive' => '',
                 'quantity_supply' =>'',
                 'quantity_receive' =>'',
                 'remarks' => '',
-                'supplier_id' =>0
+                'supplier_id' =>0,
+                'challan_number' =>'',
+                'date_challan' => '',
+                'price_unit_tk' => '',
             );
 
             $data['suppliers']=Query_helper::get_info($this->config->item('table_login_basic_setup_supplier'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
@@ -293,11 +306,14 @@ class Purchase_raw_foil extends Root_Controller
         {
             /* --Start-- Item saving (In two table consequently)*/
             $data=array(); //Main data
-            $data['date_purchase']=System_helper::get_time($item['date_purchase']);
+            $data['date_receive']=System_helper::get_time($item['date_receive']);
             $data['supplier_id']=$item['supplier_id'];
+            $data['challan_number']=$item['challan_number'];
+            $data['date_challan']=System_helper::get_time($item['date_challan']);
             $data['remarks']=$item['remarks'];
             $data['quantity_supply']=$item['quantity_supply'];
             $data['quantity_receive']=$item['quantity_receive'];
+            $data['price_unit_tk']=$item['price_unit_tk'];
             $data['user_updated']=$user->user_id;
             $data['date_updated']=$time;
             $this->db->set('revision_count', 'revision_count+1', FALSE);
@@ -331,11 +347,14 @@ class Purchase_raw_foil extends Root_Controller
         {
             /* --Start-- Item saving (In two table consequently)*/
             $data=array(); //Main Data
-            $data['date_purchase']=System_helper::get_time($item['date_purchase']);
+            $data['date_receive']=System_helper::get_time($item['date_receive']);
             $data['supplier_id']=$item['supplier_id'];
+            $data['challan_number']=$item['challan_number'];
+            $data['date_challan']=System_helper::get_time($item['date_challan']);
             $data['remarks']=$item['remarks'];
             $data['quantity_supply']=$item['quantity_supply'];
             $data['quantity_receive']=$item['quantity_receive'];
+            $data['price_unit_tk']=$item['price_unit_tk'];
             $data['user_created']=$user->user_id;
             $data['date_created']=$time;
             $data['status']=$this->config->item('system_status_active');
@@ -389,7 +408,112 @@ class Purchase_raw_foil extends Root_Controller
 
     private function system_details($id)
     {
-        $this->system_list();
+        //$this->system_list();
+        if(isset($this->permissions['action0']) && ($this->permissions['action0']==1))
+        {
+            if($id>0)
+            {
+                $item_id=$id;
+            }
+            else
+            {
+                $item_id=$this->input->post('id');
+            }
+            $item['variety_id']=0;
+            $item['pack_size_id']=0;
+            $packing_item=$this->config->item('system_common_foil');
+
+            $this->db->from($this->config->item('table_sms_purchase_raw_foil').' purchase_foil');
+            $this->db->select('purchase_foil.*');
+            $this->db->select('supplier.name supplier_name');
+            $this->db->join($this->config->item('table_login_basic_setup_supplier').' supplier','supplier.id = purchase_foil.supplier_id','LEFT');
+            $this->db->where('purchase_foil.status !=',$this->config->item('system_status_delete'));
+            $this->db->where('purchase_foil.id',$item_id);
+            $data['item']=$this->db->get()->row_array();
+            if(!$data['item'])
+            {
+                System_helper::invalid_try('Details Non Exists',$item_id);
+                $ajax['status']=false;
+                $ajax['system_message']='Invalid Try.';
+                $this->json_return($ajax);
+            }
+
+            $current_stocks=System_helper::get_raw_stock(array($item['variety_id']));
+
+            $data['item']['current_stock']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$packing_item]['current_stock'];
+
+            $data['title']="Details Purchase (Common Foil)";
+            $ajax['status']=true;
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/details",$data,true));
+            if($this->message)
+            {
+                $ajax['system_message']=$this->message;
+            }
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/details/'.$item_id);
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+    }
+
+    private function system_details_print($id)
+    {
+        if(isset($this->permissions['action0']) && ($this->permissions['action0']==1))
+        {
+            if($id>0)
+            {
+                $item_id=$id;
+            }
+            else
+            {
+                $item_id=$this->input->post('id');
+            }
+            $item['variety_id']=0;
+            $item['pack_size_id']=0;
+            $packing_item=$this->config->item('system_common_foil');
+
+            $this->db->from($this->config->item('table_sms_purchase_raw_foil').' purchase_foil');
+            $this->db->select('purchase_foil.*');
+            $this->db->select('supplier.name supplier_name');
+            $this->db->join($this->config->item('table_login_basic_setup_supplier').' supplier','supplier.id = purchase_foil.supplier_id','LEFT');
+            $this->db->where('purchase_foil.status !=',$this->config->item('system_status_delete'));
+            $this->db->where('purchase_foil.id',$item_id);
+            $data['item']=$this->db->get()->row_array();
+            if(!$data['item'])
+            {
+                System_helper::invalid_try('Details Print Non Exists',$item_id);
+                $ajax['status']=false;
+                $ajax['system_message']='Invalid Try.';
+                $this->json_return($ajax);
+            }
+
+            $current_stocks=System_helper::get_raw_stock(array($item['variety_id']));
+
+            $data['item']['current_stock']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$packing_item]['current_stock'];
+
+
+//            print_r($data['item']);
+//            exit;
+            $data['title']="Details Purchase (Common Foil)";
+            $ajax['status']=true;
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/details_print",$data,true));
+            if($this->message)
+            {
+                $ajax['system_message']=$this->message;
+            }
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/details_print/'.$item_id);
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
     }
 
     private function system_delete($id)
@@ -483,10 +607,12 @@ class Purchase_raw_foil extends Root_Controller
         if(!($id>0))
         {
             $this->load->library('form_validation');
-            $this->form_validation->set_rules('item[date_purchase]',$this->lang->line('LABEL_DATE_PURCHASE'),'required');
+            $this->form_validation->set_rules('item[date_receive]',$this->lang->line('LABEL_DATE_RECEIVE'),'required');
             $this->form_validation->set_rules('item[supplier_id]',$this->lang->line('LABEL_SUPPLIER_NAME'),'required');
             $this->form_validation->set_rules('item[quantity_supply]',$this->lang->line('LABEL_QUANTITY_SUPPLY'),'required');
             $this->form_validation->set_rules('item[quantity_receive]',$this->lang->line('LABEL_QUANTITY_RECEIVE'),'required');
+            $this->form_validation->set_rules('item[date_challan]',$this->lang->line('LABEL_DATE_CHALLAN'),'required');
+            $this->form_validation->set_rules('item[challan_number]',$this->lang->line('LABEL_CHALLAN_NUMBER'),'required');
             if($this->form_validation->run() == FALSE)
             {
                 $this->message=validation_errors();
@@ -503,8 +629,10 @@ class Purchase_raw_foil extends Root_Controller
             $user = User_helper::get_user();
             $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
             $data['system_preference_items']['barcode']= 1;
-            $data['system_preference_items']['date_purchase']= 1;
+            $data['system_preference_items']['date_receive']= 1;
             $data['system_preference_items']['supplier_name']= 1;
+            $data['system_preference_items']['date_challan']= 1;
+            $data['system_preference_items']['challan_number']= 1;
             $data['system_preference_items']['quantity_receive']= 1;
             $data['system_preference_items']['remarks']= 1;
             if($result)

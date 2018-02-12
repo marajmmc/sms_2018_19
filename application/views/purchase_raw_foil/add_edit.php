@@ -40,10 +40,10 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         <div class="row show-grid">
             <div class="row show-grid">
                 <div class="col-xs-4">
-                    <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_PURCHASE');?><span style="color:#FF0000">*</span></label>
+                    <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_RECEIVE');?><span style="color:#FF0000">*</span></label>
                 </div>
                 <div class="col-sm-4 col-xs-8">
-                    <input type="text" name="item[date_purchase]" class="form-control datepicker" value="<?php echo System_helper::display_date($item['date_purchase']);?>"/>
+                    <input type="text" name="item[date_receive]" class="form-control datepicker" value="<?php echo System_helper::display_date($item['date_receive']);?>"/>
                 </div>
             </div>
         </div>
@@ -77,6 +77,26 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
         <div class="row show-grid">
             <div class="col-xs-4">
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CHALLAN_NUMBER');?><span style="color:#FF0000">*</span></label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <input type="text" name="item[challan_number]" id="challan_number" class="form-control" value="<?php echo $item['challan_number'];?>"/>
+            </div>
+        </div>
+
+        <div class="row show-grid">
+            <div class="row show-grid">
+                <div class="col-xs-4">
+                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_CHALLAN');?><span style="color:#FF0000">*</span></label>
+                </div>
+                <div class="col-sm-4 col-xs-8">
+                    <input type="text" name="item[date_challan]" class="form-control datepicker" value="<?php echo System_helper::display_date($item['date_challan']);?>"/>
+                </div>
+            </div>
+        </div>
+
+        <div class="row show-grid">
+            <div class="col-xs-4">
                 <label for="quantity_supply" class="control-label pull-right"><?php echo $this->lang->line('LABEL_QUANTITY_SUPPLY');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
@@ -89,7 +109,25 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <label for="quantity_receive" class="control-label pull-right"><?php echo $this->lang->line('LABEL_QUANTITY_RECEIVE');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <input type="text" name="item[quantity_receive]" class="form-control float_type_positive" value="<?php echo $item['quantity_receive'];?>"/>
+                <input type="text" name="item[quantity_receive]" id="quantity_receive" class="form-control quantity_receive float_type_positive" value="<?php echo $item['quantity_receive'];?>"/>
+            </div>
+        </div>
+
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label for="price_unit_tk" class="control-label pull-right">Price Unit (Tk)<span style="color:#FF0000">*</span></label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <input type="text" name="item[price_unit_tk]" id="price_unit_tk" class="form-control price_unit_tk float_type_positive" value="<?php echo $item['price_unit_tk'];?>"/>
+            </div>
+        </div>
+
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right">Total (Tk)</label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <label id="lbl_price_total_tk" class="control-label"><?php echo ($item['quantity_receive']*$item['price_unit_tk'])?></label>
             </div>
         </div>
 
@@ -149,5 +187,40 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 $('#current_stock_container').hide();
             }
         });
+
+        $(document).off('input','#quantity_receive');
+        $(document).on('input', '#quantity_receive', function()
+        {
+            $("#lbl_price_total_tk").html('');
+            var quantity_receive=parseFloat($(this).val());
+            if(isNaN(quantity_receive))
+            {
+                quantity_receive=0;
+            }
+            var price_unit_tk=parseFloat($("#price_unit_tk").val());
+            if(isNaN(price_unit_tk))
+            {
+                price_unit_tk=0;
+            }
+            $("#lbl_price_total_tk").html(price_unit_tk*quantity_receive);
+        });
+
+        $(document).off('input','#price_unit_tk');
+        $(document).on('input', '#price_unit_tk', function()
+        {
+            $("#lbl_price_total_tk").html('');
+            var quantity_receive=parseFloat($("#quantity_receive").val());
+            if(isNaN(quantity_receive))
+            {
+                quantity_receive=0;
+            }
+            var price_unit_tk=parseFloat($(this).val());
+            if(isNaN(price_unit_tk))
+            {
+                price_unit_tk=0;
+            }
+            $("#lbl_price_total_tk").html(price_unit_tk*quantity_receive);
+        });
+
     });
 </script>

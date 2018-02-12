@@ -40,10 +40,10 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         <div class="row show-grid">
             <div class="row show-grid">
                 <div class="col-xs-4">
-                    <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_PURCHASE');?><span style="color:#FF0000">*</span></label>
+                    <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_RECEIVE');?><span style="color:#FF0000">*</span></label>
                 </div>
                 <div class="col-sm-4 col-xs-8">
-                    <input type="text" name="item[date_purchase]" class="form-control datepicker" value="<?php echo System_helper::display_date($item['date_purchase']);?>"/>
+                    <input type="text" name="item[date_receive]" class="form-control datepicker" value="<?php echo System_helper::display_date($item['date_receive']);?>"/>
                 </div>
             </div>
         </div>
@@ -66,6 +66,26 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             </div>
         </div>
 
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CHALLAN_NUMBER');?><span style="color:#FF0000">*</span></label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <input type="text" name="item[challan_number]" id="challan_number" class="form-control" value="<?php echo $item['challan_number'];?>"/>
+            </div>
+        </div>
+
+        <div class="row show-grid">
+            <div class="row show-grid">
+                <div class="col-xs-4">
+                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_CHALLAN');?><span style="color:#FF0000">*</span></label>
+                </div>
+                <div class="col-sm-4 col-xs-8">
+                    <input type="text" name="item[date_challan]" class="form-control datepicker" value="<?php echo System_helper::display_date($item['date_challan']);?>"/>
+                </div>
+            </div>
+        </div>
+
         <div style="" class="row show-grid">
             <div class="col-xs-4">
                 <label for="remarks" class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS');?></label>
@@ -80,19 +100,27 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <thead>
                 <tr>
                     <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></th>
-                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_CROP_TYPE'); ?></th>
-                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_VARIETY'); ?></th>
+                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?></th>
+                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
                     <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
                     <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_CURRENT_STOCK'); ?></th>
                     <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY_SUPPLY'); ?></th>
                     <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY_RECEIVE'); ?></th>
+                    <th style="min-width: 150px; text-align: right;">Unit Price (Tk)</th>
+                    <th style="min-width: 150px; text-align: right;">Total Price (Tk)</th>
                     <th style="min-width: 150px;"><?php echo $CI->lang->line('ACTION'); ?></th>
                 </tr>
                 </thead>
                 <tbody>
                 <?php
+                $quantity_total=0;
+                $total_tk=0;
+                $price_total=0;
                 foreach($purchase_sticker as $index=>$sticker)
                 {
+                    $price_total=($sticker['quantity_receive']*$sticker['price_unit_tk']);
+                    $quantity_total+=$sticker['quantity_receive'];
+                    $total_tk+=$price_total;
                     ?>
                     <tr>
                         <td>
@@ -117,13 +145,31 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                             <input type="text" id="quantity_supply<?php echo $index+1;?>" value="<?php echo $sticker['quantity_supply']; ?>" class="form-control text-right float_type_positive quantity_supply" data-current-id="<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][quantity_supply]">
                         </td>
                         <td class="text-right">
-                            <input type="text" id="quantity_receive<?php echo $index+1;?>" value="<?php echo $sticker['quantity_receive']; ?>" class="form-control text-right float_type_positive quantity_receive" data-current-id="<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][quantity_receive]">
+                            <input type="text" id="quantity_receive_<?php echo $index+1;?>" value="<?php echo $sticker['quantity_receive']; ?>" class="form-control text-right float_type_positive quantity_receive" data-current-id="<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][quantity_receive]">
+                        </td>
+                        <td>
+                            <input type="text" value="<?php echo $sticker['price_unit_tk']; ?>" class="form-control float_type_positive price_unit_tk" id="price_unit_tk_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][price_unit_tk]">
+                        </td>
+                        <td class="text-right">
+                            <label class="control-label price_total_tk" id="price_total_tk_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>">
+                                <?php echo number_format($price_total,2); ?>
+                            </label>
                         </td>
                     </tr>
                 <?php
                 }
                 ?>
                 </tbody>
+
+                <tfoot>
+                <tr>
+                    <th colspan="6" class="text-right">Grand Total Quantity</th>
+                    <th class="text-right"><label class="control-label" id="lbl_quantity_receive_total"><?php echo number_format(($quantity_total),3,'.','')?></label></th>
+                    <th class="text-right">Grand Total (Tk)</th>
+                    <th class="text-right"><label class="control-label" id="lbl_price_total_tk"><?php echo number_format($total_tk,2)?></label></th>
+                    <th class="text-right"></th>
+                </tr>
+                </tfoot>
 
             </table>
         </div>
@@ -192,10 +238,16 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <label class="stock_current">&nbsp;</label>
             </td>
             <td class="text-right">
-                <input type="text" class="form-control text-right quantity_supply float_type_positive" value=""/>
+                <input type="text" class="form-control text-right quantity_supply float_type_positive" value="" style="display: none;"/>
             </td>
             <td class="text-right">
-                <input type="text" class="form-control text-right quantity_receive float_type_positive" value=""/>
+                <input type="text" class="form-control text-right quantity_receive float_type_positive" value="" style="display: none;"/>
+            </td>
+            <td class="text-right">
+                <input type="text" class="form-control float_type_positive price_unit_tk" value="" style="display: none;"/>
+            </td>
+            <td class="text-right">
+                <label class="control-label price_total_tk">0.00</label>
             </td>
             <td>
                 <button type="button" class="btn btn-danger system_button_add_delete"><?php echo $CI->lang->line('DELETE'); ?></button>
@@ -244,9 +296,17 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             $(content_id+' .quantity_supply').attr('data-current-id',current_id);
             $(content_id+' .quantity_supply').attr('name','items['+current_id+'][quantity_supply]');
 
-            $(content_id+' .quantity_receive').attr('id','quantity_receive'+current_id);
+            $(content_id+' .quantity_receive').attr('id','quantity_receive_'+current_id);
             $(content_id+' .quantity_receive').attr('data-current-id',current_id);
             $(content_id+' .quantity_receive').attr('name','items['+current_id+'][quantity_receive]');
+
+            $(content_id+' .price_unit_tk').attr('id','price_unit_tk_'+current_id);
+            $(content_id+' .price_unit_tk').attr('data-current-id',current_id);
+            $(content_id+' .price_unit_tk').attr('name','items['+current_id+'][price_unit_tk]');
+
+            $(content_id+' .price_total_tk').attr('id','price_total_tk_'+current_id);
+            $(content_id+' .price_total_tk').attr('data-current-id',current_id);
+            $(content_id+' .price_total_tk').attr('name','items['+current_id+'][price_total_tk]');
 
             var html=$(content_id).html();
             $("#order_items_container tbody").append(html);
@@ -260,6 +320,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             $(content_id+' .stock_current').removeAttr('id');
             $(content_id+' .quantity_supply').removeAttr('id');
             $(content_id+' .quantity_receive').removeAttr('id');
+            $(content_id+' .price_unit_tk').removeAttr('id');
+            $(content_id+' .price_total_tk').removeAttr('id');
 
         });
 
@@ -279,6 +341,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             $("#stock_current_"+active_id).html("");
             $("#quantity_supply_"+active_id).val("");
             $("#quantity_receive_"+active_id).val("");
+            $("#price_unit_tk_"+active_id).val("");
+            $("#price_total_tk_"+active_id).val("");
             var crop_id=$('#crop_id_'+active_id).val();
             $('#variety_id_container_'+active_id).hide();
             $('#pack_size_id_container_'+active_id).hide();
@@ -303,6 +367,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             $("#stock_current_"+active_id).html("");
             $("#quantity_supply_"+active_id).val("");
             $("#quantity_receive_"+active_id).val("");
+            $("#price_unit_tk_"+active_id).val("");
+            $("#price_total_tk_"+active_id).val("");
             var crop_type_id=$('#crop_type_id_'+active_id).val();
             $('#pack_size_id_container_'+active_id).hide();
             if(crop_type_id>0)
@@ -325,6 +391,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             $("#stock_current_"+active_id).html("");
             $("#quantity_supply_"+active_id).val("");
             $("#quantity_receive_"+active_id).val("");
+            $("#price_unit_tk_"+active_id).val("");
+            $("#price_total_tk_"+active_id).val("");
             var variety_id=$('#variety_id_'+active_id).val();
 
             if(variety_id>0)
@@ -345,12 +413,17 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             $("#stock_current_"+active_id).html("");
             $("#quantity_supply_"+active_id).val("");
             $("#quantity_receive_"+active_id).val("");
+            $("#price_unit_tk_"+active_id).val("");
+            $("#price_total_tk_"+active_id).val("");
             var variety_id=$('#variety_id_'+active_id).val();
             var pack_size_id=$('#pack_size_id_'+active_id).val();
             var packing_item='<?php echo $CI->config->item('system_sticker')?>';
 
             if(variety_id>0 && pack_size_id!='' && packing_item!='')
             {
+                $('#quantity_supply_'+active_id).show();
+                $('#quantity_receive_'+active_id).show();
+                $('#price_unit_tk_'+active_id).show();
                 $.ajax({
                     url: "<?php echo site_url('common_controller/get_raw_current_stock'); ?>",
                     type: 'POST',
@@ -371,6 +444,78 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     }
                 });
             }
+            else
+            {
+                $('#quantity_supply_'+active_id).hide();
+                $('#quantity_receive_'+active_id).hide();
+                $('#price_unit_tk_'+active_id).hide();
+            }
+        });
+
+        $(document).off('input','.quantity_receive');
+        $(document).on('input', '.quantity_receive', function()
+        {
+            var current_id=parseInt($(this).attr('data-current-id'));
+            var quantity_receive = parseFloat($(this).val());
+
+            if(isNaN(quantity_receive))
+            {
+                quantity_receive=0;
+            }
+
+            var price_unit_tk = parseFloat($("#price_unit_tk_"+current_id).val());
+            if(isNaN(price_unit_tk))
+            {
+                price_unit_tk=0;
+            }
+            $("#price_total_tk_"+current_id).html((quantity_receive*price_unit_tk));
+
+            calculate_total();
+        });
+
+        $(document).off('change','.price_unit_tk');
+        $(document).on('input', '.price_unit_tk', function()
+        {
+            var current_id=parseInt($(this).attr('data-current-id'));
+            var price_unit_tk = parseFloat($(this).val());
+            if(isNaN(price_unit_tk))
+            {
+                price_unit_tk=0;
+            }
+            var quantity_receive = parseFloat($("#quantity_receive_"+current_id).val());
+            if(isNaN(quantity_receive))
+            {
+                quantity_receive=0;
+            }
+            $("#price_total_tk_"+current_id).html((quantity_receive*price_unit_tk));
+            calculate_total();
         });
     });
+
+    function calculate_total()
+    {
+        $("#lbl_quantity_receive_total").html('');
+        $("#lbl_price_total_tk").html('');
+        var quantity_receive_total=0;
+        var price_total_tk=0;
+        $('#order_items_container .quantity_receive').each(function(index, element)
+        {
+            var current_id=parseInt($(this).attr('data-current-id'));
+            var quantity_receive = parseFloat($(this).val());
+            if(isNaN(quantity_receive))
+            {
+                quantity_receive=0;
+            }
+            quantity_receive_total+=quantity_receive;
+
+            var total_taka = parseFloat($("#price_total_tk_"+current_id).html().replace(/,/g,''));
+            if(isNaN(total_taka))
+            {
+                total_taka=0;
+            }
+            price_total_tk+=total_taka;
+        });
+        $("#lbl_quantity_receive_total").html(quantity_receive_total);
+        $("#lbl_price_total_tk").html(price_total_tk);
+    }
 </script>
