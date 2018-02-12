@@ -68,7 +68,7 @@ $num_pages=ceil($total_records/$row_per_page);
                     </div>
                     <div class="row show-grid">
                         <div class="col-xs-6">
-                            <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_PRINCIPAL_NAME');?>:</label>
+                            <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_SUPPLIER_NAME');?>:</label>
                         </div>
                         <div class="col-xs-6">
                             <?php echo $item['principal_name'];?>
@@ -130,24 +130,22 @@ $num_pages=ceil($total_records/$row_per_page);
                     <th rowspan="2"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
                     <th rowspan="2"><?php echo $CI->lang->line('LABEL_CARTON_NUMBER')?></th>
                     <th rowspan="2"><?php echo $CI->lang->line('LABEL_CARTON_SIZE')?></th>
-                    <th rowspan="2"><?php echo $CI->lang->line('LABEL_WAREHOUSE_NAME'); ?></th>
-                    <th colspan="2">Release Information</th>
-                    <th colspan="2">Receive Information</th>
-                    <th colspan="2">Deference Information</th>
+                    <th colspan="2" class="text-center"><?php echo $CI->lang->line('LABEL_QUANTITY_SUPPLY');?></th>
+                    <th colspan="2" class="text-center"><?php echo $CI->lang->line('LABEL_QUANTITY_RECEIVE');?></th>
+                    <th colspan="2" class="text-center"><?php echo $CI->lang->line('LABEL_QUANTITY_DEFERENCE');?></th>
                 </tr>
                 <tr>
-                    <th><?php echo $CI->lang->line('LABEL_QUANTITY_KG_PACK'); ?></th>
-                    <th><?php echo $CI->lang->line('KG');?></th>
-                    <th><?php echo $CI->lang->line('LABEL_QUANTITY_KG_PACK'); ?></th>
-                    <th><?php echo $CI->lang->line('KG');?></th>
-                    <th><?php echo $CI->lang->line('LABEL_QUANTITY_KG_PACK'); ?></th>
-                    <th><?php echo $CI->lang->line('KG');?></th>
+                    <th class="text-right"><?php echo $CI->lang->line('LABEL_PACK'); ?>/<?php echo $CI->lang->line('LABEL_KG');?></th>
+                    <th class="text-right"><?php echo $CI->lang->line('LABEL_KG');?></th>
+                    <th class="text-right"><?php echo $CI->lang->line('LABEL_PACK'); ?>/<?php echo $CI->lang->line('LABEL_KG');?></th>
+                    <th class="text-right"><?php echo $CI->lang->line('LABEL_KG');?></th>
+                    <th class="text-right"><?php echo $CI->lang->line('LABEL_PACK'); ?>/<?php echo $CI->lang->line('LABEL_KG');?></th>
+                    <th class="text-right"><?php echo $CI->lang->line('LABEL_KG');?></th>
                 </tr>
                 </thead>
                 <tbody>
                 <?php
                 $serial=0;
-
                 for($index=$page*$row_per_page;($index<(($page+1)*$row_per_page))&&($index<sizeof($items));$index++)
                 {
                     $serial=($index+1);
@@ -175,7 +173,6 @@ $num_pages=ceil($total_records/$row_per_page);
                         <td class="text-center"> <?php if($data['pack_size']==0){echo "Bulk";}else{echo $data['pack_size'];}?></td>
                         <td class="text-right"><?php echo $data['carton_number_receive']; ?></td>
                         <td class="text-right"><?php echo $data['carton_size_receive']; ?></td>
-                        <td><?php echo $data['warehouse_name']?> </td>
                         <td class="text-right"><?php echo $data['quantity_release'];?></td>
                         <td class="text-right"><?php echo number_format($quantity_release_kg,3,'.','')?></td>
                         <td class="text-right"><?php echo $data['quantity_receive']; ?></td>
@@ -190,8 +187,8 @@ $num_pages=ceil($total_records/$row_per_page);
                         {
                             ?>
                             <tr>
-                                <td colspan="8" class="text-right"><label class="control-label"><?php echo $this->lang->line('LABEL_TOTAL_KG')?></label></td>
-                                <td class="text-right"><label class="control-label"><?php echo number_format($quantity_total_release,3,'.','');?></label></td>
+                                <td colspan="7" class="text-right"><label class="control-label"><?php echo $this->lang->line('LABEL_TOTAL')?></label></td>
+                                <td class="text-right"><label class="control-label"><?php echo $quantity_total_release;?></label></td>
                                 <td class="text-right"><label class="control-label"><?php echo number_format($quantity_total_release_kg,3,'.','');?></label></td>
                                 <td class="text-right"><label class="control-label"><?php echo $quantity_total_receive;?></label></td>
                                 <td class="text-right"><label class="control-label"><?php echo number_format($quantity_total_receive_kg,3,'.','');?></label></td>
@@ -200,7 +197,7 @@ $num_pages=ceil($total_records/$row_per_page);
                             </tr>
                             <tr>
                                 <td colspan="21">
-                                    <strong>Note: </strong><?php echo $item['remarks_receive'];?>
+                                    <strong><?php echo $CI->lang->line('LABEL_REMARKS');?>: </strong><?php echo $item['remarks_receive'];?>
                                 </td>
                             </tr>
                             <?php

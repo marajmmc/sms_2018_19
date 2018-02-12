@@ -88,7 +88,7 @@ $lang['SELECT'] = 'Select';
 $lang['LABEL_YES'] = 'Yes';
 $lang['LABEL_NO'] = 'No';
 
-$lang['LABEL_SL_NO'] = 'SL#';
+$lang['LABEL_SL_NO'] = 'S/N';
 $lang['ACTION'] = 'Action';
 
 $lang['LABEL_ID'] = 'ID';
@@ -211,6 +211,9 @@ $lang['LABEL_KG'] = 'Kg';
 // Quantity
 $lang['LABEL_QUANTITY'] = 'Quantity';
 $lang['LABEL_QUANTITY_TOTAL'] = 'Total Quantity';
+$lang['LABEL_QUANTITY_SUPPLY'] = 'Supply Quantity';
+$lang['LABEL_QUANTITY_RECEIVE'] = 'Receive Quantity';
+$lang['LABEL_QUANTITY_DEFERENCE'] = 'Deference Quantity';
 
 // Total, Currency, Percentage - kg/pkt/taka/currency
 /* Total */
@@ -345,5 +348,5 @@ $lang['LABEL_DATE_RECEIVE']='Receive Date';
 $lang['LABEL_DATE_PACKING_LIST']='Packing List Date';
 $lang['LABEL_NUMBER_PACKING_LIST']='Packing List Number';
 $lang['LABEL_NUMBER_LOT']='Lot Number';
-$lang['LABEL_CARTON_NUMBER']='Number or Carton';
-$lang['LABEL_CARTON_SIZE']='Carton Size';
+$lang['LABEL_CARTON_NUMBER']='No. of Ctn/Bosta';
+$lang['LABEL_CARTON_SIZE']='Ctn Size';
