@@ -23,7 +23,7 @@ $height=11.69*100/2;
 $row_per_page=20;
 $header_image=base_url('images/print/header.jpg');
 $footer_image=base_url('images/print/footer.jpg');
-$result=Query_helper::get_info($CI->config->item('table_sms_setup_print'),'*',array('controller ="' .$this->controller_url.'"','method ="details_print"'),1);
+$result=Query_helper::get_info($CI->config->item('table_system_setup_print'),'*',array('controller ="' .$this->controller_url.'"','method ="details_print"'),1);
 if($result)
 {
     $width=$result['width']*100;
@@ -69,14 +69,14 @@ $num_pages=ceil($total_records/$row_per_page);
                             <label class="control-label pull-right">Purpose :</label>
                         </div>
                         <div class="col-xs-6">
-                            <?php echo $item['purpose']; ?>
+                            <?php //echo $item['purpose']; ?>
                         </div>
                     </div><div class="row show-grid">
                         <div class="col-xs-6">
                             <label class="control-label pull-right">Date :</label>
                         </div>
                         <div class="col-xs-6">
-                            <?php echo System_helper::display_date($item['date_stock_in']);?>
+                            <?php //echo System_helper::display_date($item['date_stock_in']);?>
                         </div>
                     </div>
                 </div>

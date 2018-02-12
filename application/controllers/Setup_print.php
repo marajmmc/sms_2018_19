@@ -67,7 +67,7 @@ class Setup_print extends Root_Controller
     }
     private function system_get_items()
     {
-        $items=Query_helper::get_info($this->config->item('table_sms_setup_print'),'*',array('status !="'.$this->config->item('system_status_delete').'"'));
+        $items=Query_helper::get_info($this->config->item('table_system_setup_print'),'*',array('status !="'.$this->config->item('system_status_delete').'"'));
         $this->json_return($items);
     }
     private function system_add()
@@ -111,7 +111,7 @@ class Setup_print extends Root_Controller
             {
                 $item_id=$this->input->post('id');
             }
-            $data['item']=Query_helper::get_info($this->config->item('table_sms_setup_print'),'*',array('id ='.$item_id),1);
+            $data['item']=Query_helper::get_info($this->config->item('table_system_setup_print'),'*',array('id ='.$item_id),1);
             $data['title']="Edit (".$data['item']['purpose'].')';
             $ajax['status']=true;
             $ajax['system_content'][]=array('id'=>'#system_content','html'=>$this->load->view($this->controller_url.'/add_edit',$data,true));
@@ -205,14 +205,14 @@ class Setup_print extends Root_Controller
             $data=$item_head;
             $data['date_updated']=$time;
             $data['user_updated']=$user->user_id;
-            Query_helper::update($this->config->item('table_sms_setup_print'),$data,array('id='.$id));
+            Query_helper::update($this->config->item('table_system_setup_print'),$data,array('id='.$id));
         }
         else
         {
             $data=$item_head;
             $data['user_created'] = $user->user_id;
             $data['date_created'] = $time;
-            Query_helper::add($this->config->item('table_sms_setup_print'),$data);
+            Query_helper::add($this->config->item('table_system_setup_print'),$data);
         }
 
         $this->db->trans_complete();   //DB Transaction Handle END
@@ -240,7 +240,7 @@ class Setup_print extends Root_Controller
             {
                 $item_id=$this->input->post('id');
             }
-            $data['item']=Query_helper::get_info($this->config->item('table_sms_setup_print'),'*',array('id ='.$item_id),1);
+            $data['item']=Query_helper::get_info($this->config->item('table_system_setup_print'),'*',array('id ='.$item_id),1);
 
             $data['title']="Details (".$data['item']['purpose'].')';
             $ajax['status']=true;
