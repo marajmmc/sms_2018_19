@@ -27,7 +27,7 @@ $action_buttons[]=array
 $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
 ?>
-<form id="save_form" action="<?php echo site_url($CI->controller_url.'/index/save_expense_complete');?>" method="post">
+<form id="save_form" action="<?php echo site_url($CI->controller_url.'/index/save');?>" method="post">
     <input type="hidden" id="id" name="id" value="<?php echo $item['id']; ?>" />
     <input type="hidden" id="system_save_new_status" name="system_save_new_status" value="0" />
     <div class="row widget">
@@ -68,17 +68,17 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <tr>
                     <th colspan="2"></th>
                     <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_CURRENCY_NAME');?></label></th>
-                    <th><label class="control-label"><?php echo $item['currency_name'];?></label></th>
+                    <th class="bg-danger"><label class="control-label"><?php echo $item['currency_name'];?></label></th>
                 </tr>
                 <tr>
                     <th colspan="2"></th>
                     <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_PRICE_OPEN_OTHER_CURRENCY');?></label></th>
-                    <th class="header_value"><label class="control-label"><?php echo number_format($item['price_open_other_currency'],2);?></label></th>
+                    <th class="bg-danger header_value"><label class="control-label"><?php echo number_format($item['price_open_other_currency'],2);?></label></th>
                 </tr>
                 <tr>
                     <th colspan="2"></th>
                     <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_PRICE_RELEASE_OTHER_CURRENCY');?></label></th>
-                    <th class="header_value"><label class="control-label"><?php echo number_format($item['price_release_other_currency'],2);?></label></th>
+                    <th class="bg-danger header_value"><label class="control-label"><?php echo number_format($item['price_release_other_currency'],2);?></label></th>
                 </tr>
                 <tr>
                     <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS_LC_OPEN');?></label></th>
@@ -92,12 +92,16 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS_LC_RECEIVE');?></label></th>
                     <th class="header_value" colspan="3"><label class="control-label"><?php echo nl2br($item['remarks_receive']);?></label></th>
                 </tr>
-                <tr>
-                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS_LC_EXPENSE');?></label></th>
-                    <th class="header_value" colspan="3"><label class="control-label"><?php echo nl2br($item['remarks_expense']);?></label></th>
-                </tr>
                 </thead>
             </table>
+            <div class="row show-grid">
+                <div class="col-xs-4">
+                    <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS_LC_EXPENSE');?> </label>
+                </div>
+                <div class="col-sm-4 col-xs-8">
+                    <textarea name="item[remarks_expense]" id="remarks_expense" class="form-control" ><?php echo $item['remarks_expense'];?></textarea>
+                </div>
+            </div>
             <div class="row show-grid">
                 <div class="col-xs-4">
                     <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_PRICE_RELEASE_OTHER_VARIETY_TAKA');?> </label>
@@ -106,19 +110,18 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <label class="control-label"><?php echo number_format($item['price_release_other_variety_taka'],2);?></label>
                 </div>
             </div>
-            <div class="row show-grid">
-                <div class="col-xs-4">
-                    <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_PRICE_COMPLETE_OTHER_VARIETY_TAKA');?> </label>
-                </div>
-                <div class="col-sm-4 col-xs-8 text-right">
-                    <label class="control-label"><?php echo number_format($item['price_complete_other_variety_taka'],2);?></label>
-                </div>
-            </div>
             <?php
             if($item['status_release']==$this->config->item('system_status_complete'))
             {
                 ?>
-
+                <div class="row show-grid">
+                    <div class="col-xs-4">
+                        <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_PRICE_COMPLETE_OTHER_VARIETY_TAKA');?> </label>
+                    </div>
+                    <div class="col-sm-4 col-xs-8">
+                        <input type="text" name="item[price_complete_other_variety_taka]" id="price_complete_other_variety_taka" class="form-control float_type_positive" value="<?php echo $item['price_complete_other_variety_taka'];?>" />
+                    </div>
+                </div>
             <?php
             }
             else
@@ -135,7 +138,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             <?php
             }
             ?>
-
         </div>
         <div class="clearfix"></div>
         <div class="row show-grid">
@@ -162,7 +164,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                             <td><?php echo $serial?></td>
                             <td><?php echo $row['name']?></td>
                             <td class="text-right">
-                                <label class="control-label"><?php echo number_format($amount,2);?></label>
+                                <input type="text" name="items[<?php echo $row['id']?>][amount]" id="amount" class="form-control float_type_positive amount" value="<?php echo $amount;?>" />
                             </td>
                         </tr>
                     <?php

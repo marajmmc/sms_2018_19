@@ -316,7 +316,7 @@ class Lc_expense extends Root_Controller
             $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
             {
-                System_helper::invalid_try('Edit Expense Non Exists',$item_id);
+                System_helper::invalid_try('Edit Expense Complete Non Exists',$item_id);
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid LC.';
                 $this->json_return($ajax);
@@ -332,12 +332,12 @@ class Lc_expense extends Root_Controller
 
             $data['title']="LC Expense :: ".Barcode_helper::get_barcode_lc($item_id);
             $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/edit",$data,true));
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/expense_complete",$data,true));
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
             }
-            $ajax['system_page_url']=site_url($this->controller_url.'/index/edit/'.$item_id);
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/expense_complete/'.$item_id);
             $this->json_return($ajax);
         }
         else
@@ -361,6 +361,12 @@ class Lc_expense extends Root_Controller
             else
             {
                 $item_id=$this->input->post('id');
+            }
+            if($item_head['status_open']!=$this->config->item('system_status_closed'))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='LC Closed is required.';
+                $this->json_return($ajax);
             }
             die('ok');
             $this->db->trans_start();  //DB Transaction Handle START
