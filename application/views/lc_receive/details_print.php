@@ -51,19 +51,19 @@ $num_pages=ceil($total_records/$row_per_page);
             <div class="row show-grid">
                 <div class="col-xs-4">
                     <div class="row show-grid">
-                        <div class="col-xs-6 text-right">
-                            <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_BARCODE');?>:</label>
-                        </div>
-                        <div class="col-xs-6 text-right">
-                            <img src="<?php echo site_url('barcode/index/stock_in/'.$item['id']);  ?>">
-                        </div>
-                    </div>
-                    <div class="row show-grid">
                         <div class="col-xs-6">
                             <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_ID');?>:</label>
                         </div>
                         <div class="col-xs-6">
                             <?php echo Barcode_helper::get_barcode_lc($item['id']);?>
+                        </div>
+                    </div>
+                    <div class="row show-grid">
+                        <div class="col-xs-6 text-right">
+                            <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_BARCODE');?>:</label>
+                        </div>
+                        <div class="col-xs-6">
+                            <img src="<?php echo site_url('barcode/index/stock_in/'.$item['id']);  ?>">
                         </div>
                     </div>
                     <div class="row show-grid">
