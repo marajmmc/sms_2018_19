@@ -350,3 +350,8 @@ $lang['LABEL_NUMBER_PACKING_LIST']='Packing List Number';
 $lang['LABEL_NUMBER_LOT']='Lot Number';
 $lang['LABEL_CARTON_NUMBER']='No. of Ctn/Bosta';
 $lang['LABEL_CARTON_SIZE']='Ctn Size';
+
+//Lang File Added By Saiful
+$lang['LABEL_DATE_RECEIVE']='Receive Date';
+$lang['LABEL_CHALLAN_NUMBER']='Challan Number';
+$lang['LABEL_DATE_CHALLAN']='Challan Date';
