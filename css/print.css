@@ -11,9 +11,11 @@
 {
     border: 1px solid #000000;
     padding: 2px;
+    font-size: 12px !important;
 }
 .system_table_report_container tbody tr td
 {
     border: 1px solid #000000;
     padding: 2px;
+    font-size: 12px !important;
 }

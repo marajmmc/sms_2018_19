@@ -49,17 +49,17 @@ $num_pages=ceil($total_records/$row_per_page);
                     <div class="col-xs-6">
                         <div class="row show-grid">
                             <div class="col-xs-6">
-                                <label class="control-label pull-right">ID :</label>
+                                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_ID');?>:</label>
                             </div>
                             <div class="col-xs-6">
-                                <?php echo Barcode_helper::get_barcode_stock_out($item['id']);?>
+                                <?php echo Barcode_helper::get_barcode_stock_in($item['id']);?>
                             </div>
                         </div>
                         <div class="row show-grid">
-                            <div class="col-xs-3">
-
+                            <div class="col-xs-6 text-right">
+                                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_BARCODE');?>:</label>
                             </div>
-                            <div class="col-xs-9">
+                            <div class="col-xs-6">
                                 <img src="<?php echo site_url('barcode/index/stock_in/'.$item['id']);  ?>">
                             </div>
                         </div>
@@ -67,14 +67,14 @@ $num_pages=ceil($total_records/$row_per_page);
                     <div class="col-xs-6">
                         <div class="row show-grid">
                             <div class="col-xs-6">
-                                <label class="control-label pull-right">Purpose :</label>
+                                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PURPOSE');?> :</label>
                             </div>
                             <div class="col-xs-6">
                                 <?php echo $item['purpose']; ?>
                             </div>
                         </div><div class="row show-grid">
                             <div class="col-xs-6">
-                                <label class="control-label pull-right">Date :</label>
+                                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE');?> :</label>
                             </div>
                             <div class="col-xs-6">
                                 <?php echo System_helper::display_date($item['date_stock_in']);?>
@@ -82,41 +82,38 @@ $num_pages=ceil($total_records/$row_per_page);
                         </div>
                     </div>
                 </div>
-                <table style="width:<?php echo $width;?>px;">
+                <table style="width:<?php echo $width;?>px;" class="system_table_report_container">
                     <thead>
                         <tr>
-                            <th style="min-width: 50px;border: 1px solid #000000;"><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></th>
-                            <th style="min-width: 50px;border: 1px solid #000000;"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?></th>
-                            <th style="min-width: 50px;border: 1px solid #000000;"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
-                            <th style="min-width: 50px;border: 1px solid #000000;"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
-                            <th style="min-width: 50px;border: 1px solid #000000;"><?php echo $CI->lang->line('LABEL_WAREHOUSE'); ?></th>
-                            <th class="text-right" style="min-width: 50px;border: 1px solid #000000;"><?php echo $CI->lang->line('LABEL_QUANTITY'); ?></th>
+                            <th rowspan="2" style="width: 5px;"><?php echo $CI->lang->line('LABEL_SL_NO'); ?></th>
+                            <!--<th rowspan="2"><?php /*echo $CI->lang->line('LABEL_CROP_NAME'); */?></th>-->
+                            <th rowspan="2"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?></th>
+                            <th rowspan="2"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
+                            <th rowspan="2" style="width: 5px;"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
+                            <th rowspan="2"><?php echo $CI->lang->line('LABEL_WAREHOUSE_NAME'); ?></th>
+                            <th colspan="2" class="text-center"><?php echo $CI->lang->line('LABEL_QUANTITY'); ?></th>
+                        </tr>
+                        <tr>
+                            <th class="text-right" ><?php echo $CI->lang->line('LABEL_PACK'); ?>/<?php echo $CI->lang->line('LABEL_KG'); ?></th>
+                            <th class="text-right" ><?php echo $CI->lang->line('LABEL_KG'); ?></th>
                         </tr>
                     </thead>
                     <tbody>
                     <?php
+                    $serial=0;
                     for($index=$page*$row_per_page;($index<(($page+1)*$row_per_page))&&($index<sizeof($items));$index++)
                     {
+                        $serial=($index+1);
                         ?>
                         <tr>
-                            <td style="border: 1px solid #000000">
-                                <label><?php echo $items[$index]['crop_name']; ?></label>
-                            </td>
-                            <td style="border: 1px solid #000000">
-                                <label><?php echo $items[$index]['crop_type_name']; ?></label>
-                            </td>
-                            <td style="border: 1px solid #000000">
-                                <label><?php echo $items[$index]['variety_name']; ?></label>
-                            </td>
-                            <td style="border: 1px solid #000000">
-                                <label><?php if($items[$index]['pack_size_id']==0){echo 'Bulk';}else{echo $items[$index]['pack_size_name'];} ?></label>
-                            </td>
-                            <td style="border: 1px solid #000000">
-                                <label><?php echo $items[$index]['ware_house_name']; ?></label>
-                            </td>
-                            <td style="border: 1px solid #000000" class="text-right">
-                                <label><?php echo $items[$index]['quantity']; ?></label>
-                            </td>
+                            <td><?php echo $serial; ?></td>
+                            <td><?php echo $items[$index]['crop_name']; ?></td>
+                            <!--<td><?php /*echo $items[$index]['crop_type_name']; */?></td>-->
+                            <td><?php echo $items[$index]['variety_name']; ?></td>
+                            <td><?php if($items[$index]['pack_size_id']==0){echo 'Bulk';}else{echo $items[$index]['pack_size_name'];} ?></td>
+                            <td><?php echo $items[$index]['ware_house_name']; ?></td>
+                            <td class="text-right"><?php echo $items[$index]['quantity']; ?></td>
+                            <td class="text-right"> <?php echo $items[$index]['quantity']/1000;?> </td>
                         </tr>
                     <?php
                     }
