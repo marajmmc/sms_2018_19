@@ -35,6 +35,10 @@ class Stock_out_variety extends Root_Controller
         {
             $this->system_details($id);
         }
+        elseif($action=="details_print")
+        {
+            $this->system_details_print($id);
+        }
         elseif($action=="delete")
         {
             $this->system_delete($id);
@@ -60,32 +64,7 @@ class Stock_out_variety extends Root_Controller
     {
         if(isset($this->permissions['action0']) && ($this->permissions['action0']==1))
         {
-            $user = User_helper::get_user();
-            $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
-            $data['system_preference_items']['barcode']= 1;
-            $data['system_preference_items']['date_stock_out']= 1;
-            $data['system_preference_items']['quantity_total']= 1;
-            $data['system_preference_items']['purpose']= 1;
-            $data['system_preference_items']['remarks']= 1;
-            if($result)
-            {
-                if($result['preferences']!=null)
-                {
-                    $preferences=json_decode($result['preferences'],true);
-                    foreach($data['system_preference_items'] as $key=>$value)
-                    {
-                        if(isset($preferences[$key]))
-                        {
-                            $data['system_preference_items'][$key]=$value;
-                        }
-                        else
-                        {
-                            $data['system_preference_items'][$key]=0;
-                        }
-                    }
-                }
-            }
-
+            $data['system_preference_items']= $this->get_preference();
             $data['title']='Stock Out List';
             $ajax['status']=true;
             $ajax['system_content'][]=array('id'=>'#system_content','html'=>$this->load->view($this->controller_url.'/list',$data,true));
@@ -265,9 +244,9 @@ class Stock_out_variety extends Root_Controller
         $id = $this->input->post("id");
         $user = User_helper::get_user();
         $time = time();
-        /*--Start-- Permission Checking */
         $old_item=array();
 
+        /*--Start-- Permission Checking */
         if($id>0)
         {
             if(!(isset($this->permissions['action2']) && ($this->permissions['action2']==1)))
@@ -637,6 +616,7 @@ class Stock_out_variety extends Root_Controller
             $this->db->where('stock_out_details.revision',1);
             $this->db->order_by('stock_out_details.id','ASC');
             $data['stock_out_varieties']=$this->db->get()->result_array();
+
             $data['title']="Details Stock Out";
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/details",$data,true));
@@ -654,7 +634,81 @@ class Stock_out_variety extends Root_Controller
             $this->json_return($ajax);
         }
     }
+    private function system_details_print($id)
+    {
+        if(isset($this->permissions['action4']) && ($this->permissions['action4']==1))
+        {
+            if($id>0)
+            {
+                $item_id=$id;
+            }
+            else
+            {
+                $item_id=$this->input->post('id');
+            }
+            $this->db->from($this->config->item('table_sms_stock_out_variety').' stock_out');
+            $this->db->select('stock_out.*');
 
+            $this->db->join($this->config->item('table_login_csetup_cus_info').' customer','customer.customer_id = stock_out.customer_id','LEFT');
+            $this->db->select('customer.name outlet_name, customer.customer_id customer_id');
+
+            $this->db->join($this->config->item('table_login_setup_location_districts').' districts','districts.id = customer.district_id','LEFT');
+            $this->db->select('districts.name district_name, districts.id district_id');
+
+            $this->db->join($this->config->item('table_login_setup_location_territories').' territory','territory.id = districts.territory_id','LEFT');
+            $this->db->select('territory.name territory_name, territory.id territory_id');
+
+            $this->db->join($this->config->item('table_login_setup_location_zones').' zones','zones.id = territory.zone_id','LEFT');
+            $this->db->select('zones.name zone_name, zones.id zone_id');
+
+            $this->db->join($this->config->item('table_login_setup_location_divisions').' divisions','divisions.id = zones.division_id','LEFT');
+            $this->db->select('divisions.name division_name, divisions.id division_id');
+
+            $this->db->where('stock_out.id',$item_id);
+            $this->db->where('stock_out.status !=',$this->config->item('system_status_delete'));
+            $data['item']=$this->db->get()->row_array();
+            if(!$data['item'])
+            {
+                System_helper::invalid_try('Details Non Exists',$item_id);
+                $ajax['status']=false;
+                $ajax['system_message']='Invalid Try.';
+                $this->json_return($ajax);
+            }
+
+            $this->db->from($this->config->item('table_sms_stock_in_variety_details').' stock_in_details');
+            $this->db->select('stock_in_details.variety_id, stock_in_details.pack_size_id, stock_in_details.warehouse_id, stock_in_details.quantity');
+            $this->db->join($this->config->item('table_login_setup_classification_varieties').' variety','variety.id = stock_in_details.variety_id','INNER');
+            $this->db->select('variety.name variety_name');
+            $this->db->join($this->config->item('table_login_setup_classification_vpack_size').' v_pack_size','v_pack_size.id = stock_in_details.pack_size_id','LEFT');
+            $this->db->select('v_pack_size.name pack_size_name');
+            $this->db->join($this->config->item('table_login_basic_setup_warehouse').' ware_house','ware_house.id = stock_in_details.warehouse_id','INNER');
+            $this->db->select('ware_house.name ware_house_name');
+            $this->db->join($this->config->item('table_login_setup_classification_crop_types').' type','type.id = variety.crop_type_id','INNER');
+            $this->db->select('type.name crop_type_name');
+            $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = type.crop_id','INNER');
+            $this->db->select('crop.name crop_name');
+            $this->db->where('stock_in_details.stock_in_id',$item_id);
+            $this->db->where('stock_in_details.revision',1);
+            $this->db->order_by('stock_in_details.id','ASC');
+            $data['items']=$this->db->get()->result_array();
+
+            $data['title']="Details Stock Out";
+            $ajax['status']=true;
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/details_print",$data,true));
+            if($this->message)
+            {
+                $ajax['system_message']=$this->message;
+            }
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/details_print/'.$item_id);
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+    }
     private function system_delete($id)
     {
         if(isset($this->permissions['action3']) && ($this->permissions['action3']==1))
@@ -757,51 +811,6 @@ class Stock_out_variety extends Root_Controller
         }
     }
 
-    private function system_set_preference()
-    {
-        if(isset($this->permissions['action6']) && ($this->permissions['action6']==1))
-        {
-            $user = User_helper::get_user();
-            $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
-            $data['system_preference_items']['barcode']= 1;
-            $data['system_preference_items']['date_stock_out']= 1;
-            $data['system_preference_items']['quantity_total']= 1;
-            $data['system_preference_items']['purpose']= 1;
-            $data['system_preference_items']['remarks']= 1;
-            if($result)
-            {
-                if($result['preferences']!=null)
-                {
-                    $preferences=json_decode($result['preferences'],true);
-                    foreach($data['system_preference_items'] as $key=>$value)
-                    {
-                        if(isset($preferences[$key]))
-                        {
-                            $data['system_preference_items'][$key]=$value;
-                        }
-                        else
-                        {
-                            $data['system_preference_items'][$key]=0;
-                        }
-                    }
-                }
-            }
-            $data['preference_method_name']='list';
-
-            $data['title']="Set Preference";
-            $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("preference_add_edit",$data,true));
-            $ajax['system_page_url']=site_url($this->controller_url.'/index/set_preference');
-            $this->json_return($ajax);
-        }
-        else
-        {
-            $ajax['status']=false;
-            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
-            $this->json_return($ajax);
-        }
-    }
-
     private function check_validation()
     {
         $id = $this->input->post("id");
@@ -833,5 +842,54 @@ class Stock_out_variety extends Root_Controller
             return false;
         }
         return true;
+    }
+    private function system_set_preference()
+    {
+        if(isset($this->permissions['action6']) && ($this->permissions['action6']==1))
+        {
+            $data['system_preference_items']= $this->get_preference();
+            $data['preference_method_name']='list';
+            $data['title']="Set Preference";
+            $ajax['status']=true;
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("preference_add_edit",$data,true));
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/set_preference');
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+    }
+    private function get_preference()
+    {
+        $user = User_helper::get_user();
+        $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
+        $data['barcode']= 1;
+        $data['date_stock_out']= 1;
+        $data['quantity_total']= 1;
+        $data['purpose']= 1;
+        $data['remarks']= 1;
+        if($result)
+        {
+            if($result['preferences']!=null)
+            {
+                $preferences=json_decode($result['preferences'],true);
+                foreach($data as $key=>$value)
+                {
+
+                    if(isset($preferences[$key]))
+                    {
+                        $data[$key]=$value;
+                    }
+                    else
+                    {
+                        $data[$key]=0;
+                    }
+                }
+            }
+        }
+        return $data;
     }
 }

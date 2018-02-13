@@ -41,6 +41,12 @@ if(isset($CI->permissions['action4']) && ($CI->permissions['action4']==1))
 {
     $action_buttons[]=array(
         'type'=>'button',
+        'label'=>$CI->lang->line('ACTION_DETAILS_PRINT'),
+        'class'=>'button_jqx_action',
+        'data-action-link'=>site_url($CI->controller_url.'/index/details_print')
+    );
+    $action_buttons[]=array(
+        'type'=>'button',
         'label'=>$CI->lang->line("ACTION_PRINT"),
         'class'=>'button_action_download',
         'data-title'=>"Print",
@@ -89,14 +95,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
     <?php
     if(isset($CI->permissions['action6']) && ($CI->permissions['action6']==1))
     {
-        ?>
-        <?php
-        if(isset($CI->permissions['action6']) && ($CI->permissions['action6']==1))
-        {
-            $CI->load->view('preference',array('system_preference_items'=>$system_preference_items));
-        }
-        ?>
-        <?php
+        $CI->load->view('preference',array('system_preference_items'=>$system_preference_items));
     }
     ?>
     <div class="col-xs-12" id="system_jqx_container">
@@ -124,6 +123,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 { name: 'remarks', type: 'string' }
             ],
             id: 'id',
+            type: 'POST',
             url: url
         };
 
@@ -147,8 +147,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 autoheight: true,
                 columns: [
                     { text: '<?php echo $CI->lang->line('LABEL_BARCODE'); ?>', dataField: 'barcode',width:'80',hidden: <?php echo $system_preference_items['barcode']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_DATE_STOCK_OUT'); ?>', dataField: 'date_stock_out',width:'80',filtertype: 'list',hidden: <?php echo $system_preference_items['date_stock_out']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL'); ?> (KG)', dataField: 'quantity_total',width:'200',cellsalign: 'right',hidden: <?php echo $system_preference_items['quantity_total']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_DATE_STOCK_OUT'); ?>', dataField: 'date_stock_out',width:'90',filtertype: 'list',hidden: <?php echo $system_preference_items['date_stock_out']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL'); ?>', dataField: 'quantity_total',width:'100',cellsalign: 'right',hidden: <?php echo $system_preference_items['quantity_total']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_PURPOSE'); ?>', dataField: 'purpose',filtertype: 'list',width:'200',hidden: <?php echo $system_preference_items['purpose']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_REMARKS'); ?>', dataField: 'remarks',hidden: <?php echo $system_preference_items['remarks']?0:1;?>}
                 ]
