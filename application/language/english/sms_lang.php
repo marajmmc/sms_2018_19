@@ -213,7 +213,7 @@ $lang['LABEL_QUANTITY'] = 'Quantity';
 $lang['LABEL_QUANTITY_TOTAL'] = 'Total Quantity';
 $lang['LABEL_QUANTITY_SUPPLY'] = 'Supply Quantity';
 $lang['LABEL_QUANTITY_RECEIVE'] = 'Receive Quantity';
-$lang['LABEL_QUANTITY_DEFERENCE'] = 'Deference Quantity';
+$lang['LABEL_QUANTITY_DIFFERENCE'] = 'Difference Quantity';
 
 // Total, Currency, Percentage - kg/pkt/taka/currency
 /* Total */

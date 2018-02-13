@@ -116,7 +116,7 @@ $num_pages=ceil($total_records/$row_per_page);
                     <th><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
                     <th class="text-center"><?php echo $CI->lang->line('LABEL_QUANTITY_SUPPLY');?></th>
                     <th class="text-center"><?php echo $CI->lang->line('LABEL_QUANTITY_RECEIVE');?></th>
-                    <th class="text-center"><?php echo $CI->lang->line('LABEL_QUANTITY_DEFERENCE');?></th>
+                    <th class="text-center"><?php echo $CI->lang->line('LABEL_QUANTITY_DIFFERENCE');?></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -143,7 +143,7 @@ $num_pages=ceil($total_records/$row_per_page);
                         <td><?php echo $data['crop_name']?></td>
                         <td><?php echo $data['crop_type_name']?></td>
                         <td><?php echo $data['variety_name']?></td>
-                        <td class="text-center"> <?php echo $data['pack_size_name'];?></td>
+                        <td class="text-right"> <?php echo $data['pack_size_name'];?></td>
                         <td class="text-right"><?php echo $data['quantity_supply'];?></td>
                         <td class="text-right"><?php echo $data['quantity_receive'];?></td>
                         <td class="text-right"><?php echo ($data['quantity_supply']-$data['quantity_receive']);?></td>

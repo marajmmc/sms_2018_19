@@ -19,7 +19,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         <div class="row show-grid">
             <div class="row show-grid">
                 <div class="col-xs-4">
-                    <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_RECEIVE');?><span style="color:#FF0000">*</span></label>
+                    <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_RECEIVE');?> :</label>
                 </div>
                 <div class="col-sm-4 col-xs-8">
                     <?php echo System_helper::display_date($item['date_receive']);?>
@@ -29,7 +29,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
         <div style="" class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_SUPPLIER_NAME');?><span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_SUPPLIER_NAME');?> :</label>
             </div>
             <div class="col-sm-4 col-xs-8">
                  <?php echo $item['supplier_name'];?>
@@ -38,7 +38,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CHALLAN_NUMBER');?><span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CHALLAN_NUMBER');?> :</label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <?php echo $item['challan_number'];?>
@@ -48,7 +48,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         <div class="row show-grid">
             <div class="row show-grid">
                 <div class="col-xs-4">
-                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_CHALLAN');?><span style="color:#FF0000">*</span></label>
+                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_CHALLAN');?> :</label>
                 </div>
                 <div class="col-sm-4 col-xs-8">
                     <?php echo System_helper::display_date($item['date_challan']);?>
@@ -58,7 +58,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
         <div style="" class="row show-grid">
             <div class="col-xs-4">
-                <label for="remarks" class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS');?></label>
+                <label for="remarks" class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS');?> :</label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <?php echo $item['remarks'];?>
@@ -78,7 +78,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY_RECEIVE'); ?></th>
                     <th style="min-width: 150px; text-align: right;">Unit Price (Tk)</th>
                     <th style="min-width: 150px; text-align: right;">Total Price (Tk)</th>
-                    <th style="min-width: 150px;"><?php echo $CI->lang->line('ACTION'); ?></th>
                 </tr>
                 </thead>
                 <tbody>

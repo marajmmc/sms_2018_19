@@ -46,38 +46,58 @@ $num_pages=ceil($total_records/$row_per_page);
         <div class="page page_no_<?php echo $page; ?>" style="width:<?php echo $width;?>px;height:<?php echo $height; ?>px;position: relative;">
             <img src="<?php echo $header_image;  ?>" style="width: 100%">
             <div class="row show-grid">
-                <div class="col-xs-6">
+                <div class="col-xs-4">
                     <div class="row show-grid">
                         <div class="col-xs-6">
-                            <label class="control-label pull-right">ID :</label>
+                            <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_ID');?>:</label>
                         </div>
                         <div class="col-xs-6">
                             <?php echo Barcode_helper::get_barcode_raw_sticker_purchase($item['id']);?>
                         </div>
                     </div>
                     <div class="row show-grid">
-                        <div class="col-xs-3">
-
+                        <div class="col-xs-6 text-right">
+                            <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_BARCODE');?>:</label>
                         </div>
-                        <div class="col-xs-9">
+                        <div class="col-xs-6">
                             <img src="<?php echo site_url('barcode/index/raw_sticker_purchase/'.$item['id']);  ?>">
                         </div>
                     </div>
-                </div>
-                <div class="col-xs-6">
                     <div class="row show-grid">
                         <div class="col-xs-6">
-                            <label class="control-label pull-right">Supplier Name :</label>
+                            <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_SUPPLIER_NAME');?>:</label>
                         </div>
                         <div class="col-xs-6">
-                            <?php echo $item['supplier_name']; ?>
+                            <?php echo $item['supplier_name'];?>
                         </div>
-                    </div><div class="row show-grid">
+                    </div>
+                </div>
+                <div class="col-xs-4">
+                    <div class="row show-grid">
                         <div class="col-xs-6">
-                            <label class="control-label pull-right">Date :</label>
+                            <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_CHALLAN_NUMBER');?>:</label>
+                        </div>
+                        <div class="col-xs-6">
+                            <?php echo $item['challan_number']; ?>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-xs-4">
+                    <div class="row show-grid">
+                        <div class="col-xs-6">
+                            <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_RECEIVE');?>:</label>
                         </div>
                         <div class="col-xs-6">
                             <?php echo System_helper::display_date($item['date_receive']);?>
+                        </div>
+                    </div>
+                    <div class="row show-grid">
+                        <div class="col-xs-6">
+                            <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_CHALLAN');?>:</label>
+                        </div>
+                        <div class="col-xs-6">
+                            <?php echo System_helper::display_date($item['date_challan']);?>
                         </div>
                     </div>
                 </div>
@@ -92,7 +112,7 @@ $num_pages=ceil($total_records/$row_per_page);
                     <th><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
                     <th class="text-center"><?php echo $CI->lang->line('LABEL_QUANTITY_SUPPLY');?></th>
                     <th class="text-center"><?php echo $CI->lang->line('LABEL_QUANTITY_RECEIVE');?></th>
-                    <th class="text-center"><?php echo $CI->lang->line('LABEL_QUANTITY_DEFERENCE');?></th>
+                    <th class="text-center"><?php echo $CI->lang->line('LABEL_QUANTITY_DIFFERENCE');?></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -119,7 +139,7 @@ $num_pages=ceil($total_records/$row_per_page);
                         <td><?php echo $data['crop_name']?></td>
                         <td><?php echo $data['crop_type_name']?></td>
                         <td><?php echo $data['variety_name']?></td>
-                        <td class="text-center"> <?php echo $data['pack_size_name'];?></td>
+                        <td class="text-right"> <?php echo $data['pack_size_name'];?></td>
                         <td class="text-right"><?php echo $data['quantity_supply'];?></td>
                         <td class="text-right"><?php echo $data['quantity_receive'];?></td>
                         <td class="text-right"><?php echo ($data['quantity_supply']-$data['quantity_receive']);?></td>

@@ -93,14 +93,13 @@ if($result)
             </div>
         </div>
 
-
         <table style="width:<?php echo $width;?>px;" class="system_table_report_container">
             <thead>
             <tr>
                 <th style="width: 5px"><?php echo $CI->lang->line('LABEL_SL_NO'); ?></th>
                 <th class="text-center"><?php echo $CI->lang->line('LABEL_QUANTITY_SUPPLY');?></th>
                 <th class="text-center"><?php echo $CI->lang->line('LABEL_QUANTITY_RECEIVE');?></th>
-                <th class="text-center"><?php echo $CI->lang->line('LABEL_QUANTITY_DEFERENCE');?></th>
+                <th class="text-center"><?php echo $CI->lang->line('LABEL_QUANTITY_DIFFERENCE');?></th>
             </tr>
             </thead>
             <tbody>
@@ -111,28 +110,6 @@ if($result)
                     <td class="text-right"><?php echo $item['quantity_receive'];?></td>
                     <td class="text-right"><?php echo ($item['quantity_supply']-$item['quantity_receive']);?></td>
                 </tr>
-<!--                --><?php
-//                    if($item['remarks'])
-//                    {
-//                        ?>
-<!--                        <tr>-->
-<!--                            <td colspan="5" class="text-right"><label class="control-label">--><?php //echo $this->lang->line('LABEL_TOTAL')?><!--</label></td>-->
-<!--                            <td class="text-right"><label class="control-label">--><?php //echo $quantity_total_supply;?><!--</label></td>-->
-<!--                            <td class="text-right"><label class="control-label">--><?php //echo $quantity_total_receive;?><!--</label></td>-->
-<!--                            <td class="text-right"><label class="control-label">--><?php //echo $quantity_total_difference;?><!--</label></td>-->
-<!--                        </tr>-->
-<!--                        <tr>-->
-<!--                            <td colspan="7" class="text-right"><label class="control-label">Total Tk</label></td>-->
-<!--                            <td class="text-right"><label class="control-label">--><?php //echo number_format($total_tk,2);?><!--</label></td>-->
-<!--                        </tr>-->
-<!--                        <tr>-->
-<!--                            <td colspan="21">-->
-<!--                                <strong>--><?php //echo $CI->lang->line('LABEL_REMARKS');?><!--: </strong>--><?php //echo $item['remarks'];?>
-<!--                            </td>-->
-<!--                        </tr>-->
-<!--                    --><?php
-//                    }
-//                 ?>
             </tbody>
         </table>
         <img src="<?php echo $footer_image;  ?>" style="width: 100%;position: absolute;left 0px;bottom: 0px;">
