@@ -194,7 +194,7 @@ class Stock_out_variety extends Root_Controller
             $this->db->join($this->config->item('table_sms_stock_out_variety_details').' stock_out_details','stock_out_details.stock_out_id = stock_out.id','INNER');
             $this->db->select('variety.name variety_name');
             $this->db->join($this->config->item('table_login_setup_classification_varieties').' variety','variety.id = stock_out_details.variety_id','INNER');
-            $this->db->select('v_pack_size.name pack_size_name');
+            $this->db->select('v_pack_size.name pack_size');
             $this->db->join($this->config->item('table_login_setup_classification_vpack_size').' v_pack_size','v_pack_size.id = stock_out_details.pack_size_id','LEFT');
             $this->db->select('ware_house.name ware_house_name');
             $this->db->join($this->config->item('table_login_basic_setup_warehouse').' ware_house','ware_house.id = stock_out_details.warehouse_id','INNER');
@@ -604,7 +604,7 @@ class Stock_out_variety extends Root_Controller
             $this->db->join($this->config->item('table_sms_stock_out_variety_details').' stock_out_details','stock_out_details.stock_out_id = stock_out.id','INNER');
             $this->db->select('variety.name variety_name');
             $this->db->join($this->config->item('table_login_setup_classification_varieties').' variety','variety.id = stock_out_details.variety_id','INNER');
-            $this->db->select('v_pack_size.name pack_size_name');
+            $this->db->select('v_pack_size.name pack_size');
             $this->db->join($this->config->item('table_login_setup_classification_vpack_size').' v_pack_size','v_pack_size.id = stock_out_details.pack_size_id','LEFT');
             $this->db->select('ware_house.name ware_house_name');
             $this->db->join($this->config->item('table_login_basic_setup_warehouse').' ware_house','ware_house.id = stock_out_details.warehouse_id','INNER');
@@ -675,21 +675,27 @@ class Stock_out_variety extends Root_Controller
                 $this->json_return($ajax);
             }
 
-            $this->db->from($this->config->item('table_sms_stock_in_variety_details').' stock_in_details');
-            $this->db->select('stock_in_details.variety_id, stock_in_details.pack_size_id, stock_in_details.warehouse_id, stock_in_details.quantity');
-            $this->db->join($this->config->item('table_login_setup_classification_varieties').' variety','variety.id = stock_in_details.variety_id','INNER');
+            $this->db->from($this->config->item('table_sms_stock_out_variety_details').' stock_out_details');
+            $this->db->select('stock_out_details.variety_id, stock_out_details.pack_size_id, stock_out_details.warehouse_id, stock_out_details.quantity');
+
+            $this->db->join($this->config->item('table_login_setup_classification_varieties').' variety','variety.id = stock_out_details.variety_id','INNER');
             $this->db->select('variety.name variety_name');
-            $this->db->join($this->config->item('table_login_setup_classification_vpack_size').' v_pack_size','v_pack_size.id = stock_in_details.pack_size_id','LEFT');
-            $this->db->select('v_pack_size.name pack_size_name');
-            $this->db->join($this->config->item('table_login_basic_setup_warehouse').' ware_house','ware_house.id = stock_in_details.warehouse_id','INNER');
-            $this->db->select('ware_house.name ware_house_name');
+
+            $this->db->join($this->config->item('table_login_setup_classification_vpack_size').' pack','pack.id = stock_out_details.pack_size_id','LEFT');
+            $this->db->select('pack.name pack_size');
+
+            $this->db->join($this->config->item('table_login_basic_setup_warehouse').' warehouse','warehouse.id = stock_out_details.warehouse_id','INNER');
+            $this->db->select('warehouse.name warehouse_name');
+
             $this->db->join($this->config->item('table_login_setup_classification_crop_types').' type','type.id = variety.crop_type_id','INNER');
             $this->db->select('type.name crop_type_name');
+
             $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = type.crop_id','INNER');
             $this->db->select('crop.name crop_name');
-            $this->db->where('stock_in_details.stock_in_id',$item_id);
-            $this->db->where('stock_in_details.revision',1);
-            $this->db->order_by('stock_in_details.id','ASC');
+
+            $this->db->where('stock_out_details.stock_out_id',$item_id);
+            $this->db->where('stock_out_details.revision',1);
+            $this->db->order_by('stock_out_details.id','ASC');
             $data['items']=$this->db->get()->result_array();
 
             $data['title']="Details Stock Out";

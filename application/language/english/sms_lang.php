@@ -116,6 +116,8 @@ $lang['LABEL_SHORT_NAME'] = 'Short Name';
 $lang['LABEL_FULL_NAME'] = 'Full Name';
 $lang['LABEL_CUSTOMER_NAME'] = 'Customer Name';
 $lang['LABEL_SUPPLIER_NAME']='Supplier Name';
+$lang['LABEL_OUTLET_NAME'] = 'Outlet';
+$lang['LABEL_SHOWROOM_NAME'] = 'Showroom Name';
 
 // office, company, department
 $lang['LABEL_COMPANY_NAME'] = 'Company';
@@ -322,7 +324,6 @@ $lang['LABEL_AGREEMENT'] = 'Agreement';
 $lang['LABEL_CUSTOMER_TYPE'] = 'Customer Type';
 $lang['LABEL_MAP_ADDRESS'] = 'Google Map Link';
 $lang['LABEL_INCHARGE'] = 'In-charge';
-$lang['LABEL_OUTLET_NAME'] = 'Outlet';
 
 // Unknown
 $lang['LABEL_STOCK_ID']='Stock Id';
