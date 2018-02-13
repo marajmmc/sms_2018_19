@@ -103,7 +103,6 @@ class Stock_in_variety extends Root_Controller
         $this->db->from($this->config->item('table_sms_stock_in_variety').' stock_in');
         $this->db->select('stock_in.*');
         $this->db->where('stock_in.status !=',$this->config->item('system_status_delete'));
-        $this->db->order_by('stock_in.date_stock_in','DESC');
         $this->db->order_by('stock_in.id','DESC');
         $this->db->limit($pagesize,$current_records);
         $items=$this->db->get()->result_array();

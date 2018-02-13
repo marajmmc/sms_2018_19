@@ -312,7 +312,7 @@ class Lc_expense extends Root_Controller
             $this->db->join($this->config->item('table_login_setup_bank').' bank','bank.id = ba.bank_id','INNER');
             $this->db->select("CONCAT_WS(' ( ',ba.account_number,  CONCAT_WS('', bank.name,' - ',ba.branch_name,')')) bank_account_number");
             $this->db->where('lco.id',$item_id);
-            $this->db->where('lco.status_open =',$this->config->item('system_status_active'));
+            $this->db->where('lco.status_open !=',$this->config->item('system_status_delete'));
             $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
             {
@@ -347,33 +347,94 @@ class Lc_expense extends Root_Controller
             $this->json_return($ajax);
         }
     }
-    private function system_save_expense_complete($id=null)
+    private function system_save_expense_complete()
     {
         if((isset($this->permissions['action7']) && ($this->permissions['action7']==1)))
         {
+            $item_id=$this->input->post('id');
             $user = User_helper::get_user();
             $time=time();
             $item_head=$this->input->post('item');
-            if($id>0)
-            {
-                $item_id=$id;
-            }
-            else
-            {
-                $item_id=$this->input->post('id');
-            }
+
             if($item_head['status_open']!=$this->config->item('system_status_closed'))
             {
                 $ajax['status']=false;
                 $ajax['system_message']='LC Closed is required.';
                 $this->json_return($ajax);
             }
-            die('ok');
+
+            /*fetching data from lc */
+            $result_lc=Query_helper::get_info($this->config->item('table_sms_lc_open'),'*',array('id ='.$item_id, 'status_open != "'.$this->config->item('system_status_delete').'"'),1);
+
+            /*check validation
+                1. not exist
+                2. already closed
+                3. already not received
+                4. $result_lc['price_release_other_currency']+$result_lc['price_release_variety_currency'] == 0 checking
+            */
+            $dc_expenses=Query_helper::get_info($this->config->item('table_sms_lc_expense'),'*',array('lc_id ='.$item_id),0,0,array(''));
+            $price_complete_dc_taka=0;
+            foreach($dc_expenses as $item)
+            {
+                $price_complete_dc_taka+=$item['amount'];
+            }
+            $results=Query_helper::get_info($this->config->item('table_sms_lc_expense_varieties'),'*',array('lc_id ='.$item_id),0,0,array(''));
+            $dc_expenses_varieties=array();
+            foreach($results as $result)
+            {
+                $dc_expenses_varieties[$result['variety_id']][$result['pack_size_id']][$result['dc_id']]=$result;
+            }
+            $data_lc=array();
+            $data_lc['status_open']=$this->config->item('system_status_closed');
+            $data_lc['rate_currency']=$result_lc['price_complete_other_variety_taka']/($result_lc['price_release_other_currency']+$result_lc['price_release_variety_currency']);
+            $data_lc['price_complete_dc_taka']=$price_complete_dc_taka;
+            $data_lc['price_complete_total_taka']=$result_lc['price_complete_other_variety_taka']+$price_complete_dc_taka;
+            $data_lc['date_expense_completed']=$time;
+            $data_lc['user_expense_completed']=$user->user_id;
+
+            $result_varieties=Query_helper::get_info($this->config->item('table_sms_lc_details'),'*',array('lc_id ='.$item_id, 'quantity_open >0'));
+
+
             $this->db->trans_start();  //DB Transaction Handle START
 
-            /*$item_head['']=$time;
-            $item_head['']=$user->user_id;
-            Query_helper::update($this->config->item(''),$item_head,array('id='.$item_id));*/
+            Query_helper::update($this->config->item('table_sms_lc_open'),$data_lc,array('id='.$item_id));
+
+            foreach($result_varieties as $variety)
+            {
+                $data=array();
+                $data['price_unit_complete_currency']=($variety['price_unit_currency']*$variety['quantity_release'])/$variety['quantity_receive'];
+                $data['price_unit_complete_taka']=($data['price_unit_complete_currency']*$data_lc['rate_currency']);
+                $data['price_complete_variety_taka']=($data['price_unit_complete_taka']*$variety['quantity_receive']);
+                $data['price_complete_other_taka']=($result_lc['price_release_other_currency']/$result_lc['price_release_variety_currency'])*$data['price_complete_variety_taka'];
+                $data['price_dc_expense_taka']=($price_complete_dc_taka/($result_lc['price_release_variety_currency']*$data_lc['rate_currency']) * $data['price_complete_variety_taka']);
+                $data['price_total_taka']=($data['price_complete_variety_taka']+$data['price_complete_other_taka']+$data['price_dc_expense_taka']);
+                Query_helper::update($this->config->item('table_sms_lc_details'),$data,array('id='.$variety['id']));
+
+                foreach($dc_expenses as $item)
+                {
+                    if(isset($dc_expenses_varieties[$variety['variety_id']][$variety['pack_size_id']][$item['dc_id']]))
+                    {
+                        $data_dcv=array();
+                        $data_dcv['amount']=$data['price_dc_expense_taka']*($item['amount']/$price_complete_dc_taka);
+                        $data_dcv['date_created']=$time;
+                        $data_dcv['user_created']=$user->user_id;
+                        Query_helper::update($this->config->item('table_sms_lc_expense_varieties'),$data_dcv,array('id='.$dc_expenses_varieties[$variety['variety_id']][$variety['pack_size_id']][$item['dc_id']]['id']));
+                    }
+                    else
+                    {
+                        $data_dcv=array();
+                        $data_dcv['lc_id']=$item_id;
+                        $data_dcv['dc_id']=$item['dc_id'];
+                        $data_dcv['variety_id']=$variety['variety_id'];
+                        $data_dcv['pack_size_id']=$variety['pack_size_id'];
+                        $data_dcv['amount']=$data['price_dc_expense_taka']*($item['amount']/$price_complete_dc_taka);
+                        $data_dcv['date_created']=$time;
+                        $data_dcv['user_created']=$user->user_id;
+                        Query_helper::add($this->config->item('table_sms_lc_expense_varieties'),$data_dcv);
+                    }
+
+                }
+            }
 
             $this->db->trans_complete();   //DB Transaction Handle END
             if ($this->db->trans_status() === TRUE)

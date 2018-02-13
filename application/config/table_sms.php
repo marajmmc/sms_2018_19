@@ -14,6 +14,7 @@ $config['table_sms_stock_summary_variety'] = 'arm_sms_2018_19.sms_stock_summary_
 $config['table_sms_lc_open'] = 'arm_sms_2018_19.sms_lc_open';
 $config['table_sms_lc_details'] = 'arm_sms_2018_19.sms_lc_details';
 $config['table_sms_lc_expense'] = 'arm_sms_2018_19.sms_lc_expense';
+$config['table_sms_lc_expense_varieties'] = 'arm_sms_2018_19.sms_lc_expense_varieties';
 $config['table_sms_lc_open_histories'] = 'arm_sms_2018_19.sms_lc_open_histories';
 $config['table_sms_lc_release_histories'] = 'arm_sms_2018_19.sms_lc_release_histories';
 $config['table_sms_lc_receive_histories'] = 'arm_sms_2018_19.sms_lc_receive_histories';
