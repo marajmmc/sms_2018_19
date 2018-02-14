@@ -81,7 +81,6 @@ class Purchase_raw_foil extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
     private function system_get_items()
     {
         $current_records = $this->input->post('total_records');
@@ -104,7 +103,6 @@ class Purchase_raw_foil extends Root_Controller
         $this->db->select('supplier.name supplier_name');
         $this->db->join($this->config->item('table_login_basic_setup_supplier').' supplier','supplier.id = purchase_foil.supplier_id','INNER');
         $this->db->where('purchase_foil.status !=',$this->config->item('system_status_delete'));
-        $this->db->order_by('purchase_foil.date_receive','DESC');
         $this->db->order_by('purchase_foil.id','DESC');
         $this->db->limit($pagesize,$current_records);
         $items=$this->db->get()->result_array();
@@ -122,7 +120,6 @@ class Purchase_raw_foil extends Root_Controller
     {
         if(isset($this->permissions['action1']) && ($this->permissions['action1']==1))
         {
-            $time=time();
             $data['title']="Purchase Common Foil";
             $data["item"] = Array(
                 'id'=>'',
@@ -138,13 +135,14 @@ class Purchase_raw_foil extends Root_Controller
             );
 
             $data['suppliers']=Query_helper::get_info($this->config->item('table_login_basic_setup_supplier'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
-            $ajax['system_page_url']=site_url($this->controller_url."/index/add");
+
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/add_edit",$data,true));
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
             }
+            $ajax['system_page_url']=site_url($this->controller_url."/index/add");
             $this->json_return($ajax);
         }
         else
@@ -169,7 +167,6 @@ class Purchase_raw_foil extends Root_Controller
             $item['variety_id']=0;
             $item['pack_size_id']=0;
             $packing_item=$this->config->item('system_common_foil');
-
             $this->db->from($this->config->item('table_sms_purchase_raw_foil').' purchase_foil');
             $this->db->select('purchase_foil.*');
             $this->db->select('supplier.name supplier_name');
@@ -190,6 +187,7 @@ class Purchase_raw_foil extends Root_Controller
             $data['item']['current_stock']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$packing_item]['current_stock'];
 
             $data['suppliers']=Query_helper::get_info($this->config->item('table_login_basic_setup_supplier'),array('id value','name text'),array('status !="'.$this->config->item('system_status_delete').'"'));
+
             $data['title']="Edit Purchase (Common Foil)";
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/add_edit",$data,true));
@@ -213,11 +211,11 @@ class Purchase_raw_foil extends Root_Controller
         $user = User_helper::get_user();
         $time = time();
         $item = $this->input->post('item');
-        $item['variety_id']=0;
-        $item['pack_size_id']=0;
+        $variety_id=0;
+        $pack_size_id=0;
         $packing_item=$this->config->item('system_common_foil');
         $old_value=0;
-        $current_stocks=System_helper::get_raw_stock(array($item['variety_id'])); //Getting Current Stocks
+        $current_stocks=System_helper::get_raw_stock(array($variety_id)); //Getting Current Stocks
 
         /*--Start-- Permission and negative stock checking */
         if($id>0)
@@ -231,25 +229,24 @@ class Purchase_raw_foil extends Root_Controller
             $old_item=Query_helper::get_info($this->config->item('table_sms_purchase_raw_foil'),'*',array('status !="'.$this->config->item('system_status_delete').'"','id ='.$id),1);
             if(!$old_item)
             {
-                System_helper::invalid_try('Save Non Exists',$id);
+                System_helper::invalid_try('Update Non Exists',$id);
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid Try.';
                 $this->json_return($ajax);
             }
-
             $old_value=$old_item['quantity_receive'];
 
             //Negative Stock Checking
-            if(isset($current_stocks[$item['variety_id']][$item['pack_size_id']][$packing_item]))
+            if(isset($current_stocks[$variety_id][$pack_size_id][$packing_item]))
             {
                 if($old_value>$item['quantity_receive'])
                 {
-                    $current_stock=$current_stocks[$item['variety_id']][$item['pack_size_id']][$packing_item]['current_stock'];
+                    $current_stock=$current_stocks[$variety_id][$pack_size_id][$packing_item]['current_stock'];
                     $variance=$old_value-$item['quantity_receive'];
                     if($variance>$current_stock)
                     {
                         $ajax['status']=false;
-                        $ajax['system_message']='This Update('.$item['variety_id'].'-'.$item['pack_size_id'].'-'.$packing_item.'-'.$old_value.'-'.$item['quantity_receive'].') will make current stock negative.';
+                        $ajax['system_message']='This Update('.$variety_id.'-'.$pack_size_id.'-'.$packing_item.'-'.$old_value.'-'.$item['quantity_receive'].') will make current stock negative.';
                         $this->json_return($ajax);
                     }
                 }
@@ -277,7 +274,7 @@ class Purchase_raw_foil extends Root_Controller
         if($id>0)
         {
             /* --Start-- Item saving (In two table consequently)*/
-            $data=array(); //Main data
+            /*$data=array(); //Main data
             $data['date_receive']=System_helper::get_time($item['date_receive']);
             $data['supplier_id']=$item['supplier_id'];
             $data['challan_number']=$item['challan_number'];
@@ -290,22 +287,29 @@ class Purchase_raw_foil extends Root_Controller
             $data['user_updated']=$user->user_id;
             $data['date_updated']=$time;
             $this->db->set('revision_count', 'revision_count+1', FALSE);
-            Query_helper::update($this->config->item('table_sms_purchase_raw_foil'),$data,array('id='.$id));
+            Query_helper::update($this->config->item('table_sms_purchase_raw_foil'),$data,array('id='.$id));*/
+
+            // modify by maraj
+            $item['date_receive']=System_helper::get_time($item['date_receive']);
+            $item['date_challan']=System_helper::get_time($item['date_challan']);
+            $item['user_updated']=$user->user_id;
+            $item['date_updated']=$time;
+            $this->db->set('revision_count', 'revision_count+1', FALSE);
+            Query_helper::update($this->config->item('table_sms_purchase_raw_foil'),$item,array('id='.$id));
 
             $data=array(); //Summary data
-            if(isset($current_stocks[$item['variety_id']][$item['pack_size_id']][$packing_item]))
+            if(isset($current_stocks[$variety_id][$pack_size_id][$packing_item]))
             {
-                $data['in_purchase']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$packing_item]['in_purchase']-$old_value+$item['quantity_receive'];
-                $data['current_stock']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$packing_item]['current_stock']-$old_value+$item['quantity_receive'];
+                $data['in_purchase']=$current_stocks[$variety_id][$pack_size_id][$packing_item]['in_purchase']-$old_value+$item['quantity_receive'];
+                $data['current_stock']=$current_stocks[$variety_id][$pack_size_id][$packing_item]['current_stock']-$old_value+$item['quantity_receive'];
                 $data['date_updated'] = $time;
                 $data['user_updated'] = $user->user_id;
-                Query_helper::update($this->config->item('table_sms_stock_summary_raw'),$data,array('variety_id='.$item['variety_id'],'pack_size_id='.$item['pack_size_id'],'packing_item= "'.$packing_item.'"'));
-
+                Query_helper::update($this->config->item('table_sms_stock_summary_raw'),$data,array('variety_id='.$variety_id,'pack_size_id='.$pack_size_id,'packing_item= "'.$packing_item.'"'));
             }
             else
             {
-                $data['variety_id'] = $item['variety_id'];
-                $data['pack_size_id'] = $item['pack_size_id'];
+                $data['variety_id'] = $variety_id;
+                $data['pack_size_id'] = $pack_size_id;
                 $data['in_purchase'] = $item['quantity_receive'];
                 $data['packing_item'] = $packing_item;
                 $data['current_stock'] = $item['quantity_receive'];
@@ -319,7 +323,7 @@ class Purchase_raw_foil extends Root_Controller
         else
         {
             /* --Start-- Item saving (In two table consequently)*/
-            $data=array(); //Main Data
+            /*$data=array(); //Main Data
             $data['date_receive']=System_helper::get_time($item['date_receive']);
             $data['supplier_id']=$item['supplier_id'];
             $data['challan_number']=$item['challan_number'];
@@ -332,21 +336,29 @@ class Purchase_raw_foil extends Root_Controller
             $data['user_created']=$user->user_id;
             $data['date_created']=$time;
             $data['status']=$this->config->item('system_status_active');
-            Query_helper::add($this->config->item('table_sms_purchase_raw_foil'),$data);
+            Query_helper::add($this->config->item('table_sms_purchase_raw_foil'),$data);*/
+
+            // modify by maraj
+            $item['date_receive']=System_helper::get_time($item['date_receive']);
+            $item['date_challan']=System_helper::get_time($item['date_challan']);
+            $item['user_created']=$user->user_id;
+            $item['date_created']=$time;
+            $item['status']=$this->config->item('system_status_active');
+            Query_helper::add($this->config->item('table_sms_purchase_raw_foil'),$item);
 
             $data=array(); //Summary Data
-            if(isset($current_stocks[$item['variety_id']][$item['pack_size_id']][$packing_item]))
+            if(isset($current_stocks[$variety_id][$pack_size_id][$packing_item]))
             {
-                $data['in_purchase']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$packing_item]['in_purchase']+$item['quantity_receive'];
-                $data['current_stock']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$packing_item]['current_stock']+$item['quantity_receive'];
+                $data['in_purchase']=$current_stocks[$variety_id][$pack_size_id][$packing_item]['in_purchase']+$item['quantity_receive'];
+                $data['current_stock']=$current_stocks[$variety_id][$pack_size_id][$packing_item]['current_stock']+$item['quantity_receive'];
                 $data['date_updated'] = $time;
                 $data['user_updated'] = $user->user_id;
-                Query_helper::update($this->config->item('table_sms_stock_summary_raw'),$data,array('variety_id='.$item['variety_id'],'pack_size_id='.$item['pack_size_id'],'packing_item= "'.$packing_item.'"'));
+                Query_helper::update($this->config->item('table_sms_stock_summary_raw'),$data,array('variety_id='.$variety_id,'pack_size_id='.$pack_size_id,'packing_item= "'.$packing_item.'"'));
             }
             else
             {
-                $data['variety_id'] = $item['variety_id'];
-                $data['pack_size_id'] = $item['pack_size_id'];
+                $data['variety_id'] = $variety_id;
+                $data['pack_size_id'] = $pack_size_id;
                 $data['packing_item'] = $packing_item;
                 $data['in_purchase']=$item['quantity_receive'];
                 $data['current_stock']=$item['quantity_receive'];
@@ -354,8 +366,6 @@ class Purchase_raw_foil extends Root_Controller
                 $data['user_updated'] = $user->user_id;
                 Query_helper::add($this->config->item('table_sms_stock_summary_raw'),$data);
             }
-
-
             /* --End-- Item saving (In two table consequently)*/
         }
         $this->db->trans_complete();   //DB Transaction Handle END
@@ -379,7 +389,6 @@ class Purchase_raw_foil extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
     private function system_details($id)
     {
         if(isset($this->permissions['action0']) && ($this->permissions['action0']==1))
@@ -409,7 +418,7 @@ class Purchase_raw_foil extends Root_Controller
             $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
             {
-                System_helper::invalid_try('Details Non Exists',$item_id);
+                System_helper::invalid_try('View Non Exists',$item_id);
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid Try.';
                 $this->json_return($ajax);
@@ -436,10 +445,9 @@ class Purchase_raw_foil extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
     private function system_details_print($id)
     {
-        if(isset($this->permissions['action0']) && ($this->permissions['action0']==1))
+        if((isset($this->permissions['action4']) && ($this->permissions['action4']==1)))
         {
             if($id>0)
             {
@@ -455,8 +463,8 @@ class Purchase_raw_foil extends Root_Controller
 
             $this->db->from($this->config->item('table_sms_purchase_raw_foil').' purchase_foil');
             $this->db->select('purchase_foil.*');
-            $this->db->select('supplier.name supplier_name');
             $this->db->join($this->config->item('table_login_basic_setup_supplier').' supplier','supplier.id = purchase_foil.supplier_id','LEFT');
+            $this->db->select('supplier.name supplier_name');
             $this->db->where('purchase_foil.status !=',$this->config->item('system_status_delete'));
             $this->db->where('purchase_foil.id',$item_id);
             $data['item']=$this->db->get()->row_array();
@@ -472,7 +480,7 @@ class Purchase_raw_foil extends Root_Controller
 
             $data['item']['current_stock']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$packing_item]['current_stock'];
 
-            $data['title']="Details Purchase (Common Foil)";
+            $data['title']="Details Print Purchase (Common Foil)";
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/details_print",$data,true));
             if($this->message)
@@ -489,7 +497,6 @@ class Purchase_raw_foil extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
     private function system_delete($id)
     {
         if(isset($this->permissions['action3']) && ($this->permissions['action3']==1))
@@ -574,7 +581,6 @@ class Purchase_raw_foil extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
     private function check_validation()
     {
         $id = $this->input->post("id");
@@ -595,7 +601,6 @@ class Purchase_raw_foil extends Root_Controller
         }
         return true;
     }
-
     private function system_set_preference()
     {
         if(isset($this->permissions['action6']) && ($this->permissions['action6']==1))
@@ -615,7 +620,6 @@ class Purchase_raw_foil extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
     private function get_preference()
     {
         $user = User_helper::get_user();

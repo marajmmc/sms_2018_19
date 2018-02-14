@@ -34,7 +34,7 @@ class Barcode_helper
         return 'LC'.str_pad($increment_id,6,0,STR_PAD_LEFT);
     }
 
-  //  Added By saiful
+    //  Added By saiful
 
     // Raw Materials
     public static function get_barcode_raw_master_purchase($increment_id)

@@ -136,7 +136,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             {
                 width: '100%',
                 source: dataAdapter,
-                pageable: true,
+                pageable: false,
                 filterable: true,
                 sortable: true,
                 showfilterrow: true,
@@ -150,13 +150,13 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 columnsreorder: true,
                 columns: [
                     { text: '<?php echo $CI->lang->line('LABEL_BARCODE'); ?>', dataField: 'barcode',width:'80',hidden: <?php echo $system_preference_items['barcode']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_DATE_RECEIVE'); ?>',dataField: 'date_receive',width:'90',hidden: <?php echo $system_preference_items['date_receive']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_DATE_RECEIVE'); ?>',dataField: 'date_receive',width:'100',hidden: <?php echo $system_preference_items['date_receive']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_SUPPLIER_NAME'); ?>',dataField: 'supplier_name',hidden: <?php echo $system_preference_items['supplier_name']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_DATE_CHALLAN'); ?>',dataField: 'date_challan',width:'90',hidden: <?php echo $system_preference_items['date_challan']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_DATE_CHALLAN'); ?>',dataField: 'date_challan',width:'100',hidden: <?php echo $system_preference_items['date_challan']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_CHALLAN_NUMBER'); ?>',dataField: 'challan_number',width:'100',hidden: <?php echo $system_preference_items['challan_number']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_NUMBER_OF_REEL'); ?>', cellsalign: 'right',dataField: 'number_of_reel',width:'100',hidden: <?php echo $system_preference_items['number_of_reel']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_SUPPLY'); ?>', cellsalign: 'right',dataField: 'quantity_supply',width:'100',hidden: <?php echo $system_preference_items['quantity_supply']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_RECEIVE'); ?>', cellsalign: 'right',dataField: 'quantity_receive',width:'100',hidden: <?php echo $system_preference_items['quantity_receive']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_NUMBER_OF_REEL'); ?>',dataField: 'number_of_reel',width:'100', cellsalign: 'right',hidden: <?php echo $system_preference_items['number_of_reel']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_SUPPLY'); ?>',dataField: 'quantity_supply',width:'100', cellsalign: 'right',hidden: <?php echo $system_preference_items['quantity_supply']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_RECEIVE'); ?>',dataField: 'quantity_receive',width:'100', cellsalign: 'right',hidden: <?php echo $system_preference_items['quantity_receive']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_REMARKS'); ?>', dataField: 'remarks',hidden: <?php echo $system_preference_items['remarks']?0:1;?>}
                 ]
             });

@@ -556,7 +556,7 @@ class Purchase_raw_master extends Root_Controller
     }
     private function system_details_print($id)
     {
-        if(isset($this->permissions['action0']) && ($this->permissions['action0']==1))
+        if((isset($this->permissions['action4']) && ($this->permissions['action4']==1)))
         {
             if($id>0)
             {
