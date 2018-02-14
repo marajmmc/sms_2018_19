@@ -63,34 +63,7 @@ class Purchase_raw_master extends Root_Controller
     {
         if(isset($this->permissions['action0']) && ($this->permissions['action0']==1))
         {
-            $user = User_helper::get_user();
-            $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
-            $data['system_preference_items']['barcode']= 1;
-            $data['system_preference_items']['date_receive']= 1;
-            $data['system_preference_items']['date_challan']= 1;
-            $data['system_preference_items']['challan_number']= 1;
-            $data['system_preference_items']['supplier_name']= 1;
-            $data['system_preference_items']['quantity_total_receive']= 1;
-            $data['system_preference_items']['remarks']= 1;
-            if($result)
-            {
-                if($result['preferences']!=null)
-                {
-                    $preferences=json_decode($result['preferences'],true);
-                    foreach($data['system_preference_items'] as $key=>$value)
-                    {
-                        if(isset($preferences[$key]))
-                        {
-                            $data['system_preference_items'][$key]=$value;
-                        }
-                        else
-                        {
-                            $data['system_preference_items'][$key]=0;
-                        }
-                    }
-                }
-            }
-
+            $data['system_preference_items']=$this->get_preference();
             $data['title']='Purchase (Master Foil) List';
             $ajax['status']=true;
             $ajax['system_content'][]=array('id'=>'#system_content','html'=>$this->load->view($this->controller_url.'/list',$data,true));
@@ -108,7 +81,6 @@ class Purchase_raw_master extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
     private function system_get_items()
     {
         $current_records = $this->input->post('total_records');
@@ -131,7 +103,6 @@ class Purchase_raw_master extends Root_Controller
         $this->db->select('supplier.name supplier_name');
         $this->db->join($this->config->item('table_login_basic_setup_supplier').' supplier','supplier.id = purchase_master.supplier_id','INNER');
         $this->db->where('purchase_master.status !=',$this->config->item('system_status_delete'));
-        $this->db->order_by('purchase_master.date_receive','DESC');
         $this->db->order_by('purchase_master.id','DESC');
         $this->db->limit($pagesize,$current_records);
         $items=$this->db->get()->result_array();
@@ -143,12 +114,10 @@ class Purchase_raw_master extends Root_Controller
         }
         $this->json_return($items);
     }
-
     private function system_add()
     {
         if(isset($this->permissions['action1']) && ($this->permissions['action1']==1))
         {
-            $time=time();
             $data['title']="Purchase Master Foil";
             $data["item"] = Array(
                 'id'=>'',
@@ -170,6 +139,7 @@ class Purchase_raw_master extends Root_Controller
             {
                 $ajax['system_message']=$this->message;
             }
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/add/');
             $this->json_return($ajax);
         }
         else
@@ -199,19 +169,19 @@ class Purchase_raw_master extends Root_Controller
                 $ajax['system_message']='Invalid Try.';
                 $this->json_return($ajax);
             }
-            $this->db->from($this->config->item('table_sms_purchase_raw_master').' master_purchase');
-            $this->db->select('master_purchase.*');
+            $this->db->from($this->config->item('table_sms_purchase_raw_master_details').' master_details');
+            /*$this->db->select('master_purchase.*');
+            $this->db->join($this->config->item('table_sms_purchase_raw_master_details').' master_details','master_details.purchase_id = master_purchase.id','INNER');*/
             $this->db->select('master_details.variety_id, master_details.pack_size_id, master_details.quantity_supply, master_details.quantity_receive,master_details.price_unit_tk, master_details.number_of_reel');
-            $this->db->join($this->config->item('table_sms_purchase_raw_master_details').' master_details','master_details.purchase_id = master_purchase.id','INNER');
-            $this->db->select('variety.name variety_name');
             $this->db->join($this->config->item('table_login_setup_classification_varieties').' variety','variety.id = master_details.variety_id','INNER');
-            $this->db->select('v_pack_size.name pack_size_name');
+            $this->db->select('variety.name variety_name');
             $this->db->join($this->config->item('table_login_setup_classification_vpack_size').' v_pack_size','v_pack_size.id = master_details.pack_size_id','LEFT');
-            $this->db->select('type.name crop_type_name');
+            $this->db->select('v_pack_size.name pack_size_name');
             $this->db->join($this->config->item('table_login_setup_classification_crop_types').' type','type.id = variety.crop_type_id','INNER');
-            $this->db->select('crop.name crop_name');
+            $this->db->select('type.name crop_type_name');
             $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = type.crop_id','INNER');
-            $this->db->where('master_purchase.id',$item_id);
+            $this->db->select('crop.name crop_name');
+            $this->db->where('master_details.purchase_id',$item_id);
             $this->db->where('master_details.revision',1);
             $this->db->order_by('master_details.id','ASC');
             $data['purchase_master']=$this->db->get()->result_array();
@@ -241,8 +211,8 @@ class Purchase_raw_master extends Root_Controller
         $id = $this->input->post("id");
         $user = User_helper::get_user();
         $time = time();
-        $items=$this->input->post('items');
         $item_head = $this->input->post('item');
+        $items=$this->input->post('items');
         $packing_item=$this->config->item('system_master_foil');
         /*--Start-- Permission Checking */
         if($id>0)
@@ -518,7 +488,6 @@ class Purchase_raw_master extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
     private function system_details($id)
     {
         if(isset($this->permissions['action0']) && ($this->permissions['action0']==1))
@@ -540,13 +509,9 @@ class Purchase_raw_master extends Root_Controller
             $this->db->join($this->config->item('table_login_setup_user_info').' created_user_info','created_user_info.user_id = master_purchase.user_created','INNER');
             $this->db->select('updated_user_info.name updated_by');
             $this->db->join($this->config->item('table_login_setup_user_info').' updated_user_info','updated_user_info.user_id = master_purchase.user_updated','LEFT');
-
             $this->db->where('master_purchase.id',$item_id);
             $this->db->where('master_purchase.status !=',$this->config->item('system_status_delete'));
             $data['item']=$this->db->get()->row_array();
-
-//            print_r($data['item']);
-//            exit;
 
             if(!$data['item'])
             {
@@ -555,10 +520,10 @@ class Purchase_raw_master extends Root_Controller
                 $ajax['system_message']='Invalid Try.';
                 $this->json_return($ajax);
             }
-            $this->db->from($this->config->item('table_sms_purchase_raw_master').' master_purchase');
-            $this->db->select('master_purchase.*');
+            $this->db->from($this->config->item('table_sms_purchase_raw_master_details').' master_details');
+            /*$this->db->select('master_purchase.*');
+            $this->db->join($this->config->item('table_sms_purchase_raw_master_details').' master_details','master_details.purchase_id = master_purchase.id','INNER');*/
             $this->db->select('master_details.variety_id, master_details.pack_size_id, master_details.quantity_supply, master_details.quantity_receive,master_details.price_unit_tk, master_details.number_of_reel');
-            $this->db->join($this->config->item('table_sms_purchase_raw_master_details').' master_details','master_details.purchase_id = master_purchase.id','INNER');
             $this->db->select('variety.name variety_name');
             $this->db->join($this->config->item('table_login_setup_classification_varieties').' variety','variety.id = master_details.variety_id','INNER');
             $this->db->select('v_pack_size.name pack_size_name');
@@ -567,13 +532,11 @@ class Purchase_raw_master extends Root_Controller
             $this->db->join($this->config->item('table_login_setup_classification_crop_types').' type','type.id = variety.crop_type_id','INNER');
             $this->db->select('crop.name crop_name');
             $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = type.crop_id','INNER');
-            $this->db->where('master_purchase.id',$item_id);
+            $this->db->where('master_details.purchase_id',$item_id);
             $this->db->where('master_details.revision',1);
             $this->db->order_by('master_details.id','ASC');
             $data['purchase_master']=$this->db->get()->result_array();
-//            print_r($data['item']);
-//            //print_r($data['purchase_master']);
-//            exit;
+
             $data['title']="Details Purchase (Master Foil)";
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/details",$data,true));
@@ -591,7 +554,6 @@ class Purchase_raw_master extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
     private function system_details_print($id)
     {
         if(isset($this->permissions['action0']) && ($this->permissions['action0']==1))
@@ -620,19 +582,19 @@ class Purchase_raw_master extends Root_Controller
                 $ajax['system_message']='Invalid Try.';
                 $this->json_return($ajax);
             }
-            $this->db->from($this->config->item('table_sms_purchase_raw_master').' master_purchase');
-            $this->db->select('master_purchase.*');
+            $this->db->from($this->config->item('table_sms_purchase_raw_master_details').' master_details');
+            /*$this->db->select('master_purchase.*');
+            $this->db->join($this->config->item('table_sms_purchase_raw_master_details').' master_details','master_details.purchase_id = master_purchase.id','INNER');*/
             $this->db->select('master_details.variety_id, master_details.pack_size_id, master_details.quantity_supply, master_details.quantity_receive,master_details.price_unit_tk,master_details.number_of_reel');
-            $this->db->join($this->config->item('table_sms_purchase_raw_master_details').' master_details','master_details.purchase_id = master_purchase.id','INNER');
-            $this->db->select('variety.name variety_name');
             $this->db->join($this->config->item('table_login_setup_classification_varieties').' variety','variety.id = master_details.variety_id','INNER');
-            $this->db->select('v_pack_size.name pack_size_name');
+            $this->db->select('variety.name variety_name');
             $this->db->join($this->config->item('table_login_setup_classification_vpack_size').' v_pack_size','v_pack_size.id = master_details.pack_size_id','LEFT');
-            $this->db->select('type.name crop_type_name');
+            $this->db->select('v_pack_size.name pack_size_name');
             $this->db->join($this->config->item('table_login_setup_classification_crop_types').' type','type.id = variety.crop_type_id','INNER');
-            $this->db->select('crop.name crop_name');
+            $this->db->select('type.name crop_type_name');
             $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = type.crop_id','INNER');
-            $this->db->where('master_purchase.id',$item_id);
+            $this->db->select('crop.name crop_name');
+            $this->db->where('master_details.purchase_id',$item_id);
             $this->db->where('master_details.revision',1);
             $this->db->order_by('master_details.id','ASC');
             $data['items']=$this->db->get()->result_array();
@@ -654,8 +616,6 @@ class Purchase_raw_master extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
-
     private function system_delete($id)
     {
         if(isset($this->permissions['action3']) && ($this->permissions['action3']==1))
@@ -673,7 +633,6 @@ class Purchase_raw_master extends Root_Controller
             $time = time();
             $packing_item=$this->config->item('system_master_foil');
             $item=Query_helper::get_info($this->config->item('table_sms_purchase_raw_master'),'*',array('status !="'.$this->config->item('system_status_delete').'"','id ='.$item_id),1);
-
             if(!$item)
             {
                 System_helper::invalid_try('Delete Not Exists',$item_id);
@@ -682,11 +641,11 @@ class Purchase_raw_master extends Root_Controller
                 $this->json_return($ajax);
             }
 
-            $this->db->from($this->config->item('table_sms_purchase_raw_master').' master_purchase');
-            $this->db->select('master_purchase.*');
+            $this->db->from($this->config->item('table_sms_purchase_raw_master_details').' master_details');
+            /*$this->db->select('master_purchase.*');
+            $this->db->join($this->config->item('table_sms_purchase_raw_master_details').' master_details','master_details.purchase_id = master_purchase.id','INNER');*/
             $this->db->select('master_details.variety_id, master_details.pack_size_id,master_details.quantity_supply,master_details.quantity_receive');
-            $this->db->join($this->config->item('table_sms_purchase_raw_master_details').' master_details','master_details.purchase_id = master_purchase.id','INNER');
-            $this->db->where('master_purchase.id',$item_id);
+            $this->db->where('master_details.purchase_id',$item_id);
             $this->db->where('master_details.revision',1);
             $this->db->order_by('master_details.id','ASC');
             $results=$this->db->get()->result_array();
@@ -759,7 +718,6 @@ class Purchase_raw_master extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
     private function check_validation()
     {
         $id = $this->input->post("id");
@@ -776,42 +734,15 @@ class Purchase_raw_master extends Root_Controller
                 return false;
             }
         }
+
         return true;
     }
-
     private function system_set_preference()
     {
         if(isset($this->permissions['action6']) && ($this->permissions['action6']==1))
         {
-            $user = User_helper::get_user();
-            $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
-            $data['system_preference_items']['barcode']= 1;
-            $data['system_preference_items']['date_receive']= 1;
-            $data['system_preference_items']['supplier_name']= 1;
-            $data['system_preference_items']['date_challan']= 1;
-            $data['system_preference_items']['challan_number']= 1;
-            $data['system_preference_items']['quantity_total_receive']= 1;
-            $data['system_preference_items']['remarks']= 1;
-            if($result)
-            {
-                if($result['preferences']!=null)
-                {
-                    $preferences=json_decode($result['preferences'],true);
-                    foreach($data['system_preference_items'] as $key=>$value)
-                    {
-                        if(isset($preferences[$key]))
-                        {
-                            $data['system_preference_items'][$key]=$value;
-                        }
-                        else
-                        {
-                            $data['system_preference_items'][$key]=0;
-                        }
-                    }
-                }
-            }
+            $data['system_preference_items']=$this->get_preference();
             $data['preference_method_name']='list';
-
             $data['title']="Set Preference";
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("preference_add_edit",$data,true));
@@ -824,5 +755,37 @@ class Purchase_raw_master extends Root_Controller
             $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
             $this->json_return($ajax);
         }
+    }
+    private function get_preference()
+    {
+        $user = User_helper::get_user();
+        $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
+        $data['barcode']= 1;
+        $data['date_receive']= 1;
+        $data['supplier_name']= 1;
+        $data['date_challan']= 1;
+        $data['challan_number']= 1;
+        $data['quantity_total_receive']= 1;
+        $data['remarks']= 1;
+        if($result)
+        {
+            if($result['preferences']!=null)
+            {
+                $preferences=json_decode($result['preferences'],true);
+                foreach($data as $key=>$value)
+                {
+
+                    if(isset($preferences[$key]))
+                    {
+                        $data[$key]=$value;
+                    }
+                    else
+                    {
+                        $data[$key]=0;
+                    }
+                }
+            }
+        }
+        return $data;
     }
 }

@@ -104,6 +104,8 @@ $lang['LABEL_STATUS_RECEIVED']='Received Status';
 $lang['LABEL_STATUS_CLOSED']='Closed Status';
 $lang['LABEL_STATUS_LC_PENDING']='Pending';
 $lang['LABEL_STATUS_LC_COMPLETE']='Completed';
+$lang['LABEL_STATUS_OPEN_FORWARD']='Forward Status';
+$lang['LABEL_STATUS_OPEN']='LC Status';
 
 // Common information related
 // ID or Code
