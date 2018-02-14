@@ -181,11 +181,6 @@ $num_pages=ceil($total_records/$row_per_page);
                 ?>
                 </tbody>
             </table>
-
-
-
-
-
             <img src="<?php echo $footer_image;  ?>" style="width: 100%;position: absolute;left 0px;bottom: 0px;">
 
         </div>

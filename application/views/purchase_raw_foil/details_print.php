@@ -109,10 +109,21 @@ if($result)
                 <tr>
                     <td>1</td>
                     <td class="text-right"><?php echo $item['number_of_reel'];?></td>
-                    <td class="text-right"><?php echo $item['quantity_supply'];?></td>
-                    <td class="text-right"><?php echo $item['quantity_receive'];?></td>
-                    <td class="text-right"><?php echo ($item['quantity_supply']-$item['quantity_receive']);?></td>
+                    <td class="text-right"><?php echo number_format($item['quantity_supply'],3,'.','');?></td>
+                    <td class="text-right"><?php echo number_format($item['quantity_receive'],3,'.','');?></td>
+                    <td class="text-right"><?php echo number_format(($item['quantity_supply']-$item['quantity_receive']),3,'.','');?></td>
                 </tr>
+                <tr>
+                    <td colspan="4" class="text-right"><label class="control-label"><?php echo $CI->lang->line('LABEL_TOTAL_TAKA');?></label></td>
+                    <td class="text-right"><label class="control-label"><?php echo number_format(($item['quantity_receive']*$item['price_unit_tk']),2);?></label></td>
+                </tr>
+                <?php if($item['remarks']){?>
+                    <tr>
+                        <td colspan="21">
+                            <strong><?php echo $CI->lang->line('LABEL_REMARKS');?>: </strong><?php echo nl2br($item['remarks']);?>
+                        </td>
+                    </tr>
+                <?php } ?>
             </tbody>
         </table>
         <img src="<?php echo $footer_image;  ?>" style="width: 100%;position: absolute;left 0px;bottom: 0px;">

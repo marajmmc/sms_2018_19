@@ -472,9 +472,6 @@ class Purchase_raw_foil extends Root_Controller
 
             $data['item']['current_stock']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$packing_item]['current_stock'];
 
-
-//            print_r($data['item']);
-//            exit;
             $data['title']="Details Purchase (Common Foil)";
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/details_print",$data,true));

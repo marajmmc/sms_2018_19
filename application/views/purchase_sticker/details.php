@@ -56,12 +56,58 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         </div>
     </div>
 
+    <div class="row show-grid">
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right">Created Time :</label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <?php echo System_helper::display_date_time($item['date_created']);?>
+            </div>
+        </div>
+    </div>
+
+    <div class="row show-grid">
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right">Created By :</label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <?php echo $item['created_by'];?>
+            </div>
+        </div>
+    </div>
+
+    <?php if($item['date_updated']){?>
+        <div class="row show-grid">
+            <div class="row show-grid">
+                <div class="col-xs-4">
+                    <label class="control-label pull-right">Updated Time :</label>
+                </div>
+                <div class="col-sm-4 col-xs-8">
+                    <?php echo System_helper::display_date_time($item['date_updated']);?>
+                </div>
+            </div>
+        </div>
+
+        <div class="row show-grid">
+            <div class="row show-grid">
+                <div class="col-xs-4">
+                    <label class="control-label pull-right">Updated By :</label>
+                </div>
+                <div class="col-sm-4 col-xs-8">
+                    <?php echo $item['updated_by'];?>
+                </div>
+            </div>
+        </div>
+    <?php } ?>
+
     <div style="" class="row show-grid">
         <div class="col-xs-4">
             <label for="remarks" class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS');?> :</label>
         </div>
         <div class="col-sm-4 col-xs-8">
-            <?php echo $item['remarks'];?>
+            <?php echo nl2br($item['remarks']);?>
         </div>
     </div>
 
