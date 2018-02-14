@@ -201,7 +201,7 @@ class Purchase_raw_master extends Root_Controller
             }
             $this->db->from($this->config->item('table_sms_purchase_raw_master').' master_purchase');
             $this->db->select('master_purchase.*');
-            $this->db->select('master_details.variety_id, master_details.pack_size_id, master_details.quantity_supply, master_details.quantity_receive,master_details.price_unit_tk');
+            $this->db->select('master_details.variety_id, master_details.pack_size_id, master_details.quantity_supply, master_details.quantity_receive,master_details.price_unit_tk, master_details.number_of_reel');
             $this->db->join($this->config->item('table_sms_purchase_raw_master_details').' master_details','master_details.purchase_id = master_purchase.id','INNER');
             $this->db->select('variety.name variety_name');
             $this->db->join($this->config->item('table_login_setup_classification_varieties').' variety','variety.id = master_details.variety_id','INNER');
@@ -317,7 +317,7 @@ class Purchase_raw_master extends Root_Controller
         $duplicate_entry_checker=array();
         foreach($items as $item)
         {
-            if($item['variety_id']==0 || $item['pack_size_id']<0 || $item['quantity_supply']=='' ||(!($item['quantity_supply']>=0)) || $item['quantity_receive']=='' ||(!($item['quantity_receive']>=0)) || $item['price_unit_tk']=='' ||(!($item['price_unit_tk']>=0)))
+            if($item['variety_id']==0 || $item['pack_size_id']<0 || $item['number_of_reel']=='' ||(!($item['number_of_reel']>=0)) || $item['quantity_supply']=='' ||(!($item['quantity_supply']>=0)) || $item['quantity_receive']=='' ||(!($item['quantity_receive']>=0)) || $item['price_unit_tk']=='' ||(!($item['price_unit_tk']>=0)))
             {
                 $ajax['status']=false;
                 $ajax['system_message']='Unfinished stock in entry.';
@@ -396,6 +396,7 @@ class Purchase_raw_master extends Root_Controller
                 $data['purchase_id']=$id;
                 $data['variety_id']=$item['variety_id'];
                 $data['pack_size_id']=$item['pack_size_id'];
+                $data['number_of_reel']=$item['number_of_reel'];
                 $data['quantity_supply']=$item['quantity_supply'];
                 $data['quantity_receive']=$item['quantity_receive'];
                 $data['price_unit_tk']=$item['price_unit_tk'];
@@ -462,6 +463,7 @@ class Purchase_raw_master extends Root_Controller
                 $data['purchase_id']=$item_id;
                 $data['variety_id']=$item['variety_id'];
                 $data['pack_size_id']=$item['pack_size_id'];
+                $data['number_of_reel']=$item['number_of_reel'];
                 $data['quantity_supply']=$item['quantity_supply'];
                 $data['quantity_receive']=$item['quantity_receive'];
                 $data['price_unit_tk']=$item['price_unit_tk'];
@@ -534,9 +536,17 @@ class Purchase_raw_master extends Root_Controller
             $this->db->select('master_purchase.*');
             $this->db->select('supplier.name supplier_name');
             $this->db->join($this->config->item('table_login_basic_setup_supplier').' supplier','supplier.id = master_purchase.supplier_id','INNER');
+            $this->db->select('created_user_info.name created_by');
+            $this->db->join($this->config->item('table_login_setup_user_info').' created_user_info','created_user_info.user_id = master_purchase.user_created','INNER');
+            $this->db->select('updated_user_info.name updated_by');
+            $this->db->join($this->config->item('table_login_setup_user_info').' updated_user_info','updated_user_info.user_id = master_purchase.user_updated','LEFT');
+
             $this->db->where('master_purchase.id',$item_id);
             $this->db->where('master_purchase.status !=',$this->config->item('system_status_delete'));
             $data['item']=$this->db->get()->row_array();
+
+//            print_r($data['item']);
+//            exit;
 
             if(!$data['item'])
             {
@@ -547,7 +557,7 @@ class Purchase_raw_master extends Root_Controller
             }
             $this->db->from($this->config->item('table_sms_purchase_raw_master').' master_purchase');
             $this->db->select('master_purchase.*');
-            $this->db->select('master_details.variety_id, master_details.pack_size_id, master_details.quantity_supply, master_details.quantity_receive,master_details.price_unit_tk');
+            $this->db->select('master_details.variety_id, master_details.pack_size_id, master_details.quantity_supply, master_details.quantity_receive,master_details.price_unit_tk, master_details.number_of_reel');
             $this->db->join($this->config->item('table_sms_purchase_raw_master_details').' master_details','master_details.purchase_id = master_purchase.id','INNER');
             $this->db->select('variety.name variety_name');
             $this->db->join($this->config->item('table_login_setup_classification_varieties').' variety','variety.id = master_details.variety_id','INNER');
@@ -561,12 +571,9 @@ class Purchase_raw_master extends Root_Controller
             $this->db->where('master_details.revision',1);
             $this->db->order_by('master_details.id','ASC');
             $data['purchase_master']=$this->db->get()->result_array();
-
-
 //            print_r($data['item']);
-//            print_r($data['purchase_master']);
+//            //print_r($data['purchase_master']);
 //            exit;
-
             $data['title']="Details Purchase (Master Foil)";
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/details",$data,true));
@@ -615,7 +622,7 @@ class Purchase_raw_master extends Root_Controller
             }
             $this->db->from($this->config->item('table_sms_purchase_raw_master').' master_purchase');
             $this->db->select('master_purchase.*');
-            $this->db->select('master_details.variety_id, master_details.pack_size_id, master_details.quantity_supply, master_details.quantity_receive,master_details.price_unit_tk');
+            $this->db->select('master_details.variety_id, master_details.pack_size_id, master_details.quantity_supply, master_details.quantity_receive,master_details.price_unit_tk,master_details.number_of_reel');
             $this->db->join($this->config->item('table_sms_purchase_raw_master_details').' master_details','master_details.purchase_id = master_purchase.id','INNER');
             $this->db->select('variety.name variety_name');
             $this->db->join($this->config->item('table_login_setup_classification_varieties').' variety','variety.id = master_details.variety_id','INNER');

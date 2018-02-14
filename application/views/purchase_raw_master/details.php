@@ -56,6 +56,52 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             </div>
         </div>
 
+        <div class="row show-grid">
+            <div class="row show-grid">
+                <div class="col-xs-4">
+                    <label class="control-label pull-right">Created Time :</label>
+                </div>
+                <div class="col-sm-4 col-xs-8">
+                    <?php echo System_helper::display_date_time($item['date_created']);?>
+                </div>
+            </div>
+        </div>
+
+        <div class="row show-grid">
+            <div class="row show-grid">
+                <div class="col-xs-4">
+                    <label class="control-label pull-right">Created By :</label>
+                </div>
+                <div class="col-sm-4 col-xs-8">
+                    <?php echo $item['created_by'];?>
+                </div>
+            </div>
+        </div>
+
+        <?php if($item['date_updated']){?>
+            <div class="row show-grid">
+                <div class="row show-grid">
+                    <div class="col-xs-4">
+                        <label class="control-label pull-right">Updated Time :</label>
+                    </div>
+                    <div class="col-sm-4 col-xs-8">
+                        <?php echo System_helper::display_date_time($item['date_updated']);?>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row show-grid">
+                <div class="row show-grid">
+                    <div class="col-xs-4">
+                        <label class="control-label pull-right">Updated By :</label>
+                    </div>
+                    <div class="col-sm-4 col-xs-8">
+                        <?php echo $item['updated_by'];?>
+                    </div>
+                </div>
+            </div>
+        <?php } ?>
+
         <div style="" class="row show-grid">
             <div class="col-xs-4">
                 <label for="remarks" class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS');?> :</label>
@@ -74,22 +120,30 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
                     <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
                     <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_CURRENT_STOCK'); ?></th>
+                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_NUMBER_OF_REEL'); ?></th>
                     <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY_SUPPLY'); ?></th>
                     <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY_RECEIVE'); ?></th>
+                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY_DIFFERENCE');?></th>
                     <th style="min-width: 150px; text-align: right;">Unit Price (Tk)</th>
                     <th style="min-width: 150px; text-align: right;">Total Price (Tk)</th>
                 </tr>
                 </thead>
                 <tbody>
                 <?php
-                $quantity_total=0;
+                $quantity_total_supply=0;
+                $quantity_total_receive=0;
+                $quantity_total_difference=0;
                 $total_tk=0;
                 $price_total=0;
+                $total_unit_price=0;
                 foreach($purchase_master as $index=>$master)
                 {
                     $price_total=($master['quantity_receive']*$master['price_unit_tk']);
-                    $quantity_total+=$master['quantity_receive'];
+                    $quantity_total_supply+=$master['quantity_supply'];
+                    $quantity_total_receive+=$master['quantity_receive'];
+                    $quantity_total_difference=($quantity_total_supply-$quantity_total_receive);
                     $total_tk+=$price_total;
+                    $total_unit_price+=$master['price_unit_tk'];
                     ?>
                     <tr>
                         <td>
@@ -108,12 +162,18 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                             <label><?php $current_stock=System_helper::get_raw_stock(array($master['variety_id'])); if(isset($current_stock)){echo $current_stock[$master['variety_id']][$master['pack_size_id']][$CI->config->item('system_master_foil')]['current_stock'];}else{echo 0;}?></label>
                         </td>
                         <td class="text-right">
+                            <label><?php echo $master['number_of_reel']; ?></label>
+                        </td>
+                        <td class="text-right">
                             <label><?php echo $master['quantity_supply']; ?></label>
                         </td>
                         <td class="text-right">
                             <label><?php echo $master['quantity_receive']; ?></label>
                         </td>
-                        <td>
+                        <td class="text-right">
+                            <label><?php echo ($master['quantity_supply']-$master['quantity_receive']);?></label>
+                        </td class="text-right">
+                        <td class="text-right">
                             <label><?php echo $master['price_unit_tk']; ?></label>
                         </td>
                         <td class="text-right">
@@ -127,11 +187,12 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
                 <tfoot>
                 <tr>
-                    <th colspan="6" class="text-right">Grand Total Quantity</th>
-                    <th class="text-right"><label class="control-label" id="lbl_quantity_receive_total"><?php echo number_format(($quantity_total),3,'.','')?></label></th>
-                    <th class="text-right">Grand Total (Tk)</th>
-                    <th class="text-right"><label class="control-label" id="lbl_price_total_tk"><?php echo number_format($total_tk,2)?></label></th>
-                    <th class="text-right"></th>
+                    <td colspan="6" class="text-right"><label class="control-label"><?php echo $this->lang->line('LABEL_TOTAL')?></label></td>
+                    <td class="text-right"><label class="control-label"><?php echo $quantity_total_supply.' (KG)';?></label></td>
+                    <td class="text-right"><label class="control-label"><?php echo $quantity_total_receive.' (KG)';?></label></td>
+                    <td class="text-right"><label class="control-label"><?php echo $quantity_total_difference.' (KG)';?></label></td>
+                    <td class="text-right"><label class="control-label"><?php echo $total_unit_price;?></label></td>
+                    <td class="text-right"><label class="control-label"><?php echo number_format($total_tk,2);?></label></td>
                 </tr>
                 </tfoot>
 

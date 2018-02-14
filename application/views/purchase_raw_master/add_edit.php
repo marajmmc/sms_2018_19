@@ -104,6 +104,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
                     <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
                     <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_CURRENT_STOCK'); ?></th>
+                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_NUMBER_OF_REEL'); ?></th>
                     <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY_SUPPLY'); ?></th>
                     <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY_RECEIVE'); ?></th>
                     <th style="min-width: 150px; text-align: right;">Unit Price (Tk)</th>
@@ -138,8 +139,13 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                             <input type="hidden" id="pack_size_id<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][pack_size_id]" value="<?php echo $master['pack_size_id']; ?>" />
 
                         </td>
+
                         <td class="text-right">
                             <label><?php $current_stock=System_helper::get_raw_stock(array($master['variety_id'])); if(isset($current_stock)){echo $current_stock[$master['variety_id']][$master['pack_size_id']][$CI->config->item('system_master_foil')]['current_stock'];}else{echo 0;}?></label>
+                        </td>
+                        <td class="text-right">
+                            <input type="text" id="number_of_reel_<?php echo $index+1;?>" value="<?php echo $master['number_of_reel']; ?>" class="form-control text-right float_type_positive number_of_reel" data-current-id="<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][number_of_reel]">
+
                         </td>
                         <td class="text-right">
                             <input type="text" id="quantity_supply_<?php echo $index+1;?>" value="<?php echo $master['quantity_supply']; ?>" class="form-control text-right float_type_positive quantity_supply" data-current-id="<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][quantity_supply]">
@@ -163,7 +169,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
                 <tfoot>
                     <tr>
-                        <th colspan="6" class="text-right">Grand Total Quantity</th>
+                        <th colspan="7" class="text-right">Grand Total Quantity</th>
                         <th class="text-right"><label class="control-label" id="lbl_quantity_receive_total"><?php echo number_format(($quantity_total),3,'.','')?></label></th>
                         <th class="text-right">Grand Total (Tk)</th>
                         <th class="text-right"><label class="control-label" id="lbl_price_total_tk"><?php echo number_format($total_tk,2)?></label></th>
@@ -238,6 +244,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <label class="stock_current">&nbsp;</label>
             </td>
             <td class="text-right">
+                <input type="text" class="form-control text-right number_of_reel float_type_positive" value="" style="display: none;"/>
+            </td>
+            <td class="text-right">
                 <input type="text" class="form-control text-right quantity_supply float_type_positive" value="" style="display: none;"/>
             </td>
             <td class="text-right">
@@ -292,6 +301,10 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             $(content_id+' .stock_current').attr('id','stock_current_'+current_id);
             $(content_id+' .stock_current').attr('data-current-id',current_id);
 
+            $(content_id+' .number_of_reel').attr('id','number_of_reel_'+current_id);
+            $(content_id+' .number_of_reel').attr('data-current-id',current_id);
+            $(content_id+' .number_of_reel').attr('name','items['+current_id+'][number_of_reel]');
+
             $(content_id+' .quantity_supply').attr('id','quantity_supply_'+current_id);
             $(content_id+' .quantity_supply').attr('data-current-id',current_id);
             $(content_id+' .quantity_supply').attr('name','items['+current_id+'][quantity_supply]');
@@ -318,6 +331,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             $(content_id+' .pack_size_id').removeAttr('id');
             $(content_id+' .pack_size_id_container').removeAttr('id');
             $(content_id+' .stock_current').removeAttr('id');
+            $(content_id+' .number_of_reel').removeAttr('id');
             $(content_id+' .quantity_supply').removeAttr('id');
             $(content_id+' .quantity_receive').removeAttr('id');
             $(content_id+' .price_unit_tk').removeAttr('id');
@@ -339,6 +353,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             $("#variety_id_"+active_id).val("");
             $("#pack_size_id_"+active_id).val("");
             $("#stock_current_"+active_id).html("");
+            $("#number_of_reel_"+active_id).val("");
             $("#quantity_supply_"+active_id).val("");
             $("#quantity_receive_"+active_id).val("");
             $("#price_unit_tk_"+active_id).val("");
@@ -365,6 +380,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             $("#variety_id_"+active_id).val("");
             $("#pack_size_id_"+active_id).val("");
             $("#stock_current_"+active_id).html("");
+            $("#number_of_reel_"+active_id).val("");
             $("#quantity_supply_"+active_id).val("");
             $("#quantity_receive_"+active_id).val("");
             $("#price_unit_tk_"+active_id).val("");
@@ -389,6 +405,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
             $("#pack_size_id_"+active_id).val("");
             $("#stock_current_"+active_id).html("");
+            $("#number_of_reel_"+active_id).val("");
             $("#quantity_supply_"+active_id).val("");
             $("#quantity_receive_"+active_id).val("");
             $("#price_unit_tk_"+active_id).val("");
@@ -411,6 +428,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             var active_id=$(this).attr('data-current-id');
 
             $("#stock_current_"+active_id).html("");
+            $("#number_of_reel_"+active_id).val("");
             $("#quantity_supply_"+active_id).val("");
             $("#quantity_receive_"+active_id).val("");
             $("#price_unit_tk_"+active_id).val("");
@@ -421,6 +439,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
             if(variety_id>0 && pack_size_id!='' && packing_item!='')
             {
+                $("#number_of_reel_"+active_id).show();
                 $('#quantity_supply_'+active_id).show();
                 $('#quantity_receive_'+active_id).show();
                 $('#price_unit_tk_'+active_id).show();
@@ -446,6 +465,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             }
             else
             {
+                $("#number_of_reel_"+active_id).hide();
                 $('#quantity_supply_'+active_id).hide();
                 $('#quantity_receive_'+active_id).hide();
                 $('#price_unit_tk_'+active_id).hide();
