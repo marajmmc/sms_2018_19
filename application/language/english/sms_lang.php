@@ -356,3 +356,6 @@ $lang['LABEL_CARTON_SIZE']='Ctn Size';
 $lang['LABEL_DATE_RECEIVE']='Receive Date';
 $lang['LABEL_CHALLAN_NUMBER']='Challan Number';
 $lang['LABEL_DATE_CHALLAN']='Challan Date';
+
+$lang['LABEL_NUMBER_OF_REEL']='Number Of Reel';
+
