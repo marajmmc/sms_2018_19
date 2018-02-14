@@ -63,34 +63,7 @@ class Purchase_raw_foil extends Root_Controller
     {
         if(isset($this->permissions['action0']) && ($this->permissions['action0']==1))
         {
-            $user = User_helper::get_user();
-            $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
-            $data['system_preference_items']['barcode']= 1;
-            $data['system_preference_items']['date_receive']= 1;
-            $data['system_preference_items']['supplier_name']= 1;
-            $data['system_preference_items']['date_challan']= 1;
-            $data['system_preference_items']['challan_number']= 1;
-            $data['system_preference_items']['quantity_receive']= 1;
-            $data['system_preference_items']['remarks']= 1;
-            if($result)
-            {
-                if($result['preferences']!=null)
-                {
-                    $preferences=json_decode($result['preferences'],true);
-                    foreach($data['system_preference_items'] as $key=>$value)
-                    {
-                        if(isset($preferences[$key]))
-                        {
-                            $data['system_preference_items'][$key]=$value;
-                        }
-                        else
-                        {
-                            $data['system_preference_items'][$key]=0;
-                        }
-                    }
-                }
-            }
-
+            $data['system_preference_items']=$this->get_preference();
             $data['title']='Purchase (Common Foil) List';
             $ajax['status']=true;
             $ajax['system_content'][]=array('id'=>'#system_content','html'=>$this->load->view($this->controller_url.'/list',$data,true));
@@ -143,8 +116,6 @@ class Purchase_raw_foil extends Root_Controller
             $item['barcode']=Barcode_helper::get_barcode_raw_foil_purchase($item['id']);
         }
 
-//        print_r($items);
-//        exit;
         $this->json_return($items);
     }
     private function system_add()
@@ -156,6 +127,7 @@ class Purchase_raw_foil extends Root_Controller
             $data["item"] = Array(
                 'id'=>'',
                 'date_receive' => '',
+                'number_of_reel' =>'',
                 'quantity_supply' =>'',
                 'quantity_receive' =>'',
                 'remarks' => '',
@@ -311,6 +283,7 @@ class Purchase_raw_foil extends Root_Controller
             $data['challan_number']=$item['challan_number'];
             $data['date_challan']=System_helper::get_time($item['date_challan']);
             $data['remarks']=$item['remarks'];
+            $data['number_of_reel']=$item['number_of_reel'];
             $data['quantity_supply']=$item['quantity_supply'];
             $data['quantity_receive']=$item['quantity_receive'];
             $data['price_unit_tk']=$item['price_unit_tk'];
@@ -352,6 +325,7 @@ class Purchase_raw_foil extends Root_Controller
             $data['challan_number']=$item['challan_number'];
             $data['date_challan']=System_helper::get_time($item['date_challan']);
             $data['remarks']=$item['remarks'];
+            $data['number_of_reel']=$item['number_of_reel'];
             $data['quantity_supply']=$item['quantity_supply'];
             $data['quantity_receive']=$item['quantity_receive'];
             $data['price_unit_tk']=$item['price_unit_tk'];
@@ -408,7 +382,6 @@ class Purchase_raw_foil extends Root_Controller
 
     private function system_details($id)
     {
-        //$this->system_list();
         if(isset($this->permissions['action0']) && ($this->permissions['action0']==1))
         {
             if($id>0)
@@ -427,6 +400,10 @@ class Purchase_raw_foil extends Root_Controller
             $this->db->select('purchase_foil.*');
             $this->db->select('supplier.name supplier_name');
             $this->db->join($this->config->item('table_login_basic_setup_supplier').' supplier','supplier.id = purchase_foil.supplier_id','LEFT');
+            $this->db->select('created_user_info.name created_by');
+            $this->db->join($this->config->item('table_login_setup_user_info').' created_user_info','created_user_info.user_id = purchase_foil.user_created','INNER');
+            $this->db->select('updated_user_info.name updated_by');
+            $this->db->join($this->config->item('table_login_setup_user_info').' updated_user_info','updated_user_info.user_id = purchase_foil.user_updated','LEFT');
             $this->db->where('purchase_foil.status !=',$this->config->item('system_status_delete'));
             $this->db->where('purchase_foil.id',$item_id);
             $data['item']=$this->db->get()->row_array();
@@ -626,35 +603,8 @@ class Purchase_raw_foil extends Root_Controller
     {
         if(isset($this->permissions['action6']) && ($this->permissions['action6']==1))
         {
-            $user = User_helper::get_user();
-            $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
-            $data['system_preference_items']['barcode']= 1;
-            $data['system_preference_items']['date_receive']= 1;
-            $data['system_preference_items']['supplier_name']= 1;
-            $data['system_preference_items']['date_challan']= 1;
-            $data['system_preference_items']['challan_number']= 1;
-            $data['system_preference_items']['quantity_receive']= 1;
-            $data['system_preference_items']['remarks']= 1;
-            if($result)
-            {
-                if($result['preferences']!=null)
-                {
-                    $preferences=json_decode($result['preferences'],true);
-                    foreach($data['system_preference_items'] as $key=>$value)
-                    {
-                        if(isset($preferences[$key]))
-                        {
-                            $data['system_preference_items'][$key]=$value;
-                        }
-                        else
-                        {
-                            $data['system_preference_items'][$key]=0;
-                        }
-                    }
-                }
-            }
+            $data['system_preference_items']=$this->get_preference();
             $data['preference_method_name']='list';
-
             $data['title']="Set Preference";
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("preference_add_edit",$data,true));
@@ -667,5 +617,40 @@ class Purchase_raw_foil extends Root_Controller
             $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
             $this->json_return($ajax);
         }
+    }
+
+    private function get_preference()
+    {
+        $user = User_helper::get_user();
+        $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
+        $data['barcode']= 1;
+        $data['date_receive']= 1;
+        $data['supplier_name']= 1;
+        $data['date_challan']= 1;
+        $data['challan_number']= 1;
+        $data['number_of_reel']= 1;
+        $data['quantity_supply']= 1;
+        $data['quantity_receive']= 1;
+        $data['remarks']= 1;
+        if($result)
+        {
+            if($result['preferences']!=null)
+            {
+                $preferences=json_decode($result['preferences'],true);
+                foreach($data as $key=>$value)
+                {
+
+                    if(isset($preferences[$key]))
+                    {
+                        $data[$key]=$value;
+                    }
+                    else
+                    {
+                        $data[$key]=0;
+                    }
+                }
+            }
+        }
+        return $data;
     }
 }

@@ -76,20 +76,21 @@ if($result)
             <div class="col-xs-4">
                 <div class="row show-grid">
                     <div class="col-xs-6">
-                        <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_RECEIVE');?>:</label>
-                    </div>
-                    <div class="col-xs-6">
-                        <?php echo System_helper::display_date($item['date_receive']);?>
-                    </div>
-                </div>
-                <div class="row show-grid">
-                    <div class="col-xs-6">
                         <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_CHALLAN');?>:</label>
                     </div>
                     <div class="col-xs-6">
                         <?php echo System_helper::display_date($item['date_challan']);?>
                     </div>
                 </div>
+                <div class="row show-grid">
+                    <div class="col-xs-6">
+                        <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_RECEIVE');?>:</label>
+                    </div>
+                    <div class="col-xs-6">
+                        <?php echo System_helper::display_date($item['date_receive']);?>
+                    </div>
+                </div>
+
             </div>
         </div>
 
@@ -97,15 +98,17 @@ if($result)
             <thead>
             <tr>
                 <th style="width: 5px"><?php echo $CI->lang->line('LABEL_SL_NO'); ?></th>
-                <th class="text-center"><?php echo $CI->lang->line('LABEL_QUANTITY_SUPPLY');?></th>
-                <th class="text-center"><?php echo $CI->lang->line('LABEL_QUANTITY_RECEIVE');?></th>
-                <th class="text-center"><?php echo $CI->lang->line('LABEL_QUANTITY_DIFFERENCE');?></th>
+                <th class="text-center"><?php echo $CI->lang->line('LABEL_NUMBER_OF_REEL');?></th>
+                <th class="text-center"><?php echo $CI->lang->line('LABEL_QUANTITY_SUPPLY');?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
+                <th class="text-center"><?php echo $CI->lang->line('LABEL_QUANTITY_RECEIVE');?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
+                <th class="text-center"><?php echo $CI->lang->line('LABEL_QUANTITY_DIFFERENCE');?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
             </tr>
             </thead>
             <tbody>
 
                 <tr>
                     <td>1</td>
+                    <td class="text-right"><?php echo $item['number_of_reel'];?></td>
                     <td class="text-right"><?php echo $item['quantity_supply'];?></td>
                     <td class="text-right"><?php echo $item['quantity_receive'];?></td>
                     <td class="text-right"><?php echo ($item['quantity_supply']-$item['quantity_receive']);?></td>

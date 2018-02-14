@@ -63,6 +63,61 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
     </div>
 
     <div class="row show-grid">
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right">Created Time :</label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <?php echo System_helper::display_date_time($item['date_created']);?>
+            </div>
+        </div>
+    </div>
+
+    <div class="row show-grid">
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right">Created By :</label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <?php echo $item['created_by'];?>
+            </div>
+        </div>
+    </div>
+
+    <?php if($item['date_updated']){?>
+        <div class="row show-grid">
+            <div class="row show-grid">
+                <div class="col-xs-4">
+                    <label class="control-label pull-right">Updated Time :</label>
+                </div>
+                <div class="col-sm-4 col-xs-8">
+                    <?php echo System_helper::display_date_time($item['date_updated']);?>
+                </div>
+            </div>
+        </div>
+
+        <div class="row show-grid">
+            <div class="row show-grid">
+                <div class="col-xs-4">
+                    <label class="control-label pull-right">Updated By :</label>
+                </div>
+                <div class="col-sm-4 col-xs-8">
+                    <?php echo $item['updated_by'];?>
+                </div>
+            </div>
+        </div>
+    <?php } ?>
+
+    <div class="row show-grid">
+        <div class="col-xs-4">
+            <label for="number_of_reel" class="control-label pull-right"><?php echo $this->lang->line('LABEL_NUMBER_OF_REEL');?>:</label>
+        </div>
+        <div class="col-sm-4 col-xs-8">
+            <?php echo $item['number_of_reel'];?>
+        </div>
+    </div>
+
+    <div class="row show-grid">
         <div class="col-xs-4">
             <label for="quantity_supply" class="control-label pull-right"><?php echo $this->lang->line('LABEL_QUANTITY_SUPPLY');?>:</label>
         </div>
