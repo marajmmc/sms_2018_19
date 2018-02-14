@@ -586,7 +586,6 @@ class Lc_receive extends Root_Controller
             $this->db->select('crop_type.name crop_type_name');
             $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = crop_type.crop_id','LEFT');
             $this->db->select('crop.name crop_name');
-
             $this->db->join($this->config->item('table_login_basic_setup_warehouse').' warehouse','warehouse.id = lcd.receive_warehouse_id','LEFT');
             $this->db->select('warehouse.name warehouse_name');
             $this->db->where('lcd.lc_id',$item_id);

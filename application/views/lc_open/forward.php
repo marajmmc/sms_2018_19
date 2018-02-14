@@ -45,7 +45,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <thead>
                 <tr>
                     <th class="widget-header"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_FISCAL_YEAR');?></label></th>
-                    <th class="bg-danger"><label class="control-label"><?php echo $item['fiscal_year_name']?></label></th>
+                    <th class="bg-danger"><label class="control-label"><?php echo $item['fiscal_year']?></label></th>
                     <th class="widget-header"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_MONTH');?></label></th>
                     <th class="bg-danger"><label class="control-label"><?php echo date("F", mktime(0, 0, 0,  $item['month_id'],1, 2000));?></label></th>
                 </tr>
@@ -89,7 +89,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <th class="widget-header text-center" colspan="21">LC (<?php echo Barcode_helper::get_barcode_lc($item['id']);?>) Product & Price Details :: (Forwarded: <?php echo $item['status_open_forward']?>)</th>
                     </tr>
                     <tr>
-                        <th class="bg-danger" style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_VARIETY'); ?></th>
+                        <th class="bg-danger" style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
                         <th class="bg-danger text-center" style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
                         <th class="bg-danger text-right" style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_QUANTITY_KG_PACK'); ?></th>
                         <th class="bg-danger text-right" style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_QUANTITY_OPEN_KG'); ?></th>

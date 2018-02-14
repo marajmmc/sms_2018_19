@@ -132,7 +132,7 @@ $num_pages=ceil($total_records/$row_per_page);
                     <th rowspan="2"><?php echo $CI->lang->line('LABEL_CARTON_SIZE')?></th>
                     <th colspan="2" class="text-center"><?php echo $CI->lang->line('LABEL_QUANTITY_SUPPLY');?></th>
                     <th colspan="2" class="text-center"><?php echo $CI->lang->line('LABEL_QUANTITY_RECEIVE');?></th>
-                    <th colspan="2" class="text-center"><?php echo $CI->lang->line('LABEL_QUANTITY_DEFERENCE');?></th>
+                    <th colspan="2" class="text-center"><?php echo $CI->lang->line('LABEL_QUANTITY_DIFFERENCE');?></th>
                 </tr>
                 <tr>
                     <th class="text-right"><?php echo $CI->lang->line('LABEL_PACK'); ?>/<?php echo $CI->lang->line('LABEL_KG');?></th>
@@ -199,10 +199,10 @@ $num_pages=ceil($total_records/$row_per_page);
                             ?>
                             <tr>
                                 <td colspan="21">
-                                    <strong><?php echo $CI->lang->line('LABEL_REMARKS');?>: </strong><?php echo $item['remarks_receive'];?>
+                                    <strong><?php echo $CI->lang->line('LABEL_REMARKS');?>: </strong><?php echo nl2br($item['remarks_receive']);?>
                                 </td>
                             </tr>
-                            <?php
+                        <?php
                         }
                     }
                 }

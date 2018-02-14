@@ -215,6 +215,7 @@ $lang['LABEL_KG'] = 'Kg';
 // Quantity
 $lang['LABEL_QUANTITY'] = 'Quantity';
 $lang['LABEL_QUANTITY_TOTAL'] = 'Total Quantity';
+$lang['LABEL_QUANTITY_ORDER'] = 'Order Quantity';
 $lang['LABEL_QUANTITY_SUPPLY'] = 'Supply Quantity';
 $lang['LABEL_QUANTITY_RECEIVE'] = 'Receive Quantity';
 $lang['LABEL_QUANTITY_DIFFERENCE'] = 'Difference Quantity';
