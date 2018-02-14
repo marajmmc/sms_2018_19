@@ -113,7 +113,7 @@ class Lc_expense extends Root_Controller
         $this->db->select('principal.name principal_name');
         $this->db->select('currency.name currency_name');
         $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.id = lco.fiscal_year_id','INNER');
-        $this->db->join($this->config->item('table_sms_setup_currency').' currency','currency.id = lco.currency_id','INNER');
+        $this->db->join($this->config->item('table_login_setup_currency').' currency','currency.id = lco.currency_id','INNER');
         $this->db->join($this->config->item('table_login_basic_setup_principal').' principal','principal.id = lco.principal_id','INNER');
         $this->db->where('lco.status_open =',$this->config->item('system_status_active'));
         $this->db->order_by('lco.fiscal_year_id','DESC');
@@ -156,7 +156,7 @@ class Lc_expense extends Root_Controller
             $this->db->select('lco.*');
             $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.id = lco.fiscal_year_id','INNER');
             $this->db->select('fy.name fiscal_year');
-            $this->db->join($this->config->item('table_sms_setup_currency').' currency','currency.id = lco.currency_id','INNER');
+            $this->db->join($this->config->item('table_login_setup_currency').' currency','currency.id = lco.currency_id','INNER');
             $this->db->select('currency.name currency_name');
             $this->db->join($this->config->item('table_login_basic_setup_principal').' principal','principal.id = lco.principal_id','INNER');
             $this->db->select('principal.name principal_name');
@@ -174,7 +174,7 @@ class Lc_expense extends Root_Controller
                 $this->json_return($ajax);
             }
 
-            $data['items']=Query_helper::get_info($this->config->item('table_sms_direct_cost_items'),'*',array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('ordering ASC'));
+            $data['items']=Query_helper::get_info($this->config->item('table_login_setup_direct_cost_items'),'*',array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('ordering ASC'));
             $results=Query_helper::get_info($this->config->item('table_sms_lc_expense'),'*',array('lc_id ='.$item_id),0,0,array(''));
             $data['dc']=array();
             foreach($results as $result)
@@ -304,7 +304,7 @@ class Lc_expense extends Root_Controller
             $this->db->select('lco.*');
             $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.id = lco.fiscal_year_id','INNER');
             $this->db->select('fy.name fiscal_year');
-            $this->db->join($this->config->item('table_sms_setup_currency').' currency','currency.id = lco.currency_id','INNER');
+            $this->db->join($this->config->item('table_login_setup_currency').' currency','currency.id = lco.currency_id','INNER');
             $this->db->select('currency.name currency_name');
             $this->db->join($this->config->item('table_login_basic_setup_principal').' principal','principal.id = lco.principal_id','INNER');
             $this->db->select('principal.name principal_name');
@@ -322,7 +322,7 @@ class Lc_expense extends Root_Controller
                 $this->json_return($ajax);
             }
 
-            $data['items']=Query_helper::get_info($this->config->item('table_sms_direct_cost_items'),'*',array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('ordering ASC'));
+            $data['items']=Query_helper::get_info($this->config->item('table_login_setup_direct_cost_items'),'*',array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('ordering ASC'));
             $results=Query_helper::get_info($this->config->item('table_sms_lc_expense'),'*',array('lc_id ='.$item_id),0,0,array(''));
             $data['dc']=array();
             foreach($results as $result)

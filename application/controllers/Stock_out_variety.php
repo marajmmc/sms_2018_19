@@ -135,7 +135,7 @@ class Stock_out_variety extends Root_Controller
             $data['crop_types']=array();
             $data['varieties']=array();
             $data['warehouses']=Query_helper::get_info($this->config->item('table_login_basic_setup_warehouse'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
-            $data['packs']=Query_helper::get_info($this->config->item('table_login_setup_classification_vpack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
+            $data['packs']=Query_helper::get_info($this->config->item('table_login_setup_classification_pack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $data['divisions']=Query_helper::get_info($this->config->item('table_login_setup_location_divisions'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $data['stock_out_varieties']=array();
             $ajax['system_page_url']=site_url($this->controller_url."/index/add");
@@ -195,7 +195,7 @@ class Stock_out_variety extends Root_Controller
             $this->db->select('variety.name variety_name');
             $this->db->join($this->config->item('table_login_setup_classification_varieties').' variety','variety.id = stock_out_details.variety_id','INNER');
             $this->db->select('v_pack_size.name pack_size');
-            $this->db->join($this->config->item('table_login_setup_classification_vpack_size').' v_pack_size','v_pack_size.id = stock_out_details.pack_size_id','LEFT');
+            $this->db->join($this->config->item('table_login_setup_classification_pack_size').' v_pack_size','v_pack_size.id = stock_out_details.pack_size_id','LEFT');
             $this->db->select('ware_house.name ware_house_name');
             $this->db->join($this->config->item('table_login_basic_setup_warehouse').' ware_house','ware_house.id = stock_out_details.warehouse_id','INNER');
             $this->db->select('type.name crop_type_name');
@@ -207,7 +207,7 @@ class Stock_out_variety extends Root_Controller
             $data['stock_out_varieties']=$this->db->get()->result_array();
             $data['crops']=Query_helper::get_info($this->config->item('table_login_setup_classification_crops'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $data['warehouses']=Query_helper::get_info($this->config->item('table_login_basic_setup_warehouse'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
-            $data['packs']=Query_helper::get_info($this->config->item('table_login_setup_classification_vpack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
+            $data['packs']=Query_helper::get_info($this->config->item('table_login_setup_classification_pack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $data['divisions']=Query_helper::get_info($this->config->item('table_login_setup_location_divisions'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $data['zones']=Query_helper::get_info($this->config->item('table_login_setup_location_zones'),array('id value','name text'),array('division_id ='.$data['item']['division_id']));
             $data['territories']=Query_helper::get_info($this->config->item('table_login_setup_location_territories'),array('id value','name text'),array('zone_id ='.$data['item']['zone_id']));
@@ -376,7 +376,7 @@ class Stock_out_variety extends Root_Controller
 
         /* --Start-- for counting total quantity of stock out*/
         $pack_size=array();
-        $results=Query_helper::get_info($this->config->item('table_login_setup_classification_vpack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
+        $results=Query_helper::get_info($this->config->item('table_login_setup_classification_pack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
         foreach($results as $result)
         {
             $pack_size[$result['value']]=$result['text'];
@@ -605,7 +605,7 @@ class Stock_out_variety extends Root_Controller
             $this->db->select('variety.name variety_name');
             $this->db->join($this->config->item('table_login_setup_classification_varieties').' variety','variety.id = stock_out_details.variety_id','INNER');
             $this->db->select('v_pack_size.name pack_size');
-            $this->db->join($this->config->item('table_login_setup_classification_vpack_size').' v_pack_size','v_pack_size.id = stock_out_details.pack_size_id','LEFT');
+            $this->db->join($this->config->item('table_login_setup_classification_pack_size').' v_pack_size','v_pack_size.id = stock_out_details.pack_size_id','LEFT');
             $this->db->select('ware_house.name ware_house_name');
             $this->db->join($this->config->item('table_login_basic_setup_warehouse').' ware_house','ware_house.id = stock_out_details.warehouse_id','INNER');
             $this->db->select('type.name crop_type_name');
@@ -681,7 +681,7 @@ class Stock_out_variety extends Root_Controller
             $this->db->join($this->config->item('table_login_setup_classification_varieties').' variety','variety.id = stock_out_details.variety_id','INNER');
             $this->db->select('variety.name variety_name');
 
-            $this->db->join($this->config->item('table_login_setup_classification_vpack_size').' pack','pack.id = stock_out_details.pack_size_id','LEFT');
+            $this->db->join($this->config->item('table_login_setup_classification_pack_size').' pack','pack.id = stock_out_details.pack_size_id','LEFT');
             $this->db->select('pack.name pack_size');
 
             $this->db->join($this->config->item('table_login_basic_setup_warehouse').' warehouse','warehouse.id = stock_out_details.warehouse_id','INNER');

@@ -43,7 +43,7 @@ class Report_stock_variety_summary extends Root_Controller
     {
         if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
         {
-            $data['pack_sizes']=Query_helper::get_info($this->config->item('table_login_setup_classification_vpack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('name ASC'));
+            $data['pack_sizes']=Query_helper::get_info($this->config->item('table_login_setup_classification_pack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('name ASC'));
             $data['title']="Variety Current Stock Report Search";
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/search",$data,true));
@@ -105,7 +105,7 @@ class Report_stock_variety_summary extends Root_Controller
         $this->db->select('croptype.id crop_type_id, croptype.name crop_type_name');
         $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id=croptype.crop_id','INNER');
         $this->db->select('crop.id crop_id, crop.name crop_name');
-        $this->db->join($this->config->item('table_login_setup_classification_vpack_size').' pack','pack.id=stock_summary_variety.pack_size_id','LEFT');
+        $this->db->join($this->config->item('table_login_setup_classification_pack_size').' pack','pack.id=stock_summary_variety.pack_size_id','LEFT');
         $this->db->select('pack.name pack_size');
         $this->db->order_by('crop.id, croptype.id, v.id, pack.id');
 

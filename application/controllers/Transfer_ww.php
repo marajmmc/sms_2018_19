@@ -185,7 +185,7 @@ class Transfer_ww extends Root_Controller
             $this->db->select('variety.name variety_name');
             $this->db->join($this->config->item('table_login_setup_classification_varieties').' variety','variety.id = transfer_warehouse.variety_id','LEFT');
             $this->db->select('v_pack_size.name pack_size_name');
-            $this->db->join($this->config->item('table_login_setup_classification_vpack_size').' v_pack_size','v_pack_size.id = transfer_warehouse.pack_size_id','LEFT');
+            $this->db->join($this->config->item('table_login_setup_classification_pack_size').' v_pack_size','v_pack_size.id = transfer_warehouse.pack_size_id','LEFT');
             $this->db->select('source_ware_house.name source_ware_house_name');
             $this->db->join($this->config->item('table_login_basic_setup_warehouse').' source_ware_house','source_ware_house.id = transfer_warehouse.source_warehouse_id','LEFT');
             $this->db->select('destination_ware_house.name destination_ware_house_name');
@@ -243,7 +243,7 @@ class Transfer_ww extends Root_Controller
             $this->db->select('variety.name variety_name');
             $this->db->join($this->config->item('table_login_setup_classification_varieties').' variety','variety.id = transfer_warehouse.variety_id','LEFT');
             $this->db->select('v_pack_size.name pack_size_name');
-            $this->db->join($this->config->item('table_login_setup_classification_vpack_size').' v_pack_size','v_pack_size.id = transfer_warehouse.pack_size_id','LEFT');
+            $this->db->join($this->config->item('table_login_setup_classification_pack_size').' v_pack_size','v_pack_size.id = transfer_warehouse.pack_size_id','LEFT');
             $this->db->select('source_ware_house.name source_ware_house_name');
             $this->db->join($this->config->item('table_login_basic_setup_warehouse').' source_ware_house','source_ware_house.id = transfer_warehouse.source_warehouse_id','LEFT');
             $this->db->select('destination_ware_house.name destination_ware_house_name');
@@ -491,7 +491,7 @@ class Transfer_ww extends Root_Controller
         $this->db->from($this->config->item('table_sms_stock_summary_variety').' stock_summary');
         $this->db->select('stock_summary.pack_size_id value');
         $this->db->select('v_pack_size.name text');
-        $this->db->join($this->config->item('table_login_setup_classification_vpack_size').' v_pack_size','v_pack_size.id = stock_summary.pack_size_id','LEFT');
+        $this->db->join($this->config->item('table_login_setup_classification_pack_size').' v_pack_size','v_pack_size.id = stock_summary.pack_size_id','LEFT');
         $this->db->where('stock_summary.variety_id',$variety_id);
         $this->db->group_by('stock_summary.pack_size_id');
         $items=$this->db->get()->result_array();

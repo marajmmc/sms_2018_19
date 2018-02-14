@@ -27,10 +27,10 @@ $config['table_login_setup_location_unions'] = 'arm_login_2018_19.login_setup_lo
 $config['table_login_setup_classification_crops']='arm_login_2018_19.login_setup_classification_crops';
 $config['table_login_setup_classification_crop_types']='arm_login_2018_19.login_setup_classification_crop_types';
 $config['table_login_setup_classification_varieties']='arm_login_2018_19.login_setup_classification_varieties';
-$config['table_login_setup_classification_vpack_size'] = 'arm_login_2018_19.login_setup_classification_variety_pack_size';
+$config['table_login_setup_classification_pack_size'] = 'arm_login_2018_19.login_setup_classification_pack_size';
 $config['table_login_setup_classification_variety_category'] = 'arm_login_2018_19.login_setup_classification_variety_category';
 $config['table_login_setup_classification_hybrid'] = 'arm_login_2018_19.login_setup_classification_hybrid';
-$config['table_login_setup_variety_principals'] = 'arm_login_2018_19.login_setup_variety_principals';
+$config['table_login_setup_classification_variety_principals'] = 'arm_login_2018_19.login_setup_classification_variety_principals';
 $config['table_login_setup_classification_variety_price'] = 'arm_login_2018_19.login_setup_classification_variety_price';
 
 //customer setup
@@ -51,3 +51,11 @@ $config['table_login_basic_setup_supplier'] = 'arm_login_2018_19.login_basic_set
 $config['table_login_setup_bank'] = 'arm_login_2018_19.login_setup_bank';
 $config['table_login_setup_bank_account'] = 'arm_login_2018_19.login_setup_bank_account';
 $config['table_login_setup_bank_account_purpose'] = 'arm_login_2018_19.login_setup_bank_account_purpose';
+
+// Direct Cost Item Setup
+$config['table_login_setup_direct_cost_items'] = 'arm_login_2018_19.login_setup_direct_cost_items';
+$config['table_login_setup_direct_cost_items'] = 'arm_login_2018_19.login_setup_direct_cost_items';
+
+// Setup
+$config['table_login_setup_currency'] = 'arm_login_2018_19.login_setup_currency';
+$config['table_login_setup_direct_cost_items'] = 'arm_login_2018_19.login_setup_direct_cost_items';

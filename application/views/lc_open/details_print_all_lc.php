@@ -199,7 +199,7 @@ $num_pages=ceil($total_records/$row_per_page);
                             ?>
                             <tr>
                                 <td colspan="21">
-                                    <strong><?php echo $CI->lang->line('LABEL_REMARKS');?>: </strong><?php echo nl2br($item['remarks_receive']);?>
+                                    <strong><?php echo $CI->lang->line('LABEL_REMARKS');?>: </strong><?php echo $item['remarks_receive'];?>
                                 </td>
                             </tr>
                             <?php

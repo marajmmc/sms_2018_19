@@ -20,6 +20,12 @@ if(isset($CI->permissions['action4']) && ($CI->permissions['action4']==1))
 {
     $action_buttons[]=array(
         'type'=>'button',
+        'label'=>$CI->lang->line('ACTION_DETAILS_PRINT'),
+        'class'=>'button_jqx_action',
+        'data-action-link'=>site_url($CI->controller_url.'/index/details_print_all_lc')
+    );
+    $action_buttons[]=array(
+        'type'=>'button',
         'label'=>$CI->lang->line("ACTION_PRINT"),
         'class'=>'button_action_download',
         'data-title'=>"Print",
@@ -87,8 +93,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             dataFields: [
                 { name: 'id', type: 'int' },
                 { name: 'barcode', type: 'string' },
-                { name: 'fiscal_year_name', type: 'string' },
-                { name: 'month_name', type: 'string' },
+                { name: 'fiscal_year', type: 'string' },
+                { name: 'month', type: 'string' },
                 { name: 'date_opening', type: 'string' },
                 { name: 'date_expected', type: 'string' },
                 { name: 'principal_name', type: 'string' },
@@ -100,7 +106,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 { name: 'price_open_variety_currency', type: 'string' },
                 { name: 'status_open_forward', type: 'string' },
                 { name: 'status_release', type: 'string' },
-                { name: 'status_receive', type: 'string' },
+                { name: 'status_received', type: 'string' },
                 { name: 'status_open', type: 'string' }
             ],
             id: 'id',
@@ -129,8 +135,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 columns:
                     [
                         { text: '<?php echo $CI->lang->line('LABEL_BARCODE'); ?>', dataField: 'barcode',filtertype: 'list', width:80, hidden: <?php echo $system_preference_items['barcode']?0:1;?>},
-                        { text: '<?php echo $CI->lang->line('LABEL_FISCAL_YEAR'); ?>', dataField: 'fiscal_year_name',filtertype: 'list', width:65, hidden: <?php echo $system_preference_items['fiscal_year_name']?0:1;?>},
-                        { text: '<?php echo $CI->lang->line('LABEL_MONTH'); ?>', dataField: 'month_name',filtertype: 'list', width:60, hidden: <?php echo $system_preference_items['month_name']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_FISCAL_YEAR'); ?>', dataField: 'fiscal_year',filtertype: 'list', width:65, hidden: <?php echo $system_preference_items['fiscal_year']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_MONTH'); ?>', dataField: 'month',filtertype: 'list', width:60, hidden: <?php echo $system_preference_items['month']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_DATE_OPENING'); ?>', dataField: 'date_opening', width:90, hidden: <?php echo $system_preference_items['date_opening']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_DATE_EXPECTED'); ?>', dataField: 'date_expected', width:90, hidden: <?php echo $system_preference_items['date_expected']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_PRINCIPAL_NAME'); ?>', dataField: 'principal_name',filtertype: 'list', width:180, hidden: <?php echo $system_preference_items['principal_name']?0:1;?>},
@@ -142,7 +148,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         { text: '<?php echo $CI->lang->line('LABEL_PRICE_OPEN_VARIETY_CURRENCY'); ?>', dataField: 'price_open_variety_currency', cellsalign: 'right', width:100, hidden: <?php echo $system_preference_items['price_open_variety_currency']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_STATUS_OPEN_FORWARD');?>', dataField: 'status_open_forward',cellsalign: 'center',filtertype: 'list', width:30, hidden: <?php echo $system_preference_items['status_open_forward']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_STATUS_RELEASE');?>', dataField: 'status_release',cellsalign: 'center',filtertype: 'list', width:70, hidden: <?php echo $system_preference_items['status_release']?0:1;?>},
-                        { text: '<?php echo $CI->lang->line('LABEL_STATUS_RECEIVE');?>', dataField: 'status_receive',cellsalign: 'center',filtertype: 'list', width:70, hidden: <?php echo $system_preference_items['status_receive']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_STATUS_RECEIVED');?>', dataField: 'status_received',cellsalign: 'center',filtertype: 'list', width:70, hidden: <?php echo $system_preference_items['status_received']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_STATUS_OPEN');?>', dataField: 'status_open',cellsalign: 'center',filtertype: 'list', width:70, hidden: <?php echo $system_preference_items['status_open']?0:1;?>}
                     ]
             });
