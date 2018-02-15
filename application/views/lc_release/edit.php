@@ -39,51 +39,51 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         </div>
 
         <div class="col-md-12">
-            <table class="table table-bordered table-responsive ">
+            <table class="table table-bordered table-responsive system_table_details_view">
                 <thead>
                 <tr>
-                    <th class="widget-header"><label class="control-label pull-right">Forward By</label></th>
-                    <th class="bg-danger"><label class="control-label"><?php echo $item['user_full_name']?></label></th>
-                    <th class="widget-header"><label class="control-label pull-right">Forwarded Time</label></th>
-                    <th class="bg-danger"><label class="control-label"><?php echo System_helper::display_date_time($item['date_open_forward']);?></label></th>
+                    <th class="widget-header header_caption"><label class="control-label pull-right">Forward By</label></th>
+                    <th class="header_value"><label class="control-label"><?php echo $item['user_full_name']?></label></th>
+                    <th class="widget-header header_caption"><label class="control-label pull-right">Forwarded Time</label></th>
+                    <th class="header_value"><label class="control-label"><?php echo System_helper::display_date_time($item['date_open_forward']);?></label></th>
                 </tr>
                 </thead>
             </table>
-            <table class="table table-bordered table-responsive ">
+            <table class="table table-bordered table-responsive system_table_details_view">
                 <thead>
                 <tr>
-                    <th class="widget-header"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_FISCAL_YEAR');?></label></th>
-                    <th class="bg-danger"><label class="control-label"><?php echo $item['fiscal_year']?></label></th>
-                    <th class="widget-header"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_MONTH');?></label></th>
-                    <th class="bg-danger"><label class="control-label"><?php echo date("F", mktime(0, 0, 0,  $item['month_id'],1, 2000));?></label></th>
-                </tr>
-                <tr>
-                    <th class="widget-header"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_OPENING');?></label></th>
-                    <th><label class="control-label"><?php echo System_helper::display_date($item['date_opening']);?></label></th>
-                    <th class="widget-header"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_EXPECTED');?></label></th>
-                    <th><label class="control-label"><?php echo System_helper::display_date($item['date_expected']);?></label></th>
-                </tr>
-                <tr>
-                    <th class="widget-header"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_PRINCIPAL_NAME');?></label></th>
+                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_FISCAL_YEAR');?></label></th>
+                    <th class=" header_value"><label class="control-label"><?php echo $item['fiscal_year']?></label></th>
+                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_PRINCIPAL_NAME');?></label></th>
                     <th class="bg-danger"><label class="control-label"><?php echo $item['principal_name'];?></label></th>
-                    <th class="widget-header"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_LC_NUMBER');?></label></th>
+                </tr>
+                <tr>
+                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_MONTH');?></label></th>
+                    <th class=" header_value"><label class="control-label"><?php echo date("F", mktime(0, 0, 0,  $item['month_id'],1, 2000));?></label></th>
+                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_LC_NUMBER');?></label></th>
                     <th class="bg-danger"><label class="control-label"><?php echo $item['lc_number'];?></label></th>
                 </tr>
                 <tr>
-                    <th class="widget-header"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_BANK_ACCOUNT_NUMBER');?></label></th>
-                    <th><label class="control-label"><?php echo $item['bank_account_number'];?></label></th>
-                    <th class="widget-header"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_CURRENCY_NAME');?></label></th>
-                    <th><label class="control-label"><?php echo $item['currency_name'];?></label></th>
+                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_OPENING');?></label></th>
+                    <th class=" header_value"><label class="control-label"><?php echo System_helper::display_date($item['date_opening']);?></label></th>
+                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_CONSIGNMENT_NAME');?></label></th>
+                    <th class=" header_value" colspan="3"><label class="control-label"><?php echo $item['consignment_name'];?></label></th>
                 </tr>
                 <tr>
+                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_EXPECTED');?></label></th>
+                    <th class=" header_value"><label class="control-label"><?php echo System_helper::display_date($item['date_expected']);?></label></th>
+                    <th class="widget-header"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_CURRENCY_NAME');?></label></th>
+                    <th class="bg-danger"><label class="control-label"><?php echo $item['currency_name'];?></label></th>
+                </tr>
+                <tr>
+                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_BANK_ACCOUNT_NUMBER');?></label></th>
+                    <th class=" header_value"><label class="control-label"><?php echo $item['bank_account_number'];?></label></th>
                     <th class="widget-header"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_PRICE_OPEN_OTHER_CURRENCY');?></label></th>
                     <th class="bg-danger"><label class="control-label"><?php echo number_format($item['price_open_other_currency'],2);?></label></th>
-                    <th class="widget-header"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_CONSIGNMENT_NAME');?></label></th>
-                    <th><label class="control-label"><?php echo $item['consignment_name'];?></label></th>
                 </tr>
                 <tr>
-                    <th class="widget-header"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS_LC_OPEN');?></label></th>
-                    <th class="bg-danger" colspan="3"><label class="control-label"><?php echo $item['remarks_open'];?></label></th>
+                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS_LC_OPEN');?></label></th>
+                    <th class=" header_value" colspan="3"><label class="control-label"><?php echo nl2br($item['remarks_open']);?></label></th>
                 </tr>
                 </thead>
             </table>
@@ -108,17 +108,17 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <th class="label-info" rowspan="2"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
                         <th class="label-info text-center" rowspan="2"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
                         <th class="label-info text-center" rowspan="2">Unit Price (Currency)</th>
-                        <th class="label-primary text-center" colspan="3">Order Information</th>
-                        <th class="label-warning text-center" colspan="3">Actual Information</th>
+                        <th class="label-primary text-center" colspan="3"><?php echo $CI->lang->line('LABEL_QUANTITY_ORDER');?></th>
+                        <th class="label-warning text-center" colspan="3"><?php echo $CI->lang->line('LABEL_QUANTITY_SUPPLY');?></th>
                     </tr>
                     <tr>
-                        <th class="label-primary text-center"><?php echo $CI->lang->line('LABEL_QUANTITY_KG_PACK'); ?></th>
-                        <th class="label-primary text-center">KG</th>
-                        <th class="label-primary text-center">Total Price (Currency)</th>
+                        <th class="label-primary text-center"><?php echo $CI->lang->line('LABEL_PACK'); ?>/<?php echo $CI->lang->line('LABEL_KG');?></th>
+                        <th class="label-primary text-center"><?php echo $CI->lang->line('KG');?></th>
+                        <th class="label-primary text-center"><?php echo $CI->lang->line('LABEL_TOTAL_CURRENCY');?></th>
 
-                        <th class="label-warning text-center"><?php echo $CI->lang->line('LABEL_QUANTITY_KG_PACK'); ?></th>
-                        <th class="label-warning text-center">KG</th>
-                        <th class="label-warning text-center">Total Price (Currency)</th>
+                        <th class="label-primary text-center"><?php echo $CI->lang->line('LABEL_PACK'); ?>/<?php echo $CI->lang->line('LABEL_KG');?></th>
+                        <th class="label-primary text-center"><?php echo $CI->lang->line('KG');?></th>
+                        <th class="label-primary text-center"><?php echo $CI->lang->line('LABEL_TOTAL_CURRENCY');?></th>
                     </tr>
                     </thead>
                     <?php
@@ -127,8 +127,10 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         ?>
                         <tbody>
                         <?php
-                        $quantity_open_total_kg=0;
-                        $quantity_release_total_kg=0;
+                        $quantity_total_open=0;
+                        $quantity_total_open_kg=0;
+                        $quantity_total_release=0;
+                        $quantity_total_release_kg=0;
                         foreach($items as $index=>$data)
                         {
                             if($item['revision_release_count']==0)
@@ -151,8 +153,10 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                                 $quantity_open_kg=(($data['pack_size_name']*$data['quantity_open'])/1000);
                                 $quantity_release_kg=(($data['pack_size_name']*$quantity_release)/1000);
                             }
-                            $quantity_open_total_kg+=$quantity_open_kg;
-                            $quantity_release_total_kg+=$quantity_release_kg;
+                            $quantity_total_open+=$data['quantity_open'];
+                            $quantity_total_open_kg+=$quantity_open_kg;
+                            $quantity_total_release+=$data['quantity_release'];
+                            $quantity_total_release_kg+=$quantity_release_kg;
                             ?>
                             <tr>
                                 <td>
@@ -167,7 +171,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                                     <?php echo $data['price_unit_currency']?>
                                     <input type="hidden" value="<?php echo $data['price_unit_currency']; ?>" class="form-control float_type_positive price_unit_currency" id="price_unit_currency_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][price_unit_currency]">
                                 </td>
-                                <td class="text-right"><label class="control-label" for=""><?php echo number_format($data['quantity_open'],3,'.','')?></label></td>
+                                <td class="text-right"><label class="control-label" for=""><?php echo $data['quantity_open']?></label></td>
                                 <td class="text-right"><label class="control-label" for=""><?php echo number_format($quantity_open_kg,3,'.','')?></label></td>
                                 <td class="text-right"><label class="control-label" for=""><?php echo number_format(($data['quantity_open']*$data['price_unit_currency']),2)?></label></td>
                                 <td>
@@ -190,11 +194,12 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         </tbody>
                         <tfoot>
                         <tr>
-                            <th colspan="4" class="text-right"><?php echo $this->lang->line('LABEL_TOTAL_KG')?> & <?php echo $this->lang->line('LABEL_TOTAL_CURRENCY')?></th>
-                            <th class="text-right"><label class="control-label"><?php echo number_format($quantity_open_total_kg,3,'.','');?></label></th>
+                            <th colspan="3" class="text-right"><?php echo $this->lang->line('LABEL_TOTAL_KG')?> & <?php echo $this->lang->line('LABEL_TOTAL_CURRENCY')?></th>
+                            <th class="text-right"><label class="control-label"><?php echo $quantity_total_open;?></label></th>
+                            <th class="text-right"><label class="control-label"><?php echo number_format($quantity_total_open_kg,3,'.','');?></label></th>
                             <th class="text-right"><label class="control-label"><?php echo number_format($item['price_open_variety_currency'],2);?></label></th>
-                            <th>&nbsp;</th>
-                            <th class="text-right"><label class="control-label" id="lbl_quantity_release_total_kg"><?php echo number_format($quantity_release_total_kg,3,'.','');?></label></th>
+                            <th class="text-right"><label class="control-label" id="lbl_quantity_release_total"><?php echo $quantity_total_release;?></label></th>
+                            <th class="text-right"><label class="control-label" id="lbl_quantity_release_total_kg"><?php echo number_format($quantity_total_release_kg,3,'.','');?></label></th>
                             <th class="text-right">
                                 <label class="control-label" id="lbl_price_variety_total_release_currency">
                                     <?php
@@ -252,7 +257,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <tr>
                             <th colspan="8" class="text-right"><?php echo $this->lang->line('LABEL_TOTAL_TAKA')?></th>
                             <th>
-                                <input type="text" name="item[price_release_other_variety_taka]" id="price_release_other_variety_taka" class="form-control float_type_positive" value="<?php echo $item['price_release_other_variety_taka'];?>"/>
+                                <input type="text" name="item[price_release_other_variety_taka]" id="price_release_other_variety_taka" class="form-control float_type_positive" value="<?php echo $item['price_release_other_variety_taka'];?>" />
                             </th>
                         </tr>
                         </tfoot>
@@ -279,25 +284,33 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
     function calculate_total()
     {
         var quantity_release_total_kg=0;
-        var price_release_currency=0;
-        $('.quantity_release_kg').each(function(index, element)
+        var quantity_release_total=0;
+        var price_release_total_currency=0;
+        $('.quantity_release').each(function(index, element)
         {
             var current_id=parseInt($(this).attr('data-current-id'));
-            quantity_release_total_kg+=parseFloat($('#quantity_release_kg_'+current_id).html().replace(/,/g,''));
-            price_release_currency+=parseFloat($('#price_release_currency_'+current_id).html().replace(/,/g,''));
+            var quantity_release=parseFloat($(this).val());
+            if(isNaN(quantity_release))
+            {
+                quantity_release=0;
+            }
+            quantity_release_total+=quantity_release;
+            var quantity_release_kg=parseFloat($('#quantity_release_kg_'+current_id).html().replace(/,/g,''));
+            if(isNaN(quantity_release_kg))
+            {
+                quantity_release_kg=0;
+            }
+            quantity_release_total_kg+=quantity_release_kg;
+            var price_release_currency=parseFloat($('#price_release_currency_'+current_id).html().replace(/,/g,''));
+            if(isNaN(price_release_currency))
+            {
+                price_release_currency=0;
+            }
+            price_release_total_currency+=price_release_currency;
         });
+        $('#lbl_quantity_release_total').html(quantity_release_total);
         $('#lbl_quantity_release_total_kg').html(number_format(quantity_release_total_kg,3,'.',''));
-        $('#lbl_price_variety_total_release_currency').html(number_format(price_release_currency,2));
-        if(isNaN($('#price_release_other_currency').val()))
-        {
-            var price_release_other_variety_currency=price_release_currency;
-        }
-        else
-        {
-            var price_release_other_variety_currency=(parseFloat($('#price_release_other_currency').val())+price_release_currency);
-        }
-
-        $('#lbl_price_release_other_variety_currency').html(number_format(price_release_other_variety_currency,2));
+        $('#lbl_price_variety_total_release_currency').html(number_format(price_release_total_currency,2));
     }
     $(document).ready(function()
     {
@@ -335,7 +348,18 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         $(document).off('input','#price_release_other_currency');
         $(document).on('input', '#price_release_other_currency', function()
         {
-            calculate_total();
+            var price_release_other_currency=parseFloat($('#price_release_other_currency').val());
+            if(isNaN(price_release_other_currency))
+            {
+                price_release_other_currency=0;
+            }
+            var price_variety_total_release_currency=parseFloat($('#lbl_price_variety_total_release_currency').html().replace(/,/g,''));
+            if(isNaN(price_variety_total_release_currency))
+            {
+                price_variety_total_release_currency=0;
+            }
+            var price_release_other_variety_currency=(price_release_other_currency+price_variety_total_release_currency);
+            $('#lbl_price_release_other_variety_currency').html(number_format(price_release_other_variety_currency,2));
         })
     })
 </script>

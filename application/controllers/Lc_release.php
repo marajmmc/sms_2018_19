@@ -525,15 +525,23 @@ class Lc_release extends Root_Controller
             foreach($items as $item)
             {
                 /// empty checking
-                if(!($item['quantity_release']>=0))
+                if(!($item['quantity_release']>0))
                 {
                     $this->message='Invalid input (variety info :: '.$item['variety_id'].').';
                     return false;
                 }
             }
         }
+        $item=$this->input->post('item');
+        if(!$item['price_release_other_variety_taka']>0)
+        {
+            $this->message=$this->lang->line('LABEL_TOTAL_TAKA').' field is required.';
+            return false;
+        }
         $this->load->library('form_validation');
         $this->form_validation->set_rules('id','ID','required');
+        $this->form_validation->set_rules('item[price_release_other_currency]',$this->lang->line('LABEL_OTHER_COST_CURRENCY'),'required');
+        $this->form_validation->set_rules('item[price_release_other_variety_taka]',$this->lang->line('LABEL_TOTAL_TAKA'),'required');
         if($this->form_validation->run() == FALSE)
         {
             $this->message=validation_errors();

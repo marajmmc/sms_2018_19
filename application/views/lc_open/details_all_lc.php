@@ -13,6 +13,7 @@ $status_closed=false;
 $status_open_forward=false;
 $status_release=false;
 $status_receive=false;
+$number_footer_colspan=5;
 if($item['status_open']==$this->config->item('system_status_closed'))
 {
     $status_closed=true;
@@ -28,6 +29,7 @@ if($item['status_release']==$this->config->item('system_status_complete'))
 if($item['status_receive']==$this->config->item('system_status_complete'))
 {
     $status_receive=true;
+
 }
 
 
@@ -388,7 +390,7 @@ if($item['status_receive']==$this->config->item('system_status_complete'))
                     </tbody>
                     <tfoot>
                     <tr>
-                        <th colspan="8" class="text-right"><?php echo $this->lang->line('LABEL_TOTAL_KG')?></th>
+                        <th colspan="<?php echo $number_footer_colspan;?>" class="text-right"><?php echo $this->lang->line('LABEL_TOTAL_KG')?></th>
                         <th class="text-right"><label class="control-label"><?php echo $quantity_total_open;?></label></th>
                         <th class="text-right"><label class="control-label"><?php echo number_format($quantity_total_open_kg,3,'.','');?></label></th>
                         <?php
