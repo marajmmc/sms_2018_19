@@ -45,7 +45,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 if($item['id']>0)
                 {
                     ?>
-                    <label class="control-label"><?php echo $item['fiscal_year_name']?></label>
+                    <label class="control-label"><?php echo $item['fiscal_year']?></label>
                 <?php
                 }
                 else
@@ -418,7 +418,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
     $(document).ready(function()
     {
         system_preset({controller:'<?php echo $CI->router->class; ?>'});
-        $(".date_large").datepicker({dateFormat : display_date_format,changeMonth: true,changeYear: true,yearRange: "2015:+2"});
+        //$(".date_large").datepicker({dateFormat : display_date_format,changeMonth: true,changeYear: true,yearRange: "2015:+2"});
+        $(".date_large").datepicker({dateFormat : display_date_format});
 
         $(document).off('change','#principal_id');
         $(document).on("change","#principal_id",function()

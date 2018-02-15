@@ -31,7 +31,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             <thead>
             <tr>
                 <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_FISCAL_YEAR');?></label></th>
-                <th class=" header_value"><label class="control-label"><?php echo $item['fiscal_year_name']?></label></th>
+                <th class=" header_value"><label class="control-label"><?php echo $item['fiscal_year']?></label></th>
                 <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_PRINCIPAL_NAME');?></label></th>
                 <th class="bg-danger"><label class="control-label"><?php echo $item['principal_name'];?></label></th>
             </tr>

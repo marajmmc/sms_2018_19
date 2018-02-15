@@ -63,7 +63,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <thead>
                 <tr>
                     <th class="widget-header"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_FISCAL_YEAR');?></label></th>
-                    <th class="bg-danger"><label class="control-label"><?php echo $item['fiscal_year_name']?></label></th>
+                    <th class="bg-danger"><label class="control-label"><?php echo $item['fiscal_year']?></label></th>
                     <th class="widget-header"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_MONTH');?></label></th>
                     <th class="bg-danger"><label class="control-label"><?php echo date("F", mktime(0, 0, 0,  $item['month_id'],1, 2000));?></label></th>
                 </tr>

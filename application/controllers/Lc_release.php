@@ -58,8 +58,8 @@ class Lc_release extends Root_Controller
             $user = User_helper::get_user();
             $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
             $data['system_preference_items']['barcode']= 1;
-            $data['system_preference_items']['fiscal_year_name']= 1;
-            $data['system_preference_items']['month_name']= 1;
+            $data['system_preference_items']['fiscal_year']= 1;
+            $data['system_preference_items']['month']= 1;
             $data['system_preference_items']['date_opening']= 1;
             $data['system_preference_items']['date_expected']= 1;
             $data['system_preference_items']['principal_name']= 1;
@@ -109,7 +109,7 @@ class Lc_release extends Root_Controller
     {
         $this->db->from($this->config->item('table_sms_lc_open').' lco');
         $this->db->select('lco.*');
-        $this->db->select('fy.name fiscal_year_name');
+        $this->db->select('fy.name fiscal_year');
         $this->db->select('principal.name principal_name');
         $this->db->select('currency.name currency_name');
         $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.id = lco.fiscal_year_id','INNER');
@@ -127,8 +127,8 @@ class Lc_release extends Root_Controller
             $item=array();
             $item['id']=$result['id'];
             $item['barcode']=Barcode_helper::get_barcode_lc($result['id']);
-            $item['fiscal_year_name']=$result['fiscal_year_name'];
-            $item['month_name']=$this->lang->line("LABEL_MONTH_$result[month_id]");
+            $item['fiscal_year']=$result['fiscal_year'];
+            $item['month']=$this->lang->line("LABEL_MONTH_$result[month_id]");
             $item['date_opening']=System_helper::display_date($result['date_opening']);
             $item['date_expected']=System_helper::display_date($result['date_expected']);
             $item['principal_name']=$result['principal_name'];
@@ -158,7 +158,7 @@ class Lc_release extends Root_Controller
 
             $this->db->from($this->config->item('table_sms_lc_open').' lco');
             $this->db->select('lco.*');
-            $this->db->select('fy.name fiscal_year_name');
+            $this->db->select('fy.name fiscal_year');
             $this->db->select('currency.name currency_name');
             $this->db->select('principal.name principal_name');
             $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.id = lco.fiscal_year_id','INNER');
@@ -374,7 +374,7 @@ class Lc_release extends Root_Controller
 
             $this->db->from($this->config->item('table_sms_lc_open').' lco');
             $this->db->select('lco.*');
-            $this->db->select('fy.name fiscal_year_name');
+            $this->db->select('fy.name fiscal_year');
             $this->db->select('currency.name currency_name');
             $this->db->select('principal.name principal_name');
             $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.id = lco.fiscal_year_id','INNER');
@@ -548,8 +548,8 @@ class Lc_release extends Root_Controller
             $user = User_helper::get_user();
             $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
             $data['system_preference_items']['barcode']= 1;
-            $data['system_preference_items']['fiscal_year_name']= 1;
-            $data['system_preference_items']['month_name']= 1;
+            $data['system_preference_items']['fiscal_year']= 1;
+            $data['system_preference_items']['month']= 1;
             $data['system_preference_items']['date_opening']= 1;
             $data['system_preference_items']['date_expected']= 1;
             $data['system_preference_items']['principal_name']= 1;

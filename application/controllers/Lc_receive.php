@@ -134,7 +134,7 @@ class Lc_receive extends Root_Controller
 
             $this->db->from($this->config->item('table_sms_lc_open').' lco');
             $this->db->select('lco.*');
-            $this->db->select('fy.name fiscal_year_name');
+            $this->db->select('fy.name fiscal_year');
             $this->db->select('currency.name currency_name');
             $this->db->select('principal.name principal_name');
             $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.id = lco.fiscal_year_id','INNER');
@@ -357,7 +357,7 @@ class Lc_receive extends Root_Controller
 
             $this->db->from($this->config->item('table_sms_lc_open').' lco');
             $this->db->select('lco.*');
-            $this->db->select('fy.name fiscal_year_name');
+            $this->db->select('fy.name fiscal_year');
             $this->db->select('currency.name currency_name');
             $this->db->select('principal.name principal_name');
             $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.id = lco.fiscal_year_id','INNER');
@@ -460,7 +460,7 @@ class Lc_receive extends Root_Controller
             $this->db->from($this->config->item('table_sms_lc_open').' lco');
             $this->db->select('lco.*');
             $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.id = lco.fiscal_year_id','INNER');
-            $this->db->select('fy.name fiscal_year_name');
+            $this->db->select('fy.name fiscal_year');
             $this->db->join($this->config->item('table_login_setup_currency').' currency','currency.id = lco.currency_id','INNER');
             $this->db->select('currency.name currency_name');
             $this->db->join($this->config->item('table_login_basic_setup_principal').' principal','principal.id = lco.principal_id','INNER');
@@ -548,7 +548,7 @@ class Lc_receive extends Root_Controller
             $this->db->from($this->config->item('table_sms_lc_open').' lco');
             $this->db->select('lco.*');
             $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.id = lco.fiscal_year_id','INNER');
-            $this->db->select('fy.name fiscal_year_name');
+            $this->db->select('fy.name fiscal_year');
             $this->db->join($this->config->item('table_login_setup_currency').' currency','currency.id = lco.currency_id','INNER');
             $this->db->select('currency.name currency_name');
             $this->db->join($this->config->item('table_login_basic_setup_principal').' principal','principal.id = lco.principal_id','INNER');
