@@ -234,7 +234,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <table class="table table-bordered">
                     <thead>
                     <tr>
-                        <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_VARIETY'); ?></th>
+                        <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
                         <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
                         <th style="min-width: 100px; text-align: right  ;"><?php echo $CI->lang->line('LABEL_QUANTITY_KG_PACK'); ?></th>
                         <th style="min-width: 100px; text-align: right;"><?php echo $CI->lang->line('LABEL_QUANTITY_OPEN_KG'); ?></th>

@@ -111,7 +111,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <th class="widget-header text-center" colspan="21">LC (<?php echo Barcode_helper::get_barcode_lc($item['id']);?>) Product & Price Details :: ( Completed Status: <?php echo $item['status_release']?> )</th>
                     </tr>
                     <tr>
-                        <th class="label-info" rowspan="2"><?php echo $CI->lang->line('LABEL_VARIETY'); ?></th>
+                        <th class="label-info" rowspan="2"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
                         <th class="label-info text-center" rowspan="2"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
                         <th class="label-info text-center" rowspan="2">Unit Price (Currency)</th>
                         <th class="label-primary text-center" colspan="3">Order Information</th>

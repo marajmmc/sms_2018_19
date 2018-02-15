@@ -670,7 +670,7 @@ class Transfer_ww extends Root_Controller
         {
             $this->load->library('form_validation');
             $this->form_validation->set_rules('item[date_transfer]','Transfer Date','required');
-            $this->form_validation->set_rules('item[variety_id]',$this->lang->line('LABEL_VARIETY'),'required');
+            $this->form_validation->set_rules('item[variety_id]',$this->lang->line('LABEL_VARIETY_NAME'),'required');
             $this->form_validation->set_rules('item[pack_size_id]',$this->lang->line('LABEL_PACK_SIZE'),'required');
             $this->form_validation->set_rules('item[source_warehouse_id]','Source Warehouse','required');
             $this->form_validation->set_rules('item[destination_warehouse_id]','Destination Warehouse','required');

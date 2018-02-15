@@ -121,7 +121,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
         <div style="<?php if(!($item['id']>0)){echo 'display:none';} ?>" class="row show-grid" id="variety_id_container">
             <div class="col-xs-4">
-                <label for="variety_id" class="control-label pull-right"><?php echo $CI->lang->line('LABEL_VARIETY');?><span style="color:#FF0000">*</span></label>
+                <label for="variety_id" class="control-label pull-right"><?php echo $CI->lang->line('LABEL_VARIETY_NAME');?><span style="color:#FF0000">*</span></label>
             </div>
             <?php if($item['id']>0){?>
                 <div class="col-sm-4 col-xs-8">
