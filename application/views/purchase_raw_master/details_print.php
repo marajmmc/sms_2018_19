@@ -146,7 +146,7 @@ $num_pages=ceil($total_records/$row_per_page);
                         <td><?php echo $data['crop_name']?></td>
                         <td><?php echo $data['crop_type_name']?></td>
                         <td><?php echo $data['variety_name']?></td>
-                        <td class="text-right"> <?php echo $data['pack_size_name'];?></td>
+                        <td class="text-right"> <?php echo $data['pack_size'];?></td>
                         <td class="text-right"> <?php echo $data['number_of_reel'];?></td>
                         <td class="text-right"><?php echo number_format($data['quantity_supply'],3,'.','');?></td>
                         <td class="text-right"><?php echo number_format($data['quantity_receive'],3,'.','');?></td>

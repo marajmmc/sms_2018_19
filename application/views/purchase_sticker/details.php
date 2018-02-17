@@ -148,7 +148,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <label><?php echo $sticker['variety_name']; ?></label>
                     </td>
                     <td>
-                        <label><?php echo $sticker['pack_size_name']; ?></label>
+                        <label><?php echo $sticker['pack_size']; ?></label>
                     </td>
                     <td class="text-right">
                         <label><?php $current_stock=System_helper::get_raw_stock(array($sticker['variety_id'])); if(isset($current_stock)){echo $current_stock[$sticker['variety_id']][$sticker['pack_size_id']][$CI->config->item('system_sticker')]['current_stock'];}else{echo 0;}?></label>

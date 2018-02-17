@@ -150,8 +150,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                             }
                             else
                             {
-                                $quantity_open_kg=(($data['pack_size_name']*$data['quantity_open'])/1000);
-                                $quantity_release_kg=(($data['pack_size_name']*$quantity_release)/1000);
+                                $quantity_open_kg=(($data['pack_size']*$data['quantity_open'])/1000);
+                                $quantity_release_kg=(($data['pack_size']*$quantity_release)/1000);
                             }
                             $quantity_total_open+=$data['quantity_open'];
                             $quantity_total_open_kg+=$quantity_open_kg;
@@ -164,8 +164,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                                     <input type="hidden" name="items[<?php echo $index+1;?>][variety_id]" value="<?php echo $data['variety_id']; ?>">
                                 </td>
                                 <td class="text-center">
-                                    <?php if($data['pack_size_name']==0){echo "Bulk";}else{echo $data['pack_size_name'];}?>
-                                    <input type="hidden" name="items[<?php echo $index+1;?>][pack_size_id]" id="pack_size_id_<?php echo $index+1;?>" value="<?php echo $data['pack_size_id']; ?>" class="pack_size_id" data-pack-size-name="<?php if($data['pack_size_name']==0){echo 0;}else{echo $data['pack_size_name'];}?>">
+                                    <?php if($data['pack_size']==0){echo "Bulk";}else{echo $data['pack_size'];}?>
+                                    <input type="hidden" name="items[<?php echo $index+1;?>][pack_size_id]" id="pack_size_id_<?php echo $index+1;?>" value="<?php echo $data['pack_size_id']; ?>" class="pack_size_id" data-pack-size-name="<?php if($data['pack_size']==0){echo 0;}else{echo $data['pack_size'];}?>">
                                 </td>
                                 <td class="text-center">
                                     <?php echo $data['price_unit_currency']?>

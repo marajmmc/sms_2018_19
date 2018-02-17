@@ -184,7 +184,7 @@ class Transfer_ww extends Root_Controller
             $this->db->select('transfer_warehouse.*');
             $this->db->select('variety.name variety_name');
             $this->db->join($this->config->item('table_login_setup_classification_varieties').' variety','variety.id = transfer_warehouse.variety_id','LEFT');
-            $this->db->select('v_pack_size.name pack_size_name');
+            $this->db->select('v_pack_size.name pack_size');
             $this->db->join($this->config->item('table_login_setup_classification_pack_size').' v_pack_size','v_pack_size.id = transfer_warehouse.pack_size_id','LEFT');
             $this->db->select('source_ware_house.name source_ware_house_name');
             $this->db->join($this->config->item('table_login_basic_setup_warehouse').' source_ware_house','source_ware_house.id = transfer_warehouse.source_warehouse_id','LEFT');
@@ -242,7 +242,7 @@ class Transfer_ww extends Root_Controller
             $this->db->select('transfer_warehouse.*');
             $this->db->select('variety.name variety_name');
             $this->db->join($this->config->item('table_login_setup_classification_varieties').' variety','variety.id = transfer_warehouse.variety_id','LEFT');
-            $this->db->select('v_pack_size.name pack_size_name');
+            $this->db->select('v_pack_size.name pack_size');
             $this->db->join($this->config->item('table_login_setup_classification_pack_size').' v_pack_size','v_pack_size.id = transfer_warehouse.pack_size_id','LEFT');
             $this->db->select('source_ware_house.name source_ware_house_name');
             $this->db->join($this->config->item('table_login_basic_setup_warehouse').' source_ware_house','source_ware_house.id = transfer_warehouse.source_warehouse_id','LEFT');

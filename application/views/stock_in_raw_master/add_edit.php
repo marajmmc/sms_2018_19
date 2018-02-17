@@ -112,7 +112,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                             <input type="hidden"  id="variety_id<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][variety_id]" value="<?php echo $master['variety_id']; ?>" />
                         </td>
                         <td>
-                            <label><?php echo $master['pack_size_name']; ?></label>
+                            <label><?php echo $master['pack_size']; ?></label>
                             <input type="hidden" id="pack_size_id<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][pack_size_id]" value="<?php echo $master['pack_size_id']; ?>" />
 
                         </td>

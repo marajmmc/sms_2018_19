@@ -129,15 +129,10 @@ class Lc_open extends Root_Controller
             $item['fiscal_year']=$result['fiscal_year'];
             $item['month']=$this->lang->line("LABEL_MONTH_$result[month_id]");
             $item['date_opening']=System_helper::display_date($result['date_opening']);
-            $item['date_expected']=System_helper::display_date($result['date_expected']);
             $item['principal_name']=$result['principal_name'];
             $item['currency_name']=$result['currency_name'];
             $item['lc_number']=$result['lc_number'];
-            $item['consignment_name']=$result['consignment_name'];
             $item['quantity_open_kg']=number_format($result['quantity_open_kg'],3,'.','');
-            $item['price_open_other_currency']=number_format($result['price_open_other_currency'],2);
-            $item['price_open_variety_currency']=number_format($result['price_open_variety_currency'],2);
-            $item['status_open_forward']=$result['status_open_forward'];
             $items[]=$item;
         }
         $this->json_return($items);
@@ -232,7 +227,7 @@ class Lc_open extends Root_Controller
             $data['item']['lc_number']='';
             $data['item']['consignment_name']='';
             $data['item']['remarks_open']='';
-            $data['item']['price_open_other_currency']=0;
+            $data['item']['price_open_other_currency']='';
             $data['item']['quantity_open_kg']=0;
             $data['item']['price_open_variety_currency']=0;
             $data['items']=array();
@@ -308,7 +303,7 @@ class Lc_open extends Root_Controller
             $this->db->select('lcd.*');
             $this->db->select('v.id variety_id, v.name variety_name');
             $this->db->select('vp.name_import variety_name_import');
-            $this->db->select('pack.name pack_size_name');
+            $this->db->select('pack.name pack_size');
             $this->db->join($this->config->item('table_login_setup_classification_varieties').' v','v.id = lcd.variety_id','INNER');
             $this->db->join($this->config->item('table_login_setup_classification_variety_principals').' vp','vp.variety_id = v.id AND vp.principal_id = '.$data['item']['principal_id'].' AND vp.revision = 1','INNER');
             $this->db->join($this->config->item('table_login_setup_classification_pack_size').' pack','pack.id = lcd.pack_size_id','LEFT');
@@ -620,7 +615,7 @@ class Lc_open extends Root_Controller
             $this->db->select('lcd.*');
             $this->db->select('v.id variety_id, v.name variety_name');
             $this->db->select('vp.name_import variety_name_import');
-            $this->db->select('pack.name pack_size_name');
+            $this->db->select('pack.name pack_size');
             $this->db->join($this->config->item('table_login_setup_classification_varieties').' v','v.id = lcd.variety_id','INNER');
             $this->db->join($this->config->item('table_login_setup_classification_variety_principals').' vp','vp.variety_id = v.id AND vp.principal_id = '.$data['item']['principal_id'].' AND vp.revision = 1','INNER');
             $this->db->join($this->config->item('table_login_setup_classification_pack_size').' pack','pack.id = lcd.pack_size_id','LEFT');
@@ -920,7 +915,7 @@ class Lc_open extends Root_Controller
             $this->db->select('lcd.*');
             $this->db->select('v.id variety_id, v.name variety_name');
             $this->db->select('vp.name_import variety_name_import');
-            $this->db->select('pack.name pack_size_name');
+            $this->db->select('pack.name pack_size');
             $this->db->join($this->config->item('table_login_setup_classification_varieties').' v','v.id = lcd.variety_id','INNER');
             $this->db->join($this->config->item('table_login_setup_classification_variety_principals').' vp','vp.variety_id = v.id AND vp.principal_id = '.$data['item']['principal_id'].' AND vp.revision = 1','INNER');
             $this->db->join($this->config->item('table_login_setup_classification_pack_size').' pack','pack.id = lcd.pack_size_id','LEFT');
@@ -1020,27 +1015,46 @@ class Lc_open extends Root_Controller
         $item = $this->input->post("item");
         if($id==0)
         {
-            $this->form_validation->set_rules('item[fiscal_year_id]',$this->lang->line('LABEL_FISCAL_YEAR'),'required');
-            $this->form_validation->set_rules('item[month_id]',$this->lang->line('LABEL_MONTH'),'required');
-            $this->form_validation->set_rules('item[date_opening]',$this->lang->line('LABEL_DATE_OPENING'),'required');
-            $this->form_validation->set_rules('item[principal_id]',$this->lang->line('LABEL_PRINCIPAL_NAME'),'required');
-            if(!isset($item['date_opening']) || !strtotime($item['date_opening']))
+            if(!isset($item['fiscal_year_id']) || !is_numeric($item['fiscal_year_id']))
             {
-                $this->message='LC opening date is not correct formation.';
+                $this->message=$this->lang->line('LABEL_FISCAL_YEAR').' field is required.';
                 return false;
             }
+            if(!isset($item['month_id']) || !is_numeric($item['month_id']))
+            {
+                $this->message=$this->lang->line('LABEL_MONTH').' field is required.';
+                return false;
+            }
+            if(!isset($item['date_opening']) || !strtotime($item['date_opening']))
+            {
+                $this->message=$this->lang->line('LABEL_DATE_OPENING'). ' field is required.';
+                return false;
+            }
+            if(!isset($item['principal_id']) || !is_numeric($item['principal_id']))
+            {
+                $this->message=$this->lang->line('LABEL_PRINCIPAL_NAME'). ' field is required.';
+                return false;
+            }
+            //$this->form_validation->set_rules('item[fiscal_year_id]',$this->lang->line('LABEL_FISCAL_YEAR'),'required');
+            //$this->form_validation->set_rules('item[month_id]',$this->lang->line('LABEL_MONTH'),'required');
+            $this->form_validation->set_rules('item[date_opening]',$this->lang->line('LABEL_DATE_OPENING'),'required');
+            $this->form_validation->set_rules('item[principal_id]',$this->lang->line('LABEL_PRINCIPAL_NAME'),'required');
+
         }
         if(!isset($item['date_expected']) || !strtotime($item['date_expected']))
         {
-            $this->message='LC expected date is not correct formation.';
+            $this->message=$this->lang->line('LABEL_DATE_EXPECTED'). ' field is required.';
             return false;
         }
-        $this->form_validation->set_rules('item[date_expected]',$this->lang->line('LABEL_DATE_EXPECTED'),'required');
         $this->form_validation->set_rules('item[lc_number]',$this->lang->line('LABEL_LC_NUMBER'),'required');
-        $this->form_validation->set_rules('item[bank_account_id]',$this->lang->line('LABEL_BANK_NAME'),'required');
+        $this->form_validation->set_rules('item[bank_account_id]',$this->lang->line('LABEL_BANK_ACCOUNT_NUMBER'),'required');
         $this->form_validation->set_rules('item[currency_id]',$this->lang->line('LABEL_CURRENCY_NAME'),'required');
+        if(!$item['price_open_other_currency']>0)
+        {
+            $this->message=$this->lang->line('LABEL_PRICE_OPEN_OTHER_CURRENCY').' field is required.';
+            return false;
+        }
         $this->form_validation->set_rules('item[consignment_name]',$this->lang->line('LABEL_CONSIGNMENT_NAME'),'required');
-        $this->form_validation->set_rules('item[price_open_other_currency]',$this->lang->line('LABEL_OTHER_COST_CURRENCY'),'required');
         if($this->form_validation->run() == FALSE)
         {
             $this->message=validation_errors();
@@ -1153,14 +1167,10 @@ class Lc_open extends Root_Controller
         $data['fiscal_year']= 1;
         $data['month']= 1;
         $data['date_opening']= 1;
-        $data['date_expected']= 1;
         $data['principal_name']= 1;
         $data['currency_name']= 1;
         $data['lc_number']= 1;
-        $data['consignment_name']= 1;
-        $data['price_open_other_currency']= 1;
         $data['quantity_open_kg']= 1;
-        $data['price_open_variety_currency']= 1;
         if($result)
         {
             if($result['preferences']!=null)

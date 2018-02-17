@@ -191,7 +191,7 @@ class Stock_in_raw_sticker extends Root_Controller
             $this->db->join($this->config->item('table_sms_stock_in_raw_sticker_details').' sticker_details','sticker_details.stock_in_id = sticker_stock_in.id','INNER');
             $this->db->select('variety.name variety_name');
             $this->db->join($this->config->item('table_login_setup_classification_varieties').' variety','variety.id = sticker_details.variety_id','INNER');
-            $this->db->select('v_pack_size.name pack_size_name');
+            $this->db->select('v_pack_size.name pack_size');
             $this->db->join($this->config->item('table_login_setup_classification_pack_size').' v_pack_size','v_pack_size.id = sticker_details.pack_size_id','LEFT');
             $this->db->select('type.name crop_type_name');
             $this->db->join($this->config->item('table_login_setup_classification_crop_types').' type','type.id = variety.crop_type_id','INNER');

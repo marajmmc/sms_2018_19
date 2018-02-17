@@ -102,7 +102,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                             <label><?php echo $si_variety['variety_name']; ?></label>
                         </td>
                         <td>
-                            <label><?php if($si_variety['pack_size_id']==0){echo 'Bulk';}else{echo $si_variety['pack_size_name'];} ?></label>
+                            <label><?php if($si_variety['pack_size_id']==0){echo 'Bulk';}else{echo $si_variety['pack_size'];} ?></label>
                         </td>
                         <td>
                             <label><?php echo $si_variety['ware_house_name']; ?></label>

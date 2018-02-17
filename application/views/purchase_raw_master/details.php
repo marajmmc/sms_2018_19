@@ -156,7 +156,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                             <label><?php echo $master['variety_name']; ?></label>
                         </td>
                         <td>
-                            <label><?php echo $master['pack_size_name']; ?></label>
+                            <label><?php echo $master['pack_size']; ?></label>
                         </td>
                         <td class="text-right">
                             <label><?php $current_stock=System_helper::get_raw_stock(array($master['variety_id'])); if(isset($current_stock)){echo $current_stock[$master['variety_id']][$master['pack_size_id']][$CI->config->item('system_master_foil')]['current_stock'];}else{echo 0;}?></label>

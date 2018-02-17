@@ -112,7 +112,7 @@ $num_pages=ceil($total_records/$row_per_page);
                             <td><?php echo $items[$index]['crop_name']; ?></td>
                             <!--<td><?php /*echo $items[$index]['crop_type_name']; */?></td>-->
                             <td><?php echo $items[$index]['variety_name']; ?></td>
-                            <td><?php if($items[$index]['pack_size_id']==0){echo 'Bulk';}else{echo $items[$index]['pack_size_name'];} ?></td>
+                            <td><?php if($items[$index]['pack_size_id']==0){echo 'Bulk';}else{echo $items[$index]['pack_size'];} ?></td>
                             <td><?php echo $items[$index]['ware_house_name']; ?></td>
                             <td class="text-right"><?php echo $items[$index]['quantity']; ?></td>
                             <td class="text-right"> <?php echo $items[$index]['quantity']/1000;?> </td>

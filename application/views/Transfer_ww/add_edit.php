@@ -142,7 +142,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             </div>
             <?php if($item['id']>0){?>
                 <div class="col-sm-4 col-xs-8">
-                    <label class="control-label"><?php if($item['pack_size_id']==0){echo 'Bulk';}else{echo $item['pack_size_name'];}?></label>
+                    <label class="control-label"><?php if($item['pack_size_id']==0){echo 'Bulk';}else{echo $item['pack_size'];}?></label>
                 </div>
             <?php }else{?>
                 <div class="col-sm-4 col-xs-8">

@@ -144,8 +144,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                             }
                             else
                             {
-                                $quantity_open_kg=(($data['pack_size_name']*$data['quantity_open'])/1000);
-                                $quantity_release_kg=(($data['pack_size_name']*$data['quantity_release'])/1000);
+                                $quantity_open_kg=(($data['pack_size']*$data['quantity_open'])/1000);
+                                $quantity_release_kg=(($data['pack_size']*$data['quantity_release'])/1000);
                             }
                             $quantity_open_total_kg+=$quantity_open_kg;
                             $quantity_release_total_kg+=$quantity_release_kg;
@@ -155,7 +155,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                                     <strong class="text-success"><?php echo $data['variety_name']?> (<?php echo $data['variety_name_import']?>)</strong>
                                 </td>
                                 <td class="text-center">
-                                    <?php if($data['pack_size_name']==0){echo "Bulk";}else{echo $data['pack_size_name'];}?>
+                                    <?php if($data['pack_size']==0){echo "Bulk";}else{echo $data['pack_size'];}?>
                                 </td>
                                 <td class="text-center">
                                     <?php echo $data['price_unit_currency']?>

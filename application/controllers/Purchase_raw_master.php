@@ -176,7 +176,7 @@ class Purchase_raw_master extends Root_Controller
             $this->db->join($this->config->item('table_login_setup_classification_varieties').' variety','variety.id = master_details.variety_id','INNER');
             $this->db->select('variety.name variety_name');
             $this->db->join($this->config->item('table_login_setup_classification_pack_size').' v_pack_size','v_pack_size.id = master_details.pack_size_id','LEFT');
-            $this->db->select('v_pack_size.name pack_size_name');
+            $this->db->select('v_pack_size.name pack_size');
             $this->db->join($this->config->item('table_login_setup_classification_crop_types').' type','type.id = variety.crop_type_id','INNER');
             $this->db->select('type.name crop_type_name');
             $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = type.crop_id','INNER');
@@ -526,7 +526,7 @@ class Purchase_raw_master extends Root_Controller
             $this->db->select('master_details.variety_id, master_details.pack_size_id, master_details.quantity_supply, master_details.quantity_receive,master_details.price_unit_tk, master_details.number_of_reel');
             $this->db->select('variety.name variety_name');
             $this->db->join($this->config->item('table_login_setup_classification_varieties').' variety','variety.id = master_details.variety_id','INNER');
-            $this->db->select('v_pack_size.name pack_size_name');
+            $this->db->select('v_pack_size.name pack_size');
             $this->db->join($this->config->item('table_login_setup_classification_pack_size').' v_pack_size','v_pack_size.id = master_details.pack_size_id','LEFT');
             $this->db->select('type.name crop_type_name');
             $this->db->join($this->config->item('table_login_setup_classification_crop_types').' type','type.id = variety.crop_type_id','INNER');
@@ -589,7 +589,7 @@ class Purchase_raw_master extends Root_Controller
             $this->db->join($this->config->item('table_login_setup_classification_varieties').' variety','variety.id = master_details.variety_id','INNER');
             $this->db->select('variety.name variety_name');
             $this->db->join($this->config->item('table_login_setup_classification_pack_size').' v_pack_size','v_pack_size.id = master_details.pack_size_id','LEFT');
-            $this->db->select('v_pack_size.name pack_size_name');
+            $this->db->select('v_pack_size.name pack_size');
             $this->db->join($this->config->item('table_login_setup_classification_crop_types').' type','type.id = variety.crop_type_id','INNER');
             $this->db->select('type.name crop_type_name');
             $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = type.crop_id','INNER');

@@ -79,7 +79,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             <label for="pack_size_id" class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PACK_SIZE');?> :</label>
         </div>
         <div class="col-sm-4 col-xs-8">
-            <label class="control-label"><?php if($item['pack_size_id']==0){echo 'Bulk';}else{echo $item['pack_size_name'];}?></label>
+            <label class="control-label"><?php if($item['pack_size_id']==0){echo 'Bulk';}else{echo $item['pack_size'];}?></label>
         </div>
     </div>
 

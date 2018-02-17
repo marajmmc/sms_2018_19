@@ -29,7 +29,6 @@ if($item['status_release']==$this->config->item('system_status_complete'))
 if($item['status_receive']==$this->config->item('system_status_complete'))
 {
     $status_receive=true;
-
 }
 
 
