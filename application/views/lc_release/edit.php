@@ -72,17 +72,21 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <tr>
                     <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_EXPECTED');?></label></th>
                     <th class=" header_value"><label class="control-label"><?php echo System_helper::display_date($item['date_expected']);?></label></th>
+                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_BANK_ACCOUNT_NUMBER');?></label></th>
+                    <th class=" header_value"><label class="control-label"><?php echo $item['bank_account_number'];?></label></th>
+                </tr>
+                <tr>
+                    <th colspan="2">&nbsp;</th>
                     <th class="widget-header"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_CURRENCY_NAME');?></label></th>
                     <th class="bg-danger"><label class="control-label"><?php echo $item['currency_name'];?></label></th>
                 </tr>
                 <tr>
-                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_BANK_ACCOUNT_NUMBER');?></label></th>
-                    <th class=" header_value"><label class="control-label"><?php echo $item['bank_account_number'];?></label></th>
+                    <th colspan="2">&nbsp;</th>
                     <th class="widget-header"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_PRICE_OPEN_OTHER_CURRENCY');?></label></th>
                     <th class="bg-danger"><label class="control-label"><?php echo number_format($item['price_open_other_currency'],2);?></label></th>
                 </tr>
                 <tr>
-                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS_LC_OPEN');?></label></th>
+                    <th class="widget-header header_caption" style="vertical-align: top;"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS_LC_OPEN');?></label></th>
                     <th class=" header_value" colspan="3"><label class="control-label"><?php echo nl2br($item['remarks_open']);?></label></th>
                 </tr>
                 </thead>
@@ -107,18 +111,18 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <tr>
                         <th class="label-info" rowspan="2"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
                         <th class="label-info text-center" rowspan="2"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
-                        <th class="label-info text-center" rowspan="2">Unit Price (Currency)</th>
+                        <th class="label-info text-center" rowspan="2"><?php echo $CI->lang->line('LABEL_PRICE_CURRENCY_UNIT');?></th>
                         <th class="label-primary text-center" colspan="3"><?php echo $CI->lang->line('LABEL_QUANTITY_ORDER');?></th>
                         <th class="label-warning text-center" colspan="3"><?php echo $CI->lang->line('LABEL_QUANTITY_SUPPLY');?></th>
                     </tr>
                     <tr>
                         <th class="label-primary text-center"><?php echo $CI->lang->line('LABEL_PACK'); ?>/<?php echo $CI->lang->line('LABEL_KG');?></th>
                         <th class="label-primary text-center"><?php echo $CI->lang->line('KG');?></th>
-                        <th class="label-primary text-center"><?php echo $CI->lang->line('LABEL_TOTAL_CURRENCY');?></th>
+                        <th class="label-primary text-center"><?php echo $CI->lang->line('LABEL_PRICE_CURRENCY_TOTAL');?></th>
 
-                        <th class="label-primary text-center"><?php echo $CI->lang->line('LABEL_PACK'); ?>/<?php echo $CI->lang->line('LABEL_KG');?></th>
-                        <th class="label-primary text-center"><?php echo $CI->lang->line('KG');?></th>
-                        <th class="label-primary text-center"><?php echo $CI->lang->line('LABEL_TOTAL_CURRENCY');?></th>
+                        <th class="label-warning text-center"><?php echo $CI->lang->line('LABEL_PACK'); ?>/<?php echo $CI->lang->line('LABEL_KG');?></th>
+                        <th class="label-warning text-center"><?php echo $CI->lang->line('KG');?></th>
+                        <th class="label-warning text-center"><?php echo $CI->lang->line('LABEL_PRICE_CURRENCY_TOTAL');?></th>
                     </tr>
                     </thead>
                     <?php
@@ -155,7 +159,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                             }
                             $quantity_total_open+=$data['quantity_open'];
                             $quantity_total_open_kg+=$quantity_open_kg;
-                            $quantity_total_release+=$data['quantity_release'];
+                            $quantity_total_release+=$quantity_release;
                             $quantity_total_release_kg+=$quantity_release_kg;
                             ?>
                             <tr>
@@ -194,7 +198,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         </tbody>
                         <tfoot>
                         <tr>
-                            <th colspan="3" class="text-right"><?php echo $this->lang->line('LABEL_TOTAL_KG')?> & <?php echo $this->lang->line('LABEL_TOTAL_CURRENCY')?></th>
+                            <th colspan="3" class="text-right"><?php echo $this->lang->line('LABEL_TOTAL_KG')?> & <?php echo $this->lang->line('LABEL_PRICE_CURRENCY_TOTAL')?></th>
                             <th class="text-right"><label class="control-label"><?php echo $quantity_total_open;?></label></th>
                             <th class="text-right"><label class="control-label"><?php echo number_format($quantity_total_open_kg,3,'.','');?></label></th>
                             <th class="text-right"><label class="control-label"><?php echo number_format($item['price_open_variety_currency'],2);?></label></th>
@@ -268,7 +272,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         ?>
                         <tfoot>
                         <tr>
-                            <td class="widget-header text-center" colspan="21"><strong>Data Not Found</strong></td>
+                            <td class="widget-header text-center" colspan="21"><strong><?php echo $CI->lang->line('NO_DATA_FOUND');?></strong></td>
                         </tr>
                         </tfoot>
                     <?php
@@ -281,37 +285,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
     <div class="clearfix"></div>
 </form>
 <script>
-    function calculate_total()
-    {
-        var quantity_release_total_kg=0;
-        var quantity_release_total=0;
-        var price_release_total_currency=0;
-        $('.quantity_release').each(function(index, element)
-        {
-            var current_id=parseInt($(this).attr('data-current-id'));
-            var quantity_release=parseFloat($(this).val());
-            if(isNaN(quantity_release))
-            {
-                quantity_release=0;
-            }
-            quantity_release_total+=quantity_release;
-            var quantity_release_kg=parseFloat($('#quantity_release_kg_'+current_id).html().replace(/,/g,''));
-            if(isNaN(quantity_release_kg))
-            {
-                quantity_release_kg=0;
-            }
-            quantity_release_total_kg+=quantity_release_kg;
-            var price_release_currency=parseFloat($('#price_release_currency_'+current_id).html().replace(/,/g,''));
-            if(isNaN(price_release_currency))
-            {
-                price_release_currency=0;
-            }
-            price_release_total_currency+=price_release_currency;
-        });
-        $('#lbl_quantity_release_total').html(quantity_release_total);
-        $('#lbl_quantity_release_total_kg').html(number_format(quantity_release_total_kg,3,'.',''));
-        $('#lbl_price_variety_total_release_currency').html(number_format(price_release_total_currency,2));
-    }
     $(document).ready(function()
     {
         $(document).off('input','.quantity_release');
@@ -320,16 +293,15 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             var current_id=parseInt($(this).attr('data-current-id'));
             var quantity_release_kg=0;
             var quantity_release=parseFloat($(this).val());
-            var price_unit_currency=parseFloat($("#price_unit_currency_"+current_id).val());
             if(isNaN(quantity_release))
             {
                 quantity_release=0;
             }
+            var price_unit_currency=parseFloat($("#price_unit_currency_"+current_id).val());
             if(isNaN(price_unit_currency))
             {
                 var price_unit_currency=0;
             }
-
             var pack_size=parseFloat($("#pack_size_id_"+current_id).attr('data-pack-size-name'));
             if(pack_size==0)
             {
@@ -361,5 +333,47 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             var price_release_other_variety_currency=(price_release_other_currency+price_variety_total_release_currency);
             $('#lbl_price_release_other_variety_currency').html(number_format(price_release_other_variety_currency,2));
         })
+        function calculate_total()
+        {
+            var quantity_release_total=0;
+            var quantity_release_total_kg=0;
+            var price_release_total_currency=0;
+            $('.quantity_release').each(function(index, element)
+            {
+                var current_id=parseInt($(this).attr('data-current-id'));
+                var quantity_release=parseFloat($(this).val());
+                if(isNaN(quantity_release))
+                {
+                    quantity_release=0;
+                }
+                quantity_release_total+=quantity_release;
+                var quantity_release_kg=parseFloat($('#quantity_release_kg_'+current_id).html().replace(/,/g,''));
+                if(isNaN(quantity_release_kg))
+                {
+                    quantity_release_kg=0;
+                }
+                quantity_release_total_kg+=quantity_release_kg;
+                var price_release_currency=parseFloat($('#price_release_currency_'+current_id).html().replace(/,/g,''));
+                if(isNaN(price_release_currency))
+                {
+                    price_release_currency=0;
+                }
+                price_release_total_currency+=price_release_currency;
+            });
+            $('#lbl_quantity_release_total').html(quantity_release_total);
+            $('#lbl_quantity_release_total_kg').html(number_format(quantity_release_total_kg,3,'.',''));
+            $('#lbl_price_variety_total_release_currency').html(number_format(price_release_total_currency,2));
+            var price_variety_total_release_currency=parseFloat($('#lbl_price_variety_total_release_currency').html().replace(/,/g,''));
+            if(isNaN(price_variety_total_release_currency))
+            {
+                price_variety_total_release_currency=0;
+            }
+            var price_release_other_currency=parseFloat($('#price_release_other_currency').val());
+            if(isNaN(price_release_other_currency))
+            {
+                price_release_other_currency=0;
+            }
+            $('#lbl_price_release_other_variety_currency').html(number_format((price_variety_total_release_currency+price_release_other_currency),2));
+        }
     })
 </script>

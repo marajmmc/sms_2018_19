@@ -226,7 +226,6 @@ $lang['LABEL_TOTAL'] = 'Total';
 $lang['LABEL_TOTAL_KG']='Total (Kg)';
 $lang['LABEL_TOTAL_PKT']='Total (pkt)';
 $lang['LABEL_GRAND_TOTAL_KG']='Grand Total (Kg)';
-$lang['LABEL_GRAND_TOTAL_CURRENCY']='Grand Total (Currency)';
 $lang['LABEL_QUANTITY_KG_PACK']='Quantity (packet / Kg)';
 
 $lang['LABEL_CURRENT_STOCK'] = 'Current Stock (Pack/Kg)';
@@ -243,9 +242,11 @@ $lang['LABEL_QUANTITY_TOTAL_RECEIVE'] = 'Total Quantity (Receive)';
 $lang['LABEL_CURRENCY_SYMBOL'] = 'Currency Symbol';
 $lang['LABEL_CURRENCY_RATE'] = 'Currency Rate';
 $lang['LABEL_CURRENCY_NAME']='Currency';
-$lang['LABEL_TOTAL_CURRENCY']='Total (Currency)';
+$lang['LABEL_PRICE_CURRENCY_UNIT'] = 'Unit Price (Currency)';
+$lang['LABEL_PRICE_CURRENCY_TOTAL']='Total Price (Currency)';
 $lang['LABEL_GRAND_TOTAL_CURRENCY']='Grand Total (Currency)';
 $lang['LABEL_OTHER_COST_CURRENCY']='Others Cost (Currency)';
+$lang['LABEL_GRAND_TOTAL_CURRENCY']='Grand Total (Currency)';
 
 /* Taka */
 $lang['LABEL_TOTAL_TAKA']='Total (Taka)';

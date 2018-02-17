@@ -105,13 +105,10 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 { name: 'fiscal_year', type: 'string' },
                 { name: 'month', type: 'string' },
                 { name: 'date_opening', type: 'string' },
-                { name: 'date_expected', type: 'string' },
                 { name: 'principal_name', type: 'string' },
                 { name: 'currency_name', type: 'string' },
                 { name: 'lc_number', type: 'string' },
-                { name: 'consignment_name', type: 'string' },
-                { name: 'quantity_release_kg', type: 'string' },
-                { name: 'quantity_receive_kg', type: 'string' }
+                { name: 'quantity_open_kg', type: 'string' }
             ],
             id: 'id',
             url: url
@@ -137,17 +134,14 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 columnsreorder: true,
                 columns:
                     [
-                        { text: '<?php echo $CI->lang->line('LABEL_BARCODE'); ?>', dataField: 'barcode',filtertype: 'list', width:80, hidden: <?php echo $system_preference_items['barcode']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_BARCODE'); ?>', dataField: 'barcode', width:80, hidden: <?php echo $system_preference_items['barcode']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_FISCAL_YEAR'); ?>', dataField: 'fiscal_year',filtertype: 'list', width:65, hidden: <?php echo $system_preference_items['fiscal_year']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_MONTH'); ?>', dataField: 'month',filtertype: 'list', width:60, hidden: <?php echo $system_preference_items['month']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_DATE_OPENING'); ?>', dataField: 'date_opening', width:90, hidden: <?php echo $system_preference_items['date_opening']?0:1;?>},
-                        { text: '<?php echo $CI->lang->line('LABEL_DATE_EXPECTED'); ?>', dataField: 'date_expected', width:90, hidden: <?php echo $system_preference_items['date_expected']?0:1;?>},
-                        { text: '<?php echo $CI->lang->line('LABEL_PRINCIPAL_NAME'); ?>', dataField: 'principal_name',filtertype: 'list', width:80, hidden: <?php echo $system_preference_items['principal_name']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_PRINCIPAL_NAME'); ?>', dataField: 'principal_name',filtertype: 'list', width:180, hidden: <?php echo $system_preference_items['principal_name']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_CURRENCY_NAME'); ?>', dataField: 'currency_name',filtertype: 'list', width:80, hidden: <?php echo $system_preference_items['currency_name']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_LC_NUMBER'); ?>', dataField: 'lc_number', hidden: <?php echo $system_preference_items['lc_number']?0:1;?>},
-                        { text: '<?php echo $CI->lang->line('LABEL_CONSIGNMENT_NAME'); ?>', dataField: 'consignment_name', width:150, hidden: <?php echo $system_preference_items['consignment_name']?0:1;?>},
-                        { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_RELEASE_KG'); ?>', dataField: 'quantity_release_kg', width:100, cellsalign: 'right',  hidden: <?php echo $system_preference_items['quantity_release_kg']?0:1;?>},
-                        { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_RECEIVE_KG'); ?>', dataField: 'quantity_receive_kg', width:100, cellsalign: 'right', hidden: <?php echo $system_preference_items['quantity_receive_kg']?0:1;?>}
+                        { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_OPEN_KG'); ?>', dataField: 'quantity_open_kg', cellsalign: 'right', width:100, hidden: <?php echo $system_preference_items['quantity_open_kg']?0:1;?>}
                     ]
             });
     });

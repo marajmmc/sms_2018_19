@@ -89,7 +89,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_RECEIVE');?> <span style="color:#FF0000">*</span></label>
                 </div>
                 <div class="col-sm-4 col-xs-8">
-                    <input type="text" name="item[date_receive]" id="date_receive" class="form-control datepicker" value="<?php echo System_helper::display_date($item['date_receive']);?>" readonly="readonly" />
+                    <input type="text" name="item[date_receive]" id="date_receive" class="form-control datepicker" value="<?php echo System_helper::display_date($item['date_receive']);?>" />
                 </div>
             </div>
             <div class="row show-grid">
@@ -97,7 +97,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_PACKING_LIST');?> <span style="color:#FF0000">*</span></label>
                 </div>
                 <div class="col-sm-4 col-xs-8">
-                    <input type="text" name="item[date_packing_list]" id="date_packing_list" class="form-control datepicker" value="<?php echo System_helper::display_date($item['date_packing_list']);?>" readonly="readonly" />
+                    <input type="text" name="item[date_packing_list]" id="date_packing_list" class="form-control datepicker" value="<?php echo System_helper::display_date($item['date_packing_list']);?>" />
                 </div>
             </div>
             <div class="row show-grid">
@@ -139,17 +139,17 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <th class="label-info text-center" rowspan="2"><?php echo $CI->lang->line('LABEL_CARTON_NUMBER')?></th>
                         <th class="label-info text-center" rowspan="2"><?php echo $CI->lang->line('LABEL_CARTON_SIZE')?></th>
                         <th class="label-info text-center" rowspan="2"><?php echo $CI->lang->line('LABEL_WAREHOUSE_NAME'); ?></th>
-                        <th class="label-primary text-center" colspan="2">Release Information</th>
-                        <th class="label-warning text-center" colspan="2">Receive Information</th>
-                        <th class="label-success text-center" colspan="2">Deference Information</th>
+                        <th class="label-primary text-center" colspan="2"><?php echo $CI->lang->line('LABEL_QUANTITY_SUPPLY');?></th>
+                        <th class="label-success text-center" colspan="2"><?php echo $CI->lang->line('LABEL_QUANTITY_RECEIVE');?></th>
+                        <th class="label-danger text-center" colspan="2"><?php echo $CI->lang->line('LABEL_QUANTITY_DIFFERENCE');?></th>
                     </tr>
                     <tr>
                         <th class="label-primary text-center"><?php echo $CI->lang->line('LABEL_QUANTITY_KG_PACK'); ?></th>
                         <th class="label-primary text-center"><?php echo $CI->lang->line('KG');?></th>
-                        <th class="label-warning text-center"><?php echo $CI->lang->line('LABEL_QUANTITY_KG_PACK'); ?></th>
-                        <th class="label-warning text-center"><?php echo $CI->lang->line('KG');?></th>
                         <th class="label-success text-center"><?php echo $CI->lang->line('LABEL_QUANTITY_KG_PACK'); ?></th>
                         <th class="label-success text-center"><?php echo $CI->lang->line('KG');?></th>
+                        <th class="label-danger text-center"><?php echo $CI->lang->line('LABEL_QUANTITY_KG_PACK'); ?></th>
+                        <th class="label-danger text-center"><?php echo $CI->lang->line('KG');?></th>
                     </tr>
                     </thead>
                     <?php
@@ -224,7 +224,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                                         <?php echo number_format($quantity_receive_kg,3,'.',''); ?>
                                     </label>
                                 </td>
-                                <td class="text-right"><label class="control-label" id="quantity_deference_<?php echo $index+1;?>" for=""><?php echo ($data['quantity_release']-$data['quantity_receive'])?></label></td>
+                                <td class="text-right"><label class="control-label" id="quantity_deference_<?php echo $index+1;?>" for=""><?php echo ($data['quantity_release']-$quantity_receive)?></label></td>
                                 <td class="text-right"><label class="control-label" id="quantity_deference_kg_<?php echo $index+1;?>" for=""><?php echo number_format(($quantity_release_kg-$quantity_receive_kg),3,'.','')?></label></td>
                             </tr>
                         <?php
@@ -233,13 +233,13 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         </tbody>
                         <tfoot>
                         <tr>
-                            <th colspan="6" class="text-right"><?php echo $this->lang->line('LABEL_TOTAL_KG')?></th>
+                            <th colspan="5" class="text-right"><?php echo $this->lang->line('LABEL_TOTAL_KG')?></th>
+                            <th class="text-right"><label class="control-label" id="lbl_quantity_total_release_kg"><?php echo $quantity_total_release;?></label></th>
                             <th class="text-right"><label class="control-label" id="lbl_quantity_total_release_kg"><?php echo number_format($quantity_total_release_kg,3,'.','');?></label></th>
                             <th class="text-right"><label class="control-label" id="lbl_quantity_total_receive"><?php echo $quantity_total_receive;?></label></th>
                             <th class="text-right"><label class="control-label" id="lbl_quantity_total_receive_kg"><?php echo number_format($quantity_total_receive_kg,3,'.','');?></label></th>
                             <th class="text-right"><label class="control-label" id="lbl_quantity_total_deference"><?php echo ($quantity_total_release-$quantity_total_receive);?></label></th>
                             <th class="text-right"><label class="control-label" id="lbl_quantity_total_deference_kg"><?php echo number_format(($quantity_total_release_kg-$quantity_total_receive_kg),3,'.','');?></label></th>
-                            <th colspan="2">&nbsp;</th>
                         </tr>
                         </tfoot>
                     <?php
@@ -264,7 +264,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 <script>
     $(document).ready(function()
     {
-        $(".datepicker").datepicker({dateFormat : display_date_format,changeMonth: true,changeYear: true,yearRange: "c-2:c+2"});
+        //$(".datepicker").datepicker({dateFormat : display_date_format,changeMonth: true,changeYear: true,yearRange: "c-2:c+2"});
+        $(".datepicker").datepicker({dateFormat : display_date_format});
 
         $(document).off('input','.quantity_receive');
         $(document).on('input', '.quantity_receive', function()
@@ -305,6 +306,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             var quantity_total_release=0;
             var quantity_total_receive=0;
             var quantity_total_receive_kg=0;
+            var quantity_total_deference=0;
+            var quantity_total_deference_kg=0;
             $('.quantity_receive').each(function(index, element)
             {
                 var current_id=parseInt($(this).attr('data-current-id'));
@@ -323,15 +326,29 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 {
                     quantity_receive_kg=0;
                 }
+                var quantity_deference=parseFloat($('#quantity_deference_'+current_id).html().replace(/,/g,''));
+                if(isNaN(quantity_deference))
+                {
+                    quantity_deference=0;
+                }
+                var quantity_deference_kg=parseFloat($('#quantity_deference_kg_'+current_id).html().replace(/,/g,''));
+                if(isNaN(quantity_deference_kg))
+                {
+                    quantity_deference_kg=0;
+                }
+
+
                 quantity_total_release+=quantity_release;
                 quantity_total_receive+=quantity_receive;
                 quantity_total_receive_kg+=quantity_receive_kg;
+                quantity_total_deference+=quantity_deference;
+                quantity_total_deference_kg+=quantity_deference_kg;
             });
             var quantity_total_release_kg=$("#lbl_quantity_total_release_kg").html().replace(/,/g,'');
             $('#lbl_quantity_total_receive').html(quantity_total_receive);
             $('#lbl_quantity_total_receive_kg').html(number_format(quantity_total_receive_kg,3,'.',''));
-            $('#lbl_quantity_total_deference').html((quantity_total_release-quantity_total_receive));
-            $('#lbl_quantity_total_deference_kg').html(number_format((quantity_total_release_kg-quantity_total_receive_kg),3,'.',''));
+            $('#lbl_quantity_total_deference').html((quantity_total_deference));
+            $('#lbl_quantity_total_deference_kg').html(number_format((quantity_total_deference_kg),3,'.',''));
         }
     })
 </script>

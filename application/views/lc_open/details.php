@@ -13,7 +13,7 @@ $status_closed=false;
 $status_open_forward=false;
 $status_release=false;
 $status_receive=false;
-$number_footer_colspan=5;
+$number_footer_colspan=6;
 if($item['status_open']==$this->config->item('system_status_closed'))
 {
     $status_closed=true;
@@ -29,7 +29,7 @@ if($item['status_release']==$this->config->item('system_status_complete'))
 if($item['status_receive']==$this->config->item('system_status_complete'))
 {
     $status_receive=true;
-
+    $number_footer_colspan+=3;
 }
 
 
@@ -49,9 +49,9 @@ if($item['status_receive']==$this->config->item('system_status_complete'))
         {
             ?>
             <tr>
-                <th class="widget-header header_caption"><label class="control-label pull-right">Forwarded By</label></th>
+                <th class="widget-header header_caption"><label class="control-label pull-right">LC Forwarded By</label></th>
                 <th class=" header_value"><label class="control-label"><?php echo $item['forward_user_full_name']?></label></th>
-                <th class="widget-header header_caption"><label class="control-label pull-right">Forwarded Time</label></th>
+                <th class="widget-header header_caption"><label class="control-label pull-right">LC Forwarded Time</label></th>
                 <th class=" header_value"><label class="control-label"><?php echo System_helper::display_date_time($item['date_open_forward']);?></label></th>
             </tr>
         <?php
@@ -62,10 +62,10 @@ if($item['status_receive']==$this->config->item('system_status_complete'))
         {
             ?>
             <tr>
-                <th class="widget-header header_caption"><label class="control-label pull-right">Released By</label></th>
-                <th class=" header_value"><label class="control-label"><?php echo $item['forward_user_full_name']?></label></th>
-                <th class="widget-header header_caption"><label class="control-label pull-right">Released Time</label></th>
-                <th class=" header_value"><label class="control-label"><?php echo System_helper::display_date_time($item['date_open_forward']);?></label></th>
+                <th class="widget-header header_caption"><label class="control-label pull-right">LC Release Completed By</label></th>
+                <th class=" header_value"><label class="control-label"><?php echo $item['release_completed_user_full_name']?></label></th>
+                <th class="widget-header header_caption"><label class="control-label pull-right">LC Release Completed Time</label></th>
+                <th class=" header_value"><label class="control-label"><?php echo System_helper::display_date_time($item['date_release_completed']);?></label></th>
             </tr>
         <?php
         }
@@ -75,10 +75,10 @@ if($item['status_receive']==$this->config->item('system_status_complete'))
         {
             ?>
             <tr>
-                <th class="widget-header header_caption"><label class="control-label pull-right">Received By</label></th>
+                <th class="widget-header header_caption"><label class="control-label pull-right">LC Receive Completed By</label></th>
                 <th class=" header_value"><label class="control-label"><?php echo $item['forward_user_full_name']?></label></th>
-                <th class="widget-header header_caption"><label class="control-label pull-right">Received Time</label></th>
-                <th class=" header_value"><label class="control-label"><?php echo System_helper::display_date_time($item['date_open_forward']);?></label></th>
+                <th class="widget-header header_caption"><label class="control-label pull-right">LC Receive Completed Time</label></th>
+                <th class=" header_value"><label class="control-label"><?php echo System_helper::display_date_time($item['date_receive_completed']);?></label></th>
             </tr>
         <?php
         }
@@ -88,10 +88,10 @@ if($item['status_receive']==$this->config->item('system_status_complete'))
         {
             ?>
             <tr>
-                <th class="widget-header header_caption"><label class="control-label pull-right">Closed By</label></th>
-                <th class=" header_value"><label class="control-label"><?php echo $item['forward_user_full_name']?></label></th>
-                <th class="widget-header header_caption"><label class="control-label pull-right">Closed Time</label></th>
-                <th class=" header_value"><label class="control-label"><?php echo System_helper::display_date_time($item['date_open_forward']);?></label></th>
+                <th class="widget-header header_caption"><label class="control-label pull-right">LC Closed/Completed By</label></th>
+                <th class=" header_value"><label class="control-label"><?php echo $item['expense_completed_user_full_name']?></label></th>
+                <th class="widget-header header_caption"><label class="control-label pull-right">LC Closed/Completed Time</label></th>
+                <th class=" header_value"><label class="control-label"><?php echo System_helper::display_date_time($item['date_expense_completed']);?></label></th>
             </tr>
         <?php
         }
@@ -121,22 +121,44 @@ if($item['status_receive']==$this->config->item('system_status_complete'))
         <tr>
             <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_EXPECTED');?></label></th>
             <th class=" header_value"><label class="control-label"><?php echo System_helper::display_date($item['date_expected']);?></label></th>
+            <th class="widget-header"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_BANK_ACCOUNT_NUMBER');?></label></th>
+            <th><label class="control-label"><?php echo $item['bank_account_number'];?></label></th>
+        </tr>
+        <tr>
+            <th colspan="2">&nbsp;</th>
             <th class="widget-header"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_CURRENCY_NAME');?></label></th>
             <th class="bg-danger"><label class="control-label"><?php echo $item['currency_name'];?></label></th>
         </tr>
-        <tr>
-            <th class="widget-header"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_BANK_ACCOUNT_NUMBER');?></label></th>
-            <th><label class="control-label"><?php echo $item['bank_account_number'];?></label></th>
-            <?php
-            if($status_closed)
-            {
-                ?>
+        <?php
+        if($status_closed)
+        {
+            ?>
+            <tr>
+                <th colspan="2">&nbsp;</th>
                 <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_CURRENCY_RATE');?></label></th>
                 <th class="bg-danger header_value"><label class="control-label"><?php echo number_format($item['rate_currency'],2);?></label></th>
-            <?php
-            }
-            ?>
+            </tr>
+
+        <?php
+        }
+        ?>
+        <tr>
+            <th colspan="2">&nbsp;</th>
+            <th class="widget-header"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_PRICE_OPEN_OTHER_CURRENCY');?></label></th>
+            <th class="bg-danger header_value"><label class="control-label"><?php echo number_format($item['price_open_other_currency'],2);?></label></th>
         </tr>
+        <?php
+        if($status_release)
+        {
+            ?>
+            <tr>
+                <th colspan="2"></th>
+                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_PRICE_RELEASE_OTHER_CURRENCY');?></label></th>
+                <th class="bg-danger header_value"><label class="control-label"><?php echo number_format($item['price_release_other_currency'],2);?></label></th>
+            </tr>
+        <?php
+        }
+        ?>
         <?php
         if($status_receive)
         {
@@ -158,7 +180,7 @@ if($item['status_receive']==$this->config->item('system_status_complete'))
         ?>
 
         <tr>
-            <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS_LC_OPEN');?></label></th>
+            <th class="widget-header header_caption" style="vertical-align: top;"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS_LC_OPEN');?></label></th>
             <th class=" header_value" colspan="3"><label class="control-label"><?php echo nl2br($item['remarks_open']);?></label></th>
         </tr>
         <?php
@@ -166,7 +188,7 @@ if($item['status_receive']==$this->config->item('system_status_complete'))
         {
             ?>
             <tr>
-                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS_LC_RELEASE');?></label></th>
+                <th class="widget-header header_caption" style="vertical-align: top;"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS_LC_RELEASE');?></label></th>
                 <th class=" header_value" colspan="3"><label class="control-label"><?php echo nl2br($item['remarks_release']);?></label></th>
             </tr>
         <?php
@@ -177,7 +199,7 @@ if($item['status_receive']==$this->config->item('system_status_complete'))
         {
             ?>
             <tr>
-                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS_LC_RECEIVE');?></label></th>
+                <th class="widget-header header_caption" style="vertical-align: top;"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS_LC_RECEIVE');?></label></th>
                 <th class="header_value" colspan="3"><label class="control-label"><?php echo nl2br($item['remarks_receive']);?></label></th>
             </tr>
         <?php
@@ -188,7 +210,7 @@ if($item['status_receive']==$this->config->item('system_status_complete'))
         {
             ?>
             <tr>
-                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS_LC_EXPENSE');?></label></th>
+                <th class="widget-header header_caption" style="vertical-align: top;"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS_LC_EXPENSE');?></label></th>
                 <th class="header_value" colspan="3"><label class="control-label"><?php echo nl2br($item['remarks_expense']);?></label></th>
             </tr>
         <?php
@@ -203,7 +225,7 @@ if($item['status_receive']==$this->config->item('system_status_complete'))
 <table class="table table-bordered">
 <thead>
 <tr>
-    <th class="widget-header text-center" colspan="21">LC (<?php echo Barcode_helper::get_barcode_lc($item['id']);?>) Product & Price Details  :: ( Receive Status: <?php echo $item['status_receive']?> )</th>
+    <th class="widget-header text-center" colspan="30">LC (<?php echo Barcode_helper::get_barcode_lc($item['id']);?>) Product & Price Details </th>
 </tr>
 <tr>
     <th class="label-info" rowspan="2" style="width: 5px"><?php echo $CI->lang->line('LABEL_SL_NO'); ?></th>
@@ -211,6 +233,7 @@ if($item['status_receive']==$this->config->item('system_status_complete'))
     <th class="label-info" rowspan="2"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?></th>
     <th class="label-info" rowspan="2"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
     <th class="label-info text-center" rowspan="2"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
+    <th class="label-info text-right" rowspan="2"><?php echo $CI->lang->line('LABEL_PRICE_CURRENCY_UNIT'); ?></th>
     <?php
     if($status_receive)
     {
@@ -221,12 +244,12 @@ if($item['status_receive']==$this->config->item('system_status_complete'))
     <?php
     }
     ?>
-    <th class="label-primary text-center" colspan="2"><?php echo $CI->lang->line('LABEL_QUANTITY_ORDER');?></th>
+    <th class="label-primary text-center" colspan="3"><?php echo $CI->lang->line('LABEL_QUANTITY_ORDER');?></th>
     <?php
     if($status_release)
     {
         ?>
-        <th class="label-primary text-center" colspan="2"><?php echo $CI->lang->line('LABEL_QUANTITY_SUPPLY');?></th>
+        <th class="label-warning text-center" colspan="3"><?php echo $CI->lang->line('LABEL_QUANTITY_SUPPLY');?></th>
     <?php
     }
     ?>
@@ -234,8 +257,8 @@ if($item['status_receive']==$this->config->item('system_status_complete'))
     if($status_receive)
     {
         ?>
-        <th class="label-warning text-center" colspan="2"><?php echo $CI->lang->line('LABEL_QUANTITY_RECEIVE');?></th>
-        <th class="label-success text-center" colspan="2"><?php echo $CI->lang->line('LABEL_QUANTITY_DIFFERENCE');?></th>
+        <th class="label-success text-center" colspan="3"><?php echo $CI->lang->line('LABEL_QUANTITY_RECEIVE');?></th>
+        <th class="label-danger text-center" colspan="2"><?php echo $CI->lang->line('LABEL_QUANTITY_DIFFERENCE');?></th>
     <?php
     }
     ?>
@@ -243,7 +266,8 @@ if($item['status_receive']==$this->config->item('system_status_complete'))
     if($status_closed)
     {
         ?>
-        <th class="label-warning text-center" colspan="5"><?php echo $CI->lang->line('LABEL_TOTAL_TAKA');?></th>
+        <th class=" text-center" colspan="5"><?php echo $CI->lang->line('LABEL_TOTAL_TAKA');?></th>
+        <th class="label-default text-center" colspan="2">Variety Rate</th>
     <?php
     }
     ?>
@@ -251,12 +275,14 @@ if($item['status_receive']==$this->config->item('system_status_complete'))
 <tr>
     <th class="label-primary text-center"><?php echo $CI->lang->line('LABEL_PACK'); ?>/<?php echo $CI->lang->line('LABEL_KG');?></th>
     <th class="label-primary text-center"><?php echo $CI->lang->line('KG');?></th>
+    <th class="label-primary text-right"><?php echo $CI->lang->line('LABEL_PRICE_CURRENCY_TOTAL'); ?></th>
     <?php
     if($status_release)
     {
         ?>
-        <th class="label-primary text-center"><?php echo $CI->lang->line('LABEL_PACK'); ?>/<?php echo $CI->lang->line('LABEL_KG');?></th>
-        <th class="label-primary text-center"><?php echo $CI->lang->line('KG');?></th>
+        <th class="label-warning text-center"><?php echo $CI->lang->line('LABEL_PACK'); ?>/<?php echo $CI->lang->line('LABEL_KG');?></th>
+        <th class="label-warning text-center"><?php echo $CI->lang->line('KG');?></th>
+        <th class="label-warning text-right"><?php echo $CI->lang->line('LABEL_PRICE_CURRENCY_TOTAL'); ?></th>
     <?php
     }
     ?>
@@ -264,10 +290,11 @@ if($item['status_receive']==$this->config->item('system_status_complete'))
     if($status_receive)
     {
         ?>
-        <th class="label-warning text-center"><?php echo $CI->lang->line('LABEL_PACK'); ?>/<?php echo $CI->lang->line('LABEL_KG');?></th>
-        <th class="label-warning text-center"><?php echo $CI->lang->line('KG');?></th>
         <th class="label-success text-center"><?php echo $CI->lang->line('LABEL_PACK'); ?>/<?php echo $CI->lang->line('LABEL_KG');?></th>
         <th class="label-success text-center"><?php echo $CI->lang->line('KG');?></th>
+        <th class="label-success text-right"><?php echo $CI->lang->line('LABEL_PRICE_CURRENCY_TOTAL'); ?></th>
+        <th class="label-danger text-center"><?php echo $CI->lang->line('LABEL_PACK'); ?>/<?php echo $CI->lang->line('LABEL_KG');?></th>
+        <th class="label-danger text-center"><?php echo $CI->lang->line('KG');?></th>
     <?php
     }
     ?>
@@ -275,11 +302,13 @@ if($item['status_receive']==$this->config->item('system_status_complete'))
     if($status_closed)
     {
         ?>
-        <th class="label-success text-center">Unit Price (Taka)</th>
-        <th class="label-success text-center">Variety Price (Taka)</th>
-        <th class="label-success text-center">Other Cost (Taka)</th>
-        <th class="label-success text-center">Expense (Taka)</th>
-        <th class="label-success text-center"><?php echo $CI->lang->line('LABEL_TOTAL_TAKA');?></th>
+        <th class=" text-center">Unit Price (Taka)</th>
+        <th class=" text-center">Variety Price (Taka)</th>
+        <th class=" text-center">Other Cost (Taka)</th>
+        <th class=" text-center">Expense (Taka)</th>
+        <th class=" text-center"><?php echo $CI->lang->line('LABEL_TOTAL_TAKA');?></th>
+        <th class="label-default text-center">Pkt (Taka)</th>
+        <th class="label-default text-center">Kg (Taka)</th>
     <?php
     }
     ?>
@@ -299,11 +328,23 @@ if(!empty($items))
     $quantity_total_receive=0;
     $quantity_total_receive_kg=0;
 
+    $price_unit_currency=0;
+
+    $price_open_currency=0;
+    $price_total_open_currency=0;
+    $price_release_currency=0;
+    $price_total_release_currency=0;
+    $price_receive_currency=0;
+    $price_total_receive_currency=0;
+
     $price_total_unit_complete_taka=0;
     $price_total_complete_variety_taka=0;
     $price_total_complete_other_taka=0;
     $price_total_dc_expense_taka=0;
     $price_total_total_taka=0;
+
+    $rate_variety_pkt=0;
+    $rate_variety_kg=0;
     foreach($items as $data)
     {
         ++$serial;
@@ -319,6 +360,8 @@ if(!empty($items))
             $quantity_release_kg=(($data['pack_size']*$data['quantity_release'])/1000);
             $quantity_receive_kg=(($data['pack_size']*$data['quantity_receive'])/1000);
         }
+        $price_unit_currency=$data['price_unit_currency'];
+
         $quantity_total_open+=$data['quantity_open'];
         $quantity_total_open_kg+=$quantity_open_kg;
         $quantity_total_release+=$data['quantity_release'];
@@ -326,12 +369,19 @@ if(!empty($items))
         $quantity_total_receive+=$data['quantity_receive'];;
         $quantity_total_receive_kg+=$quantity_receive_kg;
 
+        $price_open_currency=($data['quantity_open']*$price_unit_currency);
+        $price_total_open_currency+=$price_open_currency;
+        $price_release_currency=($data['quantity_release']*$price_unit_currency);
+        $price_total_release_currency+=$price_release_currency;
+        $price_receive_currency=($data['quantity_receive']*$price_unit_currency);
+        $price_total_receive_currency+=$price_receive_currency;
 
         $price_total_unit_complete_taka+=$data['price_unit_complete_taka'];
         $price_total_complete_variety_taka+=$data['price_complete_variety_taka'];
         $price_total_complete_other_taka+=$data['price_complete_other_taka'];
         $price_total_dc_expense_taka+=$data['price_dc_expense_taka'];
         $price_total_total_taka+=$data['price_total_taka'];
+
         ?>
         <tr>
             <td><?php echo $serial;?></td>
@@ -339,6 +389,7 @@ if(!empty($items))
             <td><?php echo $data['crop_type_name'];?></td>
             <td><?php echo $data['variety_name'];?> ( <?php echo $data['variety_name_import'];?> )</td>
             <td class="text-center"> <?php if($data['pack_size']==0){echo "Bulk";}else{echo $data['pack_size'];}?></td>
+            <td class="text-right"><?php echo $price_unit_currency;?></td>
             <?php
             if($status_receive)
             {
@@ -351,12 +402,14 @@ if(!empty($items))
             ?>
             <td class="text-right"><label class="control-label" for=""><?php echo $data['quantity_open'];?></label></td>
             <td class="text-right"><label class="control-label" for=""><?php echo number_format($quantity_open_kg,3,'.','')?></label></td>
+            <td class="text-right"><label class="control-label" for=""><?php echo number_format($price_open_currency,2)?></label></td>
             <?php
             if($status_release)
             {
                 ?>
                 <td class="text-right"><label class="control-label" for=""><?php echo $data['quantity_release'];?></label></td>
                 <td class="text-right"><label class="control-label" for=""><?php echo number_format($quantity_release_kg,3,'.','')?></label></td>
+                <td class="text-right"><label class="control-label" for=""><?php echo number_format($price_release_currency,2)?></label></td>
             <?php
             }
             ?>
@@ -366,6 +419,7 @@ if(!empty($items))
                 ?>
                 <td class="text-right"><label class="control-label" for=""><?php echo $data['quantity_receive']; ?></label></td>
                 <td class="text-right" ><label class="control-label "><?php echo number_format($quantity_receive_kg,3,'.',''); ?></label></td>
+                <td class="text-right" ><label class="control-label "><?php echo number_format($price_receive_currency,2); ?></label></td>
                 <td class="text-right"><label class="control-label"><?php echo ($data['quantity_receive']-$data['quantity_release'])?></label></td>
                 <td class="text-right"><label class="control-label"><?php echo number_format(($quantity_receive_kg-$quantity_release_kg),3,'.','')?></label></td>
             <?php
@@ -374,12 +428,16 @@ if(!empty($items))
             <?php
             if($status_closed)
             {
+                $price_variety_rate_pkt=($data['price_total_taka']/$data['quantity_receive']);
+                $price_variety_rate_kg=($data['price_total_taka']/$quantity_receive_kg);
                 ?>
-                <td class="text-right"><label class="control-label" for=""><?php echo $data['price_unit_complete_taka']; ?></label></td>
-                <td class="text-right"><label class="control-label" for=""><?php echo $data['price_complete_variety_taka']; ?></label></td>
-                <td class="text-right"><label class="control-label" for=""><?php echo $data['price_complete_other_taka']; ?></label></td>
-                <td class="text-right"><label class="control-label" for=""><?php echo $data['price_dc_expense_taka']; ?></label></td>
-                <td class="text-right"><label class="control-label" for=""><?php echo $data['price_total_taka']; ?></label></td>
+                <td class="text-right"><label class="control-label"><?php echo number_format($data['price_unit_complete_taka'],2); ?></label></td>
+                <td class="text-right"><label class="control-label"><?php echo number_format($data['price_complete_variety_taka'],2); ?></label></td>
+                <td class="text-right"><label class="control-label"><?php echo number_format($data['price_complete_other_taka'],2); ?></label></td>
+                <td class="text-right"><label class="control-label"><?php echo number_format($data['price_dc_expense_taka'],2); ?></label></td>
+                <td class="text-right"><label class="control-label"><?php echo number_format($data['price_total_taka'],2); ?></label></td>
+                <td class="text-right"><label class="control-label"><?php echo number_format($price_variety_rate_pkt,2); ?></label></td>
+                <td class="text-right"><label class="control-label"><?php echo number_format($price_variety_rate_kg,2); ?></label></td>
             <?php
             }
             ?>
@@ -393,12 +451,14 @@ if(!empty($items))
         <th colspan="<?php echo $number_footer_colspan;?>" class="text-right"><?php echo $this->lang->line('LABEL_TOTAL_KG')?></th>
         <th class="text-right"><label class="control-label"><?php echo $quantity_total_open;?></label></th>
         <th class="text-right"><label class="control-label"><?php echo number_format($quantity_total_open_kg,3,'.','');?></label></th>
+        <th class="text-right"><label class="control-label"><?php echo number_format($price_total_open_currency,2);?></label></th>
         <?php
         if($status_release)
         {
             ?>
             <th class="text-right"><label class="control-label"><?php echo $quantity_total_release;?></label></th>
             <th class="text-right"><label class="control-label"><?php echo number_format($quantity_total_release_kg,3,'.','');?></label></th>
+            <th class="text-right"><label class="control-label"><?php echo number_format($price_total_release_currency,2);?></label></th>
         <?php
         }
         ?>
@@ -408,6 +468,7 @@ if(!empty($items))
             ?>
             <th class="text-right"><label class="control-label"><?php echo $quantity_total_receive;?></label></th>
             <th class="text-right"><label class="control-label"><?php echo number_format($quantity_total_receive_kg,3,'.','');?></label></th>
+            <th class="text-right"><label class="control-label"><?php echo number_format($price_total_receive_currency,2);?></label></th>
             <th class="text-right"><label class="control-label"><?php echo ($quantity_total_receive-$quantity_total_release);?></label></th>
             <th class="text-right"><label class="control-label"><?php echo number_format(($quantity_total_receive_kg-$quantity_total_release_kg),3,'.','');?></label></th>
         <?php
@@ -422,6 +483,7 @@ if(!empty($items))
             <th class="text-right"><label class="control-label"><?php echo number_format($price_total_complete_other_taka,2);?></label></th>
             <th class="text-right"><label class="control-label"><?php echo number_format($price_total_dc_expense_taka,2);?></label></th>
             <th class="text-right"><label class="control-label"><?php echo number_format($price_total_total_taka,2);?></label></th>
+            <th colspan="2"> &nbsp;</th>
         <?php
         }
         ?>

@@ -302,7 +302,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <th colspan="2" class="text-right"><?php echo $this->lang->line('LABEL_TOTAL_KG')?></th>
                         <th class="text-right"><label class="control-label" id="lbl_quantity_open_total"><?php echo $quantity_open_total;?></label></th>
                         <th class="text-right"><label class="control-label" id="lbl_quantity_open_total_kg"><?php echo number_format(($quantity_open_total_kg),3,'.','');?></label></th>
-                        <th class="text-right"><?php echo $this->lang->line('LABEL_TOTAL_CURRENCY')?></th>
+                        <th class="text-right"><?php echo $this->lang->line('LABEL_PRICE_CURRENCY_TOTAL')?></th>
                         <th class="text-right"><label class="control-label" id="lbl_price_variety_total_currency"><?php echo number_format($item['price_open_variety_currency'],2)?></label></th>
                         <th class="text-right"></th>
                     </tr>

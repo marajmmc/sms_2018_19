@@ -94,16 +94,16 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <th class="label-info text-center" rowspan="2"><?php echo $CI->lang->line('LABEL_CARTON_SIZE')?></th>
                     <th class="label-info text-center" rowspan="2"><?php echo $CI->lang->line('LABEL_WAREHOUSE_NAME'); ?></th>
                     <th class="label-primary text-center" colspan="2">Release Information</th>
-                    <th class="label-warning text-center" colspan="2">Receive Information</th>
-                    <th class="label-success text-center" colspan="2">Deference Information</th>
+                    <th class="label-success text-center" colspan="2">Receive Information</th>
+                    <th class="label-danger text-center" colspan="2">Deference Information</th>
                 </tr>
                 <tr>
                     <th class="label-primary text-center"><?php echo $CI->lang->line('LABEL_QUANTITY_KG_PACK'); ?></th>
                     <th class="label-primary text-center"><?php echo $CI->lang->line('KG');?></th>
-                    <th class="label-warning text-center"><?php echo $CI->lang->line('LABEL_QUANTITY_KG_PACK'); ?></th>
-                    <th class="label-warning text-center"><?php echo $CI->lang->line('KG');?></th>
                     <th class="label-success text-center"><?php echo $CI->lang->line('LABEL_QUANTITY_KG_PACK'); ?></th>
                     <th class="label-success text-center"><?php echo $CI->lang->line('KG');?></th>
+                    <th class="label-danger text-center"><?php echo $CI->lang->line('LABEL_QUANTITY_KG_PACK'); ?></th>
+                    <th class="label-danger text-center"><?php echo $CI->lang->line('KG');?></th>
                 </tr>
                 </thead>
                 <?php
@@ -154,7 +154,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     </tbody>
                     <tfoot>
                     <tr>
-                        <th colspan="6" class="text-right"><?php echo $this->lang->line('LABEL_TOTAL_KG')?></th>
+                        <th colspan="5" class="text-right"><?php echo $this->lang->line('LABEL_TOTAL_KG')?></th>
+                        <th class="text-right"><label class="control-label"><?php echo $quantity_total_release;?></label></th>
                         <th class="text-right"><label class="control-label"><?php echo number_format($quantity_total_release_kg,3,'.','');?></label></th>
                         <th class="text-right"><label class="control-label"><?php echo $quantity_total_receive;?></label></th>
                         <th class="text-right"><label class="control-label"><?php echo number_format($quantity_total_receive_kg,3,'.','');?></label></th>

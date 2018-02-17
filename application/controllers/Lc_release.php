@@ -59,39 +59,7 @@ class Lc_release extends Root_Controller
     {
         if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
         {
-            $user = User_helper::get_user();
-            $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
-            $data['system_preference_items']['barcode']= 1;
-            $data['system_preference_items']['fiscal_year']= 1;
-            $data['system_preference_items']['month']= 1;
-            $data['system_preference_items']['date_opening']= 1;
-            $data['system_preference_items']['date_expected']= 1;
-            $data['system_preference_items']['principal_name']= 1;
-            $data['system_preference_items']['currency_name']= 1;
-            $data['system_preference_items']['lc_number']= 1;
-            $data['system_preference_items']['consignment_name']= 1;
-            $data['system_preference_items']['price_release_other_currency']= 1;
-            $data['system_preference_items']['quantity_release_kg']= 1;
-            $data['system_preference_items']['price_release_variety_currency']= 1;
-            if($result)
-            {
-                if($result['preferences']!=null)
-                {
-                    $preferences=json_decode($result['preferences'],true);
-                    foreach($data['system_preference_items'] as $key=>$value)
-                    {
-                        if(isset($preferences[$key]))
-                        {
-                            $data['system_preference_items'][$key]=$value;
-                        }
-                        else
-                        {
-                            $data['system_preference_items'][$key]=0;
-                        }
-                    }
-                }
-            }
-
+            $data['system_preference_items']=$this->get_preference();
             $data['title']="LC Release List";
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/list",$data,true));
@@ -134,15 +102,10 @@ class Lc_release extends Root_Controller
             $item['fiscal_year']=$result['fiscal_year'];
             $item['month']=$this->lang->line("LABEL_MONTH_$result[month_id]");
             $item['date_opening']=System_helper::display_date($result['date_opening']);
-            $item['date_expected']=System_helper::display_date($result['date_expected']);
             $item['principal_name']=$result['principal_name'];
             $item['currency_name']=$result['currency_name'];
             $item['lc_number']=$result['lc_number'];
-            $item['consignment_name']=$result['consignment_name'];
-            $item['quantity_release_kg']=number_format($result['quantity_release_kg'],3);
-            $item['price_release_other_currency']=number_format($result['price_release_other_currency'],2);
-            $item['price_release_variety_currency']=number_format($result['price_release_variety_currency'],2);
-            $item['status_release']=$result['status_release'];
+            $item['quantity_open_kg']=number_format($result['quantity_open_kg'],3,'.','');
             $items[]=$item;
         }
         $this->json_return($items);
@@ -185,10 +148,28 @@ class Lc_release extends Root_Controller
                 $ajax['system_message']='Invalid LC.';
                 $this->json_return($ajax);
             }
+            if($data['item']['status_open_forward']!=$this->config->item('system_status_yes'))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='You can not see this LC. LC not forwarded.';
+                $this->json_return($ajax);
+            }
+            if($data['item']['status_release']==$this->config->item('system_status_complete'))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='LC already released.';
+                $this->json_return($ajax);
+            }
+            if($data['item']['status_receive']==$this->config->item('system_status_complete'))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='LC already received.';
+                $this->json_return($ajax);
+            }
             if($data['item']['status_open']==$this->config->item('system_status_closed'))
             {
                 $ajax['status']=false;
-                $ajax['system_message']='LC Already Closed.';
+                $ajax['system_message']='LC already closed.';
                 $this->json_return($ajax);
             }
 
@@ -390,8 +371,6 @@ class Lc_release extends Root_Controller
             $this->db->join($this->config->item('table_login_setup_user_info').' ui','ui.user_id = lco.user_open_forward','INNER');
             $this->db->select('ui.name user_full_name');
             $this->db->where('lco.id',$item_id);
-            $this->db->where('lco.status_open_forward',$this->config->item('system_status_yes'));
-            $this->db->where('lco.status_release',$this->config->item('system_status_pending'));
             $this->db->where('lco.status_open !=',$this->config->item('system_status_delete'));
             $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
@@ -401,10 +380,22 @@ class Lc_release extends Root_Controller
                 $ajax['system_message']='Invalid LC.';
                 $this->json_return($ajax);
             }
+            if($data['item']['revision_release_count']==0)
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='You have to complete your (LC) edit release.';
+                $this->json_return($ajax);
+            }
             if(!$data['item']['status_release']==$this->config->item('system_status_pending'))
             {
                 $ajax['status']=false;
-                $ajax['system_message']='Invalid LC.';
+                $ajax['system_message']='You can not see this LC. LC release pending.';
+                $this->json_return($ajax);
+            }
+            if(!$data['item']['status_open_forward']==$this->config->item('system_status_yes'))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='You can not see this LC. LC not forwarded.';
                 $this->json_return($ajax);
             }
 
@@ -465,8 +456,6 @@ class Lc_release extends Root_Controller
             $this->db->join($this->config->item('table_login_setup_user_info').' ui','ui.user_id = lco.user_open_forward','INNER');
             $this->db->select('ui.name user_full_name');
             $this->db->where('lco.id',$item_id);
-            $this->db->where('lco.status_open_forward',$this->config->item('system_status_yes'));
-            $this->db->where('lco.status_release',$this->config->item('system_status_pending'));
             $this->db->where('lco.status_open !=',$this->config->item('system_status_delete'));
             $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
@@ -482,15 +471,39 @@ class Lc_release extends Root_Controller
                 $ajax['system_message']='You have to complete your (LC) edit release.';
                 $this->json_return($ajax);
             }
+            if($data['item']['status_open_forward']!=$this->config->item('system_status_yes'))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='You can not see this LC. LC not forwarded.';
+                $this->json_return($ajax);
+            }
+            if($data['item']['status_release']==$this->config->item('system_status_complete'))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='LC already released.';
+                $this->json_return($ajax);
+            }
+            if($data['item']['status_receive']==$this->config->item('system_status_complete'))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='LC already received.';
+                $this->json_return($ajax);
+            }
+            if($data['item']['status_open']==$this->config->item('system_status_closed'))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='LC already closed.';
+                $this->json_return($ajax);
+            }
 
             $this->db->from($this->config->item('table_sms_lc_details').' lcd');
             $this->db->select('lcd.*');
-            $this->db->select('v.id variety_id, v.name variety_name');
-            $this->db->select('vp.name_import variety_name_import');
-            $this->db->select('pack.name pack_size');
             $this->db->join($this->config->item('table_login_setup_classification_varieties').' v','v.id = lcd.variety_id','INNER');
+            $this->db->select('v.id variety_id, v.name variety_name');
             $this->db->join($this->config->item('table_login_setup_classification_variety_principals').' vp','vp.variety_id = v.id AND vp.principal_id = '.$data['item']['principal_id'].' AND vp.revision = 1','INNER');
+            $this->db->select('vp.name_import variety_name_import');
             $this->db->join($this->config->item('table_login_setup_classification_pack_size').' pack','pack.id = lcd.pack_size_id','LEFT');
+            $this->db->select('pack.name pack_size');
             $this->db->where('lcd.lc_id',$item_id);
             $this->db->where('lcd.quantity_open >0');
             $data['items']=$this->db->get()->result_array();
@@ -632,38 +645,7 @@ class Lc_release extends Root_Controller
     {
         if(isset($this->permissions['action6']) && ($this->permissions['action6']==1))
         {
-            $user = User_helper::get_user();
-            $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
-            $data['system_preference_items']['barcode']= 1;
-            $data['system_preference_items']['fiscal_year']= 1;
-            $data['system_preference_items']['month']= 1;
-            $data['system_preference_items']['date_opening']= 1;
-            $data['system_preference_items']['date_expected']= 1;
-            $data['system_preference_items']['principal_name']= 1;
-            $data['system_preference_items']['currency_name']= 1;
-            $data['system_preference_items']['lc_number']= 1;
-            $data['system_preference_items']['consignment_name']= 1;
-            $data['system_preference_items']['price_release_other_currency']= 1;
-            $data['system_preference_items']['quantity_release_kg']= 1;
-            $data['system_preference_items']['price_release_variety_currency']= 1;
-            if($result)
-            {
-                if($result['preferences']!=null)
-                {
-                    $preferences=json_decode($result['preferences'],true);
-                    foreach($data['system_preference_items'] as $key=>$value)
-                    {
-                        if(isset($preferences[$key]))
-                        {
-                            $data['system_preference_items'][$key]=$value;
-                        }
-                        else
-                        {
-                            $data['system_preference_items'][$key]=0;
-                        }
-                    }
-                }
-            }
+            $data['system_preference_items']=$this->get_preference();
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("preference_add_edit",$data,true));
             $ajax['system_page_url']=site_url($this->controller_url.'/index/set_preference');
@@ -675,5 +657,38 @@ class Lc_release extends Root_Controller
             $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
             $this->json_return($ajax);
         }
+    }
+    private function get_preference()
+    {
+        $user = User_helper::get_user();
+        $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
+        $data['barcode']= 1;
+        $data['fiscal_year']= 1;
+        $data['month']= 1;
+        $data['date_opening']= 1;
+        $data['principal_name']= 1;
+        $data['currency_name']= 1;
+        $data['lc_number']= 1;
+        $data['quantity_open_kg']= 1;
+        if($result)
+        {
+            if($result['preferences']!=null)
+            {
+                $preferences=json_decode($result['preferences'],true);
+                foreach($data as $key=>$value)
+                {
+
+                    if(isset($preferences[$key]))
+                    {
+                        $data[$key]=$value;
+                    }
+                    else
+                    {
+                        $data[$key]=0;
+                    }
+                }
+            }
+        }
+        return $data;
     }
 }

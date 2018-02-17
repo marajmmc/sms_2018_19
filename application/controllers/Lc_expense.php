@@ -56,38 +56,7 @@ class Lc_expense extends Root_Controller
     {
         if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
         {
-            $user = User_helper::get_user();
-            $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
-            $data['system_preference_items']['barcode']= 1;
-            $data['system_preference_items']['fiscal_year']= 1;
-            $data['system_preference_items']['month']= 1;
-            $data['system_preference_items']['date_opening']= 1;
-            $data['system_preference_items']['date_expected']= 1;
-            $data['system_preference_items']['principal_name']= 1;
-            $data['system_preference_items']['currency_name']= 1;
-            $data['system_preference_items']['lc_number']= 1;
-            $data['system_preference_items']['consignment_name']= 1;
-            $data['system_preference_items']['price_release_other_currency']= 1;
-            $data['system_preference_items']['quantity_receive_kg']= 1;
-            if($result)
-            {
-                if($result['preferences']!=null)
-                {
-                    $preferences=json_decode($result['preferences'],true);
-                    foreach($data['system_preference_items'] as $key=>$value)
-                    {
-                        if(isset($preferences[$key]))
-                        {
-                            $data['system_preference_items'][$key]=$value;
-                        }
-                        else
-                        {
-                            $data['system_preference_items'][$key]=0;
-                        }
-                    }
-                }
-            }
-
+            $data['system_preference_items']=$this->get_preference();
             $data['title']="LC Expense List";
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/list",$data,true));
@@ -128,13 +97,10 @@ class Lc_expense extends Root_Controller
             $item['fiscal_year']=$result['fiscal_year'];
             $item['month']=$this->lang->line("LABEL_MONTH_$result[month_id]");
             $item['date_opening']=System_helper::display_date($result['date_opening']);
-            $item['date_expected']=System_helper::display_date($result['date_expected']);
             $item['principal_name']=$result['principal_name'];
             $item['currency_name']=$result['currency_name'];
             $item['lc_number']=$result['lc_number'];
-            $item['consignment_name']=$result['consignment_name'];
-            $item['price_release_other_currency']=number_format($result['price_release_other_currency'],2);
-            $item['quantity_receive_kg']=number_format($result['quantity_receive_kg'],3,'.','');
+            $item['quantity_open_kg']=number_format($result['quantity_open_kg'],3,'.','');
             $items[]=$item;
         }
         $this->json_return($items);
@@ -321,6 +287,25 @@ class Lc_expense extends Root_Controller
                 $ajax['system_message']='Invalid LC.';
                 $this->json_return($ajax);
             }
+            if($data['item']['status_release']!=$this->config->item('system_status_complete'))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='You can not open this LC. LC release pending.';
+                $this->json_return($ajax);
+            }
+            if($data['item']['status_receive']!=$this->config->item('system_status_complete'))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='You can not open this LC. LC receive pending.';
+                $this->json_return($ajax);
+            }
+            if($data['item']['status_open']==$this->config->item('system_status_closed'))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='LC already closed.';
+                $this->json_return($ajax);
+            }
+
 
             $data['items']=Query_helper::get_info($this->config->item('table_login_setup_direct_cost_items'),'*',array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('ordering ASC'));
             $results=Query_helper::get_info($this->config->item('table_sms_lc_expense'),'*',array('lc_id ='.$item_id),0,0,array(''));
@@ -484,37 +469,7 @@ class Lc_expense extends Root_Controller
     {
         if(isset($this->permissions['action6']) && ($this->permissions['action6']==1))
         {
-            $user = User_helper::get_user();
-            $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
-            $data['system_preference_items']['barcode']= 1;
-            $data['system_preference_items']['fiscal_year']= 1;
-            $data['system_preference_items']['month']= 1;
-            $data['system_preference_items']['date_opening']= 1;
-            $data['system_preference_items']['date_expected']= 1;
-            $data['system_preference_items']['principal_name']= 1;
-            $data['system_preference_items']['currency_name']= 1;
-            $data['system_preference_items']['lc_number']= 1;
-            $data['system_preference_items']['consignment_name']= 1;
-            $data['system_preference_items']['price_release_other_currency']= 1;
-            $data['system_preference_items']['quantity_receive_kg']= 1;
-            if($result)
-            {
-                if($result['preferences']!=null)
-                {
-                    $preferences=json_decode($result['preferences'],true);
-                    foreach($data['system_preference_items'] as $key=>$value)
-                    {
-                        if(isset($preferences[$key]))
-                        {
-                            $data['system_preference_items'][$key]=$value;
-                        }
-                        else
-                        {
-                            $data['system_preference_items'][$key]=0;
-                        }
-                    }
-                }
-            }
+            $data['system_preference_items']=$this->get_preference();
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("preference_add_edit",$data,true));
             $ajax['system_page_url']=site_url($this->controller_url.'/index/set_preference');
@@ -526,5 +481,38 @@ class Lc_expense extends Root_Controller
             $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
             $this->json_return($ajax);
         }
+    }
+    private function get_preference()
+    {
+        $user = User_helper::get_user();
+        $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
+        $data['barcode']= 1;
+        $data['fiscal_year']= 1;
+        $data['month']= 1;
+        $data['date_opening']= 1;
+        $data['principal_name']= 1;
+        $data['currency_name']= 1;
+        $data['lc_number']= 1;
+        $data['quantity_open_kg']= 1;
+        if($result)
+        {
+            if($result['preferences']!=null)
+            {
+                $preferences=json_decode($result['preferences'],true);
+                foreach($data as $key=>$value)
+                {
+
+                    if(isset($preferences[$key]))
+                    {
+                        $data[$key]=$value;
+                    }
+                    else
+                    {
+                        $data[$key]=0;
+                    }
+                }
+            }
+        }
+        return $data;
     }
 }
