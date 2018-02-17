@@ -197,7 +197,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         foreach($packs as $pack)
                         {
                             ?>
-                            <option value="<?php echo $pack['value']?>"><?php echo $pack['text'];?></option>
+                            <option value="<?php echo $pack['value']?>" data-pack-size-name="<?php echo $pack['text'];?>"><?php echo $pack['text'];?></option>
                         <?php
                         }
                         ?>
@@ -205,31 +205,78 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 </div>
             <?php } ?>
         </div>
-        <div style="display:none" class="row show-grid" id="packing_item_validation_container">
-            <div class="col-xs-4">
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <label id="packing_item_validation_id" class="control-label"></label>
-            </div>
-        </div>
 
-        <div style="display:none" class="row show-grid" id="number_of_packet_container">
+        <div style="display: none;" class="row show-grid" id="number_of_packet_container">
             <div class="col-xs-4">
-                <label for="number_of_packet" class="control-label pull-right">Number Of Packet</label>
+                <label for="number_of_packet" class="control-label pull-right">Number Of Packet:</label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <label id="number_of_packet_id" class="control-label"></label>
             </div>
         </div>
+        <div style="display: none;" class="row show-grid" id="number_of_actual_packet_container">
+            <div class="col-xs-4">
+                <label for="number_of_actual_packet" class="control-label pull-right">Number Of Actual Packet<span style="color:#FF0000">*</span></label>
+            </div>
+            <div class="col-sm-4 col-xs-8" id="number_of_actual_packet_id_input_container">
+                <input type="text" name="item[number_of_actual_packet]" class="form-control float_type_positive" value="<?php //echo $item['number_of_actual_packet'];?>"/>
+            </div>
+        </div>
+        <div style="display: none;" class="row show-grid" id="expected_mf_container">
+            <div class="col-xs-4">
+                <label for="expected_mf" class="control-label pull-right">Expected Master Foil:</label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <label id="expected_mf_id" class="control-label"></label>
+            </div>
+        </div>
+        <div style="display: none;" class="row show-grid" id="actual_mf_container">
+            <div class="col-xs-4">
+                <label for="actual_mf" class="control-label pull-right">Actual Master Foil<span style="color:#FF0000">*</span></label>
+            </div>
+            <div class="col-sm-4 col-xs-8" id="actual_mf_id_input_container">
+                <input type="text" name="item[actual_mf]" class="form-control float_type_positive" value="<?php //echo $item['number_of_actual_packet'];?>"/>
+            </div>
+        </div>
+        <div style="display: none;" class="row show-grid" id="expected_f_container">
+            <div class="col-xs-4">
+                <label for="expected_f" class="control-label pull-right">Expected Foil:</label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <label id="expected_f_id" class="control-label"></label>
+            </div>
+        </div>
+        <div style="display: none;" class="row show-grid" id="actual_f_container">
+            <div class="col-xs-4">
+                <label for="actual_f" class="control-label pull-right">Actual Foil<span style="color:#FF0000">*</span></label>
+            </div>
+            <div class="col-sm-4 col-xs-8" id="actual_f_id_input_container">
+                <input type="text" name="item[actual_f]" class="form-control float_type_positive" value="<?php //echo $item['number_of_actual_packet'];?>"/>
+            </div>
+        </div>
+        <div style="display: none;" class="row show-grid" id="expected_sticker_container">
+            <div class="col-xs-4">
+                <label for="expected_sticker" class="control-label pull-right">Expected Sticker:</label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <label id="expected_sticker_id" class="control-label"></label>
+            </div>
+        </div>
+        <div style="display: none;" class="row show-grid" id="actual_sticker_container">
+            <div class="col-xs-4">
+                <label for="actual_sticker" class="control-label pull-right">Actual Sticker<span style="color:#FF0000">*</span></label>
+            </div>
+            <div class="col-sm-4 col-xs-8" id="actual_sticker_id_input_container">
+                <input type="text" name="item[actual_sticker]" class="form-control float_type_positive" value="<?php //echo $item['number_of_actual_packet'];?>"/>
+            </div>
+        </div>
 
         <div style="<?php if(!($item['id']>0)){echo 'display:none';} ?>" class="row show-grid" id="remarks_id_container">
-            <div style="" class="row show-grid">
-                <div class="col-xs-4">
-                    <label for="remarks" class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS');?></label>
-                </div>
-                <div class="col-sm-4 col-xs-8">
-                    <textarea name="item[remarks]" id="remarks_id" class="form-control"><?php echo $item['remarks'] ?></textarea>
-                </div>
+            <div class="col-xs-4">
+                <label for="remarks" class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS');?></label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <textarea name="item[remarks]" id="remarks_id" class="form-control"><?php echo $item['remarks'] ?></textarea>
             </div>
         </div>
     </div>
@@ -248,20 +295,37 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         {
             $("#crop_type_id").val("");
             $("#variety_id").val("");
-            $("#pack_size_id").val("");
             $("#source_warehouse_id").val("");
             $("#current_stock_id").text("");
-            $("#destination_warehouse_id").val("");
             $("#quantity_id").val("");
+            $("#destination_warehouse_id").val("");
+            $("#pack_size_id").val("");
+            $('#number_of_packet_id').html("");
+            $('#number_of_actual_packet_id_input_container').val("");
+            $('#expected_mf_id').html("");
+            $('#actual_mf_id_input_container').val("");
+            $('#expected_f_id').html("");
+            $('#actual_f_id_input_container').val("");
+            $('#expected_sticker_id').html("");
+            $('#actual_sticker_id_input_container').val("");
             $("#remarks_id").val("");
+
             var crop_id=$('#crop_id').val();
             $('#crop_type_id_container').hide();
             $('#variety_id_container').hide();
-            $('#pack_size_id_container').hide();
             $('#source_warehouse_id_container').hide();
             $('#current_stock_container').hide();
-            $('#destination_warehouse_id_container').hide();
             $('#quantity_id_container').hide();
+            $('#destination_warehouse_id_container').hide();
+            $('#pack_size_id_container').hide();
+            $('#number_of_packet_container').hide();
+            $('#number_of_actual_packet_container').hide();
+            $('#expected_mf_container').hide();
+            $('#actual_mf_container').hide();
+            $('#expected_f_container').hide();
+            $('#actual_f_container').hide();
+            $('#expected_sticker_container').hide();
+            $('#actual_sticker_container').hide();
             $('#remarks_id_container').hide();
             if(crop_id>0)
             {
@@ -274,19 +338,37 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         $(document).on("change","#crop_type_id",function()
         {
             $("#variety_id").val("");
-            $("#pack_size_id").val("");
             $("#source_warehouse_id").val("");
             $("#current_stock_id").text("");
-            $("#destination_warehouse_id").val("");
             $("#quantity_id").val("");
+            $("#destination_warehouse_id").val("");
+            $("#pack_size_id").val("");
+            $('#number_of_packet_id').html("");
+            $('#number_of_actual_packet_id_input_container').val("");
+            $('#expected_mf_id').html("");
+            $('#actual_mf_id_input_container').val("");
+            $('#expected_f_id').html("");
+            $('#actual_f_id_input_container').val("");
+            $('#expected_sticker_id').html("");
+            $('#actual_sticker_id_input_container').val("");
             $("#remarks_id").val("");
+
             var crop_type_id=$('#crop_type_id').val();
             $('#variety_id_container').hide();
-            $('#pack_size_id_container').hide();
+
             $('#source_warehouse_id_container').hide();
             $('#current_stock_container').hide();
-            $('#destination_warehouse_id_container').hide();
             $('#quantity_id_container').hide();
+            $('#destination_warehouse_id_container').hide();
+            $('#pack_size_id_container').hide();
+            $('#number_of_packet_container').hide();
+            $('#number_of_actual_packet_container').hide();
+            $('#expected_mf_container').hide();
+            $('#actual_mf_container').hide();
+            $('#expected_f_container').hide();
+            $('#actual_f_container').hide();
+            $('#expected_sticker_container').hide();
+            $('#actual_sticker_container').hide();
             $('#remarks_id_container').hide();
             if(crop_type_id>0)
             {
@@ -300,14 +382,33 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         {
             $("#source_warehouse_id").val("");
             $("#current_stock_id").text("");
-            $("#destination_warehouse_id").val("");
             $("#quantity_id").val("");
+            $("#destination_warehouse_id").val("");
+            $("#pack_size_id").val("");
+            $('#number_of_packet_id').html("");
+            $('#number_of_actual_packet_id_input_container').val("");
+            $('#expected_mf_id').html("");
+            $('#actual_mf_id_input_container').val("");
+            $('#expected_f_id').html("");
+            $('#actual_f_id_input_container').val("");
+            $('#expected_sticker_id').html("");
+            $('#actual_sticker_id_input_container').val("");
             $("#remarks_id").val("");
+
             var variety_id=$('#variety_id').val();
             $('#source_warehouse_id_container').hide();
             $('#current_stock_container').hide();
-            $('#destination_warehouse_id_container').hide();
             $('#quantity_id_container').hide();
+            $('#destination_warehouse_id_container').hide();
+            $('#pack_size_id_container').hide();
+            $('#number_of_packet_container').hide();
+            $('#number_of_actual_packet_container').hide();
+            $('#expected_mf_container').hide();
+            $('#actual_mf_container').hide();
+            $('#expected_f_container').hide();
+            $('#actual_f_container').hide();
+            $('#expected_sticker_container').hide();
+            $('#actual_sticker_container').hide();
             $('#remarks_id_container').hide();
             if(variety_id>0)
             {
@@ -330,50 +431,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             }
         });
 
-<!--        $(document).off('change','#pack_size_id');-->
-<!--        $(document).on("change","#pack_size_id",function()-->
-<!--        {-->
-<!--            $("#source_warehouse_id").val("");-->
-<!--            $("#current_stock_id").text("");-->
-<!--            $("#destination_warehouse_id").val("");-->
-<!--            $("#quantity_id").val("");-->
-<!--            $("#remarks_id").val("");-->
-<!--            var variety_id=$('#variety_id').val();-->
-<!--            var pack_size_id=$('#pack_size_id').val();-->
-<!--            if(pack_size_id == '')-->
-<!--            {-->
-<!--                $('#source_warehouse_id_container').hide();-->
-<!--                $('#current_stock_container').hide();-->
-<!--                $('#destination_warehouse_id_container').hide();-->
-<!--                $('#quantity_id_container').hide();-->
-<!--                $('#remarks_id_container').hide();-->
-<!--            }-->
-<!--            else-->
-<!--            {-->
-<!--                $('#source_warehouse_id_container').show();-->
-<!--                $('#current_stock_container').hide();-->
-<!--                $('#destination_warehouse_id_container').hide();-->
-<!--                $('#quantity_id_container').hide();-->
-<!--                $('#remarks_id_container').hide();-->
-<!--                $.ajax({-->
-<!--                    url: base_url+"--><?php //echo $CI->controller_url?><!--/get_source_warehouse/",-->
-<!--                    type: 'POST',-->
-<!--                    datatype: "JSON",-->
-<!--                    data:{variety_id:variety_id,pack_size_id:pack_size_id},-->
-<!--                    success: function (data, status)-->
-<!--                    {-->
-<!---->
-<!--                    },-->
-<!--                    error: function (xhr, desc, err)-->
-<!--                    {-->
-<!--                        console.log("error");-->
-<!---->
-<!--                    }-->
-<!--                });-->
-<!---->
-<!--            }-->
-<!--        });-->
-
         $(document).off('change','#source_warehouse_id');
         $(document).on("change","#source_warehouse_id",function()
         {
@@ -381,7 +438,30 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             $("#quantity_id").val("");
             $("#destination_warehouse_id").val("");
             $("#pack_size_id").val("");
+            $('#number_of_packet_id').html("");
+            $('#number_of_actual_packet_id_input_container').val("");
+            $('#expected_mf_id').html("");
+            $('#actual_mf_id_input_container').val("");
+            $('#expected_f_id').html("");
+            $('#actual_f_id_input_container').val("");
+            $('#expected_sticker_id').html("");
+            $('#actual_sticker_id_input_container').val("");
             $("#remarks_id").val("");
+
+            $('#pack_size_id_container').hide();
+            $('#number_of_packet_container').hide();
+            $('#number_of_actual_packet_container').hide();
+            $('#expected_mf_container').hide();
+            $('#actual_mf_container').hide();
+            $('#expected_f_container').hide();
+            $('#actual_f_container').hide();
+            $('#expected_sticker_container').hide();
+            $('#actual_sticker_container').hide();
+            $('#current_stock_container').hide();
+            $('#quantity_id_container').hide();
+            $('#remarks_id_container').hide();
+            $('#destination_warehouse_id_container').hide();
+
             var variety_id=$('#variety_id').val();
             var pack_size_id=0;
             var source_warehouse_id=$('#source_warehouse_id').val();
@@ -412,20 +492,60 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     }
                 });
             }
-            else
+        });
+
+        $(document).off('input','#quantity_id');
+        $(document).on("input","#quantity_id",function()
+        {
+            var quantity=parseFloat($('#quantity_id').val());
+            var pack_size=parseFloat($("#pack_size_id").attr('data-pack-size-name'));
+
+            if(isNaN(pack_size))
             {
-                $('#current_stock_container').hide();
-                $('#quantity_id_container').hide();
-                $('#remarks_id_container').hide();
-                $('#destination_warehouse_id_container').hide();
+                pack_size=0;
             }
+
+            alert(quantity);
+            alert(pack_size);
+            if(pack_size>0)
+            {
+                alert(quantity);
+                alert(pack_size);
+                $('#number_of_packet_id').html("");
+                $('#number_of_actual_packet_id_input_container').val("");
+
+                var number_of_packet=(quantity/pack_size);
+                $("#number_of_packet_id").html(number_of_packet);
+                $("#number_of_actual_packet_id_input_container").val(number_of_packet);
+            }
+            //alert(pack_size_id);
+
         });
 
         $(document).off('change','#destination_warehouse_id');
         $(document).on("change","#destination_warehouse_id",function()
         {
             $("#pack_size_id").val("");
+            $('#number_of_packet_id').html("");
+            $('#number_of_actual_packet_id_input_container').val("");
+            $('#expected_mf_id').html("");
+            $('#actual_mf_id_input_container').val("");
+            $('#expected_f_id').html("");
+            $('#actual_f_id_input_container').val("");
+            $('#expected_sticker_id').html("");
+            $('#actual_sticker_id_input_container').val("");
+            $("#remarks_id").val("");
+
             $('#pack_size_id_container').hide();
+            $('#number_of_packet_container').hide();
+            $('#number_of_actual_packet_container').hide();
+            $('#expected_mf_container').hide();
+            $('#actual_mf_container').hide();
+            $('#expected_f_container').hide();
+            $('#actual_f_container').hide();
+            $('#expected_sticker_container').hide();
+            $('#actual_sticker_container').hide();
+
             var destination_warehouse_id=$('#destination_warehouse_id').val();
             if(destination_warehouse_id>0)
             {
@@ -451,19 +571,57 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         $(document).off('change','#pack_size_id');
         $(document).on("change","#pack_size_id",function()
         {
+            var pack_size=parseFloat($('option:selected', $("#pack_size_id")).attr('data-pack-size-name'));
+
+            alert(pack_size);
+            $('#number_of_packet_id').html("");
+            $('#number_of_actual_packet_id_input_container').val("");
+            $('#expected_mf_id').html("");
+            $('#actual_mf_id_input_container').val("");
+            $('#expected_f_id').html("");
+            $('#actual_f_id_input_container').val("");
+            $('#expected_sticker_id').html("");
+            $('#actual_sticker_id_input_container').val("");
+            $("#remarks_id").val("");
+
             var variety_id=$('#variety_id').val();
             var pack_size_id=$('#pack_size_id').val();
+            var quantity=$('#quantity_id').val();
+
+            $('#number_of_packet_container').hide();
+            $('#number_of_actual_packet_container').hide();
+            $('#expected_mf_container').hide();
+            $('#actual_mf_container').hide();
+            $('#expected_f_container').hide();
+            $('#actual_f_container').hide();
+            $('#expected_sticker_container').hide();
+            $('#actual_sticker_container').hide();
+
             if(pack_size_id>0)
             {
-                $('#packing_item_validation_container').show();
                 $.ajax({
                     url: base_url+"<?php echo $CI->controller_url?>/check_variety_raw_config/",
                     type: 'POST',
                     datatype: "JSON",
-                    data:{variety_id:variety_id,pack_size_id:pack_size_id},
+                    data:{variety_id:variety_id,pack_size_id:pack_size_id,quantity:quantity},
                     success: function (data, status)
                     {
-
+                        if(data['quantity_master_foil']>0)
+                        {
+                            $('#number_of_packet_container').show();
+                            $('#number_of_actual_packet_container').show();
+                            $('#expected_mf_container').show();
+                            $('#actual_mf_container').show();
+                        }
+                        else if(data['quantity_foil']>0 && data['quantity_sticker']>0)
+                        {
+                            $('#number_of_packet_container').show();
+                            $('#number_of_actual_packet_container').show();
+                            $('#expected_f_container').show();
+                            $('#actual_f_container').show();
+                            $('#expected_sticker_container').show();
+                            $('#actual_sticker_container').show();
+                        }
                     },
                     error: function (xhr, desc, err)
                     {
@@ -473,6 +631,5 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 });
             }
         });
-
     });
 </script>

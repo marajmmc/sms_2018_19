@@ -476,6 +476,9 @@ class Convert_bp extends Root_Controller
         $this->db->where('stock_summary.variety_id',$variety_id);
         $this->db->where('stock_summary.pack_size_id',$pack_size_id);
         $data['items']=$this->db->get()->result_array();
+
+//        print_r($data['items']);
+//        exit;
         $ajax['status']=true;
         $ajax['system_content'][]=array("id"=>$html_container_id,"html"=>$this->load->view("dropdown_with_select",$data,true));
         $this->json_return($ajax);
@@ -485,32 +488,67 @@ class Convert_bp extends Root_Controller
     {
         $variety_id = $this->input->post('variety_id');
         $pack_size_id = $this->input->post('pack_size_id');
-        $html_container_id='#packing_item_validation_id';
-        if($this->input->post('html_container_id'))
-        {
-            $html_container_id=$this->input->post('html_container_id');
+        $quantity = $this->input->post('quantity');
+
+        $pack_size_value = Query_helper::get_info($this->config->item('table_login_setup_classification_pack_size'), 'name value', array('status !="' . $this->config->item('system_status_delete') . '"', 'id =' . $pack_size_id), 1);
+
+        $html_container_id = '#number_of_packet_id';
+        if ($this->input->post('html_container_id')) {
+            $html_container_id = $this->input->post('html_container_id');
+        }
+        if ($this->input->post('html_container_id')) {
+            $html_container_id = $this->input->post('html_container_id');
         }
 
-        $this->db->from($this->config->item('table_login_setup_classification_variety_raw_config').' raw_config');
+        $this->db->from($this->config->item('table_login_setup_classification_variety_raw_config') . ' raw_config');
         $this->db->select('raw_config.*');
-        $this->db->where('raw_config.variety_id',$variety_id);
-        $this->db->where('raw_config.pack_size_id',$pack_size_id);
-        $this->db->where('raw_config.revision',1);
-        $result=$this->db->get()->row_array();
-        if(!($result['masterfoil']>0))
-        {
-            if(!($result['foil']>0 && $result['sticker']>0))
-            {
-                $result='Packing item is not set up yet';
+        $this->db->where('raw_config.variety_id', $variety_id);
+        $this->db->where('raw_config.pack_size_id', $pack_size_id);
+        $this->db->where('raw_config.revision', 1);
+        $result = $this->db->get()->row_array();
+        if (!($result['masterfoil'] > 0)) {
+            if (!($result['foil'] > 0 && $result['sticker'] > 0)) {
+                $ajax['status'] = false;
+                $ajax['system_content'][] = array("id" => $html_container_id, "html" => '');
+                $ajax['system_content'][] = array("id" => '#number_of_actual_packet_id_input_container', "html" => '');
+                $ajax['system_message'] = 'Packing Materials is not setup for this variety';
+                $this->json_return($ajax);
             }
+        }
+        $number_of_packet = ($quantity / $pack_size_value['value']);
+
+        $number_of_mf = 10;
+        $number_of_f = 5;
+        $number_of_sticker = 20;
+        $ajax['status'] = true;
+        $ajax['system_content'][] = array("id" => $html_container_id, "html" => $number_of_packet);
+        $ajax['system_content'][] = array("id" => '#number_of_actual_packet_id_input_container', "html" => '<input type="text" name="item[number_of_actual_packet]" class="form-control float_type_positive" value="' . $number_of_packet . '"/>');
+
+        if ($result['masterfoil'] > 0)
+        {
+            $ajax['quantity_master_foil']=$result['masterfoil'];
+            $ajax['quantity_foil']=0;
+            $ajax['quantity_sticker']=0;
+
+            $ajax['system_content'][] = array("id" => '#expected_mf_id', "html" => $number_of_mf);
+            $ajax['system_content'][] = array("id" => '#actual_mf_id_input_container', "html" => '<input type="text" name="item[actual_mf]" class="form-control float_type_positive" value="' . $number_of_mf . '"/>');
+        }
+        elseif ($result['foil'] > 0 && $result['sticker'] > 0)
+        {
+            $ajax['quantity_master_foil']=0;
+            $ajax['quantity_foil']=$result['foil'];
+            $ajax['quantity_sticker']=$result['sticker'];
+
+            $ajax['system_content'][] = array("id" => '#expected_f_id', "html" => $number_of_f);
+            $ajax['system_content'][] = array("id" => '#actual_f_id_input_container', "html" => '<input type="text" name="item[actual_f]" class="form-control float_type_positive" value="' . $number_of_f . '"/>');
+
+            $ajax['system_content'][] = array("id" => '#expected_sticker_id', "html" => $number_of_sticker);
+            $ajax['system_content'][] = array("id" => '#actual_sticker_id_input_container', "html" => '<input type="text" name="item[actual_sticker]" class="form-control float_type_positive" value="' . $number_of_sticker . '"/>');
         }
         else
         {
-            $result='';
+            $ajax['quantity_master_foil']=0;
         }
-
-        $ajax['status']=true;
-        $ajax['system_content'][]=array("id"=>$html_container_id,"html"=>$result);
         $this->json_return($ajax);
 
     }
