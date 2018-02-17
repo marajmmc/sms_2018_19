@@ -43,7 +43,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         <div class="row show-grid">
             <div class="row show-grid">
                 <div class="col-xs-4">
-                    <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_CONVERT');?><span style="color:#FF0000">*</span></label>
+                    <label class="control-label pull-right">Date Convert<span style="color:#FF0000">*</span></label>
                 </div>
                 <div class="col-sm-4 col-xs-8">
                     <input type="text" name="item[date_convert]" class="form-control datepicker" value="<?php echo System_helper::display_date($item['date_convert']);?>"/>
