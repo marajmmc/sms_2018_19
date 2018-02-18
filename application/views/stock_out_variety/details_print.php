@@ -116,11 +116,11 @@ $num_pages=ceil($total_records/$row_per_page);
                 <thead>
                 <tr>
                     <th rowspan="2" style="width: 5px;"><?php echo $CI->lang->line('LABEL_SL_NO'); ?></th>
-                    <!--<th rowspan="2"><?php /*echo $CI->lang->line('LABEL_CROP_NAME'); */?></th>-->
+                    <th rowspan="2"><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></th>
                     <th rowspan="2"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?></th>
                     <th rowspan="2"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
                     <th rowspan="2" style="width: 5px;"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
-                    <th rowspan="2"><?php echo $CI->lang->line('LABEL_WAREHOUSE_NAME'); ?></th>
+                    <!--<th rowspan="2"><?php /*echo $CI->lang->line('LABEL_WAREHOUSE_NAME'); */?></th>-->
                     <th colspan="2" class="text-center"><?php echo $CI->lang->line('LABEL_QUANTITY'); ?></th>
                 </tr>
                 <tr>
@@ -139,10 +139,10 @@ $num_pages=ceil($total_records/$row_per_page);
                     <tr>
                         <td><?php echo $serial; ?></td>
                         <td><?php echo $items[$index]['crop_name']; ?></td>
-                        <!--<td><?php /*echo $items[$index]['crop_type_name']; */?></td>-->
+                        <td><?php echo $items[$index]['crop_type_name']; ?></td>
                         <td><?php echo $items[$index]['variety_name']; ?></td>
                         <td><?php if($items[$index]['pack_size_id']==0){echo 'Bulk';}else{echo $items[$index]['pack_size'];} ?></td>
-                        <td><?php echo $items[$index]['warehouse_name']; ?></td>
+                        <!--<td><?php /*echo $items[$index]['warehouse_name']; */?></td>-->
                         <td class="text-right"><?php echo $items[$index]['quantity']; ?></td>
                         <td class="text-right"> <?php echo $items[$index]['quantity']/1000;?> </td>
                     </tr>
