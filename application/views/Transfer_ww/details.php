@@ -58,7 +58,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
     <div class="row show-grid">
         <div class="col-xs-4">
-            <label for="crop_type_id" class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CROP_TYPE');?> :</label>
+            <label for="crop_type_id" class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME');?> :</label>
         </div>
         <div class="col-sm-4 col-xs-8">
             <label class="control-label"><?php echo $item['crop_type_name']?></label>
