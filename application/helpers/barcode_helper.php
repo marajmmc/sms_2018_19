@@ -73,4 +73,11 @@ class Barcode_helper
     {
         return 'RSO'.str_pad($increment_id,5,0,STR_PAD_LEFT); //Raw Sticker Stock Out
     }
+
+    //Convert
+    public static function get_barcode_convert_bulk_to_packet($increment_id)
+    {
+        return 'CBP'.str_pad($increment_id,5,0,STR_PAD_LEFT); //Raw Sticker Stock Out
+    }
+
 }

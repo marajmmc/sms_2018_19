@@ -59,3 +59,6 @@ $config['table_sms_stock_out_raw_sticker_details'] = 'arm_sms_2018_19.sms_stock_
 
 //Stock Out Common Foil
 $config['table_sms_stock_out_raw_foil'] = 'arm_sms_2018_19.sms_stock_out_raw_foil';
+
+//Convert
+$config['table_sms_convert_bulk_to_pack'] = 'arm_sms_2018_19.sms_convert_bulk_to_pack';

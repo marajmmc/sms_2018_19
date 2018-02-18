@@ -214,12 +214,12 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <label id="number_of_packet_id" class="control-label"></label>
             </div>
         </div>
-        <div style="display: none;" class="row show-grid" id="number_of_actual_packet_container">
+        <div style="<?php if(!($item['id']>0)){echo 'display:none';} ?>" class="row show-grid" id="number_of_actual_packet_container">
             <div class="col-xs-4">
                 <label for="number_of_actual_packet" class="control-label pull-right">Number Of Actual Packet<span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8" id="number_of_actual_packet_id_input_container">
-                <input type="text" name="item[number_of_actual_packet]" id="number_of_actual_packet_id" class="form-control float_type_positive" value="<?php //echo $item['number_of_actual_packet'];?>"/>
+                <input type="text" name="item[number_of_actual_packet]" id="number_of_actual_packet_id" class="form-control float_type_positive" value="<?php echo $item['number_of_actual_packet'];?>"/>
             </div>
         </div>
         <div style="display: none;" class="row show-grid" id="expected_mf_container">
@@ -234,12 +234,12 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             </div>
         </div>
 
-        <div style="display: none;" class="row show-grid" id="actual_mf_container">
+        <div style="<?php if(!($item['id']>0) || !($item['actual_master_foil']>0)){echo 'display:none';} ?>" class="row show-grid" id="actual_mf_container">
             <div class="col-xs-4">
                 <label for="actual_mf" class="control-label pull-right">Actual Master Foil (In KG)<span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8" id="actual_mf_id_input_container">
-                <input type="text" name="item[actual_mf]" id="actual_mf_id" class="form-control float_type_positive" value="<?php //echo $item['number_of_actual_packet'];?>"/>
+                <input type="text" name="item[actual_mf]" id="actual_mf_id" class="form-control float_type_positive" value="<?php echo $item['actual_master_foil'];?>"/>
             </div>
         </div>
         <div style="display: none;" class="row show-grid" id="expected_f_container">
@@ -253,12 +253,12 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 </label>
             </div>
         </div>
-        <div style="display: none;" class="row show-grid" id="actual_f_container">
+        <div style="<?php if(!($item['id']>0) || !($item['actual_foil']>0)){echo 'display:none';} ?>" class="row show-grid" id="actual_f_container">
             <div class="col-xs-4">
                 <label for="actual_f" class="control-label pull-right">Actual Foil (In KG)<span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8" id="actual_f_id_input_container">
-                <input type="text" name="item[actual_f]" id="actual_f_id" class="form-control float_type_positive" value="<?php //echo $item['number_of_actual_packet'];?>"/>
+                <input type="text" name="item[actual_f]" id="actual_f_id" class="form-control float_type_positive" value="<?php echo $item['actual_foil'];?>"/>
             </div>
         </div>
         <div style="display: none;" class="row show-grid" id="expected_sticker_container">
@@ -272,12 +272,12 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 </label>
             </div>
         </div>
-        <div style="display: none;" class="row show-grid" id="actual_sticker_container">
+        <div style="<?php if(!($item['id']>0) || !($item['actual_sticker']>0)){echo 'display:none';} ?>" class="row show-grid" id="actual_sticker_container">
             <div class="col-xs-4">
                 <label for="actual_sticker" class="control-label pull-right">Actual Sticker<span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8" id="actual_sticker_id_input_container">
-                <input type="text" name="item[actual_sticker]" id="actual_sticker_id" class="form-control float_type_positive" value="<?php //echo $item['number_of_actual_packet'];?>"/>
+                <input type="text" name="item[actual_sticker]" id="actual_sticker_id" class="form-control float_type_positive" value="<?php echo $item['actual_sticker'];?>"/>
             </div>
         </div>
 
