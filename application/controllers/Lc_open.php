@@ -797,7 +797,7 @@ class Lc_open extends Root_Controller
                 $ajax['system_message']='Invalid LC.';
                 $this->json_return($ajax);
             }
-            if($data['item']['status_release']!=$this->config->item('system_status_complete'))
+            /*if($data['item']['status_release']!=$this->config->item('system_status_complete'))
             {
                 $ajax['status']=false;
                 $ajax['system_message']='LC release pending.';
@@ -808,7 +808,7 @@ class Lc_open extends Root_Controller
                 $ajax['status']=false;
                 $ajax['system_message']='LC receive pending.';
                 $this->json_return($ajax);
-            }
+            }*/
             /*if($data['item']['status_open']==$this->config->item('system_status_closed'))
             {
                 $ajax['status']=false;
@@ -1250,14 +1250,10 @@ class Lc_open extends Root_Controller
         $data['fiscal_year']= 1;
         $data['month']= 1;
         $data['date_opening']= 1;
-        $data['date_expected']= 1;
         $data['principal_name']= 1;
         $data['currency_name']= 1;
         $data['lc_number']= 1;
-        $data['consignment_name']= 1;
-        $data['price_open_other_currency']= 1;
         $data['quantity_open_kg']= 1;
-        $data['price_open_variety_currency']= 1;
         $data['status_open_forward']= 1;
         $data['status_release']= 1;
         $data['status_received']= 1;
