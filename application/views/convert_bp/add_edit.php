@@ -234,7 +234,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             </div>
         </div>
 
-        <div style="<?php if(!($item['id']>0) || !($item['actual_master_foil']>0)){echo 'display:none';} ?>" class="row show-grid" id="actual_mf_container">
+        <div style="<?php if((!($item['id']>0)) && (!($item['actual_master_foil']>0))){echo 'display:none';} ?>" class="row show-grid" id="actual_mf_container">
             <div class="col-xs-4">
                 <label for="actual_mf" class="control-label pull-right">Actual Master Foil (In KG)<span style="color:#FF0000">*</span></label>
             </div>
@@ -253,7 +253,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 </label>
             </div>
         </div>
-        <div style="<?php if(!($item['id']>0) || !($item['actual_foil']>0)){echo 'display:none';} ?>" class="row show-grid" id="actual_f_container">
+        <div style="<?php if((!($item['id']>0)) && (!($item['actual_foil']>0))){echo 'display:none';} ?>" class="row show-grid" id="actual_f_container">
             <div class="col-xs-4">
                 <label for="actual_f" class="control-label pull-right">Actual Foil (In KG)<span style="color:#FF0000">*</span></label>
             </div>
@@ -272,7 +272,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 </label>
             </div>
         </div>
-        <div style="<?php if(!($item['id']>0) || !($item['actual_sticker']>0)){echo 'display:none';} ?>" class="row show-grid" id="actual_sticker_container">
+        <div style="<?php if((!($item['id']>0)) && (!($item['actual_sticker']>0))){echo 'display:none';} ?>" class="row show-grid" id="actual_sticker_container">
             <div class="col-xs-4">
                 <label for="actual_sticker" class="control-label pull-right">Actual Sticker<span style="color:#FF0000">*</span></label>
             </div>
