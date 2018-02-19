@@ -167,6 +167,9 @@ class Convert_bp extends Root_Controller
             $this->db->where('convert_bp.status !=',$this->config->item('system_status_delete'));
             $this->db->order_by('convert_bp.id','ASC');
             $data['item']=$this->db->get()->row_array();
+
+//            print_r($data['item']);
+//            exit;
             if(!$data['item'])
             {
                 System_helper::invalid_try('Edit Non Exists',$item_id);

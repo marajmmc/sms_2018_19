@@ -573,18 +573,21 @@ jQuery(document).ready(function()
         $('#number_of_packet_id').html("");
         $('#number_of_actual_packet_id').val("");
         $('#expected_mf_id').html("");
+        $('#current_stock_mf').html("");
+        $('#current_stock_sticker').html("");
+        $('#current_stock_f').html("");
+        $('#actual_mf_id').val("");
+        $('#actual_f_id').val("");
+        $('#actual_sticker_id').val("");
         $('#actual_mf_id_input_container').val("");
         $('#expected_f_id').html("");
         $('#actual_f_id_input_container').val("");
         $('#expected_sticker_id').html("");
         $('#actual_sticker_id_input_container').val("");
-
         $('#expected_mf_id_in_pack_size_change').val("");
         $('#expected_f_id_in_pack_size_change').val("");
         $('#expected_sticker_id_in_pack_size_change').val("");
-
         $("#remarks_id").val("");
-
         var variety_id=$('#variety_id').val();
         var pack_size_id=$('#pack_size_id').val();
         var quantity=$('#quantity_id').val();
