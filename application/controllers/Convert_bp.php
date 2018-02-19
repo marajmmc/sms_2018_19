@@ -118,7 +118,7 @@ class Convert_bp extends Root_Controller
             $data['packs']=Query_helper::get_info($this->config->item('table_login_setup_classification_pack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
 
             $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/add_edit",$data,true));
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/add",$data,true));
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
@@ -211,7 +211,7 @@ class Convert_bp extends Root_Controller
             }
             $data['title']="Convert (Bulk to Packet)";
             $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/add_edit",$data,true));
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/edit",$data,true));
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
@@ -253,8 +253,6 @@ class Convert_bp extends Root_Controller
             $item['pack_size_id']=$old_item['pack_size_id'];
             $old_value=$old_item['quantity'];
             $old_number_of_actual_packet=$old_item['number_of_actual_packet'];
-
-            //$old_number_of_actual_packet=
         }
 
         $item['source_pack_size_id']=0;
@@ -265,9 +263,6 @@ class Convert_bp extends Root_Controller
         //Getting Number Of Packet
         $pack_size_value = Query_helper::get_info($this->config->item('table_login_setup_classification_pack_size'), 'name value', array('status !="' . $this->config->item('system_status_delete') . '"', 'id =' . $item['pack_size_id']), 1);
         $number_of_packet = (($item['quantity']*1000) / $pack_size_value['value']);
-
-//        print_r($number_of_packet);
-//        exit;
 
         /*--Start-- Permission Checking */
         if($id>0)
@@ -310,8 +305,6 @@ class Convert_bp extends Root_Controller
         if(isset($current_stocks[$item['variety_id']][$item['pack_size_id']][$item['destination_warehouse_id']]))
         {
             $stock_destination=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['destination_warehouse_id']]['current_stock'];
-//            print_r($stock_destination);
-//            exit;
         }
         if($id>0)
         {
@@ -429,8 +422,6 @@ class Convert_bp extends Root_Controller
 
                 if($id>0)
                 {
-//                    print_r($result);
-//                    exit;
                     $old_required_f=(($result['foil']*$old_number_of_actual_packet)/1000);
                     $old_required_number_of_sticker=($result['sticker']*$old_number_of_actual_packet);
                     if(($required_f>$old_required_f) || ($required_number_of_sticker>$old_required_number_of_sticker))
@@ -469,20 +460,7 @@ class Convert_bp extends Root_Controller
             $ajax['system_message'] = 'Packing materials setup is not correct for this pack size';
             $this->json_return($ajax);
         }
-//        echo $old_required_mf;
-//        echo 'hi';
-//        echo $old_required_f;
-//        echo 'hi';
-//        echo $old_required_number_of_sticker;
-//        echo 'new';
-//        echo $required_mf;
-//        echo 'hi';
-//        echo $required_f;
-//        echo 'hi';
-//        echo $required_number_of_sticker;
-//        exit;
         /*-- End-- Validation Checking */
-
 
         $this->db->trans_start(); //DB Transaction Handle START
         if($id>0)
@@ -498,18 +476,52 @@ class Convert_bp extends Root_Controller
             Query_helper::update($this->config->item('table_sms_convert_bulk_to_pack'),$data,array('id='.$id));
 
             $data=array(); //Summary Data(for source warehouse)
-            $data['out_transfer_warehouse']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['source_warehouse_id']]['out_transfer_warehouse']-$old_value+$item['quantity'];
-            $data['current_stock']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['source_warehouse_id']]['current_stock']+$old_value-$item['quantity'];
+            $data['out_convert_bulk_pack']=$current_stocks[$item['variety_id']][$item['source_pack_size_id']][$item['source_warehouse_id']]['out_convert_bulk_pack']-$old_value+$item['quantity'];
+            $data['current_stock']=$current_stocks[$item['variety_id']][$item['source_pack_size_id']][$item['source_warehouse_id']]['current_stock']+$old_value-$item['quantity'];
             $data['date_updated'] = $time;
             $data['user_updated'] = $user->user_id;
-            Query_helper::update($this->config->item('table_sms_stock_summary_variety'),$data,array('variety_id='.$item['variety_id'],'pack_size_id='.$item['pack_size_id'],'warehouse_id='.$item['source_warehouse_id']));
+            Query_helper::update($this->config->item('table_sms_stock_summary_variety'),$data,array('variety_id='.$item['variety_id'],'pack_size_id='.$item['source_pack_size_id'],'warehouse_id='.$item['source_warehouse_id']));
 
             $data=array(); //Summary Data(for destination warehouse)
-            $data['out_convert_bulk_pack']=$current_stocks[$item['variety_id']][$item['source_pack_size_id']][$item['source_warehouse_id']]['out_convert_bulk_pack']-$old_value+$item['quantity'];
-            $data['current_stock']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['destination_warehouse_id']]['current_stock']-$old_value+$item['quantity'];
+            $data['in_convert_bulk_pack']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['destination_warehouse_id']]['in_convert_bulk_pack']-$old_number_of_actual_packet+$number_of_packet;
+            $data['current_stock']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['destination_warehouse_id']]['current_stock']-$old_number_of_actual_packet+$number_of_packet;
             $data['date_updated'] = $time;
             $data['user_updated'] = $user->user_id;
             Query_helper::update($this->config->item('table_sms_stock_summary_variety'),$data,array('variety_id='.$item['variety_id'],'pack_size_id='.$item['pack_size_id'],'warehouse_id='.$item['destination_warehouse_id']));
+
+
+            if($required_mf>0)
+            {
+                $data=array(); //Summary data (for master foil)
+                $master_foil=$this->config->item('system_master_foil');
+                $data['out_convert']=$current_raw_stocks[$item['variety_id']][$item['pack_size_id']][$master_foil]['out_convert']-$old_required_mf+$required_mf;
+                $data['current_stock']=$current_raw_stocks[$item['variety_id']][$item['pack_size_id']][$master_foil]['current_stock']+$old_required_mf-$required_mf;
+                $data['date_updated'] = $time;
+                $data['user_updated'] = $user->user_id;
+                Query_helper::update($this->config->item('table_sms_stock_summary_raw'),$data,array('variety_id='.$item['variety_id'],'pack_size_id='.$item['pack_size_id'],'packing_item= "'.$master_foil.'"'));
+            }
+
+            if($required_f>0)
+            {
+                $data=array(); //Summary data (for common foil)
+                $foil=$this->config->item('system_common_foil');
+                $data['out_convert']=$current_foil_stocks[0][0][$foil]['out_convert']-$old_required_f+$required_f;
+                $data['current_stock']=$current_foil_stocks[0][0][$foil]['current_stock']+$old_required_f-$required_f;
+                $data['date_updated'] = $time;
+                $data['user_updated'] = $user->user_id;
+                Query_helper::update($this->config->item('table_sms_stock_summary_raw'),$data,array('variety_id='.'0','pack_size_id='.$item['source_pack_size_id'],'packing_item= "'.$foil.'"'));
+            }
+
+            if($required_number_of_sticker>0)
+            {
+                $data=array(); //Summary data (for sticker)
+                $sticker=$this->config->item('system_sticker');
+                $data['out_convert']=$current_raw_stocks[$item['variety_id']][$item['pack_size_id']][$sticker]['out_convert']-$old_required_number_of_sticker+$required_number_of_sticker;
+                $data['current_stock']=$current_raw_stocks[$item['variety_id']][$item['pack_size_id']][$sticker]['current_stock']+$old_required_number_of_sticker-$required_number_of_sticker;
+                $data['date_updated'] = $time;
+                $data['user_updated'] = $user->user_id;
+                Query_helper::update($this->config->item('table_sms_stock_summary_raw'),$data,array('variety_id='.$item['variety_id'],'pack_size_id='.$item['pack_size_id'],'packing_item= "'.$sticker.'"'));
+            }
 
         }
         else
@@ -556,38 +568,30 @@ class Convert_bp extends Root_Controller
                 Query_helper::add($this->config->item('table_sms_stock_summary_variety'),$data);
             }
 
-            $data=array(); //Raw Stock Summary data
-//            print_r($current_raw_stocks);
-//            exit;
+
             if($required_mf>0)
             {
+                $data=array(); //Summary data (for master foil)
                 $master_foil=$this->config->item('system_master_foil');
                 $data['out_convert']=$current_raw_stocks[$item['variety_id']][$item['pack_size_id']][$master_foil]['out_convert']+$required_mf;
                 $data['current_stock']=$current_raw_stocks[$item['variety_id']][$item['pack_size_id']][$master_foil]['current_stock']-$required_mf;
                 $data['date_updated'] = $time;
                 $data['user_updated'] = $user->user_id;
-//                print_r($data);
-//                echo $item['variety_id'];
-//                echo $item['pack_size_id'];
-//                echo $master_foil;
-//                exit;
                 Query_helper::update($this->config->item('table_sms_stock_summary_raw'),$data,array('variety_id='.$item['variety_id'],'pack_size_id='.$item['pack_size_id'],'packing_item= "'.$master_foil.'"'));
             }
             if($required_f>0)
             {
+                $data=array(); //Summary data (for Common foil)
                 $foil=$this->config->item('system_common_foil');
-//                echo $foil;
-//                exit;
                 $data['out_convert']=$current_foil_stocks[0][0][$foil]['out_convert']+$required_f;
                 $data['current_stock']=$current_foil_stocks[0][0][$foil]['current_stock']-$required_f;
                 $data['date_updated'] = $time;
                 $data['user_updated'] = $user->user_id;
-//                print_r($data);
-//                exit;
                 Query_helper::update($this->config->item('table_sms_stock_summary_raw'),$data,array('variety_id='.'0','pack_size_id='.$item['source_pack_size_id'],'packing_item= "'.$foil.'"'));
             }
             if($required_number_of_sticker>0)
             {
+                $data=array(); //Summary data (for Sticker)
                 $sticker=$this->config->item('system_sticker');
                 $data['out_convert']=$current_raw_stocks[$item['variety_id']][$item['pack_size_id']][$sticker]['out_convert']+$required_number_of_sticker;
                 $data['current_stock']=$current_raw_stocks[$item['variety_id']][$item['pack_size_id']][$sticker]['current_stock']-$required_number_of_sticker;
