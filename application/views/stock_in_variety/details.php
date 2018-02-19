@@ -81,7 +81,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?></th>
                     <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
                     <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
-                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_WAREHOUSE'); ?></th>
+                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_WAREHOUSE_NAME'); ?></th>
                     <th class="text-right" style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_CURRENT_STOCK'); ?></th>
                     <th class="text-right" style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY'); ?></th>
                 </tr>
@@ -189,7 +189,7 @@ $footer_image=base_url('images/print/footer.jpg');
             <th style="min-width: 50px;border: 1px solid #000000;"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?></th>
             <th style="min-width: 50px;border: 1px solid #000000;"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
             <th style="min-width: 50px;border: 1px solid #000000;"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
-            <th style="min-width: 50px;border: 1px solid #000000;"><?php echo $CI->lang->line('LABEL_WAREHOUSE'); ?></th>
+            <th style="min-width: 50px;border: 1px solid #000000;"><?php echo $CI->lang->line('LABEL_WAREHOUSE_NAME'); ?></th>
             <th class="text-right" style="min-width: 50px;border: 1px solid #000000;"><?php echo $CI->lang->line('LABEL_CURRENT_STOCK'); ?></th>
             <th class="text-right" style="min-width: 50px;border: 1px solid #000000;"><?php echo $CI->lang->line('LABEL_QUANTITY'); ?></th>
         </tr>
@@ -237,7 +237,6 @@ $footer_image=base_url('images/print/footer.jpg');
     </table>
 </div>
 <script type="text/javascript">
-
     jQuery(document).ready(function()
     {
         system_preset({controller:'<?php echo $CI->router->class; ?>'});
