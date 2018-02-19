@@ -100,7 +100,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <label class="control-label pull-right">Header Image</label>
                 </div>
                 <div class="col-xs-4">
-                    <input type="file" class="browse_button" data-preview-container="#image_header" name="image_header">
+                    <input type="file" class="browse_button" data-preview-container="#image_header" data-preview-width="300" name="image_header">
                 </div>
                 <div class="col-xs-4" id="image_header">
                     <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_picture_setup_print').$item['image_header_location']; ?>" alt="<?php echo $item['image_header_name']; ?>">
@@ -111,7 +111,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <label class="control-label pull-right">Footer Image</label>
                 </div>
                 <div class="col-xs-4">
-                    <input type="file" class="browse_button" data-preview-container="#image_footer" name="image_footer">
+                    <input type="file" class="browse_button" data-preview-container="#image_footer" data-preview-width="300" name="image_footer">
                 </div>
                 <div class="col-xs-4" id="image_footer">
                     <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_picture_setup_print').$item['image_footer_location']; ?>" alt="<?php echo $item['image_footer_name']; ?>">

@@ -217,8 +217,18 @@ $(document).ready(function()
                 var path=URL.createObjectURL(file);
                 if(container)
                 {
-                    var img_tag='<img height="'+preview_height+'" src="'+path+'" >';
-                    $(container).html(img_tag);
+                    var img_tag='';
+                    if($(this).attr('data-preview-width'))
+                    {
+                        var preview_width=$(this).attr('data-preview-width');
+                        img_tag='<img width="'+preview_width+'" src="'+path+'" >';
+                        $(container).html(img_tag);
+                    }
+                    else
+                    {
+                        img_tag='<img height="'+preview_height+'" src="'+path+'" >';
+                        $(container).html(img_tag);
+                    }
                 }
                 var img=new Image();
                 img.src=path;
