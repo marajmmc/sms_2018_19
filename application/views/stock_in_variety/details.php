@@ -8,15 +8,16 @@ $action_buttons[]=array(
 );
 if(isset($CI->permissions['action4']) && ($CI->permissions['action4']==1))
 {
-    $action_buttons[]=array(
-        'type'=>'button',
-        'label'=>$CI->lang->line("ACTION_PRINT"),
-        'class'=>'button_action_download',
-        'data-title'=>"Print",
-        'data-print'=>true
-    );
+    if(isset($CI->permissions['action4']) && ($CI->permissions['action4']==1))
+    {
+        $action_buttons[]=array(
+            'type'=>'button',
+            'label'=>$CI->lang->line("ACTION_PRINT"),
+            'onClick'=>"window.print()"
+        );
+    }
 }
-if(isset($CI->permissions['action5']) && ($CI->permissions['action5']==1))
+/*if(isset($CI->permissions['action5']) && ($CI->permissions['action5']==1))
 {
     $action_buttons[]=array(
         'type'=>'button',
@@ -24,13 +25,13 @@ if(isset($CI->permissions['action5']) && ($CI->permissions['action5']==1))
         'class'=>'button_action_download',
         'data-title'=>"Download"
     );
-}
+}*/
 $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 ?>
-<form class="hidden" id="save_form" action="<?php echo site_url($CI->controller_url.'/index/save');?>" method="post">
+<form class="" id="save_form" action="<?php echo site_url($CI->controller_url.'/index/save');?>" method="post">
     <input type="hidden" id="id" name="id" value="<?php echo $item['id']; ?>" />
     <input type="hidden" id="system_save_new_status" name="system_save_new_status" value="0" />
-    <div class="row widget hide">
+    <div class="row widget ">
         <div class="widget-header">
             <div class="title">
                 <?php echo $title; ?>
@@ -42,7 +43,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_BARCODE');?> :</label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <?php echo Barcode_helper::get_barcode_stock_out($item['id']);?>
+                <?php echo Barcode_helper::get_barcode_stock_in($item['id']);?>
             </div>
         </div>
 
@@ -157,7 +158,7 @@ $footer_image=base_url('images/print/footer.jpg');
         text-align: left;
     }
 </style>
-<div id="system_report_container" style="width: <?php echo $width; ?>px;">
+<div id="system_report_container" style="width: <?php echo $width; ?>px; display: none;" class="">
     <table>
         <thead>
         <tr>

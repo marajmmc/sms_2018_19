@@ -6,7 +6,14 @@ $action_buttons[]=array(
     'label'=>$CI->lang->line("ACTION_BACK"),
     'href'=>site_url($CI->controller_url)
 );
-
+if(isset($CI->permissions['action4']) && ($CI->permissions['action4']==1))
+{
+    $action_buttons[]=array(
+        'type'=>'button',
+        'label'=>$CI->lang->line("ACTION_PRINT"),
+        'onClick'=>"window.print()"
+    );
+}
 $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
 $status_closed=false;
