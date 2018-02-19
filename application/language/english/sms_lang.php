@@ -97,6 +97,8 @@ $lang['LABEL_ADD_MORE'] = 'Add more';
 $lang['LABEL_SEARCH'] = 'Search';
 $lang['LABEL_DESCRIPTION'] = 'Description';
 $lang['LABEL_ITEM'] = 'Item';
+$lang['LABEL_CREATED_BY'] = 'Created By';
+$lang['LABEL_UPDATED_BY'] = 'Updated By';
 
 /* Status */
 $lang['LABEL_STATUS']='Status';
@@ -161,11 +163,12 @@ $lang['LABEL_SITE_URL'] = 'Site Url';
 $lang['LABEL_SITE_REPLACE_TEXT'] = 'Url Replace text';
 $lang['LABEL_OTHER_SITES'] = 'Other Sites';
 
-//date
+//date & time
 $lang['LABEL_DATE']='Date';
 $lang['LABEL_DATE_START'] = 'Starting Date';
 $lang['LABEL_DATE_END'] = 'End Date';
 $lang['LABEL_DATE_CREATED']='Creation date';
+$lang['LABEL_DATE_RECEIVE']='Receive Date';
 $lang['LABEL_DATE_RELEASE']='Release Date';
 $lang['LABEL_DATE_OPENING'] = 'Opening Date';
 $lang['LABEL_DATE_CLOSING'] = 'Closing Date';
@@ -176,6 +179,9 @@ $lang['LABEL_DATE_STOCK_IN']='Stock In date';
 $lang['LABEL_DATE_STOCK_OUT']='Stock Out date';
 $lang['LABEL_DATE_TRANSFER']='Transfer date';
 $lang['LABEL_DATE_PURCHASE']='Purchase date';
+$lang['LABEL_DATE_CHALLAN']='Challan Date';
+$lang['LABEL_DATE_CREATED_TIME']='Created Time';
+$lang['LABEL_DATE_UPDATED_TIME']='Updated Time';
 
 //months array
 $lang['LABEL_MONTH'] = 'Month';
@@ -350,7 +356,6 @@ $lang['LABEL_PRICE_RELEASE_VARIETY_CURRENCY']='Release Total Variety (Currency)'
 /*LC receive*/
 $lang['LABEL_PRICE_COMPLETE_OTHER_VARIETY_TAKA']='LC Release Actual Total (Taka)';
 $lang['LABEL_QUANTITY_RECEIVE_KG']='Receive Total (KG)';
-$lang['LABEL_DATE_RECEIVE']='Receive Date';
 $lang['LABEL_DATE_PACKING_LIST']='Packing List Date';
 $lang['LABEL_NUMBER_PACKING_LIST']='Packing List Number';
 $lang['LABEL_NUMBER_LOT']='Lot Number';
@@ -358,9 +363,6 @@ $lang['LABEL_CARTON_NUMBER']='No. of Ctn/Bosta';
 $lang['LABEL_CARTON_SIZE']='Ctn Size';
 
 //Lang File Added By Saiful
-$lang['LABEL_DATE_RECEIVE']='Receive Date';
 $lang['LABEL_CHALLAN_NUMBER']='Challan Number';
-$lang['LABEL_DATE_CHALLAN']='Challan Date';
-
 $lang['LABEL_NUMBER_OF_REEL']='Number Of Reel';
 
