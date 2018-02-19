@@ -33,9 +33,35 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <th class="bg-danger"><label class="control-label"><?php echo $item['purpose'];?></label></th>
             </tr>
             <tr>
-                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS');?></label></th>
-                <th class=" header_value" colspan="3"><label class="control-label"><?php echo $item['remarks']?></label></th>
+                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_CREATED_BY');?></label></th>
+                <th class=" header_value"><label class="control-label"><?php echo $item['user_created_full_name'];?></label></th>
+                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_CREATED_TIME');?></label></th>
+                <th class=""><label class="control-label"><?php echo System_helper::display_date_time($item['date_created']);?></label></th>
             </tr>
+            <?php
+            if($item['user_updated'])
+            {
+                ?>
+                <tr>
+                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_UPDATED_BY');?></label></th>
+                    <th class=" header_value"><label class="control-label"><?php echo $item['user_updated_full_name'];?></label></th>
+                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_UPDATED_TIME');?></label></th>
+                    <th class=""><label class="control-label"><?php echo System_helper::display_date_time($item['date_updated']);?></label></th>
+                </tr>
+            <?php
+            }
+            ?>
+            <?php
+            if($item['remarks'])
+            {
+                ?>
+                <tr>
+                    <th class="widget-header header_caption" style="vertical-align: top"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS');?></label></th>
+                    <th class=" header_value" colspan="3"><label class="control-label"><?php echo nl2br($item['remarks']);?></label></th>
+                </tr>
+            <?php
+            }
+            ?>
             </thead>
         </table>
     </div>

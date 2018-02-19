@@ -146,9 +146,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 columnsreorder: true,
                 columns: [
                     { text: '<?php echo $CI->lang->line('LABEL_BARCODE'); ?>', dataField: 'barcode',width:'80',hidden: <?php echo $system_preference_items['barcode']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_DATE_STOCK_IN'); ?>',dataField: 'date_stock_in',width:'80', filtertype: 'list',hidden: <?php echo $system_preference_items['date_stock_in']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_DATE_STOCK_IN'); ?>',dataField: 'date_stock_in',width:'100', filtertype: 'list',hidden: <?php echo $system_preference_items['date_stock_in']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_PURPOSE'); ?>', dataField: 'purpose',width:'200',filtertype: 'list',hidden: <?php echo $system_preference_items['purpose']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_QUANTITY'); ?>',dataField: 'quantity',width:'200', cellsalign: 'right',hidden: <?php echo $system_preference_items['quantity']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_QUANTITY'); ?>',dataField: 'quantity',width:'100', cellsalign: 'right',hidden: <?php echo $system_preference_items['quantity']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_REMARKS'); ?>', dataField: 'remarks',hidden: <?php echo $system_preference_items['remarks']?0:1;?>}
                 ]
             });

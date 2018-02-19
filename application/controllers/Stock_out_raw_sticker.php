@@ -501,10 +501,19 @@ class Stock_out_raw_sticker extends Root_Controller
                 $item_id=$this->input->post('id');
             }
 
-            $data['item']=Query_helper::get_info($this->config->item('table_sms_stock_out_raw_sticker'),'*',array('status !="'.$this->config->item('system_status_delete').'"','id ='.$item_id),1);
+            //$data['item']=Query_helper::get_info($this->config->item('table_sms_stock_out_raw_sticker'),'*',array('status !="'.$this->config->item('system_status_delete').'"','id ='.$item_id),1);
+            $this->db->from($this->config->item('table_sms_stock_out_raw_sticker').' raw_sticker');
+            $this->db->select('raw_sticker.*');
+            $this->db->join($this->config->item('table_login_setup_user_info').' ui_created','ui_created.user_id = raw_sticker.user_created','LEFT');
+            $this->db->select('ui_created.name user_created_full_name, ui_created.date_created');
+            $this->db->join($this->config->item('table_login_setup_user_info').' ui_updated','ui_updated.user_id = raw_sticker.user_updated','LEFT');
+            $this->db->select('ui_updated.name user_updated_full_name, ui_updated.date_updated');
+            $this->db->where('raw_sticker.id',$item_id);
+            $this->db->where('raw_sticker.status !=',$this->config->item('system_status_delete'));
+            $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
             {
-                System_helper::invalid_try('Edit Non Exists',$item_id);
+                System_helper::invalid_try('View Non Exists',$item_id);
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid Try.';
                 $this->json_return($ajax);

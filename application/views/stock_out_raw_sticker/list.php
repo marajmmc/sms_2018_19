@@ -122,6 +122,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 { name: 'remarks', type: 'string' }
             ],
             id: 'id',
+            type: 'POST',
             url: url
         };
 
@@ -131,7 +132,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             {
                 width: '100%',
                 source: dataAdapter,
-                pageable: true,
+                pageable: false,
                 filterable: true,
                 sortable: true,
                 showfilterrow: true,

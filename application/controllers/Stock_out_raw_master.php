@@ -501,7 +501,16 @@ class Stock_out_raw_master extends Root_Controller
                 $item_id=$this->input->post('id');
             }
 
-            $data['item']=Query_helper::get_info($this->config->item('table_sms_stock_out_raw_master'),'*',array('status !="'.$this->config->item('system_status_delete').'"','id ='.$item_id),1);
+            //$data['item']=Query_helper::get_info($this->config->item('table_sms_stock_out_raw_master'),'*',array('status !="'.$this->config->item('system_status_delete').'"','id ='.$item_id),1);
+            $this->db->from($this->config->item('table_sms_stock_out_raw_master').' raw_master');
+            $this->db->select('raw_master.*');
+            $this->db->join($this->config->item('table_login_setup_user_info').' ui_created','ui_created.user_id = raw_master.user_created','LEFT');
+            $this->db->select('ui_created.name user_created_full_name, ui_created.date_created');
+            $this->db->join($this->config->item('table_login_setup_user_info').' ui_updated','ui_updated.user_id = raw_master.user_updated','LEFT');
+            $this->db->select('ui_updated.name user_updated_full_name, ui_updated.date_updated');
+            $this->db->where('raw_master.id',$item_id);
+            $this->db->where('raw_master.status !=',$this->config->item('system_status_delete'));
+            $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
             {
                 System_helper::invalid_try('Edit Non Exists',$item_id);
@@ -524,7 +533,7 @@ class Stock_out_raw_master extends Root_Controller
             $this->db->order_by('master_details.id','ASC');
             $data['items']=$this->db->get()->result_array();
 
-            $data['title']="Stock Out (Master Foil) Details :: ".Barcode_helper::get_barcode_raw_master_stock_in($item_id);
+            $data['title']="Stock Out (Master Foil) Details :: ".Barcode_helper::get_barcode_raw_master_stock_out($item_id);
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/details",$data,true));
             if($this->message)

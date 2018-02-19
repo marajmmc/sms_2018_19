@@ -123,6 +123,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 { name: 'remarks', type: 'string' }
             ],
             id: 'id',
+            type: 'POST',
             url: url
         };
 
@@ -148,7 +149,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     { text: '<?php echo $CI->lang->line('LABEL_BARCODE'); ?>', dataField: 'barcode',width:'80',hidden: <?php echo $system_preference_items['barcode']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_DATE_STOCK_OUT'); ?>', dataField: 'date_stock_out',width:'80',filtertype: 'list',hidden: <?php echo $system_preference_items['date_stock_out']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL'); ?>', dataField: 'quantity_total',width:'200',cellsalign: 'right',hidden: <?php echo $system_preference_items['quantity_total']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_PURPOSE'); ?>', dataField: 'purpose',filtertype: 'list',width:'200',hidden: <?php echo $system_preference_items['purpose']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_PURPOSE'); ?>', dataField: 'purpose',width:'200',filtertype: 'list',hidden: <?php echo $system_preference_items['purpose']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_REMARKS'); ?>', dataField: 'remarks',hidden: <?php echo $system_preference_items['remarks']?0:1;?>}
                 ]
             });
