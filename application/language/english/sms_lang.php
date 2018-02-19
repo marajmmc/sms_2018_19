@@ -99,6 +99,7 @@ $lang['LABEL_DESCRIPTION'] = 'Description';
 $lang['LABEL_ITEM'] = 'Item';
 
 /* Status */
+$lang['LABEL_STATUS']='Status';
 $lang['LABEL_STATUS_EXPENSE']='Expense Status';
 $lang['LABEL_STATUS_RELEASE']='Release Status';
 $lang['LABEL_STATUS_RECEIVED']='Received Status';

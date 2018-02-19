@@ -210,7 +210,7 @@ $footer_image=base_url('images/print/footer.jpg');
                     <label><?php echo $si_variety['variety_name']; ?></label>
                 </td>
                 <td  style="border: 1px solid #000000">
-                    <label><?php if($si_variety['pack_size_id']==0){echo 'Bulk';}else{echo $si_variety['pack_size_name'];} ?></label>
+                    <label><?php if($si_variety['pack_size_id']==0){echo 'Bulk';}else{echo $si_variety['pack_size'];} ?></label>
                 </td>
                 <td  style="border: 1px solid #000000">
                     <label><?php echo $si_variety['ware_house_name']; ?></label>

@@ -95,7 +95,7 @@ $num_pages=ceil($total_records/$row_per_page);
                             <th colspan="2" class="text-center"><?php echo $CI->lang->line('LABEL_QUANTITY'); ?></th>
                         </tr>
                         <tr>
-                            <th class="text-right" ><?php echo $CI->lang->line('LABEL_PACK'); ?>/<?php echo $CI->lang->line('LABEL_KG'); ?></th>
+                            <th class="text-right" ><?php echo $CI->lang->line('LABEL_PACK'); ?></th>
                             <th class="text-right" ><?php echo $CI->lang->line('LABEL_KG'); ?></th>
                         </tr>
                     </thead>
@@ -114,8 +114,8 @@ $num_pages=ceil($total_records/$row_per_page);
                             <td><?php echo $items[$index]['variety_name']; ?></td>
                             <td><?php if($items[$index]['pack_size_id']==0){echo 'Bulk';}else{echo $items[$index]['pack_size'];} ?></td>
                             <td><?php echo $items[$index]['ware_house_name']; ?></td>
-                            <td class="text-right"><?php echo $items[$index]['quantity']; ?></td>
-                            <td class="text-right"> <?php echo $items[$index]['quantity']/1000;?> </td>
+                            <td class="text-right"><?php if($items[$index]['pack_size_id']==0){echo 0;}else{echo $items[$index]['quantity'];} ?></td>
+                            <td class="text-right"> <?php echo $items[$index]['quantity']/1000; ?> </td>
                         </tr>
                     <?php
                         if($total_records==$index+1)
