@@ -34,6 +34,10 @@ class Stock_out_raw_foil extends Root_Controller
         {
             $this->system_details($id);
         }
+        elseif($action=="details_print")
+        {
+            $this->system_details_print($id);
+        }
         elseif($action=="delete")
         {
             $this->system_delete($id);
@@ -356,12 +360,84 @@ class Stock_out_raw_foil extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
     private function system_details($id)
     {
-        $this->system_list();
-    }
+        if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
+        {
+            if($id>0)
+            {
+                $item_id=$id;
+            }
+            else
+            {
+                $item_id=$this->input->post('id');
+            }
 
+            $data['item']=Query_helper::get_info($this->config->item('table_sms_stock_in_raw_foil'),'*',array('status !="'.$this->config->item('system_status_delete').'"','id ='.$item_id),1);
+            if(!$data['item'])
+            {
+                System_helper::invalid_try('View Non Exists',$item_id);
+                $ajax['status']=false;
+                $ajax['system_message']='Invalid Try.';
+                $this->json_return($ajax);
+            }
+
+            $data['title']="Stock Out (Common Foil) Details :: ".Barcode_helper::get_barcode_raw_foil_stock_out($item_id);
+            $ajax['status']=true;
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/details",$data,true));
+            if($this->message)
+            {
+                $ajax['system_message']=$this->message;
+            }
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/details/'.$item_id);
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+    }
+    private function system_details_print($id)
+    {
+        if((isset($this->permissions['action4']) && ($this->permissions['action4']==1)))
+        {
+            if($id>0)
+            {
+                $item_id=$id;
+            }
+            else
+            {
+                $item_id=$this->input->post('id');
+            }
+
+            $data['item']=Query_helper::get_info($this->config->item('table_sms_stock_in_raw_foil'),'*',array('status !="'.$this->config->item('system_status_delete').'"','id ='.$item_id),1);
+            if(!$data['item'])
+            {
+                System_helper::invalid_try('Print View Non Exists',$item_id);
+                $ajax['status']=false;
+                $ajax['system_message']='Invalid Try.';
+                $this->json_return($ajax);
+            }
+
+            $data['title']="Stock Out (Common Foil) Print :: ".Barcode_helper::get_barcode_raw_foil_stock_in($item_id);
+            $ajax['status']=true;
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/details_print",$data,true));
+            if($this->message)
+            {
+                $ajax['system_message']=$this->message;
+            }
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/details_print/'.$item_id);
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+    }
     private function system_delete($id)
     {
         if(isset($this->permissions['action3']) && ($this->permissions['action3']==1))
@@ -432,7 +508,6 @@ class Stock_out_raw_foil extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
     private function system_set_preference()
     {
         if(isset($this->permissions['action6']) && ($this->permissions['action6']==1))
@@ -477,7 +552,6 @@ class Stock_out_raw_foil extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
     private function check_validation()
     {
         $id = $this->input->post("id");

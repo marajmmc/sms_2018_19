@@ -34,6 +34,10 @@ class Stock_out_raw_sticker extends Root_Controller
         {
             $this->system_details($id);
         }
+        elseif($action=="details_print")
+        {
+            $this->system_details_print($id);
+        }
         elseif($action=="delete")
         {
             $this->system_delete($id);
@@ -102,7 +106,6 @@ class Stock_out_raw_sticker extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
     private function system_get_items()
     {
         $current_records = $this->input->post('total_records');
@@ -485,12 +488,111 @@ class Stock_out_raw_sticker extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
     private function system_details($id)
     {
-        $this->system_list();
-    }
+        if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
+        {
+            if($id>0)
+            {
+                $item_id=$id;
+            }
+            else
+            {
+                $item_id=$this->input->post('id');
+            }
 
+            $data['item']=Query_helper::get_info($this->config->item('table_sms_stock_out_raw_sticker'),'*',array('status !="'.$this->config->item('system_status_delete').'"','id ='.$item_id),1);
+            if(!$data['item'])
+            {
+                System_helper::invalid_try('Edit Non Exists',$item_id);
+                $ajax['status']=false;
+                $ajax['system_message']='Invalid Try.';
+                $this->json_return($ajax);
+            }
+            $this->db->from($this->config->item('table_sms_stock_out_raw_sticker_details').' master_details');
+            $this->db->select('master_details.variety_id, master_details.pack_size_id, master_details.quantity');
+            $this->db->join($this->config->item('table_login_setup_classification_varieties').' variety','variety.id = master_details.variety_id','INNER');
+            $this->db->select('variety.name variety_name');
+            $this->db->join($this->config->item('table_login_setup_classification_pack_size').' v_pack_size','v_pack_size.id = master_details.pack_size_id','LEFT');
+            $this->db->select('v_pack_size.name pack_size');
+            $this->db->join($this->config->item('table_login_setup_classification_crop_types').' type','type.id = variety.crop_type_id','INNER');
+            $this->db->select('type.name crop_type_name');
+            $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = type.crop_id','INNER');
+            $this->db->select('crop.name crop_name');
+            $this->db->where('master_details.stock_out_id',$item_id);
+            $this->db->where('master_details.revision',1);
+            $this->db->order_by('master_details.id','ASC');
+            $data['items']=$this->db->get()->result_array();
+
+            $data['title']="Stock Out (Sticker) Details :: ".Barcode_helper::get_barcode_raw_sticker_stock_out($item_id);
+            $ajax['status']=true;
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/details",$data,true));
+            if($this->message)
+            {
+                $ajax['system_message']=$this->message;
+            }
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/details/'.$item_id);
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+    }
+    private function system_details_print($id)
+    {
+        if((isset($this->permissions['action4']) && ($this->permissions['action4']==1)))
+        {
+            if($id>0)
+            {
+                $item_id=$id;
+            }
+            else
+            {
+                $item_id=$this->input->post('id');
+            }
+
+            $data['item']=Query_helper::get_info($this->config->item('table_sms_stock_out_raw_sticker'),'*',array('status !="'.$this->config->item('system_status_delete').'"','id ='.$item_id),1);
+            if(!$data['item'])
+            {
+                System_helper::invalid_try('Edit Non Exists',$item_id);
+                $ajax['status']=false;
+                $ajax['system_message']='Invalid Try.';
+                $this->json_return($ajax);
+            }
+            $this->db->from($this->config->item('table_sms_stock_out_raw_sticker_details').' master_details');
+            $this->db->select('master_details.variety_id, master_details.pack_size_id, master_details.quantity');
+            $this->db->join($this->config->item('table_login_setup_classification_varieties').' variety','variety.id = master_details.variety_id','INNER');
+            $this->db->select('variety.name variety_name');
+            $this->db->join($this->config->item('table_login_setup_classification_pack_size').' v_pack_size','v_pack_size.id = master_details.pack_size_id','LEFT');
+            $this->db->select('v_pack_size.name pack_size');
+            $this->db->join($this->config->item('table_login_setup_classification_crop_types').' type','type.id = variety.crop_type_id','INNER');
+            $this->db->select('type.name crop_type_name');
+            $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = type.crop_id','INNER');
+            $this->db->select('crop.name crop_name');
+            $this->db->where('master_details.stock_out_id',$item_id);
+            $this->db->where('master_details.revision',1);
+            $this->db->order_by('master_details.id','ASC');
+            $data['items']=$this->db->get()->result_array();
+
+            $ajax['status']=true;
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/details_print",$data,true));
+            if($this->message)
+            {
+                $ajax['system_message']=$this->message;
+            }
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/details_print/'.$item_id);
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+    }
     private function system_delete($id)
     {
         if(isset($this->permissions['action3']) && ($this->permissions['action3']==1))
@@ -581,7 +683,6 @@ class Stock_out_raw_sticker extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
     private function system_set_preference()
     {
         if(isset($this->permissions['action6']) && ($this->permissions['action6']==1))
@@ -626,7 +727,6 @@ class Stock_out_raw_sticker extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
     private function check_validation()
     {
         $id = $this->input->post("id");

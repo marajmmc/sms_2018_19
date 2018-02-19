@@ -96,6 +96,7 @@ $lang['LABEL_ORDER'] = 'Ordering';
 $lang['LABEL_ADD_MORE'] = 'Add more';
 $lang['LABEL_SEARCH'] = 'Search';
 $lang['LABEL_DESCRIPTION'] = 'Description';
+$lang['LABEL_ITEM'] = 'Item';
 
 /* Status */
 $lang['LABEL_STATUS_EXPENSE']='Expense Status';
