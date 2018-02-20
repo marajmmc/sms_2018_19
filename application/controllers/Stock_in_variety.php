@@ -82,7 +82,6 @@ class Stock_in_variety extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
     private function system_get_items()
     {
         $current_records = $this->input->post('total_records');
@@ -110,6 +109,7 @@ class Stock_in_variety extends Root_Controller
         {
             $item['date_stock_in']=System_helper::display_date($item['date_stock_in']);
             $item['barcode']=Barcode_helper::get_barcode_stock_in($item['id']);
+            $item['quantity_total_kg']=number_format($item['quantity_total'],3,'.','');
         }
         $this->json_return($items);
     }
@@ -524,7 +524,6 @@ class Stock_in_variety extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
     private function system_details($id)
     {
         if(isset($this->permissions['action0']) && ($this->permissions['action0']==1))
@@ -570,7 +569,6 @@ class Stock_in_variety extends Root_Controller
             $this->db->join($this->config->item('table_login_setup_classification_crop_types').' type','type.id = variety.crop_type_id','INNER');
             $this->db->select('crop.name crop_name');
             $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = type.crop_id','INNER');
-
             $this->db->where('stock_in.id',$item_id);
             $this->db->where('stock_in_details.revision',1);
             $this->db->order_by('stock_in_details.id','ASC');
@@ -631,6 +629,7 @@ class Stock_in_variety extends Root_Controller
             $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = type.crop_id','INNER');
             $this->db->where('stock_in.id',$item_id);
             $this->db->where('stock_in_details.revision',1);
+            $this->db->where('stock_in_details.quantity > 0');
             $this->db->order_by('stock_in_details.id','ASC');
             $data['items']=$this->db->get()->result_array();
             $data['title']="Details Stock In";
@@ -755,7 +754,6 @@ class Stock_in_variety extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
     private function check_validation()
     {
         $id = $this->input->post("id");
@@ -797,7 +795,7 @@ class Stock_in_variety extends Root_Controller
         $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
         $data['barcode']= 1;
         $data['date_stock_in']= 1;
-        $data['quantity_total']= 1;
+        $data['quantity_total_kg']= 1;
         $data['purpose']= 1;
         $data['remarks']= 1;
         if($result)

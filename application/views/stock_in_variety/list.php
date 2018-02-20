@@ -18,6 +18,15 @@ if(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1))
         'data-action-link'=>site_url($CI->controller_url.'/index/edit')
     );
 }
+if(isset($CI->permissions['action0']) && ($CI->permissions['action0']==1))
+{
+    $action_buttons[]=array(
+        'type'=>'button',
+        'label'=>$CI->lang->line('ACTION_DETAILS'),
+        'class'=>'button_jqx_action',
+        'data-action-link'=>site_url($CI->controller_url.'/index/details')
+    );
+}
 if(isset($CI->permissions['action3']) && ($CI->permissions['action3']==1))
 {
     $action_buttons[]=array(
@@ -26,15 +35,6 @@ if(isset($CI->permissions['action3']) && ($CI->permissions['action3']==1))
         'data-message-confirm'=>'Are you sure to Delete this stock?',
         'class'=>'button_jqx_action',
         'data-action-link'=>site_url($CI->controller_url.'/index/delete')
-    );
-}
-if(isset($CI->permissions['action0']) && ($CI->permissions['action0']==1))
-{
-    $action_buttons[]=array(
-        'type'=>'button',
-        'label'=>$CI->lang->line('ACTION_DETAILS'),
-        'class'=>'button_jqx_action',
-        'data-action-link'=>site_url($CI->controller_url.'/index/details')
     );
 }
 if(isset($CI->permissions['action4']) && ($CI->permissions['action4']==1))
@@ -117,7 +117,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 { name: 'id', type: 'int' },
                 { name: 'barcode', type: 'string' },
                 { name: 'date_stock_in', type: 'string' },
-                { name: 'quantity_total', type: 'string' },
+                { name: 'quantity_total_kg', type: 'string' },
                 { name: 'purpose', type: 'string' },
                 { name: 'remarks', type: 'string' }
             ],
@@ -146,8 +146,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 columnsreorder: true,
                 columns: [
                     { text: '<?php echo $CI->lang->line('LABEL_BARCODE'); ?>', dataField: 'barcode',width:'80',hidden: <?php echo $system_preference_items['barcode']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_DATE_STOCK_IN'); ?>', filtertype: 'list',dataField: 'date_stock_in',width:'80',hidden: <?php echo $system_preference_items['date_stock_in']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL'); ?> (KG)', cellsalign: 'right',dataField: 'quantity_total',width:'200',hidden: <?php echo $system_preference_items['quantity_total']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_DATE_STOCK_IN'); ?>',dataField: 'date_stock_in',width:'100', filtertype: 'list',hidden: <?php echo $system_preference_items['date_stock_in']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL_KG'); ?>', cellsalign: 'right',dataField: 'quantity_total_kg',width:'200',hidden: <?php echo $system_preference_items['quantity_total_kg']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_PURPOSE'); ?>', dataField: 'purpose',filtertype: 'list',width:'200',hidden: <?php echo $system_preference_items['purpose']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_REMARKS'); ?>', dataField: 'remarks',hidden: <?php echo $system_preference_items['remarks']?0:1;?>}
                 ]

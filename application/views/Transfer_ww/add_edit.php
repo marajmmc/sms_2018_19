@@ -104,7 +104,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
         <div style="<?php if(!($item['id']>0)){echo 'display:none';} ?>" class="row show-grid" id="crop_type_id_container">
             <div class="col-xs-4">
-                <label for="crop_type_id" class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CROP_TYPE');?><span style="color:#FF0000">*</span></label>
+                <label for="crop_type_id" class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME');?><span style="color:#FF0000">*</span></label>
             </div>
             <?php if($item['id']){?>
                 <div class="col-sm-4 col-xs-8">

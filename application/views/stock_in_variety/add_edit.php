@@ -88,7 +88,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></th>
                     <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?></th>
                     <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
-                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
+                    <th style="min-width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
                     <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_WAREHOUSE_NAME'); ?></th>
                     <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_CURRENT_STOCK'); ?></th>
                     <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY'); ?></th>
@@ -111,12 +111,12 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                                 <label><?php echo $si_variety['variety_name']; ?></label>
                                 <input type="hidden"  id="variety_id<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][variety_id]" value="<?php echo $si_variety['variety_id']; ?>" />
                             </td>
-                            <td>
+                            <td class="text-right">
                                 <label><?php if($si_variety['pack_size_id']==0){echo 'Bulk';}else{echo $si_variety['pack_size'];} ?></label>
                                 <input type="hidden" id="pack_size_id<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][pack_size_id]" value="<?php echo $si_variety['pack_size_id']; ?>" />
 
                             </td>
-                            <td class="text-right">
+                            <td>
                                 <label><?php echo $si_variety['ware_house_name']; ?></label>
                                 <input type="hidden" id="warehouse_id<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][warehouse_id]" value="<?php echo $si_variety['warehouse_id']; ?>" />
                             </td>

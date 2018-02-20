@@ -82,7 +82,6 @@ class Stock_out_variety extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
     private function system_get_items()
     {
         $current_records = $this->input->post('total_records');
@@ -110,6 +109,7 @@ class Stock_out_variety extends Root_Controller
         {
             $item['date_stock_out']=System_helper::display_date($item['date_stock_out']);
             $item['barcode']=Barcode_helper::get_barcode_stock_out($item['id']);
+            $item['quantity_total_kg']=number_format($item['quantity_total'],3,'.','');
         }
         $this->json_return($items);
     }
@@ -561,7 +561,6 @@ class Stock_out_variety extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
     private function system_details($id)
     {
         if(isset($this->permissions['action0']) && ($this->permissions['action0']==1))
@@ -621,7 +620,7 @@ class Stock_out_variety extends Root_Controller
             $this->db->order_by('stock_out_details.id','ASC');
             $data['stock_out_varieties']=$this->db->get()->result_array();
 
-            $data['title']="Details Stock Out";
+            $data['title']="Stock Out Details :: ".Barcode_helper::get_barcode_stock_out($item_id);
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/details",$data,true));
             if($this->message)
@@ -820,7 +819,6 @@ class Stock_out_variety extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
     private function check_validation()
     {
         $id = $this->input->post("id");
@@ -878,7 +876,7 @@ class Stock_out_variety extends Root_Controller
         $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
         $data['barcode']= 1;
         $data['date_stock_out']= 1;
-        $data['quantity_total']= 1;
+        $data['quantity_total_kg']= 1;
         $data['purpose']= 1;
         $data['remarks']= 1;
         if($result)

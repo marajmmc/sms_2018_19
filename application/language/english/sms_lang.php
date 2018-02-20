@@ -227,16 +227,19 @@ $lang['LABEL_QUANTITY_ORDER'] = 'Order Quantity';
 $lang['LABEL_QUANTITY_SUPPLY'] = 'Supply Quantity';
 $lang['LABEL_QUANTITY_RECEIVE'] = 'Receive Quantity';
 $lang['LABEL_QUANTITY_DIFFERENCE'] = 'Difference Quantity';
-
+$lang['LABEL_QUANTITY_TOTAL_PKT']='Total Quantity (pkt)';
+$lang['LABEL_QUANTITY_TOTAL_KG']='Total Quantity (Kg)';
+$lang['LABEL_QUANTITY_TOTAL_PACK_KG']='Total Quantity (Pkt/Kg)';
+$lang['LABEL_QUANTITY_KG_PACK']='Quantity (Pkt/Kg)';
 // Total, Currency, Percentage - kg/pkt/taka/currency
 /* Total */
 $lang['LABEL_TOTAL'] = 'Total';
 $lang['LABEL_TOTAL_KG']='Total (Kg)';
 $lang['LABEL_TOTAL_PKT']='Total (pkt)';
 $lang['LABEL_GRAND_TOTAL_KG']='Grand Total (Kg)';
-$lang['LABEL_QUANTITY_KG_PACK']='Quantity (packet / Kg)';
 
-$lang['LABEL_CURRENT_STOCK'] = 'Current Stock (Pack/Kg)';
+
+$lang['LABEL_CURRENT_STOCK'] = 'Current Stock (Pkt/Kg)';
 $lang['LABEL_CURRENT_STOCK_KG']='Current Stock (KG)';
 $lang['LABEL_CURRENT_STOCK_PKT'] = 'Current Stock (pkt))';
 $lang['LABEL_STARTING_STOCK'] = 'Starting Stock';
