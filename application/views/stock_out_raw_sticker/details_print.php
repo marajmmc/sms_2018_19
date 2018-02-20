@@ -80,7 +80,7 @@ $num_pages=ceil($total_records/$row_per_page);
             </div>
             <table style="width:<?php echo $width;?>px;" class="system_table_report_container">
                 <thead>
-                <th><?php echo $CI->lang->line('LABEL_SL_NO'); ?></th>
+                <th style="width: 10px;"><?php echo $CI->lang->line('LABEL_SL_NO'); ?></th>
                 <th><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></th>
                 <th><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?></th>
                 <th><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>

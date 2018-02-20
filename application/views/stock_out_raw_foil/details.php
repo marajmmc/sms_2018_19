@@ -74,9 +74,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <th class="widget-header text-center" colspan="30">Product & Price Details :: <?php echo Barcode_helper::get_barcode_raw_foil_stock_out($item['id']);?> </th>
                 </tr>
                 <tr>
-                    <th><?php echo $CI->lang->line('LABEL_SL_NO'); ?></th>
+                    <th style="width: 10px;"><?php echo $CI->lang->line('LABEL_SL_NO'); ?></th>
                     <th><?php echo $CI->lang->line('LABEL_ITEM'); ?></th>
-                    <th class="text-right"><?php echo $CI->lang->line('LABEL_QUANTITY'); ?></th>
+                    <th class="text-right" style="width: 200px;"><?php echo $CI->lang->line('LABEL_QUANTITY'); ?></th>
                 </tr>
                 </thead>
                 <tbody>

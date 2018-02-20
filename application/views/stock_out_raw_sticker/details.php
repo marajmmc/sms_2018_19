@@ -74,7 +74,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <th class="widget-header text-center" colspan="30">Product & Price Details :: <?php echo Barcode_helper::get_barcode_raw_sticker_stock_out($item['id']);?> </th>
                 </tr>
                 <tr>
-                    <th><?php echo $CI->lang->line('LABEL_SL_NO'); ?></th>
+                    <th style="width: 10px;"><?php echo $CI->lang->line('LABEL_SL_NO'); ?></th>
                     <th><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></th>
                     <th><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?></th>
                     <th><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>

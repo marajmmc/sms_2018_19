@@ -86,7 +86,7 @@ $num_pages=ceil($total_records/$row_per_page);
                 </thead>
                 <tbody>
                 <tr>
-                    <td>1</td>
+                    <td style="width: 10px;">1</td>
                     <td>Common Foil</td>
                     <td class="text-right"><?php echo $item['quantity'];?></td>
                 </tr>

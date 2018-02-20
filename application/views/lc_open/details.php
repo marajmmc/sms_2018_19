@@ -455,7 +455,7 @@ if(!empty($items))
     </tbody>
     <tfoot>
     <tr>
-        <th colspan="<?php echo $number_footer_colspan;?>" class="text-right"><?php echo $this->lang->line('LABEL_TOTAL_KG')?></th>
+        <th colspan="<?php echo $number_footer_colspan;?>" class="text-right"><?php echo $this->lang->line('LABEL_TOTAL')?></th>
         <th class="text-right"><label class="control-label"><?php echo $quantity_total_open;?></label></th>
         <th class="text-right"><label class="control-label"><?php echo number_format($quantity_total_open_kg,3,'.','');?></label></th>
         <th class="text-right"><label class="control-label"><?php echo number_format($price_total_open_currency,2);?></label></th>
