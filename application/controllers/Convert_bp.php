@@ -694,16 +694,11 @@ class Convert_bp extends Root_Controller
                 $stock_current_mf=$stock_result_mf[$variety_id][$pack_size_id][$packing_item]['current_stock'];
             }
 
-//            print_r($result['masterfoil']);
-//            exit;
-
-
             $number_of_mf=(($result['masterfoil']*$number_of_packet)/1000);
-
             $ajax['quantity_master_foil']=$result['masterfoil'];
             $ajax['quantity_foil']=0;
             $ajax['quantity_sticker']=0;
-            $ajax['stock_current_mf']=$stock_current_mf;
+            $ajax['stock_current_mf']=' (Current Stock : '.$stock_current_mf.')';
 
 
             $ajax['system_content'][] = array("id" => '#expected_mf_id', "html" => $number_of_mf);
@@ -737,8 +732,8 @@ class Convert_bp extends Root_Controller
             $ajax['quantity_foil']=$result['foil'];
             $ajax['quantity_sticker']=$result['sticker'];
 
-            $ajax['stock_current_f']=$stock_current_f;
-            $ajax['stock_current_sticker']=$stock_current_sticker;
+            $ajax['stock_current_f']=' (Current Stock : '.$stock_current_f.')';
+            $ajax['stock_current_sticker']=' (Current Stock : '.$stock_current_sticker.')';
 
             $ajax['system_content'][] = array("id" => '#expected_f_id', "html" => $number_of_f);
             $ajax['system_content'][] = array("id" => '#actual_f_id_input_container', "html" => '<input type="text" name="item[actual_f]" id="actual_f_id" class="form-control float_type_positive" value="' . $number_of_f . '"/>');

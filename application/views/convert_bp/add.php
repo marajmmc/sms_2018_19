@@ -183,10 +183,10 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
     </div>
     <div class="col-sm-4 col-xs-8">
         <label id="expected_mf_id" class="control-label"></label>
-        <span><b>Current Stock:</b></span> <label id="current_stock_mf" class="control-label"></label>
+        <label id="current_stock_mf" class="control-label"></label>
 
         <label for="expected_mf" id="expected_mf_id_in_pack_size_container" class="control-label pull-right">
-            <input type="hidden" id="expected_mf_id_in_pack_size_change" value="<?php //echo $item['number_of_actual_packet'];?>"/>
+            <input type="hidden" id="expected_mf_id_in_pack_size_change" value=""/>
         </label>
     </div>
 </div>
@@ -205,7 +205,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
     </div>
     <div class="col-sm-4 col-xs-8">
         <label id="expected_f_id" class="control-label"></label>
-        <span><b>Current Stock:</b></span> <label id="current_stock_f" class="control-label"></label>
+        <label id="current_stock_f" class="control-label"></label>
         <label for="expected_f" id="expected_f_id_in_pack_size_change_container" class="control-label pull-right">
             <input type="hidden" id="expected_f_id_in_pack_size_change" value=""/>
         </label>
@@ -225,7 +225,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
     </div>
     <div class="col-sm-4 col-xs-8">
         <label id="expected_sticker_id" class="control-label"></label>
-        <span><b>Current Stock:</b></span> <label id="current_stock_sticker" class="control-label"></label>
+        <label id="current_stock_sticker" class="control-label"></label>
         <label for="expected_mf" id="expected_sticker_id_in_pack_size_change_container" class="control-label pull-right">
             <input type="hidden" id="expected_sticker_id_in_pack_size_change" value=""/>
         </label>
