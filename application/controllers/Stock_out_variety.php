@@ -587,6 +587,10 @@ class Stock_out_variety extends Root_Controller
             $this->db->join($this->config->item('table_login_setup_location_zones').' zones','zones.id = territory.zone_id','LEFT');
             $this->db->select('divisions.name division_name, divisions.id division_id');
             $this->db->join($this->config->item('table_login_setup_location_divisions').' divisions','divisions.id = zones.division_id','LEFT');
+            $this->db->select('created_user_info.name created_by');
+            $this->db->join($this->config->item('table_login_setup_user_info').' created_user_info','created_user_info.user_id = stock_out.user_created','INNER');
+            $this->db->select('updated_user_info.name updated_by');
+            $this->db->join($this->config->item('table_login_setup_user_info').' updated_user_info','updated_user_info.user_id = stock_out.user_updated','LEFT');
             $this->db->where('stock_out.id',$item_id);
             $this->db->where('stock_out.status !=',$this->config->item('system_status_delete'));
             $data['item']=$this->db->get()->row_array();

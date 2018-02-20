@@ -537,10 +537,20 @@ class Stock_in_variety extends Root_Controller
             {
                 $item_id=$this->input->post('id');
             }
-            $data['item']=Query_helper::get_info($this->config->item('table_sms_stock_in_variety'),'*',array('status !="'.$this->config->item('system_status_delete').'"','id ='.$item_id),1);
+
+            $this->db->from($this->config->item('table_sms_stock_in_variety').' stock_in');
+            $this->db->select('stock_in.*');
+            $this->db->select('created_user_info.name created_by');
+            $this->db->join($this->config->item('table_login_setup_user_info').' created_user_info','created_user_info.user_id = stock_in.user_created','INNER');
+            $this->db->select('updated_user_info.name updated_by');
+            $this->db->join($this->config->item('table_login_setup_user_info').' updated_user_info','updated_user_info.user_id = stock_in.user_updated','LEFT');
+            $this->db->where('stock_in.id',$item_id);
+            $this->db->where('stock_in.status !=',$this->config->item('system_status_delete'));
+            $data['item']=$this->db->get()->row_array();
+
             if(!$data['item'])
             {
-                System_helper::invalid_try('Details Not Exists',$item_id);
+                System_helper::invalid_try('Details Non Exists',$item_id);
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid Try.';
                 $this->json_return($ajax);
@@ -560,11 +570,14 @@ class Stock_in_variety extends Root_Controller
             $this->db->join($this->config->item('table_login_setup_classification_crop_types').' type','type.id = variety.crop_type_id','INNER');
             $this->db->select('crop.name crop_name');
             $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = type.crop_id','INNER');
+
             $this->db->where('stock_in.id',$item_id);
             $this->db->where('stock_in_details.revision',1);
             $this->db->order_by('stock_in_details.id','ASC');
             $data['stock_in_varieties']=$this->db->get()->result_array();
-            $data['title']="Details Stock In";
+
+            $data['title']="Stock In Details :: ".Barcode_helper::get_barcode_stock_in($item_id);
+
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/details",$data,true));
             if($this->message)

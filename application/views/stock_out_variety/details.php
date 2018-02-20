@@ -8,22 +8,14 @@ $action_buttons[]=array(
 );
 if(isset($CI->permissions['action4']) && ($CI->permissions['action4']==1))
 {
-    $action_buttons[]=array(
-        'type'=>'button',
-        'label'=>$CI->lang->line("ACTION_PRINT"),
-        'class'=>'button_action_download',
-        'data-title'=>"Print",
-        'data-print'=>true
-    );
-}
-if(isset($CI->permissions['action5']) && ($CI->permissions['action5']==1))
-{
-    $action_buttons[]=array(
-        'type'=>'button',
-        'label'=>$CI->lang->line("ACTION_DOWNLOAD"),
-        'class'=>'button_action_download',
-        'data-title'=>"Download"
-    );
+    if(isset($CI->permissions['action4']) && ($CI->permissions['action4']==1))
+    {
+        $action_buttons[]=array(
+            'type'=>'button',
+            'label'=>$CI->lang->line("ACTION_PRINT"),
+            'onClick'=>"window.print()"
+        );
+    }
 }
 $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 ?>
@@ -122,6 +114,41 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
         <div style="" class="row show-grid">
             <div class="col-xs-4">
+                <label for="remarks" class="control-label pull-right"><?php echo $this->lang->line('LABEL_CREATED_BY');?> :</label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <?php echo $item['created_by'];?>
+            </div>
+        </div>
+        <div style="" class="row show-grid">
+            <div class="col-xs-4">
+                <label for="remarks" class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_CREATED_TIME');?> :</label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <?php echo System_helper::display_date_time($item['date_created']);?>
+            </div>
+        </div>
+        <?php if($item['updated_by']){?>
+            <div style="" class="row show-grid">
+                <div class="col-xs-4">
+                    <label for="remarks" class="control-label pull-right"><?php echo $this->lang->line('LABEL_UPDATED_BY');?> :</label>
+                </div>
+                <div class="col-sm-4 col-xs-8">
+                    <?php echo $item['updated_by'];?>
+                </div>
+            </div>
+            <div style="" class="row show-grid">
+                <div class="col-xs-4">
+                    <label for="remarks" class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_UPDATED_TIME');?> :</label>
+                </div>
+                <div class="col-sm-4 col-xs-8">
+                    <?php echo System_helper::display_date_time($item['date_updated']);?>
+                </div>
+            </div>
+        <?php } ?>
+
+        <div style="" class="row show-grid">
+            <div class="col-xs-4">
                 <label for="remarks" class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS');?> :</label>
             </div>
             <div class="col-sm-4 col-xs-8">
@@ -133,12 +160,12 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             <table class="table table-bordered">
                 <thead>
                 <tr>
+                    <th><?php echo $CI->lang->line('LABEL_SL_NO'); ?></th>
                     <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></th>
                     <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?></th>
                     <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
                     <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
                     <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_WAREHOUSE_NAME'); ?></th>
-                    <th class="text-right" style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_CURRENT_STOCK'); ?></th>
                     <th class="text-right" style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY'); ?></th>
                 </tr>
                 </thead>
@@ -148,6 +175,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 {
                     ?>
                     <tr>
+                        <td><?php echo $index+1;?></td>
                         <td>
                             <label><?php echo $so_variety['crop_name']; ?></label>
                         </td>
@@ -162,9 +190,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         </td>
                         <td>
                             <label><?php echo $so_variety['ware_house_name']; ?></label>
-                        </td>
-                        <td class="text-right">
-                            <label><?php $current_stock=System_helper::get_variety_stock(array($so_variety['variety_id'])); if(isset($current_stock)){echo $current_stock[$so_variety['variety_id']][$so_variety['pack_size_id']][$so_variety['warehouse_id']]['current_stock'];}else{echo 0;}?></label>
                         </td>
                         <td class="text-right">
                             <label><?php echo $so_variety['quantity']; ?></label>
