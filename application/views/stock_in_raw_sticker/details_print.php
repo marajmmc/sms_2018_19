@@ -85,7 +85,7 @@ $num_pages=ceil($total_records/$row_per_page);
                 <th><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?></th>
                 <th><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
                 <th class="text-right"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
-                <th class="text-right"><?php echo $CI->lang->line('LABEL_QUANTITY'); ?></th>
+                <th class="text-right"><?php echo $CI->lang->line('LABEL_QUANTITY'); ?> (<?php echo $CI->lang->line('LABEL_KG'); ?>)</th>
                 </thead>
                 <tbody>
                 <?php
@@ -103,15 +103,15 @@ $num_pages=ceil($total_records/$row_per_page);
                         <td><?php echo $data['crop_type_name'];?></td>
                         <td><?php echo $data['variety_name'];?></td>
                         <td class="text-right"><?php echo $data['pack_size'];?></td>
-                        <td class="text-right"><?php echo $data['quantity'];?></td>
+                        <td class="text-right"><?php echo number_format($data['quantity'],3,'.','');?></td>
                     </tr>
                     <?php
                     if($total_records==$index+1)
                     {
                         ?>
                         <tr>
-                            <td  class="text-right" colspan="5"><label class="control-label"><?php echo $CI->lang->line('LABEL_TOTAL');?></label></td>
-                            <td class="text-right"><label class="control-label"><?php echo $quantity_total;?></label></td>
+                            <td  class="text-right" colspan="5"><label class="control-label"><?php echo $CI->lang->line('LABEL_TOTAL_KG');?></label></td>
+                            <td class="text-right"><label class="control-label"><?php echo number_format($quantity_total,3,'.','');?></label></td>
                         </tr>
                         <?php
                         if($item['remarks'])

@@ -32,6 +32,11 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         <div class="col-md-12">
             <table class="table table-bordered table-responsive system_table_details_view">
                 <thead>
+                <tr>
+                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_ID');?></label></th>
+                    <th class=""><label class="control-label"><?php echo Barcode_helper::get_barcode_stock_out($item['id']);?></label></th>
+                    <th colspan="2">&nbsp;</th>
+                </tr>
                 <?php
                 if($item['purpose']==$this->config->item('system_purpose_variety_demonstration') || $item['purpose']==$this->config->item('system_purpose_variety_sample'))
                 {
@@ -114,11 +119,14 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             <table class="table table-bordered">
                 <thead>
                 <tr>
+                    <th class="widget-header text-center" colspan="30">Product Details</th>
+                </tr>
+                <tr>
                     <th rowspan="2"><?php echo $CI->lang->line('LABEL_SL_NO'); ?></th>
                     <th rowspan="2" style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></th>
                     <th rowspan="2" style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?></th>
                     <th rowspan="2" style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
-                    <th rowspan="2" style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
+                    <th rowspan="2" class="text-right" style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
                     <th rowspan="2" style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_WAREHOUSE_NAME'); ?></th>
                     <th colspan="2" class="text-center" style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY'); ?></th>
                 </tr>
@@ -153,7 +161,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <td><?php echo $so_variety['crop_name']; ?></td>
                         <td><?php echo $so_variety['crop_type_name']; ?></td>
                         <td><?php echo $so_variety['variety_name']; ?></td>
-                        <td><?php if($so_variety['pack_size_id']==0){echo 'Bulk';}else{echo $so_variety['pack_size'];} ?></td>
+                        <td class="text-right"><?php if($so_variety['pack_size_id']==0){echo 'Bulk';}else{echo $so_variety['pack_size'];} ?></td>
                         <td><?php echo $so_variety['ware_house_name']; ?></td>
                         <td class="text-right"><?php if($so_variety['pack_size_id']==0){echo '-';}else{echo $so_variety['quantity'];} ?></td>
                         <td class="text-right"><?php  echo number_format($quantity_kg,3,'.','');?></td>

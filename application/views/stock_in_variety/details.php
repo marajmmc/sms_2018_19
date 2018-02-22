@@ -28,6 +28,11 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         <table class="table table-bordered table-responsive system_table_details_view">
             <thead>
             <tr>
+                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_ID');?></label></th>
+                <th class=""><label class="control-label"><?php echo Barcode_helper::get_barcode_stock_in($item['id']);?></label></th>
+                <th colspan="2">&nbsp;</th>
+            </tr>
+            <tr>
                 <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_PURPOSE');?></label></th>
                 <th class="bg-danger"><label class="control-label"><?php echo $item['purpose'];?></label></th>
                 <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE');?></label></th>
@@ -72,6 +77,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
     <div style="overflow-x: auto;" class="row show-grid" id="order_items_container">
         <table class="table table-bordered">
             <thead>
+            <tr>
+                <th class="widget-header text-center" colspan="30">Product Details</th>
+            </tr>
             <tr>
                 <th rowspan="2" style="width: 10px;"><?php echo $CI->lang->line('LABEL_SL_NO'); ?></th>
                 <th rowspan="2" style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></th>

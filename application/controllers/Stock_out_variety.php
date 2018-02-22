@@ -698,6 +698,7 @@ class Stock_out_variety extends Root_Controller
 
             $this->db->where('stock_out_details.stock_out_id',$item_id);
             $this->db->where('stock_out_details.revision',1);
+            $this->db->where('stock_out_details.quantity > 0');
             $this->db->order_by('stock_out_details.id','ASC');
             $data['items']=$this->db->get()->result_array();
 

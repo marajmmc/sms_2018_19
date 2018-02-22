@@ -230,7 +230,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
     {
         system_preset({controller:'<?php echo $CI->router->class; ?>'});
 
-        $(".datepicker").datepicker({dateFormat : display_date_format,changeMonth: true,changeYear: true,yearRange: "c-2:c+2"});
+        //$(".datepicker").datepicker({dateFormat : display_date_format,changeMonth: true,changeYear: true,yearRange: "c-2:c+2"});
+        $(".datepicker").datepicker({dateFormat : display_date_format});
         $(document).off("click", ".system_button_add_more");
         $(document).on("click", ".system_button_add_more", function(event)
         {

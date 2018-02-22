@@ -38,6 +38,8 @@ $num_pages=ceil($total_records/$row_per_page);
 ?>
 <div id="system_print_container" style="width:<?php echo $width;?>px;">
     <?php
+    $quantity_kg=0;
+    $quantity_total=0;
     $quantity_total_kg=0;
     for($page=0;$page<$num_pages;$page++)
     {
@@ -68,7 +70,7 @@ $num_pages=ceil($total_records/$row_per_page);
                         ?>
                         <div class="row show-grid">
                             <div class="col-xs-6 text-right">
-                                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_SHOWROOM_NAME');?>:</label>
+                                <label class="control-label pull-right">Showroom:</label>
                             </div>
                             <div class="col-xs-6">
                                 <?php echo $item['outlet_name']; ?>
@@ -101,7 +103,7 @@ $num_pages=ceil($total_records/$row_per_page);
                         ?>
                         <div class="row show-grid">
                             <div class="col-xs-6 text-right">
-                                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_CUSTOMER_NAME');?>:</label>
+                                <label class="control-label pull-right">Customer:</label>
                             </div>
                             <div class="col-xs-6">
                                 <?php echo $item['customer_name']; ?>
@@ -119,7 +121,7 @@ $num_pages=ceil($total_records/$row_per_page);
                     <th rowspan="2"><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></th>
                     <th rowspan="2"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?></th>
                     <th rowspan="2"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
-                    <th rowspan="2" style="width: 5px;"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
+                    <th rowspan="2" class="text-right" style="width: 5px;"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
                     <!--<th rowspan="2"><?php /*echo $CI->lang->line('LABEL_WAREHOUSE_NAME'); */?></th>-->
                     <th colspan="2" class="text-center"><?php echo $CI->lang->line('LABEL_QUANTITY'); ?></th>
                 </tr>
@@ -130,21 +132,30 @@ $num_pages=ceil($total_records/$row_per_page);
                 </thead>
                 <tbody>
                 <?php
-                $serial=0;
                 for($index=$page*$row_per_page;($index<(($page+1)*$row_per_page))&&($index<sizeof($items));$index++)
                 {
-                    $serial=($index+1);
-                    $quantity_total_kg+=($items[$index]['quantity']/1000);
+                    if($items[$index]['pack_size_id']==0)
+                    {
+                        $quantity_kg=$items[$index]['quantity'];
+                        $quantity_total_kg+=$items[$index]['quantity'];
+                    }
+                    else
+                    {
+                        $quantity_total+=$items[$index]['quantity'];
+                        $quantity_kg=(($items[$index]['pack_size']*$items[$index]['quantity'])/1000);
+                        $quantity_total_kg+=(($items[$index]['pack_size']*$items[$index]['quantity'])/1000);
+                    }
+
                     ?>
                     <tr>
-                        <td><?php echo $serial; ?></td>
+                        <td><?php echo $index+1; ?></td>
                         <td><?php echo $items[$index]['crop_name']; ?></td>
                         <td><?php echo $items[$index]['crop_type_name']; ?></td>
                         <td><?php echo $items[$index]['variety_name']; ?></td>
-                        <td><?php if($items[$index]['pack_size_id']==0){echo 'Bulk';}else{echo $items[$index]['pack_size'];} ?></td>
+                        <td class="text-right"><?php if($items[$index]['pack_size_id']==0){echo 'Bulk';}else{echo $items[$index]['pack_size'];} ?></td>
                         <!--<td><?php /*echo $items[$index]['warehouse_name']; */?></td>-->
-                        <td class="text-right"><?php if($items[$index]['pack_size_id']==0){echo 0;}else{echo $items[$index]['quantity'];} ?></td>
-                        <td class="text-right"> <?php echo $items[$index]['quantity']/1000; ?> </td>
+                        <td class="text-right"><?php if($items[$index]['pack_size_id']==0){echo '-';}else{echo $items[$index]['quantity'];} ?></td>
+                        <td class="text-right"> <?php echo number_format($quantity_kg,3,'.',''); ?> </td>
                     </tr>
                     <?php
                     if($total_records==$index+1)
@@ -152,7 +163,7 @@ $num_pages=ceil($total_records/$row_per_page);
                         ?>
                         <tr>
                             <td colspan="5" class="text-right"><label class="control-label"><?php echo $this->lang->line('LABEL_TOTAL')?></label></td>
-                            <td class="text-right"><label class="control-label"><?php echo number_format($item['quantity_total'],3,'.','');?></label></td>
+                            <td class="text-right"><label class="control-label"><?php echo $quantity_total;?></label></td>
                             <td class="text-right"><label class="control-label"><?php echo number_format($quantity_total_kg,3,'.','');?></label></td>
                         </tr>
                         <?php
@@ -161,7 +172,7 @@ $num_pages=ceil($total_records/$row_per_page);
                             ?>
                             <tr>
                                 <td colspan="21">
-                                    <strong><?php echo $CI->lang->line('LABEL_REMARKS');?>: </strong><?php echo $item['remarks'];?>
+                                    <strong><?php echo $CI->lang->line('LABEL_REMARKS');?>: </strong><?php echo nl2br($item['remarks']);?>
                                 </td>
                             </tr>
                         <?php
