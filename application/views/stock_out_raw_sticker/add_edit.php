@@ -79,13 +79,13 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             <table class="table table-bordered">
                 <thead>
                 <tr>
-                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></th>
-                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?></th>
-                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
-                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
-                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_CURRENT_STOCK'); ?></th>
-                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY'); ?></th>
-                    <th style="min-width: 150px;"><?php echo $CI->lang->line('ACTION'); ?></th>
+                    <th><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></th>
+                    <th><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?></th>
+                    <th><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
+                    <th class="text-right"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
+                    <th class="text-right">Current Stock (Pcs)</th>
+                    <th class="text-right"><?php echo $CI->lang->line('LABEL_QUANTITY'); ?> (Pcs)</th>
+                    <th style="width: 10%;"><?php echo $CI->lang->line('ACTION'); ?></th>
                 </tr>
                 </thead>
                 <tbody>

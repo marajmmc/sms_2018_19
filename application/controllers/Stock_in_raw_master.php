@@ -109,7 +109,7 @@ class Stock_in_raw_master extends Root_Controller
         {
             $item['date_stock_in']=System_helper::display_date($item['date_stock_in']);
             $item['barcode']=Barcode_helper::get_barcode_raw_master_stock_in($item['id']);
-            $item['quantity_total']=number_format($item['quantity_total'],3,'.','');
+            $item['quantity_total_kg']=number_format($item['quantity_total'],3,'.','');
         }
         $this->json_return($items);
     }
@@ -763,7 +763,7 @@ class Stock_in_raw_master extends Root_Controller
         $data['barcode']= 1;
         $data['date_stock_in']= 1;
         $data['purpose']= 1;
-        $data['quantity_total']= 1;
+        $data['quantity_total_kg']= 1;
         $data['remarks']= 1;
         if($result)
         {

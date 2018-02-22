@@ -63,32 +63,7 @@ class Stock_out_raw_master extends Root_Controller
     {
         if(isset($this->permissions['action0']) && ($this->permissions['action0']==1))
         {
-            $user = User_helper::get_user();
-            $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
-            $data['system_preference_items']['barcode']= 1;
-            $data['system_preference_items']['date_stock_out']= 1;
-            $data['system_preference_items']['purpose']= 1;
-            $data['system_preference_items']['quantity_total']= 1;
-            $data['system_preference_items']['remarks']= 1;
-            if($result)
-            {
-                if($result['preferences']!=null)
-                {
-                    $preferences=json_decode($result['preferences'],true);
-                    foreach($data['system_preference_items'] as $key=>$value)
-                    {
-                        if(isset($preferences[$key]))
-                        {
-                            $data['system_preference_items'][$key]=$value;
-                        }
-                        else
-                        {
-                            $data['system_preference_items'][$key]=0;
-                        }
-                    }
-                }
-            }
-
+            $data['system_preference_items']= $this->get_preference();
             $data['title']='Stock Out (Master Foil) List';
             $ajax['status']=true;
             $ajax['system_content'][]=array('id'=>'#system_content','html'=>$this->load->view($this->controller_url.'/list',$data,true));
@@ -133,6 +108,7 @@ class Stock_out_raw_master extends Root_Controller
         {
             $item['date_stock_out']=System_helper::display_date($item['date_stock_out']);
             $item['barcode']=Barcode_helper::get_barcode_raw_master_stock_out($item['id']);
+            $item['quantity_total_kg']=number_format($item['quantity_total'],3,'.','');
         }
         $this->json_return($items);
     }
@@ -505,9 +481,9 @@ class Stock_out_raw_master extends Root_Controller
             $this->db->from($this->config->item('table_sms_stock_out_raw_master').' raw_master');
             $this->db->select('raw_master.*');
             $this->db->join($this->config->item('table_login_setup_user_info').' ui_created','ui_created.user_id = raw_master.user_created','LEFT');
-            $this->db->select('ui_created.name user_created_full_name, ui_created.date_created');
+            $this->db->select('ui_created.name user_created_full_name');
             $this->db->join($this->config->item('table_login_setup_user_info').' ui_updated','ui_updated.user_id = raw_master.user_updated','LEFT');
-            $this->db->select('ui_updated.name user_updated_full_name, ui_updated.date_updated');
+            $this->db->select('ui_updated.name user_updated_full_name');
             $this->db->where('raw_master.id',$item_id);
             $this->db->where('raw_master.status !=',$this->config->item('system_status_delete'));
             $data['item']=$this->db->get()->row_array();
@@ -583,6 +559,7 @@ class Stock_out_raw_master extends Root_Controller
             $this->db->select('crop.name crop_name');
             $this->db->where('master_details.stock_out_id',$item_id);
             $this->db->where('master_details.revision',1);
+            $this->db->where('master_details.quantity>0');
             $this->db->order_by('master_details.id','ASC');
             $data['items']=$this->db->get()->result_array();
 
@@ -692,50 +669,6 @@ class Stock_out_raw_master extends Root_Controller
             $this->json_return($ajax);
         }
     }
-    private function system_set_preference()
-    {
-        if(isset($this->permissions['action6']) && ($this->permissions['action6']==1))
-        {
-            $user = User_helper::get_user();
-            $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
-            $data['system_preference_items']['barcode']= 1;
-            $data['system_preference_items']['date_stock_out']= 1;
-            $data['system_preference_items']['purpose']= 1;
-            $data['system_preference_items']['quantity_total']= 1;
-            $data['system_preference_items']['remarks']= 1;
-            if($result)
-            {
-                if($result['preferences']!=null)
-                {
-                    $preferences=json_decode($result['preferences'],true);
-                    foreach($data['system_preference_items'] as $key=>$value)
-                    {
-                        if(isset($preferences[$key]))
-                        {
-                            $data['system_preference_items'][$key]=$value;
-                        }
-                        else
-                        {
-                            $data['system_preference_items'][$key]=0;
-                        }
-                    }
-                }
-            }
-            $data['preference_method_name']='list';
-
-            $data['title']="Set Preference";
-            $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("preference_add_edit",$data,true));
-            $ajax['system_page_url']=site_url($this->controller_url.'/index/set_preference');
-            $this->json_return($ajax);
-        }
-        else
-        {
-            $ajax['status']=false;
-            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
-            $this->json_return($ajax);
-        }
-    }
     private function check_validation()
     {
         $id = $this->input->post("id");
@@ -752,5 +685,54 @@ class Stock_out_raw_master extends Root_Controller
         }
         return true;
     }
+    private function system_set_preference()
+    {
+        if(isset($this->permissions['action6']) && ($this->permissions['action6']==1))
+        {
+            $data['system_preference_items']= $this->get_preference();
+            $data['preference_method_name']='list';
 
+            $data['title']="Set Preference";
+            $ajax['status']=true;
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("preference_add_edit",$data,true));
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/set_preference');
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+    }
+    private function get_preference()
+    {
+        $user = User_helper::get_user();
+        $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
+        $data['barcode']= 1;
+        $data['date_stock_out']= 1;
+        $data['purpose']= 1;
+        $data['quantity_total_kg']= 1;
+        $data['remarks']= 1;
+        if($result)
+        {
+            if($result['preferences']!=null)
+            {
+                $preferences=json_decode($result['preferences'],true);
+                foreach($data as $key=>$value)
+                {
+
+                    if(isset($preferences[$key]))
+                    {
+                        $data[$key]=$value;
+                    }
+                    else
+                    {
+                        $data[$key]=0;
+                    }
+                }
+            }
+        }
+        return $data;
+    }
 }

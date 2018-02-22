@@ -118,7 +118,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 { name: 'barcode', type: 'string' },
                 { name: 'date_stock_in', type: 'string' },
                 { name: 'purpose', type: 'string' },
-                { name: 'quantity_total', type: 'string' },
+                { name: 'quantity_total_kg', type: 'string' },
                 { name: 'remarks', type: 'string' }
             ],
             id: 'id',
@@ -148,7 +148,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     { text: '<?php echo $CI->lang->line('LABEL_BARCODE'); ?>', dataField: 'barcode',width:'80',hidden: <?php echo $system_preference_items['barcode']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_DATE_STOCK_IN'); ?>',dataField: 'date_stock_in',width:'100',hidden: <?php echo $system_preference_items['date_stock_in']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_PURPOSE'); ?>', dataField: 'purpose',width:'200',filtertype: 'list',hidden: <?php echo $system_preference_items['purpose']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL'); ?>',dataField: 'quantity_total',width:'200', cellsalign: 'right',hidden: <?php echo $system_preference_items['quantity_total']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL_KG'); ?>',dataField: 'quantity_total_kg',width:'200', cellsalign: 'right',hidden: <?php echo $system_preference_items['quantity_total_kg']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_REMARKS'); ?>', dataField: 'remarks',hidden: <?php echo $system_preference_items['remarks']?0:1;?>}
                 ]
             });

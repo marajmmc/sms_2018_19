@@ -103,7 +103,7 @@ $num_pages=ceil($total_records/$row_per_page);
                         <td><?php echo $data['crop_type_name'];?></td>
                         <td><?php echo $data['variety_name'];?></td>
                         <td class="text-right"><?php echo $data['pack_size'];?></td>
-                        <td class="text-right"><?php echo $data['quantity'];?></td>
+                        <td class="text-right"><?php echo $data['quantity'];?> (Pcs)</td>
                     </tr>
                     <?php
                     if($total_records==$index+1)

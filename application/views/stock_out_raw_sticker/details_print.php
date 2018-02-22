@@ -85,7 +85,7 @@ $num_pages=ceil($total_records/$row_per_page);
                 <th><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?></th>
                 <th><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
                 <th class="text-right"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
-                <th class="text-right"><?php echo $CI->lang->line('LABEL_QUANTITY'); ?></th>
+                <th class="text-right"><?php echo $CI->lang->line('LABEL_QUANTITY'); ?> (Pcs)</th>
                 </thead>
                 <tbody>
                 <?php
@@ -110,7 +110,7 @@ $num_pages=ceil($total_records/$row_per_page);
                     {
                         ?>
                         <tr>
-                            <td  class="text-right" colspan="5"><label class="control-label"><?php echo $CI->lang->line('LABEL_TOTAL');?></label></td>
+                            <td  class="text-right" colspan="5"><label class="control-label"><?php echo $CI->lang->line('LABEL_TOTAL');?> (Pcs)</label></td>
                             <td class="text-right"><label class="control-label"><?php echo $quantity_total;?></label></td>
                         </tr>
                         <?php

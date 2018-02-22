@@ -27,10 +27,15 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         <table class="table table-bordered table-responsive system_table_details_view">
             <thead>
             <tr>
-                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE');?></label></th>
-                <th class=" header_value"><label class="control-label"><?php echo System_helper::display_date($item['date_stock_out']);?></label></th>
+                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_ID');?></label></th>
+                <th class=""><label class="control-label"><?php echo Barcode_helper::get_barcode_raw_sticker_stock_out($item['id']);?></label></th>
+                <th colspan="2">&nbsp;</th>
+            </tr>
+            <tr>
                 <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_PURPOSE');?></label></th>
                 <th class="bg-danger"><label class="control-label"><?php echo $item['purpose'];?></label></th>
+                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE');?></label></th>
+                <th class=" header_value"><label class="control-label"><?php echo System_helper::display_date($item['date_stock_out']);?></label></th>
             </tr>
             <tr>
                 <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_CREATED_BY');?></label></th>
@@ -71,15 +76,15 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             <table class="table table-bordered">
                 <thead>
                 <tr>
-                    <th class="widget-header text-center" colspan="30">Product & Price Details :: <?php echo Barcode_helper::get_barcode_raw_sticker_stock_out($item['id']);?> </th>
+                    <th class="widget-header text-center" colspan="30">Product Details</th>
                 </tr>
                 <tr>
-                    <th style="width: 10px;"><?php echo $CI->lang->line('LABEL_SL_NO'); ?></th>
+                    <th><?php echo $CI->lang->line('LABEL_SL_NO'); ?></th>
                     <th><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></th>
                     <th><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?></th>
                     <th><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
                     <th class="text-right"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
-                    <th class="text-right"><?php echo $CI->lang->line('LABEL_QUANTITY'); ?></th>
+                    <th class="text-right"><?php echo $CI->lang->line('LABEL_QUANTITY'); ?> (Pcs)</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -105,7 +110,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 </tbody>
                 <tfoot>
                 <tr>
-                    <th  class="text-right" colspan="5"><?php echo $CI->lang->line('LABEL_TOTAL');?></th>
+                    <th  class="text-right" colspan="5"><?php echo $CI->lang->line('LABEL_TOTAL');?> (Pcs)</th>
                     <th class="text-right"><?php echo $quantity_total;?></th>
                 </tr>
                 </tfoot>

@@ -232,6 +232,8 @@ $lang['LABEL_QUANTITY_TOTAL_KG']='Total Quantity (Kg)';
 $lang['LABEL_QUANTITY_TOTAL_PACK_KG']='Total Quantity (Pkt/Kg)';
 $lang['LABEL_QUANTITY_TOTAL_PIECES']='Total Quantity (Pcs)';
 $lang['LABEL_QUANTITY_KG_PACK']='Quantity (Pkt/Kg)';
+
+$lang['LABEL_QUANTITY_TOTAL_RECEIVE'] = 'Total Receive Quantity (Kg)';
 // Total, Currency, Percentage - kg/pkt/taka/currency
 /* Total */
 $lang['LABEL_TOTAL'] = 'Total';
@@ -247,9 +249,7 @@ $lang['LABEL_STARTING_STOCK'] = 'Starting Stock';
 $lang['LABEL_TOTAL_STOCK_IN'] = 'Total Stock In';
 $lang['LABEL_TOTAL_STOCK_OUT'] = 'Total Stock Out';
 
-$lang['LABEL_QUANTITY_SUPPLY']='Supply Quantity';
-$lang['LABEL_QUANTITY_RECEIVE']='Receive Quantity';
-$lang['LABEL_QUANTITY_TOTAL_RECEIVE'] = 'Total Receive Quantity (Kg)';
+
 /* Currency */
 $lang['LABEL_CURRENCY_SYMBOL'] = 'Currency Symbol';
 $lang['LABEL_CURRENCY_RATE'] = 'Currency Rate';
