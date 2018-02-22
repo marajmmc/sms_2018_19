@@ -80,12 +80,14 @@ $num_pages=ceil($total_records/$row_per_page);
             </div>
             <table style="width:<?php echo $width;?>px;" class="system_table_report_container">
                 <thead>
-                <th><?php echo $CI->lang->line('LABEL_SL_NO'); ?></th>
-                <th><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></th>
-                <th><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?></th>
-                <th><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
-                <th class="text-right"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
-                <th class="text-right"><?php echo $CI->lang->line('LABEL_QUANTITY'); ?> (<?php echo $CI->lang->line('LABEL_KG'); ?>)</th>
+                <tr>
+                    <th><?php echo $CI->lang->line('LABEL_SL_NO'); ?></th>
+                    <th><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></th>
+                    <th><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?></th>
+                    <th><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
+                    <th class="text-right"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
+                    <th class="text-right"><?php echo $CI->lang->line('LABEL_QUANTITY'); ?> (<?php echo $CI->lang->line('LABEL_KG'); ?>)</th>
+                </tr>
                 </thead>
                 <tbody>
                 <?php

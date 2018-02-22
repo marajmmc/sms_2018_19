@@ -84,7 +84,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <th><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?></th>
                     <th><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
                     <th class="text-right"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
-                    <th class="text-right"><?php echo $CI->lang->line('LABEL_QUANTITY'); ?> (<?php echo $CI->lang->line('LABEL_KG'); ?>)</th>
+                    <th class="text-right"><?php echo $CI->lang->line('LABEL_QUANTITY'); ?> (Pcs)</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -102,7 +102,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <td><?php echo $item['crop_type_name'];?></td>
                         <td><?php echo $item['variety_name'];?></td>
                         <td class="text-right"><?php echo $item['pack_size'];?></td>
-                        <td class="text-right"><?php echo number_format($item['quantity'],3,'.','');?></td>
+                        <td class="text-right"><?php echo $item['quantity'];?></td>
                     </tr>
                 <?php
                 }
@@ -110,8 +110,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 </tbody>
                 <tfoot>
                 <tr>
-                    <th  class="text-right" colspan="5"><?php echo $CI->lang->line('LABEL_TOTAL_KG');?></th>
-                    <th class="text-right"><?php echo number_format($quantity_total,3,'.','');?></th>
+                    <th  class="text-right" colspan="5"><?php echo $CI->lang->line('LABEL_TOTAL');?> (Pcs)</th>
+                    <th class="text-right"><?php echo $quantity_total;?></th>
                 </tr>
                 </tfoot>
             </table>

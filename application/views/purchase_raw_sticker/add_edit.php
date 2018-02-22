@@ -103,11 +103,11 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?></th>
                     <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
                     <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
-                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_CURRENT_STOCK'); ?></th>
-                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY_SUPPLY'); ?></th>
-                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY_RECEIVE'); ?></th>
-                    <th style="min-width: 150px; text-align: right;">Unit Price (Tk)</th>
-                    <th style="min-width: 150px; text-align: right;">Total Price (Tk)</th>
+                    <th style="min-width: 150px;">Current Stock (Pcs)</th>
+                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY_SUPPLY'); ?> (Pcs)</th>
+                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY_RECEIVE'); ?> (Pcs)</th>
+                    <th style="min-width: 150px; text-align: right;"><?php echo $CI->lang->line('LABEL_PRICE_TAKA_UNIT');?></th>
+                    <th style="min-width: 150px; text-align: right;"><?php echo $CI->lang->line('LABEL_PRICE_TAKA_TOTAL');?></th>
                     <th style="min-width: 150px;"><?php echo $CI->lang->line('ACTION'); ?></th>
                 </tr>
                 </thead>
@@ -163,9 +163,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
                 <tfoot>
                 <tr>
-                    <th colspan="6" class="text-right">Grand Total Quantity</th>
-                    <th class="text-right"><label class="control-label" id="lbl_quantity_receive_total"><?php echo number_format(($quantity_total),3,'.','')?></label></th>
-                    <th class="text-right">Grand Total (Tk)</th>
+                    <th colspan="6" class="text-right"><?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL_PIECES');?> </th>
+                    <th class="text-right"><label class="control-label" id="lbl_quantity_receive_total"><?php echo $quantity_total;?></label></th>
+                    <th class="text-right"><?php echo $CI->lang->line('LABEL_TOTAL_TAKA');?></th>
                     <th class="text-right"><label class="control-label" id="lbl_price_total_tk"><?php echo number_format($total_tk,2)?></label></th>
                     <th class="text-right"></th>
                 </tr>
@@ -329,6 +329,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         $(document).on("click", ".system_button_add_delete", function(event)
         {
             $(this).closest('tr').remove();
+            calculate_total();
         });
 
         $(document).off("change",".crop_id");
@@ -468,7 +469,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             {
                 price_unit_tk=0;
             }
-            $("#price_total_tk_"+current_id).html((quantity_receive*price_unit_tk));
+            $("#price_total_tk_"+current_id).html(number_format((quantity_receive*price_unit_tk),2));
 
             calculate_total();
         });
@@ -487,7 +488,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             {
                 quantity_receive=0;
             }
-            $("#price_total_tk_"+current_id).html((quantity_receive*price_unit_tk));
+            $("#price_total_tk_"+current_id).html(number_format((quantity_receive*price_unit_tk),2));
             calculate_total();
         });
     });
@@ -516,6 +517,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             price_total_tk+=total_taka;
         });
         $("#lbl_quantity_receive_total").html(quantity_receive_total);
-        $("#lbl_price_total_tk").html(price_total_tk);
+        $("#lbl_price_total_tk").html(number_format(price_total_tk,2));
     }
 </script>

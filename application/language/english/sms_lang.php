@@ -230,6 +230,7 @@ $lang['LABEL_QUANTITY_DIFFERENCE'] = 'Difference Quantity';
 $lang['LABEL_QUANTITY_TOTAL_PKT']='Total Quantity (pkt)';
 $lang['LABEL_QUANTITY_TOTAL_KG']='Total Quantity (Kg)';
 $lang['LABEL_QUANTITY_TOTAL_PACK_KG']='Total Quantity (Pkt/Kg)';
+$lang['LABEL_QUANTITY_TOTAL_PIECES']='Total Quantity (Pcs)';
 $lang['LABEL_QUANTITY_KG_PACK']='Quantity (Pkt/Kg)';
 // Total, Currency, Percentage - kg/pkt/taka/currency
 /* Total */
@@ -248,11 +249,13 @@ $lang['LABEL_TOTAL_STOCK_OUT'] = 'Total Stock Out';
 
 $lang['LABEL_QUANTITY_SUPPLY']='Supply Quantity';
 $lang['LABEL_QUANTITY_RECEIVE']='Receive Quantity';
-$lang['LABEL_QUANTITY_TOTAL_RECEIVE'] = 'Total Quantity (Receive)';
+$lang['LABEL_QUANTITY_TOTAL_RECEIVE'] = 'Total Receive Quantity (Kg)';
 /* Currency */
 $lang['LABEL_CURRENCY_SYMBOL'] = 'Currency Symbol';
 $lang['LABEL_CURRENCY_RATE'] = 'Currency Rate';
 $lang['LABEL_CURRENCY_NAME']='Currency';
+$lang['LABEL_PRICE_TAKA_UNIT'] = 'Unit Price (Taka)';
+$lang['LABEL_PRICE_TAKA_TOTAL']='Total Price (Taka)';
 $lang['LABEL_PRICE_CURRENCY_UNIT'] = 'Unit Price (Currency)';
 $lang['LABEL_PRICE_CURRENCY_TOTAL']='Total Price (Currency)';
 $lang['LABEL_GRAND_TOTAL_CURRENCY']='Grand Total (Currency)';

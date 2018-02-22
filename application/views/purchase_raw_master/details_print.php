@@ -40,6 +40,10 @@ $num_pages=ceil($total_records/$row_per_page);
 
 <div id="system_print_container" style="width:<?php echo $width;?>px;">
     <?php
+    $total_number_of_reel=0;
+    $quantity_total_supply=0;
+    $quantity_total_receive=0;
+    $quantity_total_difference=0;
     for($page=0;$page<$num_pages;$page++)
     {
         ?>
@@ -109,40 +113,32 @@ $num_pages=ceil($total_records/$row_per_page);
             <table style="width:<?php echo $width;?>px;" class="system_table_report_container">
                 <thead>
                 <tr>
-                    <th style="width: 5px"><?php echo $CI->lang->line('LABEL_SL_NO'); ?></th>
-                    <th><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></th>
-                    <th><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?></th>
-                    <th><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
-                    <th><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
-                    <th class="text-center"><?php echo $CI->lang->line('LABEL_NUMBER_OF_REEL');?> </th>
-                    <th class="text-center"><?php echo $CI->lang->line('LABEL_QUANTITY_SUPPLY');?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
-                    <th class="text-center"><?php echo $CI->lang->line('LABEL_QUANTITY_RECEIVE');?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
-                    <th class="text-center"><?php echo $CI->lang->line('LABEL_QUANTITY_DIFFERENCE');?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
+                    <th rowspan="2" style="width: 5px"><?php echo $CI->lang->line('LABEL_SL_NO'); ?></th>
+                    <th rowspan="2"><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></th>
+                    <th rowspan="2"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?></th>
+                    <th rowspan="2"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
+                    <th rowspan="2" class="text-right"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
+                    <th rowspan="2" class="text-right"><?php echo $CI->lang->line('LABEL_NUMBER_OF_REEL');?> </th>
+                    <th class="text-center" colspan="3"><?php echo $CI->lang->line('LABEL_QUANTITY');?></th>
+                </tr>
+                <tr>
+                    <th class="text-right"><?php echo $CI->lang->line('LABEL_QUANTITY_SUPPLY');?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
+                    <th class="text-right"><?php echo $CI->lang->line('LABEL_QUANTITY_RECEIVE');?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
+                    <th class="text-right"><?php echo $CI->lang->line('LABEL_QUANTITY_DIFFERENCE');?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
                 </tr>
                 </thead>
                 <tbody>
                 <?php
-                $serial=0;
-                $total_number_of_reel=0;
-                $quantity_total_supply=0;
-                $quantity_total_receive=0;
-                $quantity_total_difference=0;
-                $total_tk=0;
-                $price_total=0;
                 for($index=$page*$row_per_page;($index<(($page+1)*$row_per_page))&&($index<sizeof($items));$index++)
                 {
-                    $serial=($index+1);
                     $data=$items[$index];
-
                     $total_number_of_reel+=$data['number_of_reel'];
-                    $price_total=($data['quantity_receive']*$data['price_unit_tk']);
                     $quantity_total_supply+=$data['quantity_supply'];
                     $quantity_total_receive+=$data['quantity_receive'];
                     $quantity_total_difference=($quantity_total_supply-$quantity_total_receive);
-                    $total_tk+=$price_total;
                     ?>
                     <tr>
-                        <td><?php echo $serial; ?></td>
+                        <td><?php echo $index+1; ?></td>
                         <td><?php echo $data['crop_name']?></td>
                         <td><?php echo $data['crop_type_name']?></td>
                         <td><?php echo $data['variety_name']?></td>
@@ -159,15 +155,11 @@ $num_pages=ceil($total_records/$row_per_page);
                         {
                             ?>
                             <tr>
-                                <td colspan="5" class="text-right"><label class="control-label"><?php echo $this->lang->line('LABEL_TOTAL_KG')?></label></td>
+                                <td colspan="5" class="text-right"><label class="control-label"><?php echo $this->lang->line('LABEL_TOTAL')?></label></td>
                                 <td class="text-right"><label class="control-label"><?php echo $total_number_of_reel;?></label></td>
                                 <td class="text-right"><label class="control-label"><?php echo number_format($quantity_total_supply,3,'.','');?></label></td>
                                 <td class="text-right"><label class="control-label"><?php echo number_format($quantity_total_receive,3,'.','');?></label></td>
                                 <td class="text-right"><label class="control-label"><?php echo number_format($quantity_total_difference,3,'.','');?></label></td>
-                            </tr>
-                            <tr>
-                                <td colspan="8" class="text-right"><label class="control-label"><?php echo $CI->lang->line('LABEL_TOTAL_TAKA');?></label></td>
-                                <td class="text-right"><label class="control-label"><?php echo number_format($total_tk,2);?></label></td>
                             </tr>
                             <tr>
                                 <td colspan="21">

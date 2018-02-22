@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Purchase_sticker extends Root_Controller
+class Purchase_raw_sticker extends Root_Controller
 {
     public $message;
     public $permissions;
@@ -9,8 +9,8 @@ class Purchase_sticker extends Root_Controller
     public function __construct()
     {
         parent::__construct();
-        $this->permissions=User_helper::get_permission('Purchase_sticker');
-        $this->controller_url='purchase_sticker';
+        $this->permissions=User_helper::get_permission('Purchase_raw_sticker');
+        $this->controller_url='purchase_raw_sticker';
     }
     public function index($action='list',$id=0)
     {
@@ -81,7 +81,6 @@ class Purchase_sticker extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
     private function system_get_items()
     {
         $current_records = $this->input->post('total_records');
@@ -112,6 +111,7 @@ class Purchase_sticker extends Root_Controller
             $item['date_receive']=System_helper::display_date($item['date_receive']);
             $item['date_challan']=System_helper::display_date($item['date_challan']);
             $item['barcode']=Barcode_helper::get_barcode_raw_sticker_purchase($item['id']);
+            $item['quantity_total_pieces']=number_format($item['quantity_total_receive'],3,'.','');
         }
         $this->json_return($items);
     }
@@ -489,7 +489,6 @@ class Purchase_sticker extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
     private function system_details($id)
     {
         if(isset($this->permissions['action0']) && ($this->permissions['action0']==1))
@@ -556,7 +555,6 @@ class Purchase_sticker extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
     private function system_details_print($id)
     {
         if((isset($this->permissions['action4']) && ($this->permissions['action4']==1)))
@@ -619,7 +617,6 @@ class Purchase_sticker extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
     private function system_delete($id)
     {
         if(isset($this->permissions['action3']) && ($this->permissions['action3']==1))
@@ -725,7 +722,6 @@ class Purchase_sticker extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
     private function check_validation()
     {
         $id = $this->input->post("id");
@@ -744,7 +740,6 @@ class Purchase_sticker extends Root_Controller
         }
         return true;
     }
-
     private function system_set_preference()
     {
         if(isset($this->permissions['action6']) && ($this->permissions['action6']==1))
@@ -764,7 +759,6 @@ class Purchase_sticker extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
     private function get_preference()
     {
         $user = User_helper::get_user();
@@ -774,7 +768,7 @@ class Purchase_sticker extends Root_Controller
         $data['supplier_name']= 1;
         $data['date_challan']= 1;
         $data['challan_number']= 1;
-        $data['quantity_total_receive']= 1;
+        $data['quantity_total_pieces']= 1;
         $data['remarks']= 1;
         if($result)
         {

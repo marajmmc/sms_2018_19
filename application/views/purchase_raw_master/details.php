@@ -8,124 +8,90 @@ $action_buttons[]=array(
 );
 $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 ?>
-    <div class="row widget">
-        <div class="widget-header">
-            <div class="title">
-                <?php echo $title; ?>
-            </div>
-            <div class="clearfix"></div>
+<div class="row widget">
+    <div class="widget-header">
+        <div class="title">
+            <?php echo $title; ?>
         </div>
-
-        <div class="row show-grid">
-            <div class="row show-grid">
-                <div class="col-xs-4">
-                    <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_RECEIVE');?> :</label>
-                </div>
-                <div class="col-sm-4 col-xs-8">
-                    <?php echo System_helper::display_date($item['date_receive']);?>
-                </div>
-            </div>
-        </div>
-
-        <div style="" class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_SUPPLIER_NAME');?> :</label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                 <?php echo $item['supplier_name'];?>
-            </div>
-        </div>
-
-        <div class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CHALLAN_NUMBER');?> :</label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <?php echo $item['challan_number'];?>
-            </div>
-        </div>
-
-        <div class="row show-grid">
-            <div class="row show-grid">
-                <div class="col-xs-4">
-                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_CHALLAN');?> :</label>
-                </div>
-                <div class="col-sm-4 col-xs-8">
-                    <?php echo System_helper::display_date($item['date_challan']);?>
-                </div>
-            </div>
-        </div>
-
-        <div class="row show-grid">
-            <div class="row show-grid">
-                <div class="col-xs-4">
-                    <label class="control-label pull-right">Created Time :</label>
-                </div>
-                <div class="col-sm-4 col-xs-8">
-                    <?php echo System_helper::display_date_time($item['date_created']);?>
-                </div>
-            </div>
-        </div>
-
-        <div class="row show-grid">
-            <div class="row show-grid">
-                <div class="col-xs-4">
-                    <label class="control-label pull-right">Created By :</label>
-                </div>
-                <div class="col-sm-4 col-xs-8">
-                    <?php echo $item['created_by'];?>
-                </div>
-            </div>
-        </div>
-
-        <?php if($item['date_updated']){?>
-            <div class="row show-grid">
-                <div class="row show-grid">
-                    <div class="col-xs-4">
-                        <label class="control-label pull-right">Updated Time :</label>
-                    </div>
-                    <div class="col-sm-4 col-xs-8">
-                        <?php echo System_helper::display_date_time($item['date_updated']);?>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row show-grid">
-                <div class="row show-grid">
-                    <div class="col-xs-4">
-                        <label class="control-label pull-right">Updated By :</label>
-                    </div>
-                    <div class="col-sm-4 col-xs-8">
-                        <?php echo $item['updated_by'];?>
-                    </div>
-                </div>
-            </div>
-        <?php } ?>
-
-        <div style="" class="row show-grid">
-            <div class="col-xs-4">
-                <label for="remarks" class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS');?> :</label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <?php echo nl2br($item['remarks']);?>
-            </div>
-        </div>
-
-        <div style="overflow-x: auto;" class="row show-grid" id="order_items_container">
+        <div class="clearfix"></div>
+    </div>
+    <div class="col-md-12">
+        <table class="table table-bordered table-responsive system_table_details_view">
+            <thead>
+            <tr>
+                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_ID');?></label></th>
+                <th class=""><label class="control-label"><?php echo Barcode_helper::get_barcode_raw_master_purchase($item['id']);?></label></th>
+                <th colspan="2">&nbsp;</th>
+            </tr>
+            <tr>
+                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_SUPPLIER_NAME');?></label></th>
+                <th class="bg-danger"><label class="control-label"><?php echo $item['supplier_name'];?></label></th>
+                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_RECEIVE');?></label></th>
+                <th class=" header_value"><label class="control-label"><?php echo System_helper::display_date($item['date_receive']);?></label></th>
+            </tr>
+            <tr>
+                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_CHALLAN_NUMBER');?></label></th>
+                <th class="bg-danger"><label class="control-label"><?php echo $item['challan_number'];?></label></th>
+                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_CHALLAN');?></label></th>
+                <th class=" header_value"><label class="control-label"><?php echo System_helper::display_date($item['date_challan']);?></label></th>
+            </tr>
+            <tr>
+                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_CREATED_BY');?></label></th>
+                <th class=" header_value"><label class="control-label"><?php echo $item['created_by'];?></label></th>
+                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_CREATED_TIME');?></label></th>
+                <th class=""><label class="control-label"><?php echo System_helper::display_date_time($item['date_created']);?></label></th>
+            </tr>
+            <?php
+            if($item['user_updated'])
+            {
+                ?>
+                <tr>
+                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_UPDATED_BY');?></label></th>
+                    <th class=" header_value"><label class="control-label"><?php echo $item['updated_by'];?></label></th>
+                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_UPDATED_TIME');?></label></th>
+                    <th class=""><label class="control-label"><?php echo System_helper::display_date_time($item['date_updated']);?></label></th>
+                </tr>
+            <?php
+            }
+            ?>
+            <?php
+            if($item['remarks'])
+            {
+                ?>
+                <tr>
+                    <th class="widget-header header_caption" style="vertical-align: top"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS');?></label></th>
+                    <th class=" header_value" colspan="3"><label class="control-label"><?php echo nl2br($item['remarks']);?></label></th>
+                </tr>
+            <?php
+            }
+            ?>
+            </thead>
+        </table>
+    </div>
+    <div class="clearfix"></div>
+    <div class="row show-grid">
+        <div style="overflow-x: auto;" class="row show-grid">
             <table class="table table-bordered">
                 <thead>
                 <tr>
-                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></th>
-                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?></th>
-                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
-                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
-                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_CURRENT_STOCK'); ?></th>
-                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_NUMBER_OF_REEL'); ?></th>
-                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY_SUPPLY'); ?></th>
-                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY_RECEIVE'); ?></th>
-                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY_DIFFERENCE');?></th>
-                    <th style="min-width: 150px; text-align: right;">Unit Price (Tk)</th>
-                    <th style="min-width: 150px; text-align: right;">Total Price (Tk)</th>
+                    <th class="widget-header text-center" colspan="30">Product Details</th>
+                </tr>
+                <tr>
+                    <th rowspan="2"><?php echo $CI->lang->line('LABEL_SL_NO'); ?></th>
+                    <th rowspan="2"><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></th>
+                    <th rowspan="2"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?></th>
+                    <th rowspan="2"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
+                    <th class="text-right" rowspan="2"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
+                    <th class="text-right" rowspan="2"><?php echo $CI->lang->line('LABEL_NUMBER_OF_REEL'); ?></th>
+                    <th class="text-center" colspan="3"><?php echo $CI->lang->line('LABEL_QUANTITY');?></th>
+                    <th class="text-center" colspan="2"><?php echo $CI->lang->line('LABEL_PRICE_TAKA_TOTAL');?></th>
+                </tr>
+                <tr>
+                    <th class="text-right"><?php echo $CI->lang->line('LABEL_QUANTITY_SUPPLY'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
+                    <th class="text-right"><?php echo $CI->lang->line('LABEL_QUANTITY_RECEIVE'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
+                    <th class="text-right"><?php echo $CI->lang->line('LABEL_QUANTITY_DIFFERENCE'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
+                    <th class="text-right"><?php echo $CI->lang->line('LABEL_PRICE_TAKA_UNIT');?></th>
+                    <th class="text-right"><?php echo $CI->lang->line('LABEL_PRICE_TAKA_TOTAL');?></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -135,7 +101,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 $quantity_total_difference=0;
                 $total_tk=0;
                 $price_total=0;
-                $total_unit_price=0;
                 foreach($purchase_master as $index=>$master)
                 {
                     $price_total=($master['quantity_receive']*$master['price_unit_tk']);
@@ -143,42 +108,19 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     $quantity_total_receive+=$master['quantity_receive'];
                     $quantity_total_difference=($quantity_total_supply-$quantity_total_receive);
                     $total_tk+=$price_total;
-                    $total_unit_price+=$master['price_unit_tk'];
                     ?>
                     <tr>
-                        <td>
-                            <label><?php echo $master['crop_name']; ?></label>
-                        </td>
-                        <td>
-                            <label><?php echo $master['crop_type_name']; ?></label>
-                        </td>
-                        <td>
-                            <label><?php echo $master['variety_name']; ?></label>
-                        </td>
-                        <td>
-                            <label><?php echo $master['pack_size']; ?></label>
-                        </td>
-                        <td class="text-right">
-                            <label><?php $current_stock=System_helper::get_raw_stock(array($master['variety_id'])); if(isset($current_stock)){echo $current_stock[$master['variety_id']][$master['pack_size_id']][$CI->config->item('system_master_foil')]['current_stock'];}else{echo 0;}?></label>
-                        </td>
-                        <td class="text-right">
-                            <label><?php echo $master['number_of_reel']; ?></label>
-                        </td>
-                        <td class="text-right">
-                            <label><?php echo $master['quantity_supply']; ?></label>
-                        </td>
-                        <td class="text-right">
-                            <label><?php echo $master['quantity_receive']; ?></label>
-                        </td>
-                        <td class="text-right">
-                            <label><?php echo ($master['quantity_supply']-$master['quantity_receive']);?></label>
-                        </td class="text-right">
-                        <td class="text-right">
-                            <label><?php echo $master['price_unit_tk']; ?></label>
-                        </td>
-                        <td class="text-right">
-                            <label><?php echo number_format($price_total,2); ?></label>
-                        </td>
+                        <td><?php echo $index+1;?></td>
+                        <td><?php echo $master['crop_name']; ?></td>
+                        <td><?php echo $master['crop_type_name']; ?></td>
+                        <td><?php echo $master['variety_name']; ?></td>
+                        <td class="text-right"><?php echo $master['pack_size']; ?></td>
+                        <td class="text-right"><?php echo $master['number_of_reel']; ?></td>
+                        <td class="text-right"><?php echo number_format($master['quantity_supply'],3,'.',''); ?></td>
+                        <td class="text-right"><?php echo number_format($master['quantity_receive'],3,'.',''); ?></td>
+                        <td class="text-right"><?php echo number_format(($master['quantity_supply']-$master['quantity_receive']),3,'.','');?></td>
+                        <td class="text-right"><?php echo number_format($master['price_unit_tk'],2); ?></td>
+                        <td class="text-right"><?php echo number_format($price_total,2); ?></td>
                     </tr>
                 <?php
                 }
@@ -187,17 +129,17 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
                 <tfoot>
                 <tr>
-                    <td colspan="6" class="text-right"><label class="control-label"><?php echo $this->lang->line('LABEL_TOTAL')?></label></td>
-                    <td class="text-right"><label class="control-label"><?php echo $quantity_total_supply.' (KG)';?></label></td>
-                    <td class="text-right"><label class="control-label"><?php echo $quantity_total_receive.' (KG)';?></label></td>
-                    <td class="text-right"><label class="control-label"><?php echo $quantity_total_difference.' (KG)';?></label></td>
-                    <td class="text-right"><label class="control-label"><?php echo $total_unit_price;?></label></td>
+                    <td colspan="6" class="text-right"><label class="control-label"><?php echo $this->lang->line('LABEL_TOTAL_KG')?></label></td>
+                    <td class="text-right"><label class="control-label"><?php echo number_format($quantity_total_supply,3,'.','');?></label></td>
+                    <td class="text-right"><label class="control-label"><?php echo number_format($quantity_total_receive,3,'.','');?></label></td>
+                    <td class="text-right"><label class="control-label"><?php echo number_format($quantity_total_difference,3,'.','');?></label></td>
+                    <td class="text-right"><label class="control-label"><?php echo $this->lang->line('LABEL_PRICE_TAKA_TOTAL')?></label></td>
                     <td class="text-right"><label class="control-label"><?php echo number_format($total_tk,2);?></label></td>
                 </tr>
                 </tfoot>
-
             </table>
         </div>
     </div>
+</div>
 
-    <div class="clearfix"></div>
+<div class="clearfix"></div>

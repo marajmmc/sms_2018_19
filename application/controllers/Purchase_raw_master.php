@@ -111,6 +111,7 @@ class Purchase_raw_master extends Root_Controller
             $item['date_receive']=System_helper::display_date($item['date_receive']);
             $item['date_challan']=System_helper::display_date($item['date_challan']);
             $item['barcode']=Barcode_helper::get_barcode_raw_master_purchase($item['id']);
+            $item['quantity_total_receive']=number_format($item['quantity_total_receive'],3,'.','');
         }
         $this->json_return($items);
     }
@@ -189,7 +190,7 @@ class Purchase_raw_master extends Root_Controller
             $data['suppliers']=Query_helper::get_info($this->config->item('table_login_basic_setup_supplier'),array('id value','name text'),array('status !="'.$this->config->item('system_status_delete').'"'));
             $data['crops']=Query_helper::get_info($this->config->item('table_login_setup_classification_crops'),array('id value','name text'),array('status !="'.$this->config->item('system_status_delete').'"'));
             $data['packs']=Query_helper::get_info($this->config->item('table_login_setup_classification_pack_size'),array('id value','name text'),array('status !="'.$this->config->item('system_status_delete').'"'));
-            $data['title']="Edit Purchase (Master Foil)";
+            $data['title']="Edit Purchase (Master Foil) :: ".Barcode_helper::get_barcode_raw_master_purchase($item_id);
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/add_edit",$data,true));
             if($this->message)
@@ -537,7 +538,7 @@ class Purchase_raw_master extends Root_Controller
             $this->db->order_by('master_details.id','ASC');
             $data['purchase_master']=$this->db->get()->result_array();
 
-            $data['title']="Details Purchase (Master Foil)";
+            $data['title']="Details Purchase (Master Foil) :: ".Barcode_helper::get_barcode_raw_master_purchase($item_id);
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/details",$data,true));
             if($this->message)
@@ -596,6 +597,7 @@ class Purchase_raw_master extends Root_Controller
             $this->db->select('crop.name crop_name');
             $this->db->where('master_details.purchase_id',$item_id);
             $this->db->where('master_details.revision',1);
+            $this->db->where('master_details.quantity_receive > 0');
             $this->db->order_by('master_details.id','ASC');
             $data['items']=$this->db->get()->result_array();
 
@@ -726,8 +728,8 @@ class Purchase_raw_master extends Root_Controller
             $this->load->library('form_validation');
             $this->form_validation->set_rules('item[date_receive]',$this->lang->line('LABEL_DATE_RECEIVE'),'required');
             $this->form_validation->set_rules('item[supplier_id]',$this->lang->line('LABEL_SUPPLIER_NAME'),'required');
-            $this->form_validation->set_rules('item[date_challan]',$this->lang->line('LABEL_DATE_CHALLAN'),'required');
             $this->form_validation->set_rules('item[challan_number]',$this->lang->line('LABEL_CHALLAN_NUMBER'),'required');
+            $this->form_validation->set_rules('item[date_challan]',$this->lang->line('LABEL_DATE_CHALLAN'),'required');
             if($this->form_validation->run() == FALSE)
             {
                 $this->message=validation_errors();

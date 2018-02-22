@@ -80,19 +80,19 @@ $num_pages=ceil($total_records/$row_per_page);
             </div>
             <table style="width:<?php echo $width;?>px;" class="system_table_report_container">
                 <thead>
-                <th><?php echo $CI->lang->line('LABEL_SL_NO'); ?></th>
+                <th style="width: 1%;"><?php echo $CI->lang->line('LABEL_SL_NO'); ?></th>
                 <th><?php echo $CI->lang->line('LABEL_ITEM'); ?></th>
-                <th class="text-right"><?php echo $CI->lang->line('LABEL_QUANTITY'); ?></th>
+                <th class="text-right" style="width: 20%;"><?php echo $CI->lang->line('LABEL_QUANTITY'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
                 </thead>
                 <tbody>
                 <tr>
                     <td>1</td>
                     <td>Common Foil</td>
-                    <td class="text-right"><?php echo $item['quantity'];?></td>
+                    <td class="text-right"><?php echo number_format($item['quantity'],3,'.','');?></td>
                 </tr>
                 <tr>
-                    <td  class="text-right" colspan="2"><label class="control-label"><?php echo $CI->lang->line('LABEL_TOTAL');?></label></td>
-                    <td class="text-right"><label class="control-label"><?php echo $item['quantity'];?></label></td>
+                    <td  class="text-right" colspan="2"><label class="control-label"><?php echo $CI->lang->line('LABEL_TOTAL_KG');?></label></td>
+                    <td class="text-right"><label class="control-label"><?php echo number_format($item['quantity'],3,'.','');?></label></td>
                 </tr>
                 <?php
                 if($item['remarks'])
