@@ -112,8 +112,8 @@ class Purchase_raw_foil extends Root_Controller
             $item['date_receive']=System_helper::display_date($item['date_receive']);
             $item['date_challan']=System_helper::display_date($item['date_challan']);
             $item['barcode']=Barcode_helper::get_barcode_raw_foil_purchase($item['id']);
+            $item['quantity_total_receive']=number_format($item['quantity_receive'],3,'.','');
         }
-
         $this->json_return($items);
     }
     private function system_add()
@@ -428,7 +428,7 @@ class Purchase_raw_foil extends Root_Controller
 
             $data['item']['current_stock']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$packing_item]['current_stock'];
 
-            $data['title']="Details Purchase (Common Foil)";
+            $data['title']="Edit Purchase (Common Foil) :: ".Barcode_helper::get_barcode_raw_foil_purchase($item_id);
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/details",$data,true));
             if($this->message)
@@ -630,8 +630,7 @@ class Purchase_raw_foil extends Root_Controller
         $data['date_challan']= 1;
         $data['challan_number']= 1;
         $data['number_of_reel']= 1;
-        $data['quantity_supply']= 1;
-        $data['quantity_receive']= 1;
+        $data['quantity_total_receive']= 1;
         $data['remarks']= 1;
         if($result)
         {

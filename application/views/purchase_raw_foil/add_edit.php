@@ -71,7 +71,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <label for="current_stock_id" class="control-label pull-right">Current Stock</label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <label id="current_stock_id"><?php echo $item['current_stock'];?></label>
+                <label id="current_stock_id"><?php echo number_format(($item['current_stock']),3,'.','');?></label>
             </div>
         </div>
 
@@ -136,7 +136,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <label class="control-label pull-right">Total (Tk)</label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <label id="lbl_price_total_tk" class="control-label"><?php echo ($item['quantity_receive']*$item['price_unit_tk'])?></label>
+                <label id="lbl_price_total_tk" class="control-label"><?php echo number_format(($item['quantity_receive']*$item['price_unit_tk']),2)?></label>
             </div>
         </div>
 

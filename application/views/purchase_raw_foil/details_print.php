@@ -42,7 +42,7 @@ if($result)
                         <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_ID');?>:</label>
                     </div>
                     <div class="col-xs-6">
-                        <?php echo Barcode_helper::get_barcode_raw_master_purchase($item['id']);?>
+                        <?php echo Barcode_helper::get_barcode_raw_foil_purchase($item['id']);?>
                     </div>
                 </div>
                 <div class="row show-grid">
@@ -113,10 +113,7 @@ if($result)
                     <td class="text-right"><?php echo number_format($item['quantity_receive'],3,'.','');?></td>
                     <td class="text-right"><?php echo number_format(($item['quantity_supply']-$item['quantity_receive']),3,'.','');?></td>
                 </tr>
-                <tr>
-                    <td colspan="4" class="text-right"><label class="control-label"><?php echo $CI->lang->line('LABEL_TOTAL_TAKA');?></label></td>
-                    <td class="text-right"><label class="control-label"><?php echo number_format(($item['quantity_receive']*$item['price_unit_tk']),2);?></label></td>
-                </tr>
+
                 <?php if($item['remarks']){?>
                     <tr>
                         <td colspan="21">

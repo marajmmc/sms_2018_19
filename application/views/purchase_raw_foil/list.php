@@ -18,6 +18,15 @@ if(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1))
         'data-action-link'=>site_url($CI->controller_url.'/index/edit')
     );
 }
+if(isset($CI->permissions['action0']) && ($CI->permissions['action0']==1))
+{
+    $action_buttons[]=array(
+        'type'=>'button',
+        'label'=>$CI->lang->line('ACTION_DETAILS'),
+        'class'=>'button_jqx_action',
+        'data-action-link'=>site_url($CI->controller_url.'/index/details')
+    );
+}
 if(isset($CI->permissions['action3']) && ($CI->permissions['action3']==1))
 {
     $action_buttons[]=array(
@@ -26,15 +35,6 @@ if(isset($CI->permissions['action3']) && ($CI->permissions['action3']==1))
         'data-message-confirm'=>'Are you sure to Delete this stock?',
         'class'=>'button_jqx_action',
         'data-action-link'=>site_url($CI->controller_url.'/index/delete')
-    );
-}
-if(isset($CI->permissions['action0']) && ($CI->permissions['action0']==1))
-{
-    $action_buttons[]=array(
-        'type'=>'button',
-        'label'=>$CI->lang->line('ACTION_DETAILS'),
-        'class'=>'button_jqx_action',
-        'data-action-link'=>site_url($CI->controller_url.'/index/details')
     );
 }
 if(isset($CI->permissions['action4']) && ($CI->permissions['action4']==1))
@@ -121,8 +121,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 { name: 'date_challan', type: 'string' },
                 { name: 'challan_number', type: 'string' },
                 { name: 'number_of_reel', type: 'string' },
-                { name: 'quantity_supply', type: 'string' },
-                { name: 'quantity_receive', type: 'string' },
+                { name: 'quantity_total_receive', type: 'string' },
                 { name: 'remarks', type: 'string' }
             ],
             id: 'id',
@@ -155,8 +154,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     { text: '<?php echo $CI->lang->line('LABEL_DATE_CHALLAN'); ?>',dataField: 'date_challan',width:'100',hidden: <?php echo $system_preference_items['date_challan']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_CHALLAN_NUMBER'); ?>',dataField: 'challan_number',width:'100',hidden: <?php echo $system_preference_items['challan_number']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_NUMBER_OF_REEL'); ?>',dataField: 'number_of_reel',width:'100', cellsalign: 'right',hidden: <?php echo $system_preference_items['number_of_reel']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_SUPPLY'); ?>',dataField: 'quantity_supply',width:'100', cellsalign: 'right',hidden: <?php echo $system_preference_items['quantity_supply']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_RECEIVE'); ?>',dataField: 'quantity_receive',width:'100', cellsalign: 'right',hidden: <?php echo $system_preference_items['quantity_receive']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL_RECEIVE'); ?>',dataField: 'quantity_total_receive',width:'100', cellsalign: 'right',hidden: <?php echo $system_preference_items['quantity_total_receive']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_REMARKS'); ?>', dataField: 'remarks',hidden: <?php echo $system_preference_items['remarks']?0:1;?>}
                 ]
             });
