@@ -149,18 +149,21 @@ $num_pages=ceil($total_records/$row_per_page);
                         <td class="text-right"><?php echo number_format(($data['quantity_supply']-$data['quantity_receive']),3,'.','');?></td>
                     </tr>
                     <?php
+
                     if($total_records==$index+1)
                     {
+                        ?>
+                        <tr>
+                            <td colspan="5" class="text-right"><label class="control-label"><?php echo $this->lang->line('LABEL_TOTAL')?></label></td>
+                            <td class="text-right"><label class="control-label"><?php echo $total_number_of_reel;?></label></td>
+                            <td class="text-right"><label class="control-label"><?php echo number_format($quantity_total_supply,3,'.','');?></label></td>
+                            <td class="text-right"><label class="control-label"><?php echo number_format($quantity_total_receive,3,'.','');?></label></td>
+                            <td class="text-right"><label class="control-label"><?php echo number_format($quantity_total_difference,3,'.','');?></label></td>
+                        </tr>
+                        <?php
                         if($item['remarks'])
                         {
                             ?>
-                            <tr>
-                                <td colspan="5" class="text-right"><label class="control-label"><?php echo $this->lang->line('LABEL_TOTAL')?></label></td>
-                                <td class="text-right"><label class="control-label"><?php echo $total_number_of_reel;?></label></td>
-                                <td class="text-right"><label class="control-label"><?php echo number_format($quantity_total_supply,3,'.','');?></label></td>
-                                <td class="text-right"><label class="control-label"><?php echo number_format($quantity_total_receive,3,'.','');?></label></td>
-                                <td class="text-right"><label class="control-label"><?php echo number_format($quantity_total_difference,3,'.','');?></label></td>
-                            </tr>
                             <tr>
                                 <td colspan="21">
                                     <strong><?php echo $CI->lang->line('LABEL_REMARKS');?>: </strong><?php echo nl2br($item['remarks']);?>

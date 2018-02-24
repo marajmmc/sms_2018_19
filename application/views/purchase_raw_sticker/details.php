@@ -107,7 +107,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     $price_total=($sticker['quantity_receive']*$sticker['price_unit_tk']);
                     $quantity_total_supply+=$sticker['quantity_supply'];
                     $quantity_total_receive+=$sticker['quantity_receive'];
-                    $quantity_total_difference=($quantity_total_supply-$quantity_total_receive);
+                    $quantity_total_difference=($quantity_total_receive-$quantity_total_supply);
                     $total_tk+=$price_total;
                     ?>
                     <tr>
@@ -118,7 +118,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <td class="text-right"><?php echo $sticker['pack_size']; ?></td>
                         <td class="text-right"><?php echo $sticker['quantity_supply']; ?></td>
                         <td class="text-right"><?php echo $sticker['quantity_receive']; ?></td>
-                        <td class="text-right"><?php echo ($sticker['quantity_supply']-$sticker['quantity_receive']);?></td>
+                        <td class="text-right"><?php echo ($sticker['quantity_receive']-$sticker['quantity_supply']);?></td>
                         <td class="text-right"><?php echo number_format($sticker['price_unit_tk'],2); ?></td>
                         <td class="text-right"><?php echo number_format($price_total,2); ?></td>
                     </tr>

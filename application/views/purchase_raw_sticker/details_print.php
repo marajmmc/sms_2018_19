@@ -64,7 +64,7 @@ $num_pages=ceil($total_records/$row_per_page);
                         </div>
                     </div>
                     <div class="row show-grid">
-                        <div class="col-xs-6">
+                        <div class="col-xs-6 text-right"">
                             <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_SUPPLIER_NAME');?>:</label>
                         </div>
                         <div class="col-xs-6">
@@ -106,11 +106,14 @@ $num_pages=ceil($total_records/$row_per_page);
             <table style="width:<?php echo $width;?>px;" class="system_table_report_container">
                 <thead>
                 <tr>
-                    <th style="width: 5px"><?php echo $CI->lang->line('LABEL_SL_NO'); ?></th>
-                    <th><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></th>
-                    <th><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?></th>
-                    <th><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
-                    <th><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
+                    <th rowspan="2"style="width: 5px"><?php echo $CI->lang->line('LABEL_SL_NO'); ?></th>
+                    <th rowspan="2"><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></th>
+                    <th rowspan="2"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?></th>
+                    <th rowspan="2"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
+                    <th rowspan="2"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
+                    <th class="text-center" colspan="3"><?php echo $CI->lang->line('LABEL_QUANTITY');?></th>
+                </tr>
+                <tr>
                     <th class="text-center"><?php echo $CI->lang->line('LABEL_QUANTITY_SUPPLY').' (Pcs)';?></th>
                     <th class="text-center"><?php echo $CI->lang->line('LABEL_QUANTITY_RECEIVE').' (Pcs)';?></th>
                     <th class="text-center"><?php echo $CI->lang->line('LABEL_QUANTITY_DIFFERENCE').' (Pcs)';?></th>
@@ -132,7 +135,7 @@ $num_pages=ceil($total_records/$row_per_page);
                     $price_total=($data['quantity_receive']*$data['price_unit_tk']);
                     $quantity_total_supply+=$data['quantity_supply'];
                     $quantity_total_receive+=$data['quantity_receive'];
-                    $quantity_total_difference=($quantity_total_supply-$quantity_total_receive);
+                    $quantity_total_difference=($quantity_total_receive-$quantity_total_supply);
                     $total_tk+=$price_total;
                     ?>
                     <tr>
@@ -143,26 +146,26 @@ $num_pages=ceil($total_records/$row_per_page);
                         <td class="text-right"> <?php echo $data['pack_size'];?></td>
                         <td class="text-right"><?php echo $data['quantity_supply'];?></td>
                         <td class="text-right"><?php echo $data['quantity_receive'];?></td>
-                        <td class="text-right"><?php echo ($data['quantity_supply']-$data['quantity_receive']);?></td>
+                        <td class="text-right"><?php echo ($data['quantity_receive']-$data['quantity_supply']);?></td>
                     </tr>
                     <?php
+
                     if($total_records==$index+1)
                     {
+                        ?>
+                        <tr>
+                            <td colspan="5" class="text-right"><label class="control-label">Total Pcs</label></td>
+                            <td class="text-right"><label class="control-label"><?php echo $quantity_total_supply;?></label></td>
+                            <td class="text-right"><label class="control-label"><?php echo $quantity_total_receive;?></label></td>
+                            <td class="text-right"><label class="control-label"><?php echo $quantity_total_difference;?></label></td>
+                        </tr>
+
+                        <?php
                         if($item['remarks'])
                         {
                             ?>
                             <tr>
-                                <td colspan="5" class="text-right"><label class="control-label">Total Pcs</label></td>
-                                <td class="text-right"><label class="control-label"><?php echo $quantity_total_supply;?></label></td>
-                                <td class="text-right"><label class="control-label"><?php echo $quantity_total_receive;?></label></td>
-                                <td class="text-right"><label class="control-label"><?php echo $quantity_total_difference;?></label></td>
-                            </tr>
-                            <tr>
-                                <td colspan="7" class="text-right"><label class="control-label"><?php echo $CI->lang->line('LABEL_TOTAL_TAKA');?></label></td>
-                                <td class="text-right"><label class="control-label"><?php echo number_format($total_tk,2);?></label></td>
-                            </tr>
-                            <tr>
-                                <td colspan="21">
+                                <td colspan="8">
                                     <strong><?php echo $CI->lang->line('LABEL_REMARKS');?>: </strong><?php echo nl2br($item['remarks']);?>
                                 </td>
                             </tr>

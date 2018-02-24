@@ -38,6 +38,10 @@ class Transfer_ww extends Root_Controller
         {
             $this->system_details($id);
         }
+        elseif($action=="details_print")
+        {
+            $this->system_details_print($id);
+        }
         elseif($action=='save')
         {
             $this->system_save();
@@ -252,11 +256,16 @@ class Transfer_ww extends Root_Controller
             $this->db->join($this->config->item('table_login_setup_classification_crop_types').' type','type.id = variety.crop_type_id','LEFT');
             $this->db->select('crop.name crop_name');
             $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = type.crop_id','LEFT');
+
+            $this->db->select('created_user_info.name created_by');
+            $this->db->join($this->config->item('table_login_setup_user_info').' created_user_info','created_user_info.user_id = transfer_warehouse.user_created','INNER');
+            $this->db->select('updated_user_info.name updated_by');
+            $this->db->join($this->config->item('table_login_setup_user_info').' updated_user_info','updated_user_info.user_id = transfer_warehouse.user_updated','LEFT');
+
             $this->db->where('transfer_warehouse.id',$item_id);
             $this->db->where('transfer_warehouse.status !=',$this->config->item('system_status_delete'));
             $this->db->order_by('transfer_warehouse.id','ASC');
             $data['item']=$this->db->get()->row_array();
-
             if(!$data['item'])
             {
                 System_helper::invalid_try('Details Non Exists',$item_id);
@@ -274,6 +283,72 @@ class Transfer_ww extends Root_Controller
                 $ajax['system_message']=$this->message;
             }
             $ajax['system_page_url']=site_url($this->controller_url.'/index/details/'.$item_id);
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+    }
+
+    private function system_details_print($id)
+    {
+        if(isset($this->permissions['action4']) && ($this->permissions['action4']==1))
+        {
+            if($id>0)
+            {
+                $item_id=$id;
+            }
+            else
+            {
+                $item_id=$this->input->post('id');
+            }
+            $this->db->from($this->config->item('table_sms_transfer_warehouse_variety').' transfer_warehouse');
+            $this->db->select('transfer_warehouse.*');
+            $this->db->select('variety.name variety_name');
+            $this->db->join($this->config->item('table_login_setup_classification_varieties').' variety','variety.id = transfer_warehouse.variety_id','LEFT');
+            $this->db->select('v_pack_size.name pack_size');
+            $this->db->join($this->config->item('table_login_setup_classification_pack_size').' v_pack_size','v_pack_size.id = transfer_warehouse.pack_size_id','LEFT');
+            $this->db->select('source_ware_house.name source_ware_house_name');
+            $this->db->join($this->config->item('table_login_basic_setup_warehouse').' source_ware_house','source_ware_house.id = transfer_warehouse.source_warehouse_id','LEFT');
+            $this->db->select('destination_ware_house.name destination_ware_house_name');
+            $this->db->join($this->config->item('table_login_basic_setup_warehouse').' destination_ware_house','destination_ware_house.id = transfer_warehouse.destination_warehouse_id','LEFT');
+            $this->db->select('type.name crop_type_name');
+            $this->db->join($this->config->item('table_login_setup_classification_crop_types').' type','type.id = variety.crop_type_id','LEFT');
+            $this->db->select('crop.name crop_name');
+            $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = type.crop_id','LEFT');
+
+            $this->db->select('created_user_info.name created_by');
+            $this->db->join($this->config->item('table_login_setup_user_info').' created_user_info','created_user_info.user_id = transfer_warehouse.user_created','INNER');
+            $this->db->select('updated_user_info.name updated_by');
+            $this->db->join($this->config->item('table_login_setup_user_info').' updated_user_info','updated_user_info.user_id = transfer_warehouse.user_updated','LEFT');
+
+            $this->db->where('transfer_warehouse.id',$item_id);
+            $this->db->where('transfer_warehouse.status !=',$this->config->item('system_status_delete'));
+            $this->db->order_by('transfer_warehouse.id','ASC');
+            $data['item']=$this->db->get()->row_array();
+
+//            print_r($data['item']);
+//            exit;
+            if(!$data['item'])
+            {
+                System_helper::invalid_try('Details Non Exists',$item_id);
+                $ajax['status']=false;
+                $ajax['system_message']='Invalid Try.';
+                $this->json_return($ajax);
+            }
+
+            $data['title']="Transfer (Warehouse to Warehouse)";
+
+            $ajax['status']=true;
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/details_print",$data,true));
+            if($this->message)
+            {
+                $ajax['system_message']=$this->message;
+            }
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/details_print/'.$item_id);
             $this->json_return($ajax);
         }
         else

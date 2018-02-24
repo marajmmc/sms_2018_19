@@ -55,22 +55,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             <?php
             }
             ?>
-            <tr>
-                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_NUMBER_OF_REEL');?></label></th>
-                <th class=" header_value"><label class="control-label"><?php echo $item['number_of_reel'];?></label></th>
-                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_QUANTITY_SUPPLY');?></label></th>
-                <th class=""><label class="control-label"><?php echo $item['quantity_supply'];?></label></th>
-            </tr>
-            <tr>
-                <th class="widget-header header_caption"><label class="control-label pull-right">Price Unit (Tk):</label></th>
-                <th class=" header_value"><label class="control-label"><?php echo number_format($item['price_unit_tk'],2);?></label></th>
-                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_QUANTITY_RECEIVE');?></label></th>
-                <th class=""><label class="control-label"><?php echo $item['quantity_receive'];?></label></th>
-            </tr>
-            <tr>
-                <th class="widget-header header_caption" style="vertical-align: top"><label class="control-label pull-right">Total Taka</label></th>
-                <th class=" header_value" colspan="3"><label class="control-label"><?php echo number_format(($item['quantity_receive']*$item['price_unit_tk']),2);?></label></th>
-            </tr>
 
             <?php
             if($item['remarks'])
@@ -86,6 +70,56 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             </thead>
         </table>
     </div>
+
+    <div class="clearfix"></div>
+    <div class="row show-grid">
+        <div style="overflow-x: auto;" class="row show-grid">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th class="widget-header text-center" colspan="30">Product Details</th>
+                </tr>
+                <tr>
+                    <th rowspan="2"><?php echo $CI->lang->line('LABEL_SL_NO'); ?></th>
+                    <th class="text-right" rowspan="2"><?php echo $CI->lang->line('LABEL_NUMBER_OF_REEL'); ?></th>
+                    <th class="text-center" colspan="3"><?php echo $CI->lang->line('LABEL_QUANTITY');?></th>
+                    <th class="text-center" colspan="2"><?php echo $CI->lang->line('LABEL_PRICE_TAKA_TOTAL');?></th>
+                </tr>
+                <tr>
+                    <th class="text-right"><?php echo $CI->lang->line('LABEL_QUANTITY_SUPPLY'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
+                    <th class="text-right"><?php echo $CI->lang->line('LABEL_QUANTITY_RECEIVE'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
+                    <th class="text-right"><?php echo $CI->lang->line('LABEL_QUANTITY_DIFFERENCE'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
+                    <th class="text-right"><?php echo $CI->lang->line('LABEL_PRICE_TAKA_UNIT');?></th>
+                    <th class="text-right"><?php echo $CI->lang->line('LABEL_PRICE_TAKA_TOTAL');?></th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td class="text-right"><?php echo $item['number_of_reel']; ?></td>
+                        <td class="text-right"><?php echo number_format($item['quantity_supply'],3,'.',''); ?></td>
+                        <td class="text-right"><?php echo number_format($item['quantity_receive'],3,'.',''); ?></td>
+                        <td class="text-right"><?php echo number_format(($item['quantity_receive']-$item['quantity_supply']),3,'.','');?></td>
+                        <td class="text-right"><?php echo number_format($item['price_unit_tk'],2); ?></td>
+                        <td class="text-right"><?php echo number_format(($item['quantity_receive']*$item['price_unit_tk']),2); ?></td>
+                    </tr>
+                </tbody>
+
+                <tfoot>
+                <tr>
+                    <td colspan="1" class="text-right"><label class="control-label"><?php echo $this->lang->line('LABEL_TOTAL')?></label></td>
+                    <td class="text-right"><label class="control-label"><?php echo number_format($item['number_of_reel']);?></label></td>
+                    <td class="text-right"><label class="control-label"><?php echo number_format($item['quantity_supply'],3,'.','');?></label></td>
+                    <td class="text-right"><label class="control-label"><?php echo number_format($item['quantity_receive'],3,'.','');?></label></td>
+                    <td class="text-right"><label class="control-label"><?php echo number_format(($item['quantity_receive']-$item['quantity_supply']),3,'.','');?></label></td>
+                    <td class="text-right"><label class="control-label"><?php echo $this->lang->line('LABEL_PRICE_TAKA_TOTAL')?></label></td>
+                    <td class="text-right"><label class="control-label"><?php echo number_format(($item['quantity_receive']*$item['price_unit_tk']),2);?></label></td>
+                </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
 </div>
 
     <div class="clearfix"></div>
