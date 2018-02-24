@@ -154,7 +154,7 @@ $num_pages=ceil($total_records/$row_per_page);
                     {
                         ?>
                         <tr>
-                            <td colspan="5" class="text-right"><label class="control-label">Total Pcs</label></td>
+                            <td colspan="5" class="text-right"><label class="control-label">Total (Pcs)</label></td>
                             <td class="text-right"><label class="control-label"><?php echo $quantity_total_supply;?></label></td>
                             <td class="text-right"><label class="control-label"><?php echo $quantity_total_receive;?></label></td>
                             <td class="text-right"><label class="control-label"><?php echo $quantity_total_difference;?></label></td>

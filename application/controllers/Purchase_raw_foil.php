@@ -188,7 +188,7 @@ class Purchase_raw_foil extends Root_Controller
 
             $data['suppliers']=Query_helper::get_info($this->config->item('table_login_basic_setup_supplier'),array('id value','name text'),array('status !="'.$this->config->item('system_status_delete').'"'));
 
-            $data['title']="Edit Purchase (Common Foil)";
+            $data['title']="Edit Purchase (Common Foil) :: ".Barcode_helper::get_barcode_raw_foil_purchase($item_id);
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/add_edit",$data,true));
             if($this->message)
@@ -428,7 +428,7 @@ class Purchase_raw_foil extends Root_Controller
 
             $data['item']['current_stock']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$packing_item]['current_stock'];
 
-            $data['title']="Edit Purchase (Common Foil) :: ".Barcode_helper::get_barcode_raw_foil_purchase($item_id);
+            $data['title']="Details Purchase (Common Foil) :: ".Barcode_helper::get_barcode_raw_foil_purchase($item_id);
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/details",$data,true));
             if($this->message)
@@ -467,6 +467,7 @@ class Purchase_raw_foil extends Root_Controller
             $this->db->select('supplier.name supplier_name');
             $this->db->where('purchase_foil.status !=',$this->config->item('system_status_delete'));
             $this->db->where('purchase_foil.id',$item_id);
+            $this->db->where('purchase_foil.quantity_supply > ',0);
             $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
             {

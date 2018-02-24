@@ -211,7 +211,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             {
                 price_unit_tk=0;
             }
-            $("#lbl_price_total_tk").html(price_unit_tk*quantity_receive);
+            $("#lbl_price_total_tk").html(number_format((price_unit_tk*quantity_receive),2));
         });
 
         $(document).off('input','#price_unit_tk');
@@ -228,7 +228,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             {
                 price_unit_tk=0;
             }
-            $("#lbl_price_total_tk").html(price_unit_tk*quantity_receive);
+            $("#lbl_price_total_tk").html(number_format((price_unit_tk*quantity_receive),2));
         });
 
     });

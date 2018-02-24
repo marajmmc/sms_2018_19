@@ -84,6 +84,12 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         </div>
         <div class="clearfix"></div>
     </div>
+    <?php
+    if(isset($CI->permissions['action6']) && ($CI->permissions['action6']==1))
+    {
+        $CI->load->view('preference',array('system_preference_items'=>$system_preference_items));
+    }
+    ?>
 
     <div class="col-xs-12" id="system_jqx_container">
 
@@ -106,7 +112,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 { name: 'id', type: 'int' },
                 { name: 'barcode', type: 'string' },
                 { name: 'date_convert', type: 'string' },
-                { name: 'quantity', type: 'string' },
+                { name: 'quantity_total_kg', type: 'string' },
                 { name: 'remarks', type: 'string' }
             ],
             id: 'id',
@@ -133,10 +139,10 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 enablebrowserselection:true,
                 columnsreorder: true,
                 columns: [
-                    { text: '<?php echo $CI->lang->line('LABEL_BARCODE'); ?>', dataField: 'barcode',width:'80'},
-                    { text: 'Convert Date',dataField: 'date_convert',width:'100'},
-                    { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL'); ?> (KG)', cellsalign: 'right',dataField: 'quantity',width:'100'},
-                    { text: '<?php echo $CI->lang->line('LABEL_REMARKS'); ?>', dataField: 'remarks'}
+                    { text: '<?php echo $CI->lang->line('LABEL_BARCODE'); ?>', dataField: 'barcode',width:'80',hidden: <?php echo $system_preference_items['barcode']?0:1;?>},
+                    { text: 'Convert Date',dataField: 'date_convert',width:'100',hidden: <?php echo $system_preference_items['date_convert']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL_KG'); ?> (KG)', cellsalign: 'right',dataField: 'quantity_total_kg',width:'100',hidden: <?php echo $system_preference_items['quantity_total_kg']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_REMARKS'); ?>', dataField: 'remarks',hidden: <?php echo $system_preference_items['remarks']?0:1;?>}
                 ]
             });
     });

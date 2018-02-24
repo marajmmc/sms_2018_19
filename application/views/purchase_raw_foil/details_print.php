@@ -119,7 +119,7 @@ if($result)
                     <td class="text-right"><?php echo number_format(($item['quantity_receive']-$item['quantity_supply']),3,'.','');?></td>
                 </tr>
                 <tr>
-                    <td colspan="2"><label class="control-label"><?php echo $this->lang->line('LABEL_TOTAL')?></label></td>
+                    <td colspan="2" class="text-right"><label class="control-label"><?php echo $this->lang->line('LABEL_TOTAL')?></label></td>
                     <td class="text-right"><label class="control-label"><?php echo $item['number_of_reel'];?></label></td>
                     <td class="text-right"><label class="control-label"><?php echo number_format($item['quantity_supply'],3,'.','');?></label></td>
                     <td class="text-right"><label class="control-label"><?php echo number_format($item['quantity_receive'],3,'.','');?></label></td>

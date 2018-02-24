@@ -111,7 +111,7 @@ class Purchase_raw_sticker extends Root_Controller
             $item['date_receive']=System_helper::display_date($item['date_receive']);
             $item['date_challan']=System_helper::display_date($item['date_challan']);
             $item['barcode']=Barcode_helper::get_barcode_raw_sticker_purchase($item['id']);
-            $item['quantity_total_pieces']=number_format($item['quantity_total_receive'],3,'.','');
+            $item['quantity_total_pieces']=$item['quantity_total_receive'];
         }
         $this->json_return($items);
     }
@@ -191,7 +191,7 @@ class Purchase_raw_sticker extends Root_Controller
             $data['suppliers']=Query_helper::get_info($this->config->item('table_login_basic_setup_supplier'),array('id value','name text'),array('status !="'.$this->config->item('system_status_delete').'"'));
             $data['crops']=Query_helper::get_info($this->config->item('table_login_setup_classification_crops'),array('id value','name text'),array('status !="'.$this->config->item('system_status_delete').'"'));
             $data['packs']=Query_helper::get_info($this->config->item('table_login_setup_classification_pack_size'),array('id value','name text'),array('status !="'.$this->config->item('system_status_delete').'"'));
-            $data['title']="Edit Purchase (Sticker)";
+            $data['title']="Edit Purchase (Sticker) :: ".Barcode_helper::get_barcode_raw_sticker_purchase($item_id);
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/add_edit",$data,true));
             if($this->message)
@@ -538,7 +538,7 @@ class Purchase_raw_sticker extends Root_Controller
             $this->db->order_by('sticker_details.id','ASC');
             $data['purchase_sticker']=$this->db->get()->result_array();
 
-            $data['title']="Details Purchase (Sticker)";
+            $data['title']="Details Purchase (Sticker) :: ".Barcode_helper::get_barcode_raw_sticker_purchase($item_id);
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/details",$data,true));
             if($this->message)
@@ -597,6 +597,7 @@ class Purchase_raw_sticker extends Root_Controller
             $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = type.crop_id','INNER');
             $this->db->where('sticker_purchase.id',$item_id);
             $this->db->where('sticker_details.revision',1);
+            $this->db->where('sticker_details.quantity_supply > ',0);
             $this->db->order_by('sticker_details.id','ASC');
             $data['items']=$this->db->get()->result_array();
 

@@ -597,7 +597,7 @@ class Purchase_raw_master extends Root_Controller
             $this->db->select('crop.name crop_name');
             $this->db->where('master_details.purchase_id',$item_id);
             $this->db->where('master_details.revision',1);
-            $this->db->where('master_details.quantity_receive > 0');
+            $this->db->where('master_details.quantity_supply > 0');
             $this->db->order_by('master_details.id','ASC');
             $data['items']=$this->db->get()->result_array();
 
