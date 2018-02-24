@@ -81,6 +81,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 </tr>
                 <tr>
                     <th rowspan="2"><?php echo $CI->lang->line('LABEL_SL_NO'); ?></th>
+                    <th rowspan="2"><?php echo $CI->lang->line('LABEL_ITEM'); ?></th>
                     <th class="text-right" rowspan="2"><?php echo $CI->lang->line('LABEL_NUMBER_OF_REEL'); ?></th>
                     <th class="text-center" colspan="3"><?php echo $CI->lang->line('LABEL_QUANTITY');?></th>
                     <th class="text-center" colspan="2"><?php echo $CI->lang->line('LABEL_PRICE_TAKA_TOTAL');?></th>
@@ -96,6 +97,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <tbody>
                     <tr>
                         <td>1</td>
+                        <td>Common Foil</td>
                         <td class="text-right"><?php echo $item['number_of_reel']; ?></td>
                         <td class="text-right"><?php echo number_format($item['quantity_supply'],3,'.',''); ?></td>
                         <td class="text-right"><?php echo number_format($item['quantity_receive'],3,'.',''); ?></td>
@@ -107,7 +109,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
                 <tfoot>
                 <tr>
-                    <td colspan="1" class="text-right"><label class="control-label"><?php echo $this->lang->line('LABEL_TOTAL')?></label></td>
+                    <td colspan="2" class="text-right"><label class="control-label"><?php echo $this->lang->line('LABEL_TOTAL')?></label></td>
                     <td class="text-right"><label class="control-label"><?php echo number_format($item['number_of_reel']);?></label></td>
                     <td class="text-right"><label class="control-label"><?php echo number_format($item['quantity_supply'],3,'.','');?></label></td>
                     <td class="text-right"><label class="control-label"><?php echo number_format($item['quantity_receive'],3,'.','');?></label></td>

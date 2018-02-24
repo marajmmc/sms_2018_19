@@ -117,7 +117,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 { name: 'id', type: 'int' },
                 { name: 'barcode', type: 'string' },
                 { name: 'date_transfer', type: 'string' },
-                { name: 'quantity', type: 'string' },
+                { name: 'quantity_total_pack_kg', type: 'string' },
                 { name: 'remarks', type: 'string' }
             ],
             id: 'id',
@@ -145,8 +145,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 columnsreorder: true,
                 columns: [
                     { text: '<?php echo $CI->lang->line('LABEL_BARCODE'); ?>', dataField: 'barcode',width:'80',hidden: <?php echo $system_preference_items['barcode']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_DATE_TRANSFER'); ?>', dataField: 'date_transfer',width:'80',hidden: <?php echo $system_preference_items['date_transfer']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL'); ?> (KG)', cellsalign: 'right',dataField: 'quantity',width:'100',hidden: <?php echo $system_preference_items['quantity']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_DATE_TRANSFER'); ?>', dataField: 'date_transfer',width:'100',hidden: <?php echo $system_preference_items['date_transfer']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL_PACK_KG'); ?>', cellsalign: 'right',dataField: 'quantity_total_pack_kg',width:'100',hidden: <?php echo $system_preference_items['quantity_total_pack_kg']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_REMARKS'); ?>', dataField: 'remarks',hidden: <?php echo $system_preference_items['remarks']?0:1;?>}
                 ]
             });

@@ -30,6 +30,14 @@ class Convert_bp extends Root_Controller
         {
             $this->system_edit($id);
         }
+        elseif($action=="set_preference")
+        {
+            $this->system_set_preference();
+        }
+        elseif($action=="save_preference")
+        {
+            System_helper::save_preference();
+        }
         elseif($action=='save')
         {
             $this->system_save();
@@ -43,6 +51,7 @@ class Convert_bp extends Root_Controller
     {
         if(isset($this->permissions['action0']) && ($this->permissions['action0']==1))
         {
+            $data['system_preference_items']= $this->get_preference();
             $data['title']='Convert (Bulk to Packet) List';
             $ajax['status']=true;
             $ajax['system_content'][]=array('id'=>'#system_content','html'=>$this->load->view($this->controller_url.'/list',$data,true));
@@ -87,6 +96,7 @@ class Convert_bp extends Root_Controller
         {
             $item['date_convert']=System_helper::display_date($item['date_convert']);
             $item['barcode']=Barcode_helper::get_barcode_convert_bulk_to_packet($item['id']);
+            $item['quantity_total_kg']=$item['quantity'];
         }
         $this->json_return($items);
     }
@@ -677,8 +687,6 @@ class Convert_bp extends Root_Controller
             }
         }
 
-//        print_r($result);
-//        exit;
         $number_of_packet = (($quantity*1000) / $pack_size_value['value']);
 
         $ajax['status'] = true;
@@ -752,6 +760,56 @@ class Convert_bp extends Root_Controller
         }
         $this->json_return($ajax);
 
+    }
+
+    private function system_set_preference()
+    {
+        if(isset($this->permissions['action6']) && ($this->permissions['action6']==1))
+        {
+            $data['system_preference_items']= $this->get_preference();
+            $data['preference_method_name']='list';
+            $data['title']="Set Preference";
+            $ajax['status']=true;
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("preference_add_edit",$data,true));
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/set_preference');
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+    }
+
+    private function get_preference()
+    {
+        $user = User_helper::get_user();
+        $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
+        $data['barcode']= 1;
+        $data['date_convert']= 1;
+        $data['quantity_total_kg']= 1;
+        $data['remarks']= 1;
+        if($result)
+        {
+            if($result['preferences']!=null)
+            {
+                $preferences=json_decode($result['preferences'],true);
+                foreach($data as $key=>$value)
+                {
+
+                    if(isset($preferences[$key]))
+                    {
+                        $data[$key]=$value;
+                    }
+                    else
+                    {
+                        $data[$key]=0;
+                    }
+                }
+            }
+        }
+        return $data;
     }
 
     private function check_validation()

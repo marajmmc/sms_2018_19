@@ -71,15 +71,15 @@ if($result)
             <tr>
                 <th rowspan="2" style="width: 5px;"><?php echo $CI->lang->line('LABEL_SL_NO'); ?></th>
                 <th rowspan="2"><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></th>
-                <!--<th rowspan="2"><?php /*echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); */?></th>-->
+                <th rowspan="2"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME');?></th>
                 <th rowspan="2"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
                 <th rowspan="2" class="text-center" style="width: 5px;"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
                 <th colspan="2" class="text-center"><?php echo $CI->lang->line('LABEL_WAREHOUSE_NAME'); ?></th>
                 <th colspan="2" class="text-center"><?php echo $CI->lang->line('LABEL_QUANTITY'); ?></th>
             </tr>
             <tr>
-                <th class="text-right" >Source</th>
-                <th class="text-right" >Destination</th>
+                <th class="text-left" >Source</th>
+                <th class="text-left" >Destination</th>
                 <th class="text-right" ><?php echo $CI->lang->line('LABEL_PACK'); ?></th>
                 <th class="text-right" ><?php echo $CI->lang->line('LABEL_KG'); ?></th>
             </tr>
@@ -89,7 +89,7 @@ if($result)
             <tr>
                 <td>1</td>
                 <td><?php echo $item['crop_name']; ?></td>
-                <!--<td><?php /*echo $items[$index]['crop_type_name']; */?></td>-->
+                <td><?php echo $item['crop_type_name'];?></td>
                 <td><?php echo $item['variety_name']; ?></td>
                 <td class="text-right"><?php if($item['pack_size_id']==0){echo 'Bulk';}else{echo $item['pack_size'];} ?></td>
                 <td><?php echo $item['source_ware_house_name']; ?></td>
@@ -110,7 +110,7 @@ if($result)
             </tr>
 
             <tr>
-                <td colspan="6" class="text-right"><label class="control-label"><?php echo $this->lang->line('LABEL_TOTAL')?></label></td>
+                <td colspan="7" class="text-right"><label class="control-label"><?php echo $this->lang->line('LABEL_TOTAL')?></label></td>
                 <td class="text-right"><label class="control-label"><?php if($item['pack_size_id']==0){echo '-';}else{echo $item['quantity'];} ?></label></td>
                 <td class="text-right">
                     <label class="control-label">

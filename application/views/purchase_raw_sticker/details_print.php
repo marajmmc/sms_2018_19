@@ -110,13 +110,13 @@ $num_pages=ceil($total_records/$row_per_page);
                     <th rowspan="2"><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></th>
                     <th rowspan="2"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?></th>
                     <th rowspan="2"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
-                    <th rowspan="2"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
+                    <th rowspan="2" class="text-right"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
                     <th class="text-center" colspan="3"><?php echo $CI->lang->line('LABEL_QUANTITY');?></th>
                 </tr>
                 <tr>
-                    <th class="text-center"><?php echo $CI->lang->line('LABEL_QUANTITY_SUPPLY').' (Pcs)';?></th>
-                    <th class="text-center"><?php echo $CI->lang->line('LABEL_QUANTITY_RECEIVE').' (Pcs)';?></th>
-                    <th class="text-center"><?php echo $CI->lang->line('LABEL_QUANTITY_DIFFERENCE').' (Pcs)';?></th>
+                    <th class="text-right"><?php echo $CI->lang->line('LABEL_QUANTITY_SUPPLY').' (Pcs)';?></th>
+                    <th class="text-right"><?php echo $CI->lang->line('LABEL_QUANTITY_RECEIVE').' (Pcs)';?></th>
+                    <th class="text-right"><?php echo $CI->lang->line('LABEL_QUANTITY_DIFFERENCE').' (Pcs)';?></th>
                 </tr>
                 </thead>
                 <tbody>

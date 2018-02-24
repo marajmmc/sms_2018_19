@@ -44,49 +44,29 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <th colspan="2">&nbsp;</th>
             </tr>
             <tr>
-                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CROP_NAME');?> </label></th>
-                <th class=" header_value"><label class="control-label"><?php echo $item['crop_name'];?></label></th>
-                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_TRANSFER');?></label></th>
+                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE');?></label></th>
                 <th class=" header_value"><label class="control-label"><?php echo System_helper::display_date($item['date_transfer']);?></label></th>
-
+                <th colspan="2">&nbsp;</th>
             </tr>
             <tr>
-                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME');?></label></th>
-                <th class=" header_value"><label class="control-label"><?php echo $item['crop_type_name']?></label></th>
                 <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_CREATED_BY');?></label></th>
                 <th class=" header_value"><label class="control-label"><?php echo $item['created_by'];?></label></th>
-
-            </tr>
-            <tr>
-                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_VARIETY_NAME');?></label></th>
-                <th class=" header_value"><label class="control-label"><?php echo $item['variety_name']?></th>
                 <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_CREATED_TIME');?></label></th>
                 <th class=""><label class="control-label"><?php echo System_helper::display_date_time($item['date_created']);?></label></th>
-
             </tr>
-            <tr>
-                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PACK_SIZE');?></label></th>
-                <th class=" header_value"><label class="control-label"><?php if($item['pack_size_id']==0){echo 'Bulk';}else{echo $item['pack_size'];}?></th>
-                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_UPDATED_BY');?></label></th>
-                <th class=" header_value"><label class="control-label"><?php echo $item['updated_by'];?></label></th>
-
-            </tr>
-            <tr>
-                <th class="widget-header header_caption"><label class="control-label pull-right">Source Warehouse</label></th>
-                <th class=" header_value"><label class="control-label"><?php echo $item['source_ware_house_name']?></th>
-                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_UPDATED_TIME');?></label></th>
-                <th class=""><label class="control-label"><?php echo System_helper::display_date_time($item['date_updated']);?></label></th>
-
-            </tr>
-
-            <tr>
-                <th class="widget-header header_caption"><label class="control-label pull-right">Destination Warehouse</label></th>
-                <th class=" header_value"><label class="control-label"><?php echo $item['destination_ware_house_name']?></th>
-                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_QUANTITY');?></label></th>
-                <th class=" header_value"><label class="control-label"><?php echo $item['quantity']?></th>
-
-            </tr>
-
+            <?php
+            if($item['user_updated'])
+            {
+                ?>
+                <tr>
+                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_UPDATED_BY');?></label></th>
+                    <th class=" header_value"><label class="control-label"><?php echo $item['updated_by'];?></label></th>
+                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_UPDATED_TIME');?></label></th>
+                    <th class=""><label class="control-label"><?php echo System_helper::display_date_time($item['date_updated']);?></label></th>
+                </tr>
+            <?php
+            }
+            ?>
             <?php
             if($item['remarks'])
             {
@@ -101,6 +81,77 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             </thead>
         </table>
     </div>
+
+    <div class="clearfix"></div>
+    <div class="row show-grid">
+        <div style="overflow-x: auto;" class="row show-grid">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th class="widget-header text-center" colspan="30">Product Details</th>
+                </tr>
+                <tr>
+                    <th rowspan="2"style="width: 5px"><?php echo $CI->lang->line('LABEL_SL_NO'); ?></th>
+                    <th rowspan="2"><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></th>
+                    <th rowspan="2"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?></th>
+                    <th rowspan="2"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
+                    <th rowspan="2" class="text-right"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
+                    <th colspan="2" class="text-center"><?php echo $CI->lang->line('LABEL_WAREHOUSE_NAME'); ?></th>
+                    <th colspan="2" class="text-center"><?php echo $CI->lang->line('LABEL_QUANTITY'); ?></th>
+                </tr>
+                <tr>
+                    <th class="text-left" >Source</th>
+                    <th class="text-left" >Destination</th>
+                    <th class="text-right" ><?php echo $CI->lang->line('LABEL_PACK'); ?></th>
+                    <th class="text-right" ><?php echo $CI->lang->line('LABEL_KG'); ?></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>1</td>
+                    <td><?php echo $item['crop_name']; ?></td>
+                    <td><?php echo $item['crop_type_name']; ?></td>
+                    <td><?php echo $item['variety_name']; ?></td>
+                    <td class="text-right"><?php if($item['pack_size_id']==0){echo 'Bulk';}else{echo $item['pack_size'];} ?></td>
+                    <td><?php echo $item['source_ware_house_name']; ?></td>
+                    <td><?php echo $item['destination_ware_house_name']; ?></td>
+                    <td class="text-right"><label class="control-label"><?php if($item['pack_size_id']==0){echo '-';}else{echo $item['quantity'];} ?></label></td>
+                    <td class="text-right">
+                        <?php
+                        if($item['pack_size_id']==0)
+                        {
+                            echo number_format($item['quantity'],3,'.','');
+                        }
+                        else
+                        {
+                            echo '-';
+                        }
+                        ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="7" class="text-right"><label class="control-label"><?php echo $this->lang->line('LABEL_TOTAL')?></label></td>
+                    <td class="text-right"><label class="control-label"><?php if($item['pack_size_id']==0){echo '-';}else{echo $item['quantity'];} ?></label></td>
+                    <td class="text-right">
+                        <label class="control-label">
+                            <?php
+                            if($item['pack_size_id']==0)
+                            {
+                                echo number_format($item['quantity'],3,'.','');
+                            }
+                            else
+                            {
+                                echo '-';
+                            }
+                            ?>
+                        </label>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
     <div class="clearfix"></div>
 
 </div>

@@ -63,31 +63,7 @@ class Transfer_ww extends Root_Controller
     {
         if(isset($this->permissions['action0']) && ($this->permissions['action0']==1))
         {
-            $user = User_helper::get_user();
-            $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
-            $data['system_preference_items']['barcode']= 1;
-            $data['system_preference_items']['date_transfer']= 1;
-            $data['system_preference_items']['quantity']= 1;
-            $data['system_preference_items']['remarks']= 1;
-            if($result)
-            {
-                if($result['preferences']!=null)
-                {
-                    $preferences=json_decode($result['preferences'],true);
-                    foreach($data['system_preference_items'] as $key=>$value)
-                    {
-                        if(isset($preferences[$key]))
-                        {
-                            $data['system_preference_items'][$key]=$value;
-                        }
-                        else
-                        {
-                            $data['system_preference_items'][$key]=0;
-                        }
-                    }
-                }
-            }
-
+            $data['system_preference_items']= $this->get_preference();
             $data['title']='Transfer (Warehouse to Warehouse) List';
             $ajax['status']=true;
             $ajax['system_content'][]=array('id'=>'#system_content','html'=>$this->load->view($this->controller_url.'/list',$data,true));
@@ -132,6 +108,14 @@ class Transfer_ww extends Root_Controller
         {
             $item['date_transfer']=System_helper::display_date($item['date_transfer']);
             $item['barcode']=Barcode_helper::get_barcode_transfer_warehouse_to_warehouse($item['id']);
+            if($item['pack_size_id']==0)
+            {
+                $item['quantity_total_pack_kg']=number_format($item['quantity'],3,'.','');
+            }
+            else
+            {
+                $item['quantity_total_pack_kg']=$item['quantity'];
+            }
         }
         $this->json_return($items);
     }
@@ -464,8 +448,10 @@ class Transfer_ww extends Root_Controller
         /*-- End-- Validation Checking */
 
         $this->db->trans_start(); //DB Transaction Handle START
+
         if($id>0)
         {
+
             $data=array(); //Main Data
             $data['date_transfer']=System_helper::get_time($item['date_transfer']);
             $data['quantity']=$item['quantity'];
@@ -698,32 +684,8 @@ class Transfer_ww extends Root_Controller
     {
         if(isset($this->permissions['action6']) && ($this->permissions['action6']==1))
         {
-            $user = User_helper::get_user();
-            $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
-            $data['system_preference_items']['barcode']= 1;
-            $data['system_preference_items']['date_transfer']= 1;
-            $data['system_preference_items']['quantity']= 1;
-            $data['system_preference_items']['remarks']= 1;
-            if($result)
-            {
-                if($result['preferences']!=null)
-                {
-                    $preferences=json_decode($result['preferences'],true);
-                    foreach($data['system_preference_items'] as $key=>$value)
-                    {
-                        if(isset($preferences[$key]))
-                        {
-                            $data['system_preference_items'][$key]=$value;
-                        }
-                        else
-                        {
-                            $data['system_preference_items'][$key]=0;
-                        }
-                    }
-                }
-            }
+            $data['system_preference_items']= $this->get_preference();
             $data['preference_method_name']='list';
-
             $data['title']="Set Preference";
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("preference_add_edit",$data,true));
@@ -736,6 +698,36 @@ class Transfer_ww extends Root_Controller
             $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
             $this->json_return($ajax);
         }
+    }
+
+    private function get_preference()
+    {
+        $user = User_helper::get_user();
+        $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
+        $data['barcode']= 1;
+        $data['date_transfer']= 1;
+        $data['quantity_total_pack_kg']= 1;
+        $data['remarks']= 1;
+        if($result)
+        {
+            if($result['preferences']!=null)
+            {
+                $preferences=json_decode($result['preferences'],true);
+                foreach($data as $key=>$value)
+                {
+
+                    if(isset($preferences[$key]))
+                    {
+                        $data[$key]=$value;
+                    }
+                    else
+                    {
+                        $data[$key]=0;
+                    }
+                }
+            }
+        }
+        return $data;
     }
 
     private function check_validation()

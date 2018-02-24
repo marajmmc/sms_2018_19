@@ -68,7 +68,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
         <div style="<?php if(!($item['id']>0)){echo 'display:none';} ?>" class="row show-grid" id="current_stock_container">
             <div class="col-xs-4">
-                <label for="current_stock_id" class="control-label pull-right">Current Stock</label>
+                <label for="current_stock_id" class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CURRENT_STOCK_KG');?></label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <label id="current_stock_id"><?php echo number_format(($item['current_stock']),3,'.','');?></label>
