@@ -549,21 +549,6 @@ jQuery(document).ready(function()
         if(destination_warehouse_id>0)
         {
             $('#pack_size_id_container').show();
-            $.ajax({
-                url: base_url+"<?php echo $CI->controller_url?>/get_source_warehouse/",
-                type: 'POST',
-                datatype: "JSON",
-                data:{variety_id:variety_id},
-                success: function (data, status)
-                {
-
-                },
-                error: function (xhr, desc, err)
-                {
-                    console.log("error");
-
-                }
-            });
         }
     });
 

@@ -18,6 +18,15 @@ if(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1))
         'data-action-link'=>site_url($CI->controller_url.'/index/edit')
     );
 }
+if(isset($CI->permissions['action0']) && ($CI->permissions['action0']==1))
+{
+    $action_buttons[]=array(
+        'type'=>'button',
+        'label'=>$CI->lang->line('ACTION_DETAILS'),
+        'class'=>'button_jqx_action',
+        'data-action-link'=>site_url($CI->controller_url.'/index/details')
+    );
+}
 if(isset($CI->permissions['action3']) && ($CI->permissions['action3']==1))
 {
     $action_buttons[]=array(
@@ -26,15 +35,6 @@ if(isset($CI->permissions['action3']) && ($CI->permissions['action3']==1))
         'data-message-confirm'=>'Are you sure to Delete this stock?',
         'class'=>'button_jqx_action',
         'data-action-link'=>site_url($CI->controller_url.'/index/delete')
-    );
-}
-if(isset($CI->permissions['action0']) && ($CI->permissions['action0']==1))
-{
-    $action_buttons[]=array(
-        'type'=>'button',
-        'label'=>$CI->lang->line('ACTION_DETAILS'),
-        'class'=>'button_jqx_action',
-        'data-action-link'=>site_url($CI->controller_url.'/index/details')
     );
 }
 if(isset($CI->permissions['action4']) && ($CI->permissions['action4']==1))

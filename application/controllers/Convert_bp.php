@@ -30,6 +30,10 @@ class Convert_bp extends Root_Controller
         {
             $this->system_edit($id);
         }
+        elseif($action=="delete")
+        {
+            $this->system_delete($id);
+        }
         elseif($action=="set_preference")
         {
             $this->system_set_preference();
@@ -760,6 +764,68 @@ class Convert_bp extends Root_Controller
         }
         $this->json_return($ajax);
 
+    }
+
+    private function system_delete($id)
+    {
+        if(isset($this->permissions['action3']) && ($this->permissions['action3']==1))
+        {
+            if($id>0)
+            {
+                $item_id=$id;
+            }
+            else
+            {
+                $item_id=$this->input->post('id');
+            }
+            $user = User_helper::get_user();
+            $time = time();
+            $item=Query_helper::get_info($this->config->item('table_sms_convert_bulk_to_pack'),'*',array('status !="'.$this->config->item('system_status_delete').'"','id ='.$item_id),1);
+            if(!$item)
+            {
+                System_helper::invalid_try('Delete Not Exists',$item_id);
+                $ajax['status']=false;
+                $ajax['system_message']='Invalid Try.';
+                $this->json_return($ajax);
+            }
+
+//            print_r($item);
+//            exit;
+
+            // Getting current stocks and raw stocks
+            $current_stocks=System_helper::get_variety_stock(array($item['variety_id']));
+            $current_raw_stocks=System_helper::get_raw_stock(array($item['variety_id']));
+            $current_foil_stocks=System_helper::get_raw_stock(array(0));
+
+
+            /*--Start-- Validation Checking */
+
+            //Negative Stock Checking
+            if(isset($current_stocks[$item['variety_id']][$item['pack_size_id']][$item['destination_warehouse_id']]))
+            {
+                $current_stock=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['destination_warehouse_id']]['current_stock'];
+
+                if($item['number_of_actual_packet']>$current_stock)
+                {
+                    $ajax['status']=false;
+                    $ajax['system_message']='This Delete From Convert('.$item['variety_id'].'-'.$item['pack_size_id'].'-'.$item['destination_warehouse_id'].'-'.$item['number_of_actual_packet'].') will make current stock negative.';
+                    $this->json_return($ajax);
+                }
+            }
+            else
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='This Delete From Convert:('.$item['variety_id'].'-'.$item['pack_size_id'].'-'.$item['destination_warehouse_id
+                '].' is absent in stock.)';
+                $this->json_return($ajax);
+            }
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
     }
 
     private function system_set_preference()

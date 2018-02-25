@@ -626,14 +626,14 @@ class Transfer_ww extends Root_Controller
                 if($item['quantity']>$current_stock)
                 {
                     $ajax['status']=false;
-                    $ajax['system_message']='This Delete From Transfer('.$item['variety_id'].'-'.$item['pack_size_id'].'-'.$item['source_warehouse_id'].'-'.$item['quantity'].') will make current stock negative.';
+                    $ajax['system_message']='This Delete From Transfer('.$item['variety_id'].'-'.$item['pack_size_id'].'-'.$item['destination_warehouse_id'].'-'.$item['quantity'].') will make current stock negative.';
                     $this->json_return($ajax);
                 }
             }
             else
             {
                 $ajax['status']=false;
-                $ajax['system_message']='This Delete From Transfer:('.$item['variety_id'].'-'.$item['pack_size_id'].'-'.$item['source_warehouse_id'].' is absent in stock.)';
+                $ajax['system_message']='This Delete From Transfer:('.$item['variety_id'].'-'.$item['pack_size_id'].'-'.$item['destination_warehouse_id'].' is absent in stock.)';
                 $this->json_return($ajax);
             }
 
