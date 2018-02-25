@@ -10,3 +10,5 @@ $lang['LABEL_OUT_STOCK_DEMONSTRATION']='Demonstration';
 $lang['LABEL_OUT_STOCK_SHORT_INVENTORY']='Short Inventory';
 $lang['LABEL_IN_TRANSFER_WAREHOUSE']='Transfer In';
 $lang['LABEL_OUT_TRANSFER_WAREHOUSE']='Transfer Out';
+$lang['LABEL_OUT_CONVERT_BULK_PACK']='Converted To Packet';
+$lang['LABEL_IN_CONVERT_BULK_PACK']='Converted From Bulk';
