@@ -68,7 +68,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
         <div style="<?php if(!($item['id']>0)){echo 'display:none';} ?>" class="row show-grid" id="current_stock_container">
             <div class="col-xs-4">
-                <label for="current_stock_id" class="control-label pull-right">Current Stock</label>
+                <label for="current_stock_id" class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CURRENT_STOCK_KG');?></label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <label id="current_stock_id"><?php echo $item['current_stock'];?></label>
@@ -77,7 +77,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label for="quantity" class="control-label pull-right"><?php echo $this->lang->line('LABEL_QUANTITY');?><span style="color:#FF0000">*</span></label>
+                <label for="quantity" class="control-label pull-right"><?php echo $this->lang->line('LABEL_QUANTITY');?> (<?php echo $CI->lang->line('LABEL_KG');?>)<span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <input type="text" name="item[quantity]" class="form-control float_type_positive" value="<?php echo $item['quantity'];?>"/>

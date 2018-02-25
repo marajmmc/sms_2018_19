@@ -584,6 +584,7 @@ class Transfer_ww extends Root_Controller
         $this->db->join($this->config->item('table_login_basic_setup_warehouse').' ware_house','ware_house.id = stock_summary.warehouse_id','LEFT');
         $this->db->where('stock_summary.variety_id',$variety_id);
         $this->db->where('stock_summary.pack_size_id',$pack_size_id);
+        $this->db->where('stock_summary.current_stock > ',0);
         $data['items']=$this->db->get()->result_array();
         $ajax['status']=true;
         $ajax['system_content'][]=array("id"=>$html_container_id,"html"=>$this->load->view("dropdown_with_select",$data,true));
@@ -737,6 +738,8 @@ class Transfer_ww extends Root_Controller
         {
             $this->load->library('form_validation');
             $this->form_validation->set_rules('item[date_transfer]','Transfer Date','required');
+            $this->form_validation->set_rules('crop_id',$this->lang->line('LABEL_CROP_NAME'),'required');
+            $this->form_validation->set_rules('crop_type_id',$this->lang->line('LABEL_CROP_TYPE_NAME'),'required');
             $this->form_validation->set_rules('item[variety_id]',$this->lang->line('LABEL_VARIETY_NAME'),'required');
             $this->form_validation->set_rules('item[pack_size_id]',$this->lang->line('LABEL_PACK_SIZE'),'required');
             $this->form_validation->set_rules('item[source_warehouse_id]','Source Warehouse','required');

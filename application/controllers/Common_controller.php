@@ -33,7 +33,6 @@ class Common_controller extends Root_Controller
 
 
     //Added By saiful. Need to review
-
     public function get_raw_current_stock()
     {
         $variety_id = $this->input->post('variety_id');

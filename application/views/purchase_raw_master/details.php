@@ -77,7 +77,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <th class="widget-header text-center" colspan="30">Product Details</th>
                 </tr>
                 <tr>
-                    <th rowspan="2"><?php echo $CI->lang->line('LABEL_SL_NO'); ?></th>
+                    <th rowspan="2" class="text-right" style="width: 30px;"><?php echo $CI->lang->line('LABEL_SL_NO'); ?></th>
                     <th rowspan="2"><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></th>
                     <th rowspan="2"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?></th>
                     <th rowspan="2"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
@@ -96,21 +96,21 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 </thead>
                 <tbody>
                 <?php
+                $quantity_total_reel=0;
                 $quantity_total_supply=0;
                 $quantity_total_receive=0;
-                $quantity_total_difference=0;
                 $total_tk=0;
                 $price_total=0;
                 foreach($purchase_master as $index=>$master)
                 {
                     $price_total=($master['quantity_receive']*$master['price_unit_tk']);
+                    $quantity_total_reel+=$master['number_of_reel'];
                     $quantity_total_supply+=$master['quantity_supply'];
                     $quantity_total_receive+=$master['quantity_receive'];
-                    $quantity_total_difference=($quantity_total_supply-$quantity_total_receive);
                     $total_tk+=$price_total;
                     ?>
                     <tr>
-                        <td><?php echo $index+1;?></td>
+                        <td class="text-right"><?php echo $index+1;?></td>
                         <td><?php echo $master['crop_name']; ?></td>
                         <td><?php echo $master['crop_type_name']; ?></td>
                         <td><?php echo $master['variety_name']; ?></td>
@@ -118,7 +118,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <td class="text-right"><?php echo $master['number_of_reel']; ?></td>
                         <td class="text-right"><?php echo number_format($master['quantity_supply'],3,'.',''); ?></td>
                         <td class="text-right"><?php echo number_format($master['quantity_receive'],3,'.',''); ?></td>
-                        <td class="text-right"><?php echo number_format(($master['quantity_supply']-$master['quantity_receive']),3,'.','');?></td>
+                        <td class="text-right"><?php echo number_format(($master['quantity_receive']-$master['quantity_supply']),3,'.','');?></td>
                         <td class="text-right"><?php echo number_format($master['price_unit_tk'],2); ?></td>
                         <td class="text-right"><?php echo number_format($price_total,2); ?></td>
                     </tr>
@@ -129,10 +129,11 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
                 <tfoot>
                 <tr>
-                    <td colspan="6" class="text-right"><label class="control-label"><?php echo $this->lang->line('LABEL_TOTAL_KG')?></label></td>
+                    <td colspan="5" class="text-right"><label class="control-label"><?php echo $this->lang->line('LABEL_TOTAL')?></label></td>
+                    <td class="text-right"><label class="control-label"><?php echo $quantity_total_reel;?></label></td>
                     <td class="text-right"><label class="control-label"><?php echo number_format($quantity_total_supply,3,'.','');?></label></td>
                     <td class="text-right"><label class="control-label"><?php echo number_format($quantity_total_receive,3,'.','');?></label></td>
-                    <td class="text-right"><label class="control-label"><?php echo number_format($quantity_total_difference,3,'.','');?></label></td>
+                    <td class="text-right"><label class="control-label"><?php echo number_format(($quantity_total_receive-$quantity_total_supply),3,'.','');?></label></td>
                     <td class="text-right"><label class="control-label"><?php echo $this->lang->line('LABEL_PRICE_TAKA_TOTAL')?></label></td>
                     <td class="text-right"><label class="control-label"><?php echo number_format($total_tk,2);?></label></td>
                 </tr>

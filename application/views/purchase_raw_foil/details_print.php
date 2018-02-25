@@ -97,7 +97,7 @@ if($result)
         <table style="width:<?php echo $width;?>px;" class="system_table_report_container">
             <thead>
             <tr>
-                <th rowspan="2" style="width: 5px"><?php echo $CI->lang->line('LABEL_SL_NO'); ?></th>
+                <th rowspan="2" class="text-right" style="width: 30px;"><?php echo $CI->lang->line('LABEL_SL_NO'); ?></th>
                 <th rowspan="2" style="width: 100px"><?php echo $CI->lang->line('LABEL_ITEM'); ?></th>
                 <th rowspan="2" class="text-right"><?php echo $CI->lang->line('LABEL_NUMBER_OF_REEL');?></th>
                 <th class="text-center" colspan="3"><?php echo $CI->lang->line('LABEL_QUANTITY');?></th>
@@ -111,7 +111,7 @@ if($result)
             <tbody>
 
                 <tr>
-                    <td>1</td>
+                    <td class="text-right">1</td>
                     <td class="text-left">Common Foil</td>
                     <td class="text-right"><?php echo $item['number_of_reel'];?></td>
                     <td class="text-right"><?php echo number_format($item['quantity_supply'],3,'.','');?></td>
@@ -125,7 +125,6 @@ if($result)
                     <td class="text-right"><label class="control-label"><?php echo number_format($item['quantity_receive'],3,'.','');?></label></td>
                     <td class="text-right"><label class="control-label"><?php echo number_format(($item['quantity_receive']-$item['quantity_supply']),3,'.','');?></label></td>
                 </tr>
-
                 <?php if($item['remarks']){?>
                     <tr>
                         <td colspan="21">

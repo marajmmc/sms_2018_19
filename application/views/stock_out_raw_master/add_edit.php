@@ -82,9 +82,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></th>
                     <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?></th>
                     <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
-                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
-                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_CURRENT_STOCK'); ?></th>
-                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY'); ?></th>
+                    <th style="min-width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
+                    <th style="min-width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_CURRENT_STOCK_KG'); ?></th>
+                    <th style="min-width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_QUANTITY'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
                     <th style="min-width: 150px;"><?php echo $CI->lang->line('ACTION'); ?></th>
                 </tr>
                 </thead>
@@ -104,13 +104,25 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                             <label><?php echo $master['variety_name']; ?></label>
                             <input type="hidden"  id="variety_id<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][variety_id]" value="<?php echo $master['variety_id']; ?>" />
                         </td>
-                        <td>
+                        <td class="text-right">
                             <label><?php echo $master['pack_size']; ?></label>
                             <input type="hidden" id="pack_size_id<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][pack_size_id]" value="<?php echo $master['pack_size_id']; ?>" />
 
                         </td>
                         <td class="text-right">
-                            <label><?php $current_stock=System_helper::get_raw_stock(array($master['variety_id'])); if(isset($current_stock)){echo $current_stock[$master['variety_id']][$master['pack_size_id']][$CI->config->item('system_master_foil')]['current_stock'];}else{echo 0;}?></label>
+                            <label>
+                                <?php
+                                $current_stock=System_helper::get_raw_stock(array($master['variety_id']));
+                                if(isset($current_stock))
+                                {
+                                    echo number_format($current_stock[$master['variety_id']][$master['pack_size_id']][$CI->config->item('system_master_foil')]['current_stock'],3,'.','');
+                                }
+                                else
+                                {
+                                    echo '0.00';
+                                }
+                                ?>
+                            </label>
                         </td>
                         <td class="text-right">
                             <input type="text" id="quantity_<?php echo $index+1;?>" value="<?php echo $master['quantity']; ?>" class="form-control text-right float_type_positive quantity" data-current-id="<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][quantity]">

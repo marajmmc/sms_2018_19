@@ -79,7 +79,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <th class="widget-header text-center" colspan="30">Product Details</th>
                 </tr>
                 <tr>
-                    <th><?php echo $CI->lang->line('LABEL_SL_NO'); ?></th>
+                    <th class="text-right" style="width: 30px;"><?php echo $CI->lang->line('LABEL_SL_NO'); ?></th>
                     <th><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></th>
                     <th><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?></th>
                     <th><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
@@ -97,7 +97,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     $quantity_total+=$item['quantity'];
                 ?>
                     <tr>
-                        <td><?php echo $serial;?></td>
+                        <td class="text-right"><?php echo $serial;?></td>
                         <td><?php echo $item['crop_name'];?></td>
                         <td><?php echo $item['crop_type_name'];?></td>
                         <td><?php echo $item['variety_name'];?></td>

@@ -85,7 +85,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 else
                 {
                     ?>
-                    <select id="crop_id" class="form-control">
+                    <select name="crop_id" id="crop_id" class="form-control">
                         <option value=""><?php echo $this->lang->line('SELECT');?></option>
                         <?php
                         foreach($crops as $crop)
@@ -112,7 +112,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 </div>
             <?php }else{?>
                 <div class="col-sm-4 col-xs-8">
-                    <select id="crop_type_id" class="form-control">
+                    <select name="crop_type_id" id="crop_type_id" class="form-control">
 
                     </select>
                 </div>
@@ -208,7 +208,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         <div style="<?php if(!($item['id']>0)){echo 'display:none';} ?>" class="row show-grid" id="quantity_id_container">
             <div class="row show-grid">
                 <div class="col-xs-4">
-                    <label for="quantity" class="control-label pull-right"><?php echo $this->lang->line('LABEL_QUANTITY');?><span style="color:#FF0000">*</span></label>
+                    <label for="quantity" class="control-label pull-right"><?php echo $this->lang->line('LABEL_QUANTITY_KG_PACK');?><span style="color:#FF0000">*</span></label>
                 </div>
                 <div class="col-sm-4 col-xs-8">
                     <input type="text" name="item[quantity]" id="quantity_id" class="form-control float_type_positive" value="<?php echo $item['quantity'];?>"/>

@@ -235,7 +235,7 @@ if($item['status_receive']==$this->config->item('system_status_complete'))
     <th class="widget-header text-center" colspan="30">LC (<?php echo Barcode_helper::get_barcode_lc($item['id']);?>) Product & Price Details </th>
 </tr>
 <tr>
-    <th class="label-info" rowspan="2" style="width: 5px"><?php echo $CI->lang->line('LABEL_SL_NO'); ?></th>
+    <th class="label-info text-right" rowspan="2" style="width: 30px;"><?php echo $CI->lang->line('LABEL_SL_NO'); ?></th>
     <th class="label-info" rowspan="2"><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></th>
     <th class="label-info" rowspan="2"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?></th>
     <th class="label-info" rowspan="2"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
@@ -391,7 +391,7 @@ if(!empty($items))
 
         ?>
         <tr>
-            <td><?php echo $serial;?></td>
+            <td class="text-right"><?php echo $serial;?></td>
             <td><?php echo $data['crop_name'];?></td>
             <td><?php echo $data['crop_type_name'];?></td>
             <td><?php echo $data['variety_name'];?> ( <?php echo $data['variety_name_import'];?> )</td>

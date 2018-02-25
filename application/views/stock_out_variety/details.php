@@ -122,7 +122,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <th class="widget-header text-center" colspan="30">Product Details</th>
                 </tr>
                 <tr>
-                    <th rowspan="2"><?php echo $CI->lang->line('LABEL_SL_NO'); ?></th>
+                    <th rowspan="2" class="text-right" style="width: 30px;"><?php echo $CI->lang->line('LABEL_SL_NO'); ?></th>
                     <th rowspan="2" style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></th>
                     <th rowspan="2" style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?></th>
                     <th rowspan="2" style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
@@ -157,7 +157,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     $quantity_total_kg+=$quantity_kg;
                     ?>
                     <tr>
-                        <td><?php echo $index+1;?></td>
+                        <td class="text-right"><?php echo $index+1;?></td>
                         <td><?php echo $so_variety['crop_name']; ?></td>
                         <td><?php echo $so_variety['crop_type_name']; ?></td>
                         <td><?php echo $so_variety['variety_name']; ?></td>

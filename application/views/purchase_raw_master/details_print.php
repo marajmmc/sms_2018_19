@@ -43,7 +43,6 @@ $num_pages=ceil($total_records/$row_per_page);
     $total_number_of_reel=0;
     $quantity_total_supply=0;
     $quantity_total_receive=0;
-    $quantity_total_difference=0;
     for($page=0;$page<$num_pages;$page++)
     {
         ?>
@@ -113,7 +112,7 @@ $num_pages=ceil($total_records/$row_per_page);
             <table style="width:<?php echo $width;?>px;" class="system_table_report_container">
                 <thead>
                 <tr>
-                    <th rowspan="2" style="width: 5px"><?php echo $CI->lang->line('LABEL_SL_NO'); ?></th>
+                    <th rowspan="2" class="text-right" style="width: 30px;"><?php echo $CI->lang->line('LABEL_SL_NO'); ?></th>
                     <th rowspan="2"><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></th>
                     <th rowspan="2"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?></th>
                     <th rowspan="2"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
@@ -135,10 +134,9 @@ $num_pages=ceil($total_records/$row_per_page);
                     $total_number_of_reel+=$data['number_of_reel'];
                     $quantity_total_supply+=$data['quantity_supply'];
                     $quantity_total_receive+=$data['quantity_receive'];
-                    $quantity_total_difference=($quantity_total_supply-$quantity_total_receive);
                     ?>
                     <tr>
-                        <td><?php echo $index+1; ?></td>
+                        <td class="text-right"><?php echo $index+1; ?></td>
                         <td><?php echo $data['crop_name']?></td>
                         <td><?php echo $data['crop_type_name']?></td>
                         <td><?php echo $data['variety_name']?></td>
@@ -146,7 +144,7 @@ $num_pages=ceil($total_records/$row_per_page);
                         <td class="text-right"> <?php echo $data['number_of_reel'];?></td>
                         <td class="text-right"><?php echo number_format($data['quantity_supply'],3,'.','');?></td>
                         <td class="text-right"><?php echo number_format($data['quantity_receive'],3,'.','');?></td>
-                        <td class="text-right"><?php echo number_format(($data['quantity_supply']-$data['quantity_receive']),3,'.','');?></td>
+                        <td class="text-right"><?php echo number_format(($data['quantity_receive']-$data['quantity_supply']),3,'.','');?></td>
                     </tr>
                     <?php
 
@@ -158,7 +156,7 @@ $num_pages=ceil($total_records/$row_per_page);
                             <td class="text-right"><label class="control-label"><?php echo $total_number_of_reel;?></label></td>
                             <td class="text-right"><label class="control-label"><?php echo number_format($quantity_total_supply,3,'.','');?></label></td>
                             <td class="text-right"><label class="control-label"><?php echo number_format($quantity_total_receive,3,'.','');?></label></td>
-                            <td class="text-right"><label class="control-label"><?php echo number_format($quantity_total_difference,3,'.','');?></label></td>
+                            <td class="text-right"><label class="control-label"><?php echo number_format(($quantity_total_receive-$quantity_total_supply),3,'.','');?></label></td>
                         </tr>
                         <?php
                         if($item['remarks'])

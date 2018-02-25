@@ -590,10 +590,12 @@ class Purchase_raw_foil extends Root_Controller
             $this->load->library('form_validation');
             $this->form_validation->set_rules('item[date_receive]',$this->lang->line('LABEL_DATE_RECEIVE'),'required');
             $this->form_validation->set_rules('item[supplier_id]',$this->lang->line('LABEL_SUPPLIER_NAME'),'required');
+            $this->form_validation->set_rules('item[challan_number]',$this->lang->line('LABEL_CHALLAN_NUMBER'),'required');
+            $this->form_validation->set_rules('item[date_challan]',$this->lang->line('LABEL_DATE_CHALLAN'),'required');
+            $this->form_validation->set_rules('item[number_of_reel]',$this->lang->line('LABEL_NUMBER_OF_REEL'),'required');
             $this->form_validation->set_rules('item[quantity_supply]',$this->lang->line('LABEL_QUANTITY_SUPPLY'),'required');
             $this->form_validation->set_rules('item[quantity_receive]',$this->lang->line('LABEL_QUANTITY_RECEIVE'),'required');
-            $this->form_validation->set_rules('item[date_challan]',$this->lang->line('LABEL_DATE_CHALLAN'),'required');
-            $this->form_validation->set_rules('item[challan_number]',$this->lang->line('LABEL_CHALLAN_NUMBER'),'required');
+            $this->form_validation->set_rules('item[price_unit_tk]',$this->lang->line('LABEL_PRICE_TAKA_UNIT'),'required');
             if($this->form_validation->run() == FALSE)
             {
                 $this->message=validation_errors();

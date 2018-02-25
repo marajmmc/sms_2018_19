@@ -80,7 +80,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <th class="widget-header text-center" colspan="30">Product Details</th>
                 </tr>
                 <tr>
-                    <th rowspan="2"><?php echo $CI->lang->line('LABEL_SL_NO'); ?></th>
+                    <th rowspan="2" class="text-right" style="width: 30px;"><?php echo $CI->lang->line('LABEL_SL_NO'); ?></th>
                     <th rowspan="2"><?php echo $CI->lang->line('LABEL_ITEM'); ?></th>
                     <th class="text-right" rowspan="2"><?php echo $CI->lang->line('LABEL_NUMBER_OF_REEL'); ?></th>
                     <th class="text-center" colspan="3"><?php echo $CI->lang->line('LABEL_QUANTITY');?></th>
@@ -96,7 +96,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 </thead>
                 <tbody>
                     <tr>
-                        <td>1</td>
+                        <td class="text-right">1</td>
                         <td>Common Foil</td>
                         <td class="text-right"><?php echo $item['number_of_reel']; ?></td>
                         <td class="text-right"><?php echo number_format($item['quantity_supply'],3,'.',''); ?></td>

@@ -104,7 +104,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                             <label><?php echo $sticker['variety_name']; ?></label>
                             <input type="hidden"  id="variety_id<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][variety_id]" value="<?php echo $sticker['variety_id']; ?>" />
                         </td>
-                        <td>
+                        <td class="text-right">
                             <label><?php echo $sticker['pack_size']; ?></label>
                             <input type="hidden" id="pack_size_id<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][pack_size_id]" value="<?php echo $sticker['pack_size_id']; ?>" />
 

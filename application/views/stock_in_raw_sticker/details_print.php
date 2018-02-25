@@ -80,7 +80,7 @@ $num_pages=ceil($total_records/$row_per_page);
             </div>
             <table style="width:<?php echo $width;?>px;" class="system_table_report_container">
                 <thead>
-                <th><?php echo $CI->lang->line('LABEL_SL_NO'); ?></th>
+                <th class="text-right" style="width: 30px;"><?php echo $CI->lang->line('LABEL_SL_NO'); ?></th>
                 <th><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></th>
                 <th><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?></th>
                 <th><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
@@ -98,12 +98,12 @@ $num_pages=ceil($total_records/$row_per_page);
                     $quantity_total+=$data['quantity'];
                     ?>
                     <tr>
-                        <td><?php echo $serial;?></td>
+                        <td class="text-right"><?php echo $serial;?></td>
                         <td><?php echo $data['crop_name'];?></td>
                         <td><?php echo $data['crop_type_name'];?></td>
                         <td><?php echo $data['variety_name'];?></td>
                         <td class="text-right"><?php echo $data['pack_size'];?></td>
-                        <td class="text-right"><?php echo $data['quantity'];?> (Pcs)</td>
+                        <td class="text-right"><?php echo $data['quantity'];?></td>
                     </tr>
                     <?php
                     if($total_records==$index+1)

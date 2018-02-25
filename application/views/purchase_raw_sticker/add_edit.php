@@ -113,13 +113,15 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 </thead>
                 <tbody>
                 <?php
-                $quantity_total=0;
+                $quantity_supply_total=0;
+                $quantity_receive_total=0;
                 $total_tk=0;
                 $price_total=0;
                 foreach($purchase_sticker as $index=>$sticker)
                 {
                     $price_total=($sticker['quantity_receive']*$sticker['price_unit_tk']);
-                    $quantity_total+=$sticker['quantity_receive'];
+                    $quantity_supply_total+=$sticker['quantity_supply'];
+                    $quantity_receive_total+=$sticker['quantity_receive'];
                     $total_tk+=$price_total;
                     ?>
                     <tr>
@@ -142,7 +144,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                             <label><?php $current_stock=System_helper::get_raw_stock(array($sticker['variety_id'])); if(isset($current_stock)){echo $current_stock[$sticker['variety_id']][$sticker['pack_size_id']][$CI->config->item('system_sticker')]['current_stock'];}else{echo 0;}?></label>
                         </td>
                         <td class="text-right">
-                            <input type="text" id="quantity_supply<?php echo $index+1;?>" value="<?php echo $sticker['quantity_supply']; ?>" class="form-control text-right float_type_positive quantity_supply" data-current-id="<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][quantity_supply]">
+                            <input type="text" id="quantity_supply_<?php echo $index+1;?>" value="<?php echo $sticker['quantity_supply']; ?>" class="form-control text-right float_type_positive quantity_supply" data-current-id="<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][quantity_supply]">
                         </td>
                         <td class="text-right">
                             <input type="text" id="quantity_receive_<?php echo $index+1;?>" value="<?php echo $sticker['quantity_receive']; ?>" class="form-control text-right float_type_positive quantity_receive" data-current-id="<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][quantity_receive]">
@@ -163,8 +165,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
                 <tfoot>
                 <tr>
-                    <th colspan="6" class="text-right"><?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL_PIECES');?> </th>
-                    <th class="text-right"><label class="control-label" id="lbl_quantity_receive_total"><?php echo $quantity_total;?></label></th>
+                    <th colspan="5" class="text-right"><?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL_PIECES');?> </th>
+                    <th class="text-right"><label class="control-label" id="lbl_quantity_supply_total"><?php echo $quantity_supply_total;?></label></th>
+                    <th class="text-right"><label class="control-label" id="lbl_quantity_receive_total"><?php echo $quantity_receive_total;?></label></th>
                     <th class="text-right"><?php echo $CI->lang->line('LABEL_TOTAL_TAKA');?></th>
                     <th class="text-right"><label class="control-label" id="lbl_price_total_tk"><?php echo number_format($total_tk,2)?></label></th>
                     <th class="text-right"></th>
@@ -474,6 +477,12 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             calculate_total();
         });
 
+        $(document).off('input','.quantity_supply');
+        $(document).on('input', '#order_items_container .quantity_supply', function()
+        {
+            calculate_total();
+        });
+
         $(document).off('change','.price_unit_tk');
         $(document).on('input', '.price_unit_tk', function()
         {
@@ -497,11 +506,23 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
     {
         $("#lbl_quantity_receive_total").html('');
         $("#lbl_price_total_tk").html('');
+        var quantity_supply_total=0;
         var quantity_receive_total=0;
         var price_total_tk=0;
         $('#order_items_container .quantity_receive').each(function(index, element)
         {
             var current_id=parseInt($(this).attr('data-current-id'));
+
+            var quantity_supply = parseFloat($("#quantity_supply_"+current_id).val());
+            if(isNaN(quantity_supply))
+            {
+                quantity_supply=0;
+            }
+            quantity_supply_total+=quantity_supply;
+
+            console.log(quantity_supply);
+            console.log(quantity_supply_total);
+
             var quantity_receive = parseFloat($(this).val());
             if(isNaN(quantity_receive))
             {
@@ -516,6 +537,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             }
             price_total_tk+=total_taka;
         });
+        $("#lbl_quantity_supply_total").html(quantity_supply_total);
         $("#lbl_quantity_receive_total").html(quantity_receive_total);
         $("#lbl_price_total_tk").html(number_format(price_total_tk,2));
     }

@@ -106,7 +106,7 @@ $num_pages=ceil($total_records/$row_per_page);
             <table style="width:<?php echo $width;?>px;" class="system_table_report_container">
                 <thead>
                 <tr>
-                    <th rowspan="2"style="width: 5px"><?php echo $CI->lang->line('LABEL_SL_NO'); ?></th>
+                    <th rowspan="2" class="text-right" style="width: 30px;"><?php echo $CI->lang->line('LABEL_SL_NO'); ?></th>
                     <th rowspan="2"><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></th>
                     <th rowspan="2"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?></th>
                     <th rowspan="2"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
@@ -139,7 +139,7 @@ $num_pages=ceil($total_records/$row_per_page);
                     $total_tk+=$price_total;
                     ?>
                     <tr>
-                        <td><?php echo $serial; ?></td>
+                        <td class="text-right"><?php echo $serial; ?></td>
                         <td><?php echo $data['crop_name']?></td>
                         <td><?php echo $data['crop_type_name']?></td>
                         <td><?php echo $data['variety_name']?></td>

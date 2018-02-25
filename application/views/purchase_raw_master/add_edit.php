@@ -102,25 +102,29 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></th>
                     <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?></th>
                     <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
-                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
-                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_CURRENT_STOCK_KG'); ?></th>
+                    <th style="min-width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
+                    <th style="min-width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_CURRENT_STOCK_KG'); ?></th>
                     <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_NUMBER_OF_REEL'); ?></th>
-                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY_SUPPLY'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
-                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY_RECEIVE'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
-                    <th style="min-width: 150px; text-align: right;"><?php echo $CI->lang->line('LABEL_PRICE_TAKA_UNIT');?></th>
-                    <th style="min-width: 150px; text-align: right;"><?php echo $CI->lang->line('LABEL_PRICE_TAKA_TOTAL');?></th>
+                    <th style="min-width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_QUANTITY_SUPPLY'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
+                    <th style="min-width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_QUANTITY_RECEIVE'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
+                    <th style="min-width: 150px; text-align: right;" class="text-right"><?php echo $CI->lang->line('LABEL_PRICE_TAKA_UNIT');?></th>
+                    <th style="min-width: 150px; text-align: right;" class="text-right"><?php echo $CI->lang->line('LABEL_PRICE_TAKA_TOTAL');?></th>
                     <th style="min-width: 150px;"><?php echo $CI->lang->line('ACTION'); ?></th>
                 </tr>
                 </thead>
                 <tbody>
                 <?php
-                $quantity_total=0;
+                $quantity_reel_total=0;
+                $quantity_supply_total=0;
+                $quantity_receive_total=0;
                 $total_tk=0;
                 $price_total=0;
                 foreach($purchase_master as $index=>$master)
                 {
                     $price_total=($master['quantity_receive']*$master['price_unit_tk']);
-                    $quantity_total+=$master['quantity_receive'];
+                    $quantity_reel_total+=$master['number_of_reel'];
+                    $quantity_supply_total+=$master['quantity_supply'];
+                    $quantity_receive_total+=$master['quantity_receive'];
                     $total_tk+=$price_total;
                     ?>
                     <tr>
@@ -169,8 +173,10 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
                 <tfoot>
                     <tr>
-                        <th colspan="7" class="text-right"><?php echo $CI->lang->line('LABEL_TOTAL_KG');?></th>
-                        <th class="text-right"><label class="control-label" id="lbl_quantity_receive_total"><?php echo number_format(($quantity_total),3,'.','')?></label></th>
+                        <th colspan="5" class="text-right"><?php echo $CI->lang->line('LABEL_TOTAL');?></th>
+                        <th class="text-right"><label class="control-label" id="lbl_quantity_reel_total"><?php echo $quantity_reel_total;?></label></th>
+                        <th class="text-right"><label class="control-label" id="lbl_quantity_supply_total"><?php echo number_format(($quantity_supply_total),3,'.','')?></label></th>
+                        <th class="text-right"><label class="control-label" id="lbl_quantity_receive_total"><?php echo number_format(($quantity_receive_total),3,'.','')?></label></th>
                         <th class="text-right"><?php echo $CI->lang->line('LABEL_TOTAL_TAKA');?></th>
                         <th class="text-right"><label class="control-label" id="lbl_price_total_tk"><?php echo number_format($total_tk,2)?></label></th>
                         <th class="text-right"></th>
@@ -343,6 +349,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         $(document).on("click", ".system_button_add_delete", function(event)
         {
             $(this).closest('tr').remove();
+            calculate_total();
         });
 
         $(document).off("change",".crop_id");
@@ -472,6 +479,18 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             }
         });
 
+        $(document).off('input','.number_of_reel');
+        $(document).on('input', '.number_of_reel', function()
+        {
+            calculate_total();
+        });
+
+        $(document).off('input','.quantity_supply');
+        $(document).on('input', '.quantity_supply', function()
+        {
+            calculate_total();
+        });
+
         $(document).off('input','.quantity_receive');
         $(document).on('input', '.quantity_receive', function()
         {
@@ -513,13 +532,32 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
     });
     function calculate_total()
     {
+        $("#lbl_quantity_reel_total").html('');
+        $("#lbl_quantity_supply_total").html('');
         $("#lbl_quantity_receive_total").html('');
         $("#lbl_price_total_tk").html('');
+        var quantity_reel_total=0;
+        var quantity_supply_total=0;
         var quantity_receive_total=0;
         var price_total_tk=0;
         $('#order_items_container .quantity_receive').each(function(index, element)
         {
             var current_id=parseInt($(this).attr('data-current-id'));
+
+            var number_of_reel = parseFloat($("#number_of_reel_"+current_id).val());
+            if(isNaN(number_of_reel))
+            {
+                number_of_reel=0;
+            }
+            quantity_reel_total+=number_of_reel;
+
+            var quantity_supply = parseFloat($("#quantity_supply_"+current_id).val());
+            if(isNaN(quantity_supply))
+            {
+                quantity_supply=0;
+            }
+            quantity_supply_total+=quantity_supply;
+
             var quantity_receive = parseFloat($(this).val());
             if(isNaN(quantity_receive))
             {
@@ -533,6 +571,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             }
             price_total_tk+=total_taka;
         });
+        $("#lbl_quantity_reel_total").html(quantity_reel_total);
+        $("#lbl_quantity_supply_total").html(number_format((quantity_supply_total),3,'.',''));
         $("#lbl_quantity_receive_total").html(number_format(quantity_receive_total,3,'.',''));
         $("#lbl_price_total_tk").html(number_format(price_total_tk,2));
     }

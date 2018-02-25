@@ -90,8 +90,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
                     <th style="min-width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
                     <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_WAREHOUSE_NAME'); ?></th>
-                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_CURRENT_STOCK'); ?></th>
-                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY'); ?></th>
+                    <th style="min-width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_CURRENT_STOCK'); ?></th>
+                    <th style="min-width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_QUANTITY_KG_PACK'); ?></th>
                     <th style="min-width: 150px;"><?php echo $CI->lang->line('ACTION'); ?></th>
                 </tr>
                 </thead>

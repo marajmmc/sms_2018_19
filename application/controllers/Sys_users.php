@@ -109,6 +109,7 @@ class Sys_users extends Root_Controller
     }
     private function system_assign_user_group($id)
     {
+        $user = User_helper::get_user();
         if(isset($this->permissions['action2']) && ($this->permissions['action2']==1))
         {
             if(($this->input->post('id')))
@@ -127,12 +128,23 @@ class Sys_users extends Root_Controller
 
             $data['title']='Assign User('.$data['item']['name'].') to a Group';
             $data['item']['user_group']=0;
+
+
+
             $group_info=Query_helper::get_info($this->config->item('table_system_assigned_group'),array('user_group'),array('revision=1','user_id='.$item_id),1);
             if($group_info)
             {
                 $data['item']['user_group']=$group_info['user_group'];
             }
-            $data['user_groups']=Query_helper::get_info($this->config->item('table_system_user_group'),array('id value','name text'),array('status="'.$this->config->item('system_status_active').'"','id!=1'));
+            //$data['user_groups']=Query_helper::get_info($this->config->item('table_system_user_group'),array('id value','name text'),array('status="'.$this->config->item('system_status_active').'"','id!=1'));
+            if($user->user_group==1)
+            {
+                $data['user_groups']=Query_helper::get_info($this->config->item('table_system_user_group'),array('id value','name text'),array('status !="'.$this->config->item('system_status_delete').'"'));
+            }
+            else
+            {
+                $data['user_groups']=Query_helper::get_info($this->config->item('table_system_user_group'),array('*'),array('status ="'.$this->config->item('system_status_active').'"','id !=1'));
+            }
             $ajax['status']=true;
             $ajax['system_content'][]=array('id'=>'#system_content','html'=>$this->load->view($this->controller_url.'/assign_user_group',$data,true));
             if($this->message)

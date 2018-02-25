@@ -2,11 +2,13 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 $CI=& get_instance();
 $action_buttons=array();
-$action_buttons[]=array(
+$action_buttons[]=array
+(
     'label'=>$CI->lang->line("ACTION_BACK"),
     'href'=>site_url($CI->controller_url)
 );
-$action_buttons[]=array(
+$action_buttons[]=array
+(
     'type'=>'button',
     'label'=>$CI->lang->line("ACTION_SAVE"),
     'id'=>'button_action_save',
@@ -100,13 +102,13 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_NUMBER_OF_REEL');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <input type="text" name="item[number_of_reel]" id="number_of_reel" class="form-control" value="<?php echo $item['number_of_reel'];?>"/>
+                <input type="text" name="item[number_of_reel]" id="number_of_reel" class="form-control float_type_positive" value="<?php echo $item['number_of_reel'];?>"/>
             </div>
         </div>
 
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label for="quantity_supply" class="control-label pull-right"><?php echo $this->lang->line('LABEL_QUANTITY_SUPPLY');?><span style="color:#FF0000">*</span></label>
+                <label for="quantity_supply" class="control-label pull-right"><?php echo $this->lang->line('LABEL_QUANTITY_SUPPLY');?> (<?php echo $CI->lang->line('LABEL_KG');?>)<span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <input type="text" name="item[quantity_supply]" class="form-control float_type_positive" value="<?php echo $item['quantity_supply'];?>"/>
@@ -115,7 +117,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label for="quantity_receive" class="control-label pull-right"><?php echo $this->lang->line('LABEL_QUANTITY_RECEIVE');?><span style="color:#FF0000">*</span></label>
+                <label for="quantity_receive" class="control-label pull-right"><?php echo $this->lang->line('LABEL_QUANTITY_RECEIVE');?> (<?php echo $CI->lang->line('LABEL_KG');?>)<span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <input type="text" name="item[quantity_receive]" id="quantity_receive" class="form-control quantity_receive float_type_positive" value="<?php echo $item['quantity_receive'];?>"/>
@@ -124,7 +126,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label for="price_unit_tk" class="control-label pull-right">Price Unit (Tk)<span style="color:#FF0000">*</span></label>
+                <label for="price_unit_tk" class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PRICE_TAKA_UNIT');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <input type="text" name="item[price_unit_tk]" id="price_unit_tk" class="form-control price_unit_tk float_type_positive" value="<?php echo $item['price_unit_tk'];?>"/>
@@ -133,7 +135,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right">Total (Tk)</label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PRICE_TAKA_TOTAL');?></label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <label id="lbl_price_total_tk" class="control-label"><?php echo number_format(($item['quantity_receive']*$item['price_unit_tk']),2)?></label>

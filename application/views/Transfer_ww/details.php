@@ -124,7 +124,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         }
                         else
                         {
-                            echo '-';
+                            echo number_format((($item['quantity']*$item['pack_size'])/1000),3,'.','');
                         }
                         ?>
                     </td>
@@ -141,7 +141,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                             }
                             else
                             {
-                                echo '-';
+                                echo number_format((($item['quantity']*$item['pack_size'])/1000),3,'.','');
                             }
                             ?>
                         </label>

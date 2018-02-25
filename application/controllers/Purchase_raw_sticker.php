@@ -731,8 +731,8 @@ class Purchase_raw_sticker extends Root_Controller
             $this->load->library('form_validation');
             $this->form_validation->set_rules('item[date_receive]',$this->lang->line('LABEL_DATE_RECEIVE'),'required');
             $this->form_validation->set_rules('item[supplier_id]',$this->lang->line('LABEL_SUPPLIER_NAME'),'required');
-            $this->form_validation->set_rules('item[date_challan]','Challan Date','required');
             $this->form_validation->set_rules('item[challan_number]','Challan Number','required');
+            $this->form_validation->set_rules('item[date_challan]','Challan Date','required');
             if($this->form_validation->run() == FALSE)
             {
                 $this->message=validation_errors();
