@@ -289,6 +289,8 @@ $lang['LABEL_HYBRID']='Hybrid';
 
 //warehouse
 $lang['LABEL_WAREHOUSE_NAME']='Warehouse Name';
+$lang['LABEL_WAREHOUSE_NAME_SOURCE']='Source Warehouse';
+$lang['LABEL_WAREHOUSE_NAME_DESTINATION']='Destination Warehouse';
 $lang['LABEL_WAREHOUSE_1_PKT'] = '1st Floor(pkt)';
 $lang['LABEL_WAREHOUSE_1_KG'] = '1st Floor(kg)';
 $lang['LABEL_WAREHOUSE_2_PKT'] = '2nd Floor(pkt)';

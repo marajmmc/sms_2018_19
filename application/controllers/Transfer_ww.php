@@ -97,8 +97,22 @@ class Transfer_ww extends Root_Controller
         {
             $pagesize=$pagesize*2;
         }
+
         $this->db->from($this->config->item('table_sms_transfer_warehouse_variety').' transfer_warehouse');
         $this->db->select('transfer_warehouse.*');
+
+        $this->db->select('variety.name variety_name');
+        $this->db->join($this->config->item('table_login_setup_classification_varieties').' variety','variety.id = transfer_warehouse.variety_id','INNER');
+        $this->db->select('v_pack_size.name pack_size');
+        $this->db->join($this->config->item('table_login_setup_classification_pack_size').' v_pack_size','v_pack_size.id = transfer_warehouse.pack_size_id','LEFT');
+        $this->db->select('type.name crop_type_name');
+        $this->db->join($this->config->item('table_login_setup_classification_crop_types').' type','type.id = variety.crop_type_id','INNER');
+        $this->db->select('crop.name crop_name');
+        $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = type.crop_id','INNER');
+        $this->db->select('source_ware_house.name warehouse_name_source');
+        $this->db->join($this->config->item('table_login_basic_setup_warehouse').' source_ware_house','source_ware_house.id = transfer_warehouse.source_warehouse_id','INNER');
+        $this->db->select('destination_ware_house.name warehouse_name_destination');
+        $this->db->join($this->config->item('table_login_basic_setup_warehouse').' destination_ware_house','destination_ware_house.id = transfer_warehouse.destination_warehouse_id','INNER');
         $this->db->where('transfer_warehouse.status !=',$this->config->item('system_status_delete'));
         $this->db->order_by('transfer_warehouse.date_transfer','DESC');
         $this->db->order_by('transfer_warehouse.id','DESC');
@@ -110,6 +124,7 @@ class Transfer_ww extends Root_Controller
             $item['barcode']=Barcode_helper::get_barcode_transfer_warehouse_to_warehouse($item['id']);
             if($item['pack_size_id']==0)
             {
+                $item['pack_size']='Bulk';
                 $item['quantity_total_pack_kg']=number_format($item['quantity'],3,'.','');
             }
             else
@@ -707,7 +722,13 @@ class Transfer_ww extends Root_Controller
         $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
         $data['barcode']= 1;
         $data['date_transfer']= 1;
+        $data['crop_name']= 1;
+        $data['crop_type_name']= 1;
+        $data['variety_name']= 1;
+        $data['pack_size']= 1;
         $data['quantity_total_pack_kg']= 1;
+        $data['warehouse_name_source']= 1;
+        $data['warehouse_name_destination']= 1;
         $data['remarks']= 1;
         if($result)
         {

@@ -182,6 +182,8 @@ class Report_stock_variety_details extends Root_Controller
         }
         $this->db->group_by('details.variety_id');
         $this->db->group_by('details.pack_size_id');
+        $this->db->group_by('details.source_warehouse_id');
+        $this->db->group_by('details.destination_warehouse_id');
         $results=$this->db->get()->result_array();
 
         foreach($results as $result)
