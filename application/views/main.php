@@ -1,6 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 $CI = & get_instance();
+
 $system_crops=Query_helper::get_info($CI->config->item('table_login_setup_classification_crops'),array('id value','name text'),array('status ="'.$CI->config->item('system_status_active').'"'),0,0,array('ordering'));
 $results=Query_helper::get_info($CI->config->item('table_login_setup_classification_crop_types'),array('id value','name text','crop_id'),array('status ="'.$CI->config->item('system_status_active').'"'),0,0,array('ordering'));
 $system_types=array();
@@ -127,6 +128,7 @@ $system_warehouses=Query_helper::get_info($CI->config->item('table_login_basic_s
             var system_territories=JSON.parse('<?php echo json_encode($system_territories);?>');
             var system_districts=JSON.parse('<?php echo json_encode($system_districts);?>');
             var system_customers=JSON.parse('<?php echo json_encode($system_customers);?>');
+            var system_all_customers=JSON.parse('<?php echo json_encode($system_all_customers);?>');
             var system_outlets=JSON.parse('<?php echo json_encode($system_outlets);?>');
             var system_warehouses=JSON.parse('<?php echo json_encode($system_warehouses);?>');
             var system_report_color_grand='#AEC2DD';
@@ -152,7 +154,6 @@ $system_warehouses=Query_helper::get_info($CI->config->item('table_login_basic_s
 
                 </div>
             </div>
-
         </div>
         <footer class="hidden-print navbar-fixed-bottom">
             <div>

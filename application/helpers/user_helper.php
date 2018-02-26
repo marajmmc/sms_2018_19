@@ -50,9 +50,6 @@ class User_helper
             return FALSE;
         }
     }
-
-
-
     public static function get_user()
     {
         $CI = & get_instance();
