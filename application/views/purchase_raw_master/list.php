@@ -108,7 +108,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
         //$(document).off("click", "#button_jqx_load_more");
 
-        var url = "<?php echo base_url($CI->controller_url.'/index/get_items');?>";
+        var url = "<?php echo site_url($CI->controller_url.'/index/get_items');?>";
 
         // prepare the data
         var source =
@@ -135,7 +135,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             {
                 width: '100%',
                 source: dataAdapter,
-                pageable: false,
+                pageable: true,
                 filterable: true,
                 sortable: true,
                 showfilterrow: true,

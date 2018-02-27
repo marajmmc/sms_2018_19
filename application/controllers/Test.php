@@ -21,6 +21,9 @@ class Test extends CI_Controller {
     public function index()
     {
         //$this->user_order();
+        echo base_url('maraj');
+        echo "<br />";
+        echo site_url('maraj');
     }
 	private function user_order()
 	{
