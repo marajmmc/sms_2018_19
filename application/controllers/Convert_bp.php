@@ -119,7 +119,7 @@ class Convert_bp extends Root_Controller
                 'variety_id'=>0,
                 'destination_warehouse_id' => '',
                 'current_stock' => 0,
-                'quantity' => '',
+                'convert_quantity' => '',
                 'actual_master_foil' =>'',
                 'actual_foil' =>'',
                 'actual_sticker' =>'',
@@ -634,24 +634,41 @@ class Convert_bp extends Root_Controller
         }
     }
 
-    public function get_source_warehouse()
+    public function get_warehouse_source_and_packsize()
     {
         $variety_id = $this->input->post('variety_id');
         $pack_size_id = 0;
-        $html_container_id='#source_warehouse_id';
+        $html_warehouse_source_container_id='#warehouse_id_source';
+        $html_pack_size_container_id='#pack_size_id';
         if($this->input->post('html_container_id'))
         {
             $html_container_id=$this->input->post('html_container_id');
         }
+
+        //Getting Source Warehouse
+
         $this->db->from($this->config->item('table_sms_stock_summary_variety').' stock_summary');
         $this->db->select('stock_summary.warehouse_id value');
         $this->db->select('ware_house.name text');
-        $this->db->join($this->config->item('table_login_basic_setup_warehouse').' ware_house','ware_house.id = stock_summary.warehouse_id','LEFT');
+        $this->db->join($this->config->item('table_login_basic_setup_warehouse').' ware_house','ware_house.id = stock_summary.warehouse_id','INNER');
         $this->db->where('stock_summary.variety_id',$variety_id);
         $this->db->where('stock_summary.pack_size_id',$pack_size_id);
-        $data['items']=$this->db->get()->result_array();
+        $data_warehouse_source['items']=$this->db->get()->result_array();
+
+        //Getting packsize
+
+        $this->db->from($this->config->item('table_login_setup_classification_variety_raw_config').' raw_config');
+        $this->db->select('raw_config.pack_size_id value');
+        $this->db->select('pack_size.name text');
+        $this->db->join($this->config->item('table_login_setup_classification_pack_size').' pack_size','pack_size.id = raw_config.pack_size_id','LEFT');
+        $this->db->where('raw_config.variety_id',$variety_id);
+        $this->db->where('raw_config.revision',1);
+        $data_pack_size['items']=$this->db->get()->result_array();
+
         $ajax['status']=true;
-        $ajax['system_content'][]=array("id"=>$html_container_id,"html"=>$this->load->view("dropdown_with_select",$data,true));
+        $ajax['system_content'][]=array("id"=>$html_warehouse_source_container_id,"html"=>$this->load->view("dropdown_with_select",$data_warehouse_source,true));
+        $ajax['system_content'][]=array("id"=>$html_pack_size_container_id,"html"=>$this->load->view("dropdown_with_select",$data_pack_size,true));
+
         $this->json_return($ajax);
     }
 
@@ -659,11 +676,11 @@ class Convert_bp extends Root_Controller
     {
         $variety_id = $this->input->post('variety_id');
         $pack_size_id = $this->input->post('pack_size_id');
-        $quantity = $this->input->post('quantity');
+        $convert_quantity = $this->input->post('convert_quantity');
 
         $pack_size_value = Query_helper::get_info($this->config->item('table_login_setup_classification_pack_size'), 'name value', array('status !="' . $this->config->item('system_status_delete') . '"', 'id =' . $pack_size_id), 1);
 
-        $html_container_id = '#number_of_packet_id';
+        $html_container_id = '#expected_quantity_packet_id';
         if ($this->input->post('html_container_id'))
         {
             $html_container_id = $this->input->post('html_container_id');
@@ -685,17 +702,16 @@ class Convert_bp extends Root_Controller
             {
                 $ajax['status'] = false;
                 $ajax['system_content'][] = array("id" => $html_container_id, "html" => '');
-                $ajax['system_content'][] = array("id" => '#number_of_actual_packet_id', "html" => '');
+                $ajax['system_content'][] = array("id" => '#actual_quantity_packet_id', "html" => '');
                 $ajax['system_message'] = 'Packing Materials is not setup for this variety';
                 $this->json_return($ajax);
             }
         }
 
-        $number_of_packet = (($quantity*1000) / $pack_size_value['value']);
+        $expected_quantity_packet = (($convert_quantity*1000) / $pack_size_value['value']);
 
         $ajax['status'] = true;
-        $ajax['system_content'][] = array("id" => $html_container_id, "html" => $number_of_packet);
-        $ajax['system_content'][] = array("id" => '#number_of_actual_packet_id_input_container', "html" => '<input type="text" name="item[number_of_actual_packet]" id="number_of_actual_packet_id" class="form-control float_type_positive" value="' . $number_of_packet . '"/>');
+        $ajax['expected_quantity_packet']=$expected_quantity_packet;
         if ($result['masterfoil'] > 0)
         {
             $packing_item=$this->config->item('system_master_foil');
@@ -706,17 +722,14 @@ class Convert_bp extends Root_Controller
                 $stock_current_mf=$stock_result_mf[$variety_id][$pack_size_id][$packing_item]['current_stock'];
             }
 
-            $number_of_mf=(($result['masterfoil']*$number_of_packet)/1000);
-            $ajax['quantity_master_foil']=$result['masterfoil'];
-            $ajax['quantity_foil']=0;
-            $ajax['quantity_sticker']=0;
+            $expected_quantity_mf=(($result['masterfoil']*$expected_quantity_packet)/1000);
+            $ajax['expected_quantity_mf']=$expected_quantity_mf;
+            $ajax['expected_quantity_f']=0;
+            $ajax['expected_quantity_sticker']=0;
+            $ajax['unit_quantity_master_foil']=$result['masterfoil'];
+            $ajax['unit_quantity_foil']=0;
+            $ajax['unit_quantity_sticker']=0;
             $ajax['stock_current_mf']=' (Current Stock : '.$stock_current_mf.')';
-
-
-            $ajax['system_content'][] = array("id" => '#expected_mf_id', "html" => $number_of_mf);
-            $ajax['system_content'][] = array("id" => '#actual_mf_id_input_container', "html" => '<input type="text" name="item[actual_mf]" id="actual_mf_id" class="form-control float_type_positive" value="' . $number_of_mf . '"/>');
-            $ajax['system_content'][] = array("id" => '#expected_mf_id_in_pack_size_container', "html" => '<input type="hidden" id="expected_mf_id_in_pack_size_change" class="form-control float_type_positive" value="' . $number_of_mf . '"/>');
-
         }
         elseif ($result['foil'] > 0 && $result['sticker'] > 0)
         {
@@ -735,26 +748,16 @@ class Convert_bp extends Root_Controller
             {
                 $stock_current_sticker=$stock_result_sticker[$variety_id][$pack_size_id][$packing_item]['current_stock'];
             }
-
-
-            $number_of_f=(($result['foil']*$number_of_packet)/1000);
-            $number_of_sticker=($result['sticker']*$number_of_packet);
-
-            $ajax['quantity_master_foil']=0;
-            $ajax['quantity_foil']=$result['foil'];
-            $ajax['quantity_sticker']=$result['sticker'];
-
+            $expected_quantity_f=(($result['foil']*$expected_quantity_packet)/1000);
+            $expected_quantity_sticker=($result['sticker']*$expected_quantity_packet);
+            $ajax['expected_quantity_mf']=0;
+            $ajax['expected_quantity_f']=$expected_quantity_f;
+            $ajax['expected_quantity_sticker']=$expected_quantity_sticker;
+            $ajax['unit_quantity_master_foil']=0;
+            $ajax['unit_quantity_foil']=$result['foil'];
+            $ajax['unit_quantity_sticker']=$result['sticker'];
             $ajax['stock_current_f']=' (Current Stock : '.$stock_current_f.')';
             $ajax['stock_current_sticker']=' (Current Stock : '.$stock_current_sticker.')';
-
-            $ajax['system_content'][] = array("id" => '#expected_f_id', "html" => $number_of_f);
-            $ajax['system_content'][] = array("id" => '#actual_f_id_input_container', "html" => '<input type="text" name="item[actual_f]" id="actual_f_id" class="form-control float_type_positive" value="' . $number_of_f . '"/>');
-            $ajax['system_content'][] = array("id" => '#expected_f_id_in_pack_size_change_container', "html" => '<input type="hidden" id="expected_f_id_in_pack_size_change" class="form-control float_type_positive" value="' . $number_of_f . '"/>');
-
-            $ajax['system_content'][] = array("id" => '#expected_sticker_id', "html" => $number_of_sticker);
-            $ajax['system_content'][] = array("id" => '#actual_sticker_id_input_container', "html" => '<input type="text" name="item[actual_sticker]" id="actual_sticker_id" class="form-control float_type_positive" value="' . $number_of_sticker . '"/>');
-            $ajax['system_content'][] = array("id" => '#expected_sticker_id_in_pack_size_change_container', "html" => '<input type="hidden" id="expected_sticker_id_in_pack_size_change" class="form-control float_type_positive" value="' . $number_of_sticker . '"/>');
-
         }
         else
         {
