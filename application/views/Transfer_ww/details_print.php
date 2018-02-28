@@ -85,43 +85,41 @@ if($result)
             </tr>
             </thead>
             <tbody>
-
             <tr>
                 <td>1</td>
                 <td><?php echo $item['crop_name']; ?></td>
                 <td><?php echo $item['crop_type_name'];?></td>
                 <td><?php echo $item['variety_name']; ?></td>
                 <td class="text-right"><?php if($item['pack_size_id']==0){echo 'Bulk';}else{echo $item['pack_size'];} ?></td>
-                <td><?php echo $item['source_ware_house_name']; ?></td>
-                <td><?php echo $item['destination_ware_house_name']; ?></td>
-                <td class="text-right"><?php if($item['pack_size_id']==0){echo '-';}else{echo $item['quantity'];} ?></td>
+                <td><?php echo $item['warehouse_name_source']; ?></td>
+                <td><?php echo $item['warehouse_name_destination']; ?></td>
+                <td class="text-right"><?php if($item['pack_size_id']==0){echo '-';}else{echo $item['quantity_transfer'];} ?></td>
                 <td class="text-right">
                     <?php
                         if($item['pack_size_id']==0)
                         {
-                            echo $item['quantity'];
+                            echo $item['quantity_transfer'];
                         }
                         else
                         {
-                            echo number_format((($item['pack_size']*$item['quantity'])/1000),3,'.','');
+                            echo number_format((($item['pack_size']*$item['quantity_transfer'])/1000),3,'.','');
                         }
                     ?>
                 </td>
             </tr>
-
             <tr>
                 <td colspan="7" class="text-right"><label class="control-label"><?php echo $this->lang->line('LABEL_TOTAL')?></label></td>
-                <td class="text-right"><label class="control-label"><?php if($item['pack_size_id']==0){echo '-';}else{echo $item['quantity'];} ?></label></td>
+                <td class="text-right"><label class="control-label"><?php if($item['pack_size_id']==0){echo '-';}else{echo $item['quantity_transfer'];} ?></label></td>
                 <td class="text-right">
                     <label class="control-label">
                         <?php
                         if($item['pack_size_id']==0)
                         {
-                            echo $item['quantity'];
+                            echo $item['quantity_transfer'];
                         }
                         else
                         {
-                            echo number_format((($item['pack_size']*$item['quantity'])/1000),3,'.','');
+                            echo number_format((($item['pack_size']*$item['quantity_transfer'])/1000),3,'.','');
                         }
                         ?>
                     </label>

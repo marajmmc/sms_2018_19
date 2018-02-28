@@ -44,7 +44,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <th colspan="2">&nbsp;</th>
             </tr>
             <tr>
-                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE');?></label></th>
+                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_TRANSFER');?></label></th>
                 <th class=" header_value"><label class="control-label"><?php echo System_helper::display_date($item['date_transfer']);?></label></th>
                 <th colspan="2">&nbsp;</th>
             </tr>
@@ -113,35 +113,35 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <td><?php echo $item['crop_type_name']; ?></td>
                     <td><?php echo $item['variety_name']; ?></td>
                     <td class="text-right"><?php if($item['pack_size_id']==0){echo 'Bulk';}else{echo $item['pack_size'];} ?></td>
-                    <td><?php echo $item['source_ware_house_name']; ?></td>
-                    <td><?php echo $item['destination_ware_house_name']; ?></td>
-                    <td class="text-right"><label class="control-label"><?php if($item['pack_size_id']==0){echo '-';}else{echo $item['quantity'];} ?></label></td>
+                    <td><?php echo $item['warehouse_name_source']; ?></td>
+                    <td><?php echo $item['warehouse_name_destination']; ?></td>
+                    <td class="text-right"><label class="control-label"><?php if($item['pack_size_id']==0){echo '-';}else{echo $item['quantity_transfer'];} ?></label></td>
                     <td class="text-right">
                         <?php
                         if($item['pack_size_id']==0)
                         {
-                            echo number_format($item['quantity'],3,'.','');
+                            echo number_format($item['quantity_transfer'],3,'.','');
                         }
                         else
                         {
-                            echo number_format((($item['quantity']*$item['pack_size'])/1000),3,'.','');
+                            echo number_format((($item['quantity_transfer']*$item['pack_size'])/1000),3,'.','');
                         }
                         ?>
                     </td>
                 </tr>
                 <tr>
                     <td colspan="7" class="text-right"><label class="control-label"><?php echo $this->lang->line('LABEL_TOTAL')?></label></td>
-                    <td class="text-right"><label class="control-label"><?php if($item['pack_size_id']==0){echo '-';}else{echo $item['quantity'];} ?></label></td>
+                    <td class="text-right"><label class="control-label"><?php if($item['pack_size_id']==0){echo '-';}else{echo $item['quantity_transfer'];} ?></label></td>
                     <td class="text-right">
                         <label class="control-label">
                             <?php
                             if($item['pack_size_id']==0)
                             {
-                                echo number_format($item['quantity'],3,'.','');
+                                echo number_format($item['quantity_transfer'],3,'.','');
                             }
                             else
                             {
-                                echo number_format((($item['quantity']*$item['pack_size'])/1000),3,'.','');
+                                echo number_format((($item['quantity_transfer']*$item['pack_size'])/1000),3,'.','');
                             }
                             ?>
                         </label>

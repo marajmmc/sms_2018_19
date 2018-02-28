@@ -65,8 +65,8 @@ class Transfer_ww extends Root_Controller
         {
             $data['system_preference_items']= $this->get_preference();
             $data['title']='Transfer (Warehouse to Warehouse) List';
-            $ajax['status']=true;
             $ajax['system_content'][]=array('id'=>'#system_content','html'=>$this->load->view($this->controller_url.'/list',$data,true));
+            $ajax['status']=true;
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
@@ -101,20 +101,25 @@ class Transfer_ww extends Root_Controller
         $this->db->from($this->config->item('table_sms_transfer_warehouse_variety').' transfer_warehouse');
         $this->db->select('transfer_warehouse.*');
 
-        $this->db->select('variety.name variety_name');
         $this->db->join($this->config->item('table_login_setup_classification_varieties').' variety','variety.id = transfer_warehouse.variety_id','INNER');
-        $this->db->select('v_pack_size.name pack_size');
-        $this->db->join($this->config->item('table_login_setup_classification_pack_size').' v_pack_size','v_pack_size.id = transfer_warehouse.pack_size_id','LEFT');
-        $this->db->select('type.name crop_type_name');
-        $this->db->join($this->config->item('table_login_setup_classification_crop_types').' type','type.id = variety.crop_type_id','INNER');
+        $this->db->select('variety.name variety_name');
+
+        $this->db->join($this->config->item('table_login_setup_classification_pack_size').' pack','pack.id = transfer_warehouse.pack_size_id','LEFT');
+        $this->db->select('pack.name pack_size');
+
+        $this->db->join($this->config->item('table_login_setup_classification_crop_types').' crop_type','crop_type.id = variety.crop_type_id','INNER');
+        $this->db->select('crop_type.name crop_type_name');
+
+        $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = crop_type.crop_id','INNER');
         $this->db->select('crop.name crop_name');
-        $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = type.crop_id','INNER');
-        $this->db->select('source_ware_house.name warehouse_name_source');
-        $this->db->join($this->config->item('table_login_basic_setup_warehouse').' source_ware_house','source_ware_house.id = transfer_warehouse.source_warehouse_id','INNER');
-        $this->db->select('destination_ware_house.name warehouse_name_destination');
-        $this->db->join($this->config->item('table_login_basic_setup_warehouse').' destination_ware_house','destination_ware_house.id = transfer_warehouse.destination_warehouse_id','INNER');
+
+        $this->db->join($this->config->item('table_login_basic_setup_warehouse').' warehouse_source','warehouse_source.id = transfer_warehouse.warehouse_id_source','INNER');
+        $this->db->select('warehouse_source.name warehouse_name_source');
+
+        $this->db->join($this->config->item('table_login_basic_setup_warehouse').' warehouse_destination','warehouse_destination.id = transfer_warehouse.warehouse_id_destination','INNER');
+        $this->db->select('warehouse_destination.name warehouse_name_destination');
+
         $this->db->where('transfer_warehouse.status !=',$this->config->item('system_status_delete'));
-        $this->db->order_by('transfer_warehouse.date_transfer','DESC');
         $this->db->order_by('transfer_warehouse.id','DESC');
         $this->db->limit($pagesize,$current_records);
         $items=$this->db->get()->result_array();
@@ -125,11 +130,11 @@ class Transfer_ww extends Root_Controller
             if($item['pack_size_id']==0)
             {
                 $item['pack_size']='Bulk';
-                $item['quantity_total_pack_kg']=number_format($item['quantity'],3,'.','');
+                $item['quantity_total_pack_kg']=number_format($item['quantity_transfer'],3,'.','');
             }
             else
             {
-                $item['quantity_total_pack_kg']=$item['quantity'];
+                $item['quantity_total_pack_kg']=$item['quantity_transfer'];
             }
         }
         $this->json_return($items);
@@ -139,7 +144,6 @@ class Transfer_ww extends Root_Controller
         if(isset($this->permissions['action1']) && ($this->permissions['action1']==1))
         {
             $time=time();
-            $data['title']="Transfer (Warehouse to Warehouse)";
             $data["item"] = Array
             (
                 'id' => 0,
@@ -147,15 +151,17 @@ class Transfer_ww extends Root_Controller
                 'crop_id'=>0,
                 'crop_type_id'=>0,
                 'variety_id'=>0,
-                'destination_warehouse_id' => '',
+                'warehouse_id_destination' => '',
                 'current_stock' => 0,
-                'quantity' => '',
+                'quantity_transfer' => '',
                 'remarks' => ''
             );
             $data['crops']=Query_helper::get_info($this->config->item('table_login_setup_classification_crops'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
-            $data['destination_warehouses']=Query_helper::get_info($this->config->item('table_login_basic_setup_warehouse'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
-            $ajax['status']=true;
+            $data['warehouse_destinations']=Query_helper::get_info($this->config->item('table_login_basic_setup_warehouse'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
+
+            $data['title']="Add Transfer (Warehouse to Warehouse)";
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/add_edit",$data,true));
+            $ajax['status']=true;
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
@@ -170,7 +176,6 @@ class Transfer_ww extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
     private function system_edit($id)
     {
         if(isset($this->permissions['action2']) && ($this->permissions['action2']==1))
@@ -185,18 +190,25 @@ class Transfer_ww extends Root_Controller
             }
             $this->db->from($this->config->item('table_sms_transfer_warehouse_variety').' transfer_warehouse');
             $this->db->select('transfer_warehouse.*');
+
+            $this->db->join($this->config->item('table_login_setup_classification_varieties').' variety','variety.id = transfer_warehouse.variety_id','INNER');
             $this->db->select('variety.name variety_name');
-            $this->db->join($this->config->item('table_login_setup_classification_varieties').' variety','variety.id = transfer_warehouse.variety_id','LEFT');
-            $this->db->select('v_pack_size.name pack_size');
-            $this->db->join($this->config->item('table_login_setup_classification_pack_size').' v_pack_size','v_pack_size.id = transfer_warehouse.pack_size_id','LEFT');
-            $this->db->select('source_ware_house.name source_ware_house_name');
-            $this->db->join($this->config->item('table_login_basic_setup_warehouse').' source_ware_house','source_ware_house.id = transfer_warehouse.source_warehouse_id','LEFT');
-            $this->db->select('destination_ware_house.name destination_ware_house_name');
-            $this->db->join($this->config->item('table_login_basic_setup_warehouse').' destination_ware_house','destination_ware_house.id = transfer_warehouse.destination_warehouse_id','LEFT');
-            $this->db->select('type.name crop_type_name');
-            $this->db->join($this->config->item('table_login_setup_classification_crop_types').' type','type.id = variety.crop_type_id','LEFT');
+
+            $this->db->join($this->config->item('table_login_setup_classification_pack_size').' pack','pack.id = transfer_warehouse.pack_size_id','LEFT');
+            $this->db->select('pack.name pack_size');
+
+            $this->db->join($this->config->item('table_login_basic_setup_warehouse').' warehouse_source','warehouse_source.id = transfer_warehouse.warehouse_id_source','INNER');
+            $this->db->select('warehouse_source.name warehouse_name_source');
+
+            $this->db->join($this->config->item('table_login_basic_setup_warehouse').' warehouse_destination','warehouse_destination.id = transfer_warehouse.warehouse_id_destination','INNER');
+            $this->db->select('warehouse_destination.name warehouse_name_destination');
+
+            $this->db->join($this->config->item('table_login_setup_classification_crop_types').' crop_type','crop_type.id = variety.crop_type_id','INNER');
+            $this->db->select('crop_type.name crop_type_name');
+
+            $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = crop_type.crop_id','INNER');
             $this->db->select('crop.name crop_name');
-            $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = type.crop_id','LEFT');
+
             $this->db->where('transfer_warehouse.id',$item_id);
             $this->db->where('transfer_warehouse.status !=',$this->config->item('system_status_delete'));
             $this->db->order_by('transfer_warehouse.id','ASC');
@@ -208,10 +220,11 @@ class Transfer_ww extends Root_Controller
                 $ajax['system_message']='Invalid Try.';
                 $this->json_return($ajax);
             }
-            $current_stocks=System_helper::get_variety_stock(array($data['item']['variety_id']));
-            $data['item']['current_stock']=$current_stocks[$data['item']['variety_id']][$data['item']['pack_size_id']][$data['item']['source_warehouse_id']]['current_stock'];
 
-            $data['title']="Transfer (Warehouse to Warehouse)";
+            $current_stocks=System_helper::get_variety_stock(array($data['item']['variety_id']));
+            $data['item']['current_stock']=$current_stocks[$data['item']['variety_id']][$data['item']['pack_size_id']][$data['item']['warehouse_id_source']]['current_stock'];
+
+            $data['title']="Edit Transfer (Warehouse to Warehouse)";
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/add_edit",$data,true));
             if($this->message)
@@ -228,7 +241,6 @@ class Transfer_ww extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
     private function system_details($id)
     {
         if(isset($this->permissions['action0']) && ($this->permissions['action0']==1))
@@ -243,18 +255,24 @@ class Transfer_ww extends Root_Controller
             }
             $this->db->from($this->config->item('table_sms_transfer_warehouse_variety').' transfer_warehouse');
             $this->db->select('transfer_warehouse.*');
+
+            $this->db->join($this->config->item('table_login_setup_classification_varieties').' variety','variety.id = transfer_warehouse.variety_id','INNER');
             $this->db->select('variety.name variety_name');
-            $this->db->join($this->config->item('table_login_setup_classification_varieties').' variety','variety.id = transfer_warehouse.variety_id','LEFT');
-            $this->db->select('v_pack_size.name pack_size');
-            $this->db->join($this->config->item('table_login_setup_classification_pack_size').' v_pack_size','v_pack_size.id = transfer_warehouse.pack_size_id','LEFT');
-            $this->db->select('source_ware_house.name source_ware_house_name');
-            $this->db->join($this->config->item('table_login_basic_setup_warehouse').' source_ware_house','source_ware_house.id = transfer_warehouse.source_warehouse_id','LEFT');
-            $this->db->select('destination_ware_house.name destination_ware_house_name');
-            $this->db->join($this->config->item('table_login_basic_setup_warehouse').' destination_ware_house','destination_ware_house.id = transfer_warehouse.destination_warehouse_id','LEFT');
-            $this->db->select('type.name crop_type_name');
-            $this->db->join($this->config->item('table_login_setup_classification_crop_types').' type','type.id = variety.crop_type_id','LEFT');
+
+            $this->db->join($this->config->item('table_login_setup_classification_pack_size').' pack','pack.id = transfer_warehouse.pack_size_id','LEFT');
+            $this->db->select('pack.name pack_size');
+
+            $this->db->join($this->config->item('table_login_basic_setup_warehouse').' warehouse_source','warehouse_source.id = transfer_warehouse.warehouse_id_source','INNER');
+            $this->db->select('warehouse_source.name warehouse_name_source');
+
+            $this->db->join($this->config->item('table_login_basic_setup_warehouse').' warehouse_destination','warehouse_destination.id = transfer_warehouse.warehouse_id_destination','INNER');
+            $this->db->select('warehouse_destination.name warehouse_name_destination');
+
+            $this->db->join($this->config->item('table_login_setup_classification_crop_types').' crop_type','crop_type.id = variety.crop_type_id','INNER');
+            $this->db->select('crop_type.name crop_type_name');
+
+            $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = crop_type.crop_id','INNER');
             $this->db->select('crop.name crop_name');
-            $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = type.crop_id','LEFT');
 
             $this->db->select('created_user_info.name created_by');
             $this->db->join($this->config->item('table_login_setup_user_info').' created_user_info','created_user_info.user_id = transfer_warehouse.user_created','INNER');
@@ -273,7 +291,7 @@ class Transfer_ww extends Root_Controller
                 $this->json_return($ajax);
             }
 
-            $data['title']="Transfer (Warehouse to Warehouse)";
+            $data['title']="Transfer (Warehouse to Warehouse) Details";
 
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/details",$data,true));
@@ -291,7 +309,6 @@ class Transfer_ww extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
     private function system_details_print($id)
     {
         if(isset($this->permissions['action4']) && ($this->permissions['action4']==1))
@@ -306,40 +323,45 @@ class Transfer_ww extends Root_Controller
             }
             $this->db->from($this->config->item('table_sms_transfer_warehouse_variety').' transfer_warehouse');
             $this->db->select('transfer_warehouse.*');
-            $this->db->select('variety.name variety_name');
-            $this->db->join($this->config->item('table_login_setup_classification_varieties').' variety','variety.id = transfer_warehouse.variety_id','LEFT');
-            $this->db->select('v_pack_size.name pack_size');
-            $this->db->join($this->config->item('table_login_setup_classification_pack_size').' v_pack_size','v_pack_size.id = transfer_warehouse.pack_size_id','LEFT');
-            $this->db->select('source_ware_house.name source_ware_house_name');
-            $this->db->join($this->config->item('table_login_basic_setup_warehouse').' source_ware_house','source_ware_house.id = transfer_warehouse.source_warehouse_id','LEFT');
-            $this->db->select('destination_ware_house.name destination_ware_house_name');
-            $this->db->join($this->config->item('table_login_basic_setup_warehouse').' destination_ware_house','destination_ware_house.id = transfer_warehouse.destination_warehouse_id','LEFT');
-            $this->db->select('type.name crop_type_name');
-            $this->db->join($this->config->item('table_login_setup_classification_crop_types').' type','type.id = variety.crop_type_id','LEFT');
-            $this->db->select('crop.name crop_name');
-            $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = type.crop_id','LEFT');
 
-            $this->db->select('created_user_info.name created_by');
+            $this->db->join($this->config->item('table_login_setup_classification_varieties').' variety','variety.id = transfer_warehouse.variety_id','INNER');
+            $this->db->select('variety.name variety_name');
+
+            $this->db->join($this->config->item('table_login_setup_classification_pack_size').' pack','pack.id = transfer_warehouse.pack_size_id','LEFT');
+            $this->db->select('pack.name pack_size');
+
+            $this->db->join($this->config->item('table_login_basic_setup_warehouse').' warehouse_source','warehouse_source.id = transfer_warehouse.warehouse_id_source','INNER');
+            $this->db->select('warehouse_source.name warehouse_name_source');
+
+            $this->db->join($this->config->item('table_login_basic_setup_warehouse').' warehouse_destination','warehouse_destination.id = transfer_warehouse.warehouse_id_destination','INNER');
+            $this->db->select('warehouse_destination.name warehouse_name_destination');
+
+            $this->db->join($this->config->item('table_login_setup_classification_crop_types').' crop_type','crop_type.id = variety.crop_type_id','INNER');
+            $this->db->select('crop_type.name crop_type_name');
+
+            $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = crop_type.crop_id','INNER');
+            $this->db->select('crop.name crop_name');
+
             $this->db->join($this->config->item('table_login_setup_user_info').' created_user_info','created_user_info.user_id = transfer_warehouse.user_created','INNER');
-            $this->db->select('updated_user_info.name updated_by');
+            $this->db->select('created_user_info.name created_by');
+
             $this->db->join($this->config->item('table_login_setup_user_info').' updated_user_info','updated_user_info.user_id = transfer_warehouse.user_updated','LEFT');
+            $this->db->select('updated_user_info.name updated_by');
 
             $this->db->where('transfer_warehouse.id',$item_id);
             $this->db->where('transfer_warehouse.status !=',$this->config->item('system_status_delete'));
             $this->db->order_by('transfer_warehouse.id','ASC');
             $data['item']=$this->db->get()->row_array();
 
-//            print_r($data['item']);
-//            exit;
             if(!$data['item'])
             {
-                System_helper::invalid_try('Details Non Exists',$item_id);
+                System_helper::invalid_try('Print View Non Exists',$item_id);
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid Try.';
                 $this->json_return($ajax);
             }
 
-            $data['title']="Transfer (Warehouse to Warehouse)";
+            $data['title']="Transfer (Warehouse to Warehouse) Print";
 
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/details_print",$data,true));
@@ -357,7 +379,6 @@ class Transfer_ww extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
     private function system_save()
     {
         $id=$this->input->post('id');
@@ -399,16 +420,16 @@ class Transfer_ww extends Root_Controller
             $old_item=Query_helper::get_info($this->config->item('table_sms_transfer_warehouse_variety'),'*',array('status !="'.$this->config->item('system_status_delete').'"','id ='.$id),1);
             $item['variety_id']=$old_item['variety_id'];
             $item['pack_size_id']=$old_item['pack_size_id'];
-            $item['source_warehouse_id']=$old_item['source_warehouse_id'];
-            $item['destination_warehouse_id']=$old_item['destination_warehouse_id'];
-            $old_value=$old_item['quantity'];
+            $item['warehouse_id_source']=$old_item['warehouse_id_source'];
+            $item['warehouse_id_destination']=$old_item['warehouse_id_destination'];
+            $old_value=$old_item['quantity_transfer'];
         }
         $current_stocks=System_helper::get_variety_stock(array($item['variety_id']));
 
         /*-- Start-- Validation Checking */
 
         //Checking Same warehouse ID(source and destination)
-        if($item['source_warehouse_id']==$item['destination_warehouse_id'])
+        if($item['warehouse_id_source']==$item['warehouse_id_destination'])
         {
             $ajax['status']=false;
             $ajax['system_message']='Source warehouse and destination warehouse can not be same';
@@ -418,44 +439,44 @@ class Transfer_ww extends Root_Controller
         //Negative Stock Checking For Source Warehouse and destination warehouse
         $stock_source=0;
         $stock_destination=0;
-        if(isset($current_stocks[$item['variety_id']][$item['pack_size_id']][$item['source_warehouse_id']]))
+        if(isset($current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id_source']]))
         {
-            $stock_source=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['source_warehouse_id']]['current_stock'];
+            $stock_source=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id_source']]['current_stock'];
 
         }
-        if(isset($current_stocks[$item['variety_id']][$item['pack_size_id']][$item['destination_warehouse_id']]))
+        if(isset($current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id_destination']]))
         {
-            $stock_destination=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['destination_warehouse_id']]['current_stock'];
+            $stock_destination=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id_destination']]['current_stock'];
         }
         if($id>0)
         {
-            if($item['quantity']>$old_value)
+            if($item['quantity_transfer']>$old_value)
             {
-                $variance=$item['quantity']-$old_value;
+                $variance=$item['quantity_transfer']-$old_value;
                 if($variance>$stock_source)
                 {
                     $ajax['status']=false;
-                    $ajax['system_message']='This Transfer('.$item['variety_id'].'-'.$item['pack_size_id'].'-'.$item['source_warehouse_id'].'-'.$old_value.'-'.$item['quantity'].') will make current stock negative.';
+                    $ajax['system_message']='This Transfer('.$item['variety_id'].'-'.$item['pack_size_id'].'-'.$item['warehouse_id_source'].'-'.$old_value.'-'.$item['quantity_transfer'].') will make current stock negative.';
                     $this->json_return($ajax);
                 }
             }
-            else if($item['quantity']<$old_value)
+            else if($item['quantity_transfer']<$old_value)
             {
-                $variance=$old_value-$item['quantity'];
+                $variance=$old_value-$item['quantity_transfer'];
                 if($variance>$stock_destination)
                 {
                     $ajax['status']=false;
-                    $ajax['system_message']='This Update Transfer('.$item['variety_id'].'-'.$item['pack_size_id'].'-'.$item['destination_warehouse_id'].'-'.$old_value.'-'.$item['quantity'].') will make current stock negative.';
+                    $ajax['system_message']='This Update Transfer('.$item['variety_id'].'-'.$item['pack_size_id'].'-'.$item['warehouse_id_destination'].'-'.$old_value.'-'.$item['quantity_transfer'].') will make current stock negative.';
                     $this->json_return($ajax);
                 }
             }
         }
         else
         {
-            if($item['quantity']>$stock_source)
+            if($item['quantity_transfer']>$stock_source)
             {
                 $ajax['status']=false;
-                $ajax['system_message']='This Transfer('.$item['variety_id'].'-'.$item['pack_size_id'].'-'.$item['source_warehouse_id'].'-'.$item['quantity'].') will make current stock negative.';
+                $ajax['system_message']='This Transfer('.$item['variety_id'].'-'.$item['pack_size_id'].'-'.$item['warehouse_id_source'].'-'.$item['quantity_transfer'].') will make current stock negative.';
                 $this->json_return($ajax);
             }
         }
@@ -469,7 +490,7 @@ class Transfer_ww extends Root_Controller
 
             $data=array(); //Main Data
             $data['date_transfer']=System_helper::get_time($item['date_transfer']);
-            $data['quantity']=$item['quantity'];
+            $data['quantity_transfer']=$item['quantity_transfer'];
             $data['remarks']=$item['remarks'];
             $data['user_updated']=$user->user_id;
             $data['date_updated']=$time;
@@ -477,18 +498,18 @@ class Transfer_ww extends Root_Controller
             Query_helper::update($this->config->item('table_sms_transfer_warehouse_variety'),$data,array('id='.$id));
 
             $data=array(); //Summary Data(for source warehouse)
-            $data['out_transfer_warehouse']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['source_warehouse_id']]['out_transfer_warehouse']-$old_value+$item['quantity'];
-            $data['current_stock']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['source_warehouse_id']]['current_stock']+$old_value-$item['quantity'];
+            $data['out_transfer_warehouse']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id_source']]['out_transfer_warehouse']-$old_value+$item['quantity_transfer'];
+            $data['current_stock']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id_source']]['current_stock']+$old_value-$item['quantity_transfer'];
             $data['date_updated'] = $time;
             $data['user_updated'] = $user->user_id;
-            Query_helper::update($this->config->item('table_sms_stock_summary_variety'),$data,array('variety_id='.$item['variety_id'],'pack_size_id='.$item['pack_size_id'],'warehouse_id='.$item['source_warehouse_id']));
+            Query_helper::update($this->config->item('table_sms_stock_summary_variety'),$data,array('variety_id='.$item['variety_id'],'pack_size_id='.$item['pack_size_id'],'warehouse_id='.$item['warehouse_id_source']));
 
             $data=array(); //Summary Data(for destination warehouse)
-            $data['in_transfer_warehouse']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['destination_warehouse_id']]['in_transfer_warehouse']-$old_value+$item['quantity'];
-            $data['current_stock']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['destination_warehouse_id']]['current_stock']-$old_value+$item['quantity'];
+            $data['in_transfer_warehouse']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id_destination']]['in_transfer_warehouse']-$old_value+$item['quantity_transfer'];
+            $data['current_stock']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id_destination']]['current_stock']-$old_value+$item['quantity_transfer'];
             $data['date_updated'] = $time;
             $data['user_updated'] = $user->user_id;
-            Query_helper::update($this->config->item('table_sms_stock_summary_variety'),$data,array('variety_id='.$item['variety_id'],'pack_size_id='.$item['pack_size_id'],'warehouse_id='.$item['destination_warehouse_id']));
+            Query_helper::update($this->config->item('table_sms_stock_summary_variety'),$data,array('variety_id='.$item['variety_id'],'pack_size_id='.$item['pack_size_id'],'warehouse_id='.$item['warehouse_id_destination']));
 
         }
         else
@@ -497,9 +518,9 @@ class Transfer_ww extends Root_Controller
             $data['date_transfer']=System_helper::get_time($item['date_transfer']);
             $data['variety_id']=$item['variety_id'];
             $data['pack_size_id']=$item['pack_size_id'];
-            $data['source_warehouse_id']=$item['source_warehouse_id'];
-            $data['destination_warehouse_id']=$item['destination_warehouse_id'];
-            $data['quantity']=$item['quantity'];
+            $data['warehouse_id_source']=$item['warehouse_id_source'];
+            $data['warehouse_id_destination']=$item['warehouse_id_destination'];
+            $data['quantity_transfer']=$item['quantity_transfer'];
             $data['remarks']=$item['remarks'];
             $data['revision_counter']=1;
             $data['user_created']=$user->user_id;
@@ -507,28 +528,28 @@ class Transfer_ww extends Root_Controller
             Query_helper::add($this->config->item('table_sms_transfer_warehouse_variety'),$data);
 
             $data=array(); //Summary Data(for source warehouse)
-            $data['out_transfer_warehouse']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['source_warehouse_id']]['out_transfer_warehouse']+$item['quantity'];
-            $data['current_stock']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['source_warehouse_id']]['current_stock']-$item['quantity'];
+            $data['out_transfer_warehouse']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id_source']]['out_transfer_warehouse']+$item['quantity_transfer'];
+            $data['current_stock']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id_source']]['current_stock']-$item['quantity_transfer'];
             $data['date_updated'] = $time;
             $data['user_updated'] = $user->user_id;
-            Query_helper::update($this->config->item('table_sms_stock_summary_variety'),$data,array('variety_id='.$item['variety_id'],'pack_size_id='.$item['pack_size_id'],'warehouse_id='.$item['source_warehouse_id']));
+            Query_helper::update($this->config->item('table_sms_stock_summary_variety'),$data,array('variety_id='.$item['variety_id'],'pack_size_id='.$item['pack_size_id'],'warehouse_id='.$item['warehouse_id_source']));
 
             $data=array(); //Summary Data(for destination warehouse)
-            if(isset($current_stocks[$item['variety_id']][$item['pack_size_id']][$item['destination_warehouse_id']]))
+            if(isset($current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id_destination']]))
             {
-                $data['in_transfer_warehouse']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['destination_warehouse_id']]['in_transfer_warehouse']+$item['quantity'];
-                $data['current_stock']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['destination_warehouse_id']]['current_stock']+$item['quantity'];
+                $data['in_transfer_warehouse']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id_destination']]['in_transfer_warehouse']+$item['quantity_transfer'];
+                $data['current_stock']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id_destination']]['current_stock']+$item['quantity_transfer'];
                 $data['date_updated'] = $time;
                 $data['user_updated'] = $user->user_id;
-                Query_helper::update($this->config->item('table_sms_stock_summary_variety'),$data,array('variety_id='.$item['variety_id'],'pack_size_id='.$item['pack_size_id'],'warehouse_id='.$item['destination_warehouse_id']));
+                Query_helper::update($this->config->item('table_sms_stock_summary_variety'),$data,array('variety_id='.$item['variety_id'],'pack_size_id='.$item['pack_size_id'],'warehouse_id='.$item['warehouse_id_destination']));
             }
             else
             {
                 $data['variety_id'] = $item['variety_id'];
                 $data['pack_size_id'] = $item['pack_size_id'];
-                $data['warehouse_id'] = $item['destination_warehouse_id'];
-                $data['in_transfer_warehouse']=$item['quantity'];
-                $data['current_stock']=$item['quantity'];
+                $data['warehouse_id'] = $item['warehouse_id_destination'];
+                $data['in_transfer_warehouse']=$item['quantity_transfer'];
+                $data['current_stock']=$item['quantity_transfer'];
                 $data['date_updated'] = $time;
                 $data['user_updated'] = $user->user_id;
                 Query_helper::add($this->config->item('table_sms_stock_summary_variety'),$data);
@@ -555,7 +576,6 @@ class Transfer_ww extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
     public function get_pack_size()
     {
         $variety_id = $this->input->post('variety_id');
@@ -566,8 +586,8 @@ class Transfer_ww extends Root_Controller
         }
         $this->db->from($this->config->item('table_sms_stock_summary_variety').' stock_summary');
         $this->db->select('stock_summary.pack_size_id value');
-        $this->db->select('v_pack_size.name text');
-        $this->db->join($this->config->item('table_login_setup_classification_pack_size').' v_pack_size','v_pack_size.id = stock_summary.pack_size_id','LEFT');
+        $this->db->select('pack.name text');
+        $this->db->join($this->config->item('table_login_setup_classification_pack_size').' pack','pack.id = stock_summary.pack_size_id','LEFT');
         $this->db->where('stock_summary.variety_id',$variety_id);
         $this->db->group_by('stock_summary.pack_size_id');
         $items=$this->db->get()->result_array();
@@ -583,20 +603,19 @@ class Transfer_ww extends Root_Controller
         $ajax['system_content'][]=array("id"=>$html_container_id,"html"=>$this->load->view("dropdown_with_select",$data,true));
         $this->json_return($ajax);
     }
-
-    public function get_source_warehouse()
+    public function get_warehouse_source()
     {
         $variety_id = $this->input->post('variety_id');
         $pack_size_id = $this->input->post('pack_size_id');
-        $html_container_id='#source_warehouse_id';
+        $html_container_id='#warehouse_id_source';
         if($this->input->post('html_container_id'))
         {
             $html_container_id=$this->input->post('html_container_id');
         }
         $this->db->from($this->config->item('table_sms_stock_summary_variety').' stock_summary');
         $this->db->select('stock_summary.warehouse_id value');
-        $this->db->select('ware_house.name text');
-        $this->db->join($this->config->item('table_login_basic_setup_warehouse').' ware_house','ware_house.id = stock_summary.warehouse_id','LEFT');
+        $this->db->select('warehouse.name text');
+        $this->db->join($this->config->item('table_login_basic_setup_warehouse').' warehouse','warehouse.id = stock_summary.warehouse_id','INNER');
         $this->db->where('stock_summary.variety_id',$variety_id);
         $this->db->where('stock_summary.pack_size_id',$pack_size_id);
         $this->db->where('stock_summary.current_stock > ',0);
@@ -605,7 +624,6 @@ class Transfer_ww extends Root_Controller
         $ajax['system_content'][]=array("id"=>$html_container_id,"html"=>$this->load->view("dropdown_with_select",$data,true));
         $this->json_return($ajax);
     }
-
     private function system_delete($id)
     {
         if(isset($this->permissions['action3']) && ($this->permissions['action3']==1))
@@ -635,20 +653,20 @@ class Transfer_ww extends Root_Controller
             /*--Start-- Validation Checking */
 
             //Negative Stock Checking
-            if(isset($current_stocks[$item['variety_id']][$item['pack_size_id']][$item['destination_warehouse_id']]))
+            if(isset($current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id_destination']]))
             {
-                $current_stock=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['destination_warehouse_id']]['current_stock'];
-                if($item['quantity']>$current_stock)
+                $current_stock=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id_destination']]['current_stock'];
+                if($item['quantity_transfer']>$current_stock)
                 {
                     $ajax['status']=false;
-                    $ajax['system_message']='This Delete From Transfer('.$item['variety_id'].'-'.$item['pack_size_id'].'-'.$item['destination_warehouse_id'].'-'.$item['quantity'].') will make current stock negative.';
+                    $ajax['system_message']='This Delete From Transfer('.$item['variety_id'].'-'.$item['pack_size_id'].'-'.$item['warehouse_id_destination'].'-'.$item['quantity_transfer'].') will make current stock negative.';
                     $this->json_return($ajax);
                 }
             }
             else
             {
                 $ajax['status']=false;
-                $ajax['system_message']='This Delete From Transfer:('.$item['variety_id'].'-'.$item['pack_size_id'].'-'.$item['destination_warehouse_id'].' is absent in stock.)';
+                $ajax['system_message']='This Delete From Transfer:('.$item['variety_id'].'-'.$item['pack_size_id'].'-'.$item['warehouse_id_destination'].' is absent in stock.)';
                 $this->json_return($ajax);
             }
 
@@ -662,18 +680,18 @@ class Transfer_ww extends Root_Controller
             Query_helper::update($this->config->item('table_sms_transfer_warehouse_variety'),$data,array('id='.$item_id));
 
             $data=array(); //Summary data for source warehouse
-            $data['out_transfer_warehouse']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['source_warehouse_id']]['out_transfer_warehouse']-$item['quantity'];
-            $data['current_stock']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['source_warehouse_id']]['current_stock']+$item['quantity'];
+            $data['out_transfer_warehouse']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id_source']]['out_transfer_warehouse']-$item['quantity_transfer'];
+            $data['current_stock']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id_source']]['current_stock']+$item['quantity_transfer'];
             $data['date_updated'] = $time;
             $data['user_updated'] = $user->user_id;
-            Query_helper::update($this->config->item('table_sms_stock_summary_variety'),$data,array('variety_id='.$item['variety_id'],'pack_size_id='.$item['pack_size_id'],'warehouse_id='.$item['source_warehouse_id']));
+            Query_helper::update($this->config->item('table_sms_stock_summary_variety'),$data,array('variety_id='.$item['variety_id'],'pack_size_id='.$item['pack_size_id'],'warehouse_id='.$item['warehouse_id_source']));
 
             $data=array(); //Summary data for destination warehouse
-            $data['in_transfer_warehouse']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['destination_warehouse_id']]['in_transfer_warehouse']-$item['quantity'];
-            $data['current_stock']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['destination_warehouse_id']]['current_stock']-$item['quantity'];
+            $data['in_transfer_warehouse']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id_destination']]['in_transfer_warehouse']-$item['quantity_transfer'];
+            $data['current_stock']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id_destination']]['current_stock']-$item['quantity_transfer'];
             $data['date_updated'] = $time;
             $data['user_updated'] = $user->user_id;
-            Query_helper::update($this->config->item('table_sms_stock_summary_variety'),$data,array('variety_id='.$item['variety_id'],'pack_size_id='.$item['pack_size_id'],'warehouse_id='.$item['destination_warehouse_id']));
+            Query_helper::update($this->config->item('table_sms_stock_summary_variety'),$data,array('variety_id='.$item['variety_id'],'pack_size_id='.$item['pack_size_id'],'warehouse_id='.$item['warehouse_id_destination']));
 
             $this->db->trans_complete();   //DB Transaction Handle END
             if ($this->db->trans_status()===true)
@@ -695,7 +713,52 @@ class Transfer_ww extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
+    private function check_validation()
+    {
+        $id = $this->input->post("id");
+        $item = $this->input->post("item");
+        $this->load->library('form_validation');
+        if(!($id>0))
+        {
+            if(!isset($item['date_transfer']) || !strtotime($item['date_transfer']))
+            {
+                $this->message='Transfer date field is required.';
+                return false;
+            }
+            $this->form_validation->set_rules('item[date_transfer]','Transfer Date','required');
+            $this->form_validation->set_rules('crop_id',$this->lang->line('LABEL_CROP_NAME'),'required');
+            $this->form_validation->set_rules('crop_type_id',$this->lang->line('LABEL_CROP_TYPE_NAME'),'required');
+            $this->form_validation->set_rules('item[variety_id]',$this->lang->line('LABEL_VARIETY_NAME'),'required');
+            $this->form_validation->set_rules('item[pack_size_id]',$this->lang->line('LABEL_PACK_SIZE'),'required');
+            $this->form_validation->set_rules('item[warehouse_id_source]',$this->lang->line('LABEL_WAREHOUSE_NAME_SOURCE'),'required');
+            $this->form_validation->set_rules('item[warehouse_id_destination]',$this->lang->line('LABEL_WAREHOUSE_NAME_DESTINATION'),'required');
+        }
+        else
+        {
+            if(isset($this->permissions['action2']) && ($this->permissions['action2']==1))
+            {
+                if(!isset($item['date_transfer']) || !strtotime($item['date_transfer']))
+                {
+                    $this->message='Transfer date field is required.';
+                    return false;
+                }
+                $this->form_validation->set_rules('item[date_transfer]','Transfer Date','required');
+            }
+        }
+        $this->form_validation->set_rules('id',$this->lang->line('LABEL_ID'),'required');
+        //$this->form_validation->set_rules('item[quantity_transfer]',$this->lang->line('LABEL_QUANTITY'),'required');
+        if(!$item['quantity_transfer'])
+        {
+            $this->message='Transfer '.$this->lang->line('LABEL_QUANTITY').' field is required.';
+            return false;
+        }
+        if($this->form_validation->run() == FALSE)
+        {
+            $this->message=validation_errors();
+            return false;
+        }
+        return true;
+    }
     private function system_set_preference()
     {
         if(isset($this->permissions['action6']) && ($this->permissions['action6']==1))
@@ -715,7 +778,6 @@ class Transfer_ww extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
     private function get_preference()
     {
         $user = User_helper::get_user();
@@ -752,26 +814,4 @@ class Transfer_ww extends Root_Controller
         return $data;
     }
 
-    private function check_validation()
-    {
-        $id = $this->input->post("id");
-        if(!($id>0))
-        {
-            $this->load->library('form_validation');
-            $this->form_validation->set_rules('item[date_transfer]','Transfer Date','required');
-            $this->form_validation->set_rules('crop_id',$this->lang->line('LABEL_CROP_NAME'),'required');
-            $this->form_validation->set_rules('crop_type_id',$this->lang->line('LABEL_CROP_TYPE_NAME'),'required');
-            $this->form_validation->set_rules('item[variety_id]',$this->lang->line('LABEL_VARIETY_NAME'),'required');
-            $this->form_validation->set_rules('item[pack_size_id]',$this->lang->line('LABEL_PACK_SIZE'),'required');
-            $this->form_validation->set_rules('item[source_warehouse_id]','Source Warehouse','required');
-            $this->form_validation->set_rules('item[destination_warehouse_id]','Destination Warehouse','required');
-            $this->form_validation->set_rules('item[quantity]',$this->lang->line('LABEL_QUANTITY'),'required');
-            if($this->form_validation->run() == FALSE)
-            {
-                $this->message=validation_errors();
-                return false;
-            }
-        }
-        return true;
-    }
 }
