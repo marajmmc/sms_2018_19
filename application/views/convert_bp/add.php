@@ -115,10 +115,10 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
     <div style="display: none;" class="row show-grid" id="convert_quantity_id_container">
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label for="convert_quantity" class="control-label pull-right"><?php echo $this->lang->line('LABEL_CONVERT_QUANTITY') .' (KG)';?><span style="color:#FF0000">*</span></label>
+                <label for="convert_quantity" class="control-label pull-right">Convert Quantity (KG)<span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <input type="text" name="item[convert_quantity]" id="convert_quantity_id" class="form-control float_type_positive" value="<?php echo $item['convert_quantity'];?>"/>
+                <input type="text" name="item[quantity_convert]" id="convert_quantity_id" class="form-control float_type_positive" value="<?php echo $item['convert_quantity'];?>"/>
             </div>
         </div>
     </div>
@@ -161,12 +161,12 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         </div>
     </div>
 
-    <div style="display: none;" class="row show-grid" id="qunatity_pack_expected_container">
+    <div style="display: none;" class="row show-grid" id="quantity_pack_expected_container">
         <div class="col-xs-4">
-            <label for="qunatity_pack_expected" class="control-label pull-right">Expected Packet Quantity</label>
+            <label for="quantity_pack_expected" class="control-label pull-right">Expected Packet Quantity</label>
         </div>
         <div class="col-sm-4 col-xs-8">
-            <label id="qunatity_pack_expected_id" class="control-label"></label>
+            <label id="quantity_pack_expected_id" class="control-label"></label>
         </div>
     </div>
     <div style="display: none;" class="row show-grid" id="quantity_pack_actual_container">

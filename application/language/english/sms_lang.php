@@ -374,3 +374,9 @@ $lang['LABEL_CARTON_SIZE']='Ctn Size';
 $lang['LABEL_CHALLAN_NUMBER']='Challan Number';
 $lang['LABEL_NUMBER_OF_REEL']='Number Of Reel';
 
+$lang['LABEL_DATE_CONVERT']='Convert Date';
+
+$lang['LABEL_QUANTITY_CONVERT_TOTAL_KG']='Total Convert Quantity (Kg)';
+
+
+
