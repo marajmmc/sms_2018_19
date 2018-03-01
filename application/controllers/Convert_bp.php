@@ -698,10 +698,11 @@ class Convert_bp extends Root_Controller
 
         $this->db->from($this->config->item('table_sms_stock_summary_variety').' stock_summary');
         $this->db->select('stock_summary.warehouse_id value');
-        $this->db->select('ware_house.name text');
-        $this->db->join($this->config->item('table_login_basic_setup_warehouse').' ware_house','ware_house.id = stock_summary.warehouse_id','INNER');
+        $this->db->select('warehouse.name text');
+        $this->db->join($this->config->item('table_login_basic_setup_warehouse').' warehouse','warehouse.id = stock_summary.warehouse_id','INNER');
         $this->db->where('stock_summary.variety_id',$variety_id);
         $this->db->where('stock_summary.pack_size_id',$pack_size_id);
+        $this->db->where('stock_summary.current_stock >',0);
         $data_warehouse_source['items']=$this->db->get()->result_array();
 
         //Getting packsize
@@ -725,19 +726,6 @@ class Convert_bp extends Root_Controller
     {
         $variety_id = $this->input->post('variety_id');
         $pack_size_id = $this->input->post('pack_size_id');
-        $convert_quantity = $this->input->post('convert_quantity');
-
-        $pack_size_value = Query_helper::get_info($this->config->item('table_login_setup_classification_pack_size'), 'name value', array('status !="' . $this->config->item('system_status_delete') . '"', 'id =' . $pack_size_id), 1);
-
-        $html_container_id = '#quantity_pack_expected_id';
-        if ($this->input->post('html_container_id'))
-        {
-            $html_container_id = $this->input->post('html_container_id');
-        }
-        if ($this->input->post('html_container_id'))
-        {
-            $html_container_id = $this->input->post('html_container_id');
-        }
 
         $this->db->from($this->config->item('table_login_setup_classification_variety_raw_config') . ' raw_config');
         $this->db->select('raw_config.*');
@@ -745,7 +733,27 @@ class Convert_bp extends Root_Controller
         $this->db->where('raw_config.pack_size_id', $pack_size_id);
         $this->db->where('raw_config.revision', 1);
         $result = $this->db->get()->row_array();
-        if (!($result['masterfoil'] > 0))
+        if($result)
+        {
+            if (($result['masterfoil'] > 0)||(($result['foil'] > 0) && ($result['sticker'] > 0)))
+            {
+                $this->json_return($result);
+            }
+            else
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='Raw Material Setup is not Valid.';
+                $this->json_return($ajax);
+            }
+
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']='Raw Material Setup is not done.';
+            $this->json_return($ajax);
+        }
+        /*if (!($result['masterfoil'] > 0))
         {
             if (!($result['foil'] > 0 && $result['sticker'] > 0))
             {
@@ -814,7 +822,7 @@ class Convert_bp extends Root_Controller
             $ajax['quantity_foil']=0;
             $ajax['quantity_sticker']=0;
         }
-        $this->json_return($ajax);
+        $this->json_return($ajax);*/
 
     }
 
