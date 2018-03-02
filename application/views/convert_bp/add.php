@@ -6,18 +6,12 @@ $action_buttons[]=array(
     'label'=>$CI->lang->line("ACTION_BACK"),
     'href'=>site_url($CI->controller_url)
 );
-if((isset($CI->permissions['action1']) && ($CI->permissions['action1']==1)) || (isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)))
+if((isset($CI->permissions['action1']) && ($CI->permissions['action1']==1)))
 {
     $action_buttons[]=array(
         'type'=>'button',
         'label'=>$CI->lang->line("ACTION_SAVE"),
         'id'=>'button_action_save',
-        'data-form'=>'#save_form'
-    );
-    $action_buttons[]=array(
-        'type'=>'button',
-        'label'=>$CI->lang->line("ACTION_SAVE_NEW"),
-        'id'=>'button_action_save_new',
         'data-form'=>'#save_form'
     );
 }
@@ -153,7 +147,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <label class="control-label pull-right">Actual Packet Quantity<span style="color:#FF0000">*</span></label>
                 </div>
                 <div class="col-sm-4 col-xs-8">
-                    <input id="quantity_packet_actual" type="text" data-master-foil-per-pack="0" data-common-foil-per-pack="0" data-sticker-per-pack="0" name="item[quantity_pack_actual]" id="quantity_pack_actual_id" class="form-control float_type_positive" value=""/>
+                    <input id="quantity_packet_actual" type="text" data-master-foil-per-pack="0" data-common-foil-per-pack="0" data-sticker-per-pack="0" name="item[quantity_packet_actual]" id="quantity_pack_actual_id" class="form-control float_type_positive" value=""/>
                 </div>
             </div>
             <div style="display: none;" class="row show-grid" id="current_stock_master_foil_container">
@@ -653,6 +647,9 @@ jQuery(document).ready(function()
                             var quantity_packet_expected=Math.floor(parseFloat(convert_quantity*1000/pack_size).toFixed(3));
                             $('#quantity_packet_expected').html(quantity_packet_expected);
                             $('#quantity_packet_actual').val(quantity_packet_expected);
+                            $('#current_stock_master_foil').html((data['current_stock_master']));
+                            $('#current_stock_foil').html((data['current_stock_foil']));
+                            $('#current_stock_sticker').html((data['current_stock_sticker']));
                             calculate_raw(quantity_packet_expected,data['masterfoil'],data['foil'],data['sticker']);
 
                         }
@@ -671,13 +668,10 @@ jQuery(document).ready(function()
     $(document).off('input','#quantity_packet_actual');
     $(document).on("input","#quantity_packet_actual",function()
     {
-        console.log('here');
         var master=$('#quantity_packet_actual').attr('data-master-foil-per-pack');
         var foil=$('#quantity_packet_actual').attr('data-common-foil-per-pack');
         var sticker=$('#quantity_packet_actual').attr('data-sticker-per-pack');
         calculate_raw($(this).val(),master,foil,sticker);
-
-
     });
 });
 </script>

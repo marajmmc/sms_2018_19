@@ -9,15 +9,6 @@ if(isset($CI->permissions['action1']) && ($CI->permissions['action1']==1))
         'href'=>site_url($CI->controller_url.'/index/add')
     );
 }
-if(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1))
-{
-    $action_buttons[]=array(
-        'type'=>'button',
-        'label'=>$CI->lang->line('ACTION_EDIT'),
-        'class'=>'button_jqx_action',
-        'data-action-link'=>site_url($CI->controller_url.'/index/edit')
-    );
-}
 if(isset($CI->permissions['action0']) && ($CI->permissions['action0']==1))
 {
     $action_buttons[]=array(
@@ -25,16 +16,6 @@ if(isset($CI->permissions['action0']) && ($CI->permissions['action0']==1))
         'label'=>$CI->lang->line('ACTION_DETAILS'),
         'class'=>'button_jqx_action',
         'data-action-link'=>site_url($CI->controller_url.'/index/details')
-    );
-}
-if(isset($CI->permissions['action3']) && ($CI->permissions['action3']==1))
-{
-    $action_buttons[]=array(
-        'type'=>'button',
-        'label'=>$CI->lang->line('ACTION_DELETE'),
-        'data-message-confirm'=>'Are you sure to Delete this stock?',
-        'class'=>'button_jqx_action',
-        'data-action-link'=>site_url($CI->controller_url.'/index/delete')
     );
 }
 if(isset($CI->permissions['action4']) && ($CI->permissions['action4']==1))
@@ -117,6 +98,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 { name: 'variety_name', type: 'string' },
                 { name: 'pack_size', type: 'string' },
                 { name: 'quantity_convert_total_kg', type: 'string' },
+                { name: 'quantity_packet_actual', type: 'string' },
                 { name: 'warehouse_name_source', type: 'string' },
                 { name: 'warehouse_name_destination', type: 'string' },
                 { name: 'remarks', type: 'string' }
@@ -152,6 +134,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     { text: '<?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?>', dataField: 'variety_name',width:'100',hidden: <?php echo $system_preference_items['variety_name']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?>', dataField: 'pack_size',width:'100',cellsalign: 'right',filtertype: 'list',hidden: <?php echo $system_preference_items['pack_size']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_CONVERT_TOTAL_KG'); ?>',dataField: 'quantity_convert_total_kg',width:'100',cellsalign: 'right',hidden: <?php echo $system_preference_items['quantity_convert_total_kg']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_PACKET_ACTUAL'); ?>',dataField: 'quantity_packet_actual',width:'100',cellsalign: 'right',hidden: <?php echo $system_preference_items['quantity_convert_total_kg']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_WAREHOUSE_NAME_SOURCE'); ?>',dataField: 'warehouse_name_source',width:'100',filtertype: 'list',hidden: <?php echo $system_preference_items['warehouse_name_source']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_WAREHOUSE_NAME_DESTINATION'); ?>',dataField: 'warehouse_name_destination',width:'100',filtertype: 'list',hidden: <?php echo $system_preference_items['warehouse_name_destination']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_REMARKS'); ?>', dataField: 'remarks',hidden: <?php echo $system_preference_items['remarks']?0:1;?>}
