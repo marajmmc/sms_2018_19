@@ -182,6 +182,7 @@ $lang['LABEL_DATE_PURCHASE']='Purchase date';
 $lang['LABEL_DATE_CHALLAN']='Challan Date';
 $lang['LABEL_DATE_CREATED_TIME']='Created Time';
 $lang['LABEL_DATE_UPDATED_TIME']='Updated Time';
+$lang['LABEL_DATE_CONVERT']='Convert Date';
 
 //months array
 $lang['LABEL_MONTH'] = 'Month';
@@ -373,8 +374,6 @@ $lang['LABEL_CARTON_SIZE']='Ctn Size';
 //Lang File Added By Saiful
 $lang['LABEL_CHALLAN_NUMBER']='Challan Number';
 $lang['LABEL_NUMBER_OF_REEL']='Number Of Reel';
-
-$lang['LABEL_DATE_CONVERT']='Convert Date';
 
 $lang['LABEL_QUANTITY_CONVERT_TOTAL_KG']='Total Convert Quantity (Kg)';
 $lang['LABEL_QUANTITY_PACKET_ACTUAL']='Converted Packets';

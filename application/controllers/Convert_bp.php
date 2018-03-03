@@ -30,9 +30,13 @@ class Convert_bp extends Root_Controller
         {
             $this->system_details($id);
         }
+        elseif($action=="details_print")
+        {
+            $this->system_details_print($id);
+        }
         elseif($action=="delete")
         {
-            $this->system_delete($id);
+            $this->system_delete();
         }
         elseif($action=='save')
         {
@@ -161,7 +165,6 @@ class Convert_bp extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
     private function system_save()
     {
         $id=$this->input->post('id');
@@ -374,7 +377,6 @@ class Convert_bp extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
     public function get_warehouse_source_and_packsize()
     {
         $variety_id = $this->input->post('variety_id');
@@ -409,7 +411,6 @@ class Convert_bp extends Root_Controller
 
         $this->json_return($ajax);
     }
-
     public function check_variety_raw_config()
     {
         $variety_id = $this->input->post('variety_id');
@@ -474,18 +475,22 @@ class Convert_bp extends Root_Controller
             }
             $this->db->from($this->config->item('table_sms_convert_bulk_to_pack').' convert_bp');
             $this->db->select('convert_bp.*');
-            $this->db->select('variety.name variety_name');
             $this->db->join($this->config->item('table_login_setup_classification_varieties').' variety','variety.id = convert_bp.variety_id','INNER');
-            $this->db->select('type.name crop_type_name');
+            $this->db->select('variety.name variety_name');
             $this->db->join($this->config->item('table_login_setup_classification_crop_types').' type','type.id = variety.crop_type_id','INNER');
-            $this->db->select('crop.name crop_name');
+            $this->db->select('type.name crop_type_name');
             $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = type.crop_id','INNER');
-            $this->db->select('warehouse_source.name warehouse_name_source');
+            $this->db->select('crop.name crop_name');
             $this->db->join($this->config->item('table_login_basic_setup_warehouse').' warehouse_source','warehouse_source.id = convert_bp.warehouse_id_source','INNER');
-            $this->db->select('warehouse_destination.name warehouse_name_destination');
+            $this->db->select('warehouse_source.name warehouse_name_source');
             $this->db->join($this->config->item('table_login_basic_setup_warehouse').' warehouse_destination','warehouse_destination.id = convert_bp.warehouse_id_destination','INNER');
-            $this->db->select('v_pack_size.name pack_size');
+            $this->db->select('warehouse_destination.name warehouse_name_destination');
             $this->db->join($this->config->item('table_login_setup_classification_pack_size').' v_pack_size','v_pack_size.id = convert_bp.pack_size_id','LEFT');
+            $this->db->select('v_pack_size.name pack_size');
+            $this->db->join($this->config->item('table_login_setup_user_info').' ui_created','ui_created.user_id = convert_bp.user_created','LEFT');
+            $this->db->select('ui_created.name user_created_full_name');
+            $this->db->join($this->config->item('table_login_setup_user_info').' ui_updated','ui_updated.user_id = convert_bp.user_updated','LEFT');
+            $this->db->select('ui_updated.name user_updated_full_name');
             $this->db->where('convert_bp.id',$item_id);
             $this->db->where('convert_bp.status !=',$this->config->item('system_status_delete'));
             $this->db->order_by('convert_bp.id','ASC');
@@ -514,8 +519,61 @@ class Convert_bp extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
-    private function system_delete($id)
+    private function system_details_print($id)
+    {
+        if((isset($this->permissions['action4']) && ($this->permissions['action4']==1)))
+        {
+            if($id>0)
+            {
+                $item_id=$id;
+            }
+            else
+            {
+                $item_id=$this->input->post('id');
+            }
+            $this->db->from($this->config->item('table_sms_convert_bulk_to_pack').' convert_bp');
+            $this->db->select('convert_bp.*');
+            $this->db->join($this->config->item('table_login_setup_classification_varieties').' variety','variety.id = convert_bp.variety_id','INNER');
+            $this->db->select('variety.name variety_name');
+            $this->db->join($this->config->item('table_login_setup_classification_crop_types').' type','type.id = variety.crop_type_id','INNER');
+            $this->db->select('type.name crop_type_name');
+            $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = type.crop_id','INNER');
+            $this->db->select('crop.name crop_name');
+            $this->db->join($this->config->item('table_login_basic_setup_warehouse').' warehouse_source','warehouse_source.id = convert_bp.warehouse_id_source','INNER');
+            $this->db->select('warehouse_source.name warehouse_name_source');
+            $this->db->join($this->config->item('table_login_basic_setup_warehouse').' warehouse_destination','warehouse_destination.id = convert_bp.warehouse_id_destination','INNER');
+            $this->db->select('warehouse_destination.name warehouse_name_destination');
+            $this->db->join($this->config->item('table_login_setup_classification_pack_size').' v_pack_size','v_pack_size.id = convert_bp.pack_size_id','LEFT');
+            $this->db->select('v_pack_size.name pack_size');
+            $this->db->where('convert_bp.id',$item_id);
+            $this->db->where('convert_bp.status !=',$this->config->item('system_status_delete'));
+            $this->db->order_by('convert_bp.id','ASC');
+            $data['item']=$this->db->get()->row_array();
+            if(!$data['item'])
+            {
+                System_helper::invalid_try('Details Print Non Exists',$item_id);
+                $ajax['status']=false;
+                $ajax['system_message']='Invalid Try.';
+                $this->json_return($ajax);
+            }
+            $data['title']="Details Print of Convert (".Barcode_helper::get_barcode_convert_bulk_to_packet($data['item']['id']).')';
+            $ajax['status']=true;
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/details_print",$data,true));
+            if($this->message)
+            {
+                $ajax['system_message']=$this->message;
+            }
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/details_print/'.$item_id);
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+    }
+    private function system_delete()
     {
         if(isset($this->permissions['action3']) && ($this->permissions['action3']==1))
         {
@@ -642,9 +700,6 @@ class Convert_bp extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
-
-
     private function system_set_preference()
     {
         if(isset($this->permissions['action6']) && ($this->permissions['action6']==1))
@@ -664,7 +719,6 @@ class Convert_bp extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
     private function get_preference()
     {
         $user = User_helper::get_user();
@@ -701,7 +755,6 @@ class Convert_bp extends Root_Controller
         }
         return $data;
     }
-
     private function check_validation()
     {
         $this->load->library('form_validation');

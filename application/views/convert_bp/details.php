@@ -26,178 +26,135 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         <div class="clearfix"></div>
     </div>
 
-    <div class="row show-grid">
-        <div class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right">Date Convert<span style="color:#FF0000">*</span></label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <?php echo System_helper::display_date($item['date_convert']);?>
-            </div>
-        </div>
-    </div>
-
-
-    <div style="" class="row show-grid">
-        <div class="col-xs-4">
-            <label for="crop_id" class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CROP_NAME');?> :</label>
-        </div>
-        <div class="col-sm-4 col-xs-8">
-            <label class="control-label"><?php echo $item['crop_name']?></label>
-        </div>
-    </div>
-
-    <div class="row show-grid">
-        <div class="col-xs-4">
-            <label for="crop_type_id" class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME');?> :</label>
-        </div>
-        <div class="col-sm-4 col-xs-8">
-            <label class="control-label"><?php echo $item['crop_type_name']?></label>
-        </div>
-    </div>
-
-    <div class="row show-grid">
-        <div class="col-xs-4">
-            <label for="variety_id" class="control-label pull-right"><?php echo $CI->lang->line('LABEL_VARIETY_NAME');?> :</label>
-        </div>
-        <div class="col-sm-4 col-xs-8">
-            <label id="variety_id" data-variety-id="<?php echo $item['variety_id']?>" class="control-label"><?php echo $item['variety_name']?></label>
-        </div>
-    </div>
-
-    <div class="row show-grid">
-        <div class="col-xs-4">
-            <label for="warehouse_id_source" class="control-label pull-right">Source Warehouse :</label>
-        </div>
-        <div class="col-sm-4 col-xs-8">
-            <label class="control-label"><?php echo $item['warehouse_name_source']?></label>
-        </div>
-    </div>
-
-    <div class="row show-grid" id="quantity_id_container">
-        <div class="row show-grid">
-            <div class="col-xs-4">
-                <label for="quantity" class="control-label pull-right">Convert Quantity (KG)</label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <?php echo $item['quantity_convert'];?>
-            </div>
-        </div>
-    </div>
-
-    <div class="row show-grid" id="destination_warehouse_id_container">
-        <div class="col-xs-4">
-            <label for="warehouse_id_destination" class="control-label pull-right">Destination Warehouse :</label>
-        </div>
-        <div class="col-sm-4 col-xs-8">
-            <label class="control-label"><?php echo $item['warehouse_name_destination']?></label>
-        </div>
-    </div>
-
-    <div class="row show-grid" id="pack_size_id_container">
-        <div class="col-xs-4">
-            <label for="pack_size_id" class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PACK_SIZE');?> :</label>
-        </div>
-        <div class="col-sm-4 col-xs-8">
-            <label id="pack_size_id" data-packsize-id="<?php echo $item['pack_size_id']?>" class="control-label"><?php echo $item['pack_size']?></label>
-        </div>
-    </div>
-
-    <div class="row show-grid" id="quantity_pack_expected_container">
-        <div class="col-xs-4">
-            <label for="quantity_pack_expected" class="control-label pull-right">Expected Packet Quantity:</label>
-        </div>
-        <div class="col-sm-4 col-xs-8">
-            <?php echo $item['quantity_packet_expected']?>
-        </div>
-    </div>
-
-    <div class="row show-grid" id="quantity_pack_actual_container">
-        <div class="col-xs-4">
-            <label for="quantity_pack_actual" class="control-label pull-right">Actual Packet Quantity<span style="color:#FF0000">*</span></label>
-        </div>
-        <div class="col-sm-4 col-xs-8" id="quantity_pack_actual_id_input_container">
-            <?php echo $item['quantity_packet_actual']?>
-        </div>
-    </div>
-
-    <div class="row show-grid" id="expected_mf_container">
-        <div class="col-xs-4">
-            <label for="expected_mf" class="control-label pull-right">Expected Master Foil (KG):</label>
-        </div>
-        <div class="col-sm-4 col-xs-8">
-            <?php echo $item['quantity_master_foil_expected']?>
-        </div>
-    </div>
-    <div class="row show-grid" id="actual_mf_container">
-        <div class="col-xs-4">
-            <label for="actual_mf" class="control-label pull-right">Actual Master Foil (KG)</label>
-        </div>
-        <div class="col-sm-4 col-xs-8" id="actual_mf_id_input_container">
-            <?php echo $item['quantity_master_foil_actual']?>
-        </div>
-    </div>
-
-    <div class="row show-grid" id="expected_f_container">
-        <div class="col-xs-4">
-            <label for="expected_f" class="control-label pull-right">Expected Foil (KG):</label>
-        </div>
-        <div class="col-sm-4 col-xs-8">
-            <?php echo $item['quantity_master_foil_expected']?>
-        </div>
-    </div>
-    <div class="row show-grid" id="actual_f_container">
-        <div class="col-xs-4">
-            <label for="actual_f" class="control-label pull-right">Actual Foil (KG)<span style="color:#FF0000">*</span></label>
-        </div>
-        <div class="col-sm-4 col-xs-8" id="actual_f_id_input_container">
-            <?php echo $item['quantity_master_foil_actual']?>
-        </div>
-    </div>
-    <div class="row show-grid" id="expected_sticker_container">
-        <div class="col-xs-4">
-            <label for="expected_sticker" class="control-label pull-right">Expected Sticker:</label>
-        </div>
-        <div class="col-sm-4 col-xs-8">
-            <?php echo $item['quantity_sticker_expected']?>
-        </div>
-    </div>
-    <div class="row show-grid" id="actual_sticker_container">
-        <div class="col-xs-4">
-            <label for="actual_sticker" class="control-label pull-right">Actual Sticker<span style="color:#FF0000">*</span></label>
-        </div>
-        <div class="col-sm-4 col-xs-8" id="actual_sticker_id_input_container">
-            <?php echo $item['quantity_sticker_actual']?>
-        </div>
-    </div>
-
-    <div class="row show-grid" id="remarks_id_container">
-        <div class="col-xs-4">
-            <label for="remarks" class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS');?></label>
-        </div>
-        <div class="col-sm-4 col-xs-8">
-            <?php echo $item['remarks']?>
-        </div>
+    <div class="col-md-12">
+        <table class="table table-bordered table-responsive system_table_details_view">
+            <thead>
+            <tr>
+                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_CREATED_BY');?></label></th>
+                <th class=" header_value"><label class="control-label"><?php echo $item['user_created_full_name'];?></label></th>
+                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_CREATED_TIME');?></label></th>
+                <th class=""><label class="control-label"><?php echo System_helper::display_date_time($item['date_created']);?></label></th>
+            </tr>
+            <?php
+            if($item['user_updated'])
+            {
+                ?>
+                <tr>
+                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_UPDATED_BY');?></label></th>
+                    <th class=" header_value"><label class="control-label"><?php echo $item['user_updated_full_name'];?></label></th>
+                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_UPDATED_TIME');?></label></th>
+                    <th class=""><label class="control-label"><?php echo System_helper::display_date_time($item['date_updated']);?></label></th>
+                </tr>
+            <?php
+            }
+            ?>
+            <tr>
+                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_ID');?></label></th>
+                <th class=" header_value"><label class="control-label"><?php echo Barcode_helper::get_barcode_convert_bulk_to_packet($item['id']);?></label></th>
+                <th colspan="2">&nbsp;</th>
+            </tr>
+            <tr>
+                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_CROP_NAME');?></label></th>
+                <th class=" header_value"><label class="control-label"><?php echo $item['crop_name']?></label></th>
+                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_CONVERT');?></label></th>
+                <th class="bg-danger"><label class="control-label"><?php echo System_helper::display_date($item['date_convert']);?></label></th>
+            </tr>
+            <tr>
+                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_CROP_TYPE_NAME');?></label></th>
+                <th class=" header_value"><label class="control-label"><?php echo $item['crop_type_name']?></label></th>
+                <th colspan="2">&nbsp;</th>
+            </tr>
+            <tr>
+                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_VARIETY_NAME');?></label></th>
+                <th class=" header_value"><label class="control-label"><?php echo $item['variety_name']?></label></th>
+                <th colspan="2">&nbsp;</th>
+            </tr>
+            <tr>
+                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_WAREHOUSE_NAME_SOURCE');?></label></th>
+                <th class=" header_value"><label class="control-label"><?php echo $item['warehouse_name_source']?></label></th>
+                <th class="widget-header header_caption"><label class="control-label pull-right">Convert <?php echo $this->lang->line('LABEL_QUANTITY');?> (<?php echo $this->lang->line('LABEL_KG');?>)</label></th>
+                <th class="bg-danger header_value"><label class="control-label"><?php echo $item['quantity_convert']?></label></th>
+            </tr>
+            <tr>
+                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_WAREHOUSE_NAME_DESTINATION');?></label></th>
+                <th class=" header_value"><label class="control-label"><?php echo $item['warehouse_name_destination']?></label></th>
+                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_PACK_SIZE');?></label></th>
+                <th class="bg-danger header_value"><label class="control-label"><?php echo $item['pack_size']?></label></th>
+            </tr>
+            <?php
+            if($item['remarks'])
+            {
+                ?>
+                <tr>
+                    <th class="widget-header header_caption" style="vertical-align: top"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS');?></label></th>
+                    <th class=" header_value" colspan="3"><label class="control-label"><?php echo nl2br($item['remarks']);?></label></th>
+                </tr>
+            <?php
+            }
+            ?>
+            <?php
+            if((isset($CI->permissions['action3']) && ($CI->permissions['action3']==1)))
+            {
+                ?>
+                <tr>
+                    <th class="widget-header header_caption" style="vertical-align: top"><label class="control-label pull-right">Delete Reason</label></th>
+                    <th class=" header_value" colspan="3">
+                        <form id="save_form" action="<?php echo site_url($CI->controller_url.'/index/delete');?>" method="post">
+                            <input type="hidden" id="id" name="id" value="<?php echo $item['id']; ?>" />
+                            <div class="row show-grid" id="remarks_id_container">
+                                <textarea name="item[remarks_delete]" id="remarks_delete" class="form-control"></textarea>
+                            </div>
+                        </form>
+                    </th>
+                </tr>
+            <?php
+            }
+            ?>
+            </thead>
+        </table>
     </div>
     <div class="clearfix"></div>
-    <?php
-    if((isset($CI->permissions['action3']) && ($CI->permissions['action3']==1)))
-        {?>
-            <form id="save_form" action="<?php echo site_url($CI->controller_url.'/index/delete');?>" method="post">
-                <input type="hidden" id="id" name="id" value="<?php echo $item['id']; ?>" />
-                <div class="row show-grid" id="remarks_id_container">
-                    <div class="col-xs-4">
-                        <label for="remarks" class="control-label pull-right">Delete Reason</label>
-                    </div>
-                    <div class="col-sm-4 col-xs-8">
-                        <textarea name="item[remarks_delete]" id="remarks_delete" class="form-control"></textarea>
-                    </div>
-                </div>
-            </form>
-        <?php
-    }
-    ?>
-
+    <div class="row show-grid">
+        <div style="overflow-x: auto;" class="row show-grid">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th class="widget-header text-center" colspan="30">Convert Details</th>
+                </tr>
+                <tr>
+                    <th rowspan="2" class="text-right" style="width: 30px;"><?php echo $CI->lang->line('LABEL_SL_NO'); ?></th>
+                    <th colspan="2" class="text-center">Quantity (Packet)</th>
+                    <th colspan="2" class="text-center">Master Foil</th>
+                    <th colspan="2" class="text-center">Common Foil</th>
+                    <th colspan="2" class="text-center">Sticker</th>
+                </tr>
+                <tr>
+                    <th class="text-right">Expected</th>
+                    <th class="text-right">Actual</th>
+                    <th class="text-right">Expected (KG)</th>
+                    <th class="text-right">Actual (KG)</th>
+                    <th class="text-right">Expected (KG)</th>
+                    <th class="text-right">Actual (KG)</th>
+                    <th class="text-right">Expected (pcs)</th>
+                    <th class="text-right">Actual (pcs)</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td class="text-right">1</td>
+                    <td class="text-right"><?php echo $item['quantity_packet_expected']?></td>
+                    <td class="text-right"><?php echo $item['quantity_packet_actual']?></td>
+                    <td class="text-right"><?php echo number_format($item['quantity_master_foil_expected'],3,'.','');?></td>
+                    <td class="text-right"><?php echo number_format($item['quantity_master_foil_actual'],3,'.','');?></td>
+                    <td class="text-right"><?php echo number_format($item['quantity_foil_expected'],3,'.','');?></td>
+                    <td class="text-right"><?php echo number_format($item['quantity_foil_actual'],3,'.','');?></td>
+                    <td class="text-right"><?php echo $item['quantity_sticker_expected']?></td>
+                    <td class="text-right"><?php echo $item['quantity_sticker_actual']?></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
 <script type="text/javascript">
