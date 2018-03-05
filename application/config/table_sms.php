@@ -20,7 +20,13 @@ $config['table_sms_lc_release_histories'] = 'arm_sms_2018_19.sms_lc_release_hist
 $config['table_sms_lc_receive_histories'] = 'arm_sms_2018_19.sms_lc_receive_histories';
 
 //Transfer
+/* Warehouse to warehouse*/
 $config['table_sms_transfer_warehouse_variety'] = 'arm_sms_2018_19.sms_transfer_warehouse_variety';
+/* Head office to outlet (TO) */
+$config['table_sms_transfer_wo'] = 'arm_sms_2018_19.sms_transfer_wo';
+$config['table_sms_transfer_wo_details'] = 'arm_sms_2018_19.sms_transfer_wo_details';
+$config['table_sms_transfer_wo_details_histories'] = 'arm_sms_2018_19.sms_transfer_wo_details_histories';
+$config['table_sms_transfer_wo_courier_details'] = 'arm_sms_2018_19.sms_transfer_wo_courier_details';
 
 //Raw Materials
 
