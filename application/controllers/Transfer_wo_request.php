@@ -135,6 +135,7 @@ class Transfer_wo_request extends Root_Controller
             $data['item']['date_request']=time();
             $data['item']['remarks_request']='';
             $data['items']=[];
+            $data['two_variety_info']=[];//$this->get_transfer_wo_variety_info(258);
 
             $data['divisions']=Query_helper::get_info($this->config->item('table_login_setup_location_divisions'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $data['zones']=array();
@@ -144,7 +145,6 @@ class Transfer_wo_request extends Root_Controller
             $data['upazillas']=array();
 
             $data['crops']=Query_helper::get_info($this->config->item('table_login_setup_classification_crops'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
-            $data['pack_sizes']=Query_helper::get_info($this->config->item('table_login_setup_classification_pack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
 
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/add_edit",$data,true));
@@ -412,14 +412,88 @@ class Transfer_wo_request extends Root_Controller
         }
         return $data;
     }
-    public function get_transfer_wo_variety_info()
+    public function get_transfer_wo_variety_info($id=0)
     {
-        $ajax['outlet_id']=$this->input->post('outlet_id');
-        $ajax['status']=true;
-        if($this->message)
+        if($id>0)
         {
-            $ajax['system_message']=$this->message;
+            $outlet_id=$id;
         }
-        $this->json_return($ajax);
+        else
+        {
+            $outlet_id=$this->input->post('outlet_id');
+        }
+        /* HQ stock */
+        $this->db->from($this->config->item('table_sms_stock_summary_variety').' stock_summary_variety');
+        $this->db->select('SUM(stock_summary_variety.current_stock) current_stock, stock_summary_variety.variety_id, stock_summary_variety.pack_size_id');
+        $this->db->join($this->config->item('table_login_setup_classification_pack_size').' pack','pack.id=stock_summary_variety.pack_size_id','LEFT');
+        $this->db->select('pack.name pack_size_name');
+        $this->db->where('stock_summary_variety.current_stock > 0');
+        $this->db->group_by('stock_summary_variety.variety_id, stock_summary_variety.pack_size_id');
+        $results=$this->db->get()->result_array();
+        /*Initiate variable */
+        $two_variety_info=array();
+        foreach($results as $result)
+        {
+            if($result['pack_size_id']==0)
+            {
+                $pack_size_name='Bulk';
+            }
+            else
+            {
+                $pack_size_name=$result['pack_size_name'];
+            }
+            $two_variety_info[$result['variety_id']][$result['pack_size_id']]['pack_size_name']=$pack_size_name;
+            $two_variety_info[$result['variety_id']][$result['pack_size_id']]['stock_available']=number_format($result['current_stock'],3,'.','');
+            $two_variety_info[$result['variety_id']][$result['pack_size_id']]['quantity_min']=number_format(0,3,'.','');
+            $two_variety_info[$result['variety_id']][$result['pack_size_id']]['quantity_max']=number_format(0,3,'.','');
+            $two_variety_info[$result['variety_id']][$result['pack_size_id']]['stock_outlet']=number_format(0,3,'.','');
+        }
+
+        /* calculate available stock */
+        $this->db->from($this->config->item('table_sms_transfer_wo').' transfer_wo');
+        $this->db->join($this->config->item('table_sms_transfer_wo_details').' transfer_wo_details','transfer_wo_details.transfer_wo_id=transfer_wo.id AND transfer_wo_details.status="'.$this->config->item('system_status_active').'"','INNER');
+        $this->db->select('SUM(transfer_wo_details.quantity_approve) quantity_approve, transfer_wo_details.variety_id, transfer_wo_details.pack_size_id');
+        $this->db->where('transfer_wo.status',$this->config->item('system_status_active'));
+        $this->db->where('transfer_wo.status_approve',$this->config->item('system_status_approved'));
+        $this->db->where('transfer_wo.status_delivery',$this->config->item('system_status_pending'));
+        $this->db->group_by('transfer_wo_details.variety_id, transfer_wo_details.pack_size_id');
+        $results=$this->db->get()->result_array();
+        foreach($results as $result)
+        {
+            $two_variety_info[$result['variety_id']][$result['pack_size_id']]['stock_available']=number_format(($two_variety_info[$result['variety_id']][$result['pack_size_id']]['stock_available']-$result['quantity_approve']),3,'.','');
+        }
+
+        /* min max stock */
+        $results=Query_helper::get_info($this->config->item('table_pos_setup_stock_min_max'), array('*'),array('customer_id='.$outlet_id));
+        foreach($results as $result)
+        {
+            if(isset($two_variety_info[$result['variety_id']][$result['pack_size_id']]))
+            {
+                $two_variety_info[$result['variety_id']][$result['pack_size_id']]['quantity_min']=number_format($result['quantity_min'],3,'.','');
+                $two_variety_info[$result['variety_id']][$result['pack_size_id']]['quantity_max']=number_format($result['quantity_max'],3,'.','');
+            }
+        }
+
+        /* outlet stock */
+        $this->db->from($this->config->item('table_pos_stock_summary_variety').' pos_stock_summary_variety');
+        $this->db->select('SUM(pos_stock_summary_variety.current_stock) current_stock');
+        $this->db->where('pos_stock_summary_variety.outlet_id',$outlet_id);
+        $this->db->group_by('pos_stock_summary_variety.variety_id, pos_stock_summary_variety.pack_size_id');
+        $results=$this->db->get()->result_array();
+        foreach($results as $result)
+        {
+            $two_variety_info[$result['variety_id']][$result['pack_size_id']]['stock_outlet']=number_format($result['current_stock'],3,'.','');
+        }
+
+        if($id>0)
+        {
+            return $two_variety_info;
+        }
+        else
+        {
+            /*$ajax['status']=true;
+            $ajax['two_variety_info']=$two_variety_info;*/
+            $this->json_return($two_variety_info);
+        }
     }
 }

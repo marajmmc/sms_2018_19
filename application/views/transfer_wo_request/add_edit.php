@@ -191,9 +191,17 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <th style="width: 150px;"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?></th>
                         <th style="width: 150px;"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
                         <th class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
-                        <th class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_STOCK_MIN'); ?></th>
-                        <th class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_STOCK_MAX'); ?></th>
-                        <th class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_STOCK_MAX'); ?></th>
+                        <th class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY_MIN'); ?></th>
+                        <th class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY_MAX'); ?></th>
+                        <th class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_STOCK_AVAILABLE'); ?></th>
+                        <?php
+                        if(!($CI->locations['territory_id']>0))
+                        {
+                            ?>
+                            <th class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY_TRANSFER_MAXIMUM'); ?></th>
+                        <?php
+                        }
+                        ?>
                         <th>&nbsp;</th>
                     </tr>
                     </thead>
@@ -246,15 +254,27 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             <td>
                 <select class="form-control pack_size_id" style="display: none;">
                     <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                    <?php
-                    foreach($pack_sizes as $pack_size)
-                    {?>
-                        <option value="<?php echo $pack_size['value']?>"><?php echo $pack_size['text'];?></option>
-                    <?php
-                    }
-                    ?>
                 </select>
             </td>
+            <td class="text-right">
+                <label class="control-label quantity_min"> </label>
+            </td>
+            <td class="text-right">
+                <label class="control-label quantity_max"> </label>
+            </td>
+            <td class="text-right">
+                <label class="control-label stock_available"> </label>
+            </td>
+            <?php
+            if(!($CI->locations['territory_id']>0))
+            {
+                ?>
+                <td class="text-right">
+                    <label class="control-label quantity_transferable_max"> </label>
+                </td>
+            <?php
+            }
+            ?>
             <td>
                 <button type="button" class="btn btn-danger system_button_add_delete"><?php echo $CI->lang->line('DELETE'); ?></button>
             </td>
@@ -263,8 +283,23 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
     </table>
 </div>
 <script>
+    <?php
+    if(sizeof($two_variety_info)>0)
+    {
+        ?>
+        var two_variety_info=JSON.parse('<?php echo json_encode($two_variety_info);?>');
+        <?php
+    }
+    else
+    {
+        ?>
+        var two_variety_info={};
+        <?php
+    }
+    ?>
     $(document).ready(function()
     {
+        //console.log(two_variety_info)
         system_preset({controller:'<?php echo $CI->router->class; ?>'});
         //$(".date_large").datepicker({dateFormat : display_date_format,changeMonth: true,changeYear: true,yearRange: "2015:+2"});
         $(".datepicker").datepicker({dateFormat : display_date_format});
@@ -272,6 +307,11 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         $(document).off("click", ".system_button_add_more");
         $(document).on("click", ".system_button_add_more", function(event)
         {
+            if($("#outlet_id").val()=='')
+            {
+                alert('Outlet field is required.');
+                return false;
+            }
             var current_id=parseInt($(this).attr('data-current-id'));
             current_id=current_id+1;
             $(this).attr('data-current-id',current_id);
@@ -291,6 +331,18 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             $(content_id+' .pack_size_id').attr('data-current-id',current_id);
             $(content_id+' .pack_size_id').attr('name','items['+current_id+'][pack_size_id]');
 
+            $(content_id+' .quantity_min').attr('id','quantity_min_'+current_id);
+            $(content_id+' .quantity_min').attr('data-current-id',current_id);
+
+            $(content_id+' .quantity_max').attr('id','quantity_max_'+current_id);
+            $(content_id+' .quantity_max').attr('data-current-id',current_id);
+
+            $(content_id+' .stock_available').attr('id','stock_available_'+current_id);
+            $(content_id+' .stock_available').attr('data-current-id',current_id);
+
+            $(content_id+' .quantity_transferable_max').attr('id','quantity_transferable_max_'+current_id);
+            $(content_id+' .quantity_transferable_max').attr('data-current-id',current_id);
+
             var html=$(content_id).html();
             $("#items_container").append(html);
         });
@@ -306,9 +358,15 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         $(document).on("change",".crop_id",function()
         {
             var current_id=$(this).attr('data-current-id');
-            $("#crop_type_id_"+current_id).val("");
-            $("#variety_id_"+current_id).val("");
-            $("#pack_size_id_"+current_id).val("");
+            $("#crop_type_id_"+current_id).val('');
+            $("#variety_id_"+current_id).val('');
+            $("#pack_size_id_"+current_id).val('');
+
+            $("#quantity_min_"+current_id).html('');
+            $("#quantity_max_"+current_id).html('');
+            $("#stock_available_"+current_id).html('');
+            $("#quantity_transferable_max_"+current_id).html('');
+
             var crop_id=$('#crop_id_'+current_id).val();
             $('#crop_type_id_'+current_id).hide();
             $('#variety_id_'+current_id).hide();
@@ -328,8 +386,14 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         $(document).on("change",".crop_type_id",function()
         {
             var current_id=$(this).attr('data-current-id');
-            $("#variety_id_"+current_id).val("");
-            $("#pack_size_id_"+current_id).val("");
+            $("#variety_id_"+current_id).val('');
+            $("#pack_size_id_"+current_id).val('');
+
+            $("#quantity_min_"+current_id).html('');
+            $("#quantity_max_"+current_id).html('');
+            $("#stock_available_"+current_id).html('');
+            $("#quantity_transferable_max_"+current_id).html('');
+
             var crop_type_id=$('#crop_type_id_'+current_id).val();
             $('#pack_size_id_'+current_id).hide();
             if(crop_type_id>0)
@@ -347,13 +411,26 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         $(document).on("change",".variety_id",function()
         {
             var current_id=$(this).attr('data-current-id');
+            $("#quantity_min_"+current_id).html('');
+            $("#quantity_max_"+current_id).html('');
+            $("#stock_available_"+current_id).html('');
+            $("#quantity_transferable_max_"+current_id).html('');
 
-            $("#pack_size_id_"+current_id).val("");
+            $("#pack_size_id_"+current_id).empty('');
             var variety_id=$('#variety_id_'+current_id).val();
-
             if(variety_id>0)
             {
                 $('#pack_size_id_'+current_id).show();
+                $('#pack_size_id_'+current_id).append('<option value="">Select</option>');
+                //console.log(two_variety_info)
+                if(two_variety_info[variety_id]!==undefined)
+                {
+                    $.each(two_variety_info[variety_id], function(pack_size_id, pack_size)
+                    {
+                        //console.log(pack_size_id+'  ~~ '+pack_size['pack_size_name'])
+                        $('#pack_size_id_'+current_id).append('<option value="'+pack_size_id+'">'+pack_size['pack_size_name']+'</option>');
+                    })
+                }
             }
             else
             {
@@ -361,6 +438,25 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             }
         });
 
+        $(document).off("change",".pack_size_id");
+        $(document).on("change",".pack_size_id",function()
+        {
+            var current_id=$(this).attr('data-current-id');
+            $("#quantity_min_"+current_id).html('');
+            $("#quantity_max_"+current_id).html('');
+            $("#stock_available_"+current_id).html('');
+            $("#quantity_transferable_max_"+current_id).html('');
+            var variety_id=$('#variety_id_'+current_id).val();
+            var pack_size_id=$('#pack_size_id_'+current_id).val();
+            if(two_variety_info[variety_id][pack_size_id]!==undefined)
+            {
+                //console.log(two_variety_info[variety_id][pack_size_id])
+                $("#quantity_min_"+current_id).html(two_variety_info[variety_id][pack_size_id]['quantity_min']);
+                $("#quantity_max_"+current_id).html(two_variety_info[variety_id][pack_size_id]['quantity_max']);
+                $("#stock_available_"+current_id).html(two_variety_info[variety_id][pack_size_id]['stock_available']);
+                $("#quantity_transferable_max_"+current_id).html(two_variety_info[variety_id][pack_size_id]['quantity_transferable_max']);
+            }
+        });
         $(document).off('change', '#division_id');
         $(document).on('change','#division_id',function()
         {
@@ -373,6 +469,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             $('#territory_id_container').hide();
             $('#district_id_container').hide();
             $('#outlet_id_container').hide();
+            $("#items_container").html('');
             if(division_id>0)
             {
                 if(system_zones[division_id]!==undefined)
@@ -395,6 +492,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             $('#territory_id_container').hide();
             $('#district_id_container').hide();
             $('#outlet_id_container').hide();
+            $("#items_container").html('');
             if(zone_id>0)
             {
                 if(system_territories[zone_id]!==undefined)
@@ -412,6 +510,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             $('#upazilla_id').val('');
             $('#outlet_id_container').hide();
             $('#district_id_container').hide();
+            $("#items_container").html('');
             var territory_id=$('#territory_id').val();
             if(territory_id>0)
             {
@@ -428,6 +527,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         {
             $('#outlet_id').val('');
             $('#upazilla_id').val('');
+            $("#items_container").html('');
             var district_id=$('#district_id').val();
             $('#outlet_id_container').hide();
             if(district_id>0)
@@ -442,6 +542,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         $(document).off('change', '#outlet_id');
         $(document).on('change','#outlet_id',function()
         {
+            $("#items_container").html('');
             var outlet_id=$('#outlet_id').val();
             if(outlet_id>0)
             {
@@ -452,15 +553,26 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     data:{outlet_id:outlet_id},
                     success: function (data, status)
                     {
-                        console.log(data.outlet_id)
+                        two_variety_info=data;
+                        //console.log(two_variety_info)
+
+                        /*$.each(data['1'], function(variety_id, varieties)
+                        {
+                            //console.log(varieties)
+                            *//*$.each(varieties[1], function(pack_size_id, packs)
+                            {
+                                console.log(packs['pack_size_name'])
+                            })*//*
+                        })*/
                     },
                     error: function (xhr, desc, err)
                     {
                         console.log("error");
-
                     }
                 });
             }
         });
+
+
     });
 </script>

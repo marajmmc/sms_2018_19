@@ -239,6 +239,9 @@ $lang['LABEL_QUANTITY_KG_PACK']='Quantity (Pkt/Kg)';
 
 $lang['LABEL_QUANTITY_TOTAL_REQUEST'] = 'Total Request Quantity (Kg)';
 $lang['LABEL_QUANTITY_TOTAL_RECEIVE'] = 'Total Receive Quantity (Kg)';
+
+$lang['LABEL_QUANTITY_MIN'] = 'Min Qty';
+$lang['LABEL_QUANTITY_MAX'] = 'Max Qty';
 // Total, Currency, Percentage - kg/pkt/taka/currency
 /* Total */
 $lang['LABEL_TOTAL'] = 'Total';
@@ -254,8 +257,7 @@ $lang['LABEL_STARTING_STOCK'] = 'Starting Stock';
 $lang['LABEL_TOTAL_STOCK_IN'] = 'Total Stock In';
 $lang['LABEL_TOTAL_STOCK_OUT'] = 'Total Stock Out';
 
-$lang['LABEL_STOCK_MIN'] = 'Min Stock';
-$lang['LABEL_STOCK_MAX'] = 'Max Stock';
+$lang['LABEL_STOCK_AVAILABLE'] = 'Available Stock';
 
 
 /* Currency */
