@@ -439,5 +439,28 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 }
             }
         });
+        $(document).off('change', '#outlet_id');
+        $(document).on('change','#outlet_id',function()
+        {
+            var outlet_id=$('#outlet_id').val();
+            if(outlet_id>0)
+            {
+                $.ajax({
+                    url: '<?php echo site_url($CI->controller_url.'/get_transfer_wo_variety_info'); ?>',
+                    type: 'POST',
+                    datatype: "JSON",
+                    data:{outlet_id:outlet_id},
+                    success: function (data, status)
+                    {
+                        console.log(data.outlet_id)
+                    },
+                    error: function (xhr, desc, err)
+                    {
+                        console.log("error");
+
+                    }
+                });
+            }
+        });
     });
 </script>

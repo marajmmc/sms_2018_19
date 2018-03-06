@@ -412,4 +412,14 @@ class Transfer_wo_request extends Root_Controller
         }
         return $data;
     }
+    public function get_transfer_wo_variety_info()
+    {
+        $ajax['outlet_id']=$this->input->post('outlet_id');
+        $ajax['status']=true;
+        if($this->message)
+        {
+            $ajax['system_message']=$this->message;
+        }
+        $this->json_return($ajax);
+    }
 }
