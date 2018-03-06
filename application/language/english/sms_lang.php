@@ -123,6 +123,7 @@ $lang['LABEL_FULL_NAME'] = 'Full Name';
 $lang['LABEL_CUSTOMER_NAME'] = 'Customer Name';
 $lang['LABEL_SUPPLIER_NAME']='Supplier Name';
 $lang['LABEL_OUTLET_NAME'] = 'Outlet';
+$lang['LABEL_OUTLET_CODE'] = 'Outlet Code';
 $lang['LABEL_SHOWROOM_NAME'] = 'Showroom Name';
 
 // office, company, department
@@ -183,6 +184,7 @@ $lang['LABEL_DATE_CHALLAN']='Challan Date';
 $lang['LABEL_DATE_CREATED_TIME']='Created Time';
 $lang['LABEL_DATE_UPDATED_TIME']='Updated Time';
 $lang['LABEL_DATE_CONVERT']='Convert Date';
+$lang['LABEL_DATE_TO_REQUEST']='TO Date';
 
 //months array
 $lang['LABEL_MONTH'] = 'Month';
@@ -217,6 +219,7 @@ $lang['LABEL_REMARKS_LC_OPEN']='LC Open Remarks';
 $lang['LABEL_REMARKS_LC_RELEASE']='Release Remarks';
 $lang['LABEL_REMARKS_LC_RECEIVE']='Receive Remarks';
 $lang['LABEL_REMARKS_LC_EXPENSE']='Expense Remarks';
+$lang['LABEL_REMARKS_TO_REQUEST']='TO Create Remarks';
 
 // Unit
 $lang['LABEL_PACK'] = 'Pkt';
@@ -234,6 +237,7 @@ $lang['LABEL_QUANTITY_TOTAL_PACK_KG']='Total Quantity (Pkt/Kg)';
 $lang['LABEL_QUANTITY_TOTAL_PIECES']='Total Quantity (Pcs)';
 $lang['LABEL_QUANTITY_KG_PACK']='Quantity (Pkt/Kg)';
 
+$lang['LABEL_QUANTITY_TOTAL_REQUEST'] = 'Total Request Quantity (Kg)';
 $lang['LABEL_QUANTITY_TOTAL_RECEIVE'] = 'Total Receive Quantity (Kg)';
 // Total, Currency, Percentage - kg/pkt/taka/currency
 /* Total */
@@ -249,6 +253,9 @@ $lang['LABEL_CURRENT_STOCK_PKT'] = 'Current Stock (pkt))';
 $lang['LABEL_STARTING_STOCK'] = 'Starting Stock';
 $lang['LABEL_TOTAL_STOCK_IN'] = 'Total Stock In';
 $lang['LABEL_TOTAL_STOCK_OUT'] = 'Total Stock Out';
+
+$lang['LABEL_STOCK_MIN'] = 'Min Stock';
+$lang['LABEL_STOCK_MAX'] = 'Max Stock';
 
 
 /* Currency */
@@ -378,5 +385,5 @@ $lang['LABEL_NUMBER_OF_REEL']='Number Of Reel';
 $lang['LABEL_QUANTITY_CONVERT_TOTAL_KG']='Total Convert Quantity (Kg)';
 $lang['LABEL_QUANTITY_PACKET_ACTUAL']='Converted Packets';
 
-
-
+// Transfer HQ to TO
+$lang['LABEL_QUANTITY_TRANSFER_MAXIMUM']='Max Transferable';
