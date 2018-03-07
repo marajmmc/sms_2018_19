@@ -7,13 +7,12 @@ class Query_helper
     {
         $CI =& get_instance();
         $CI->db->insert($table_name, $data);
-        $user = User_helper::get_user();
-
         if($CI->db->affected_rows() >0)
         {
             $id = $CI->db->insert_id();
             if($save_history)
             {
+                $user = User_helper::get_user();
                 $historyData = Array(
                     'controller'=>$CI->router->class,
                     'table_id'=>$id,
