@@ -556,7 +556,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             var price_open_currency=(quantity_open*price_unit_currency);
             $("#price_open_currency_"+current_id).html(number_format(price_open_currency,2));
             calculate_total();
-        })
+        });
         $(document).off('change','#items_container .price_unit_currency');
         $(document).on('input', '#items_container .price_unit_currency', function()
         {

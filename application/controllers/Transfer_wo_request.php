@@ -45,9 +45,9 @@ class Transfer_wo_request extends Root_Controller
         {
             $this->system_save();
         }
-        elseif($action=="edit_outlet_discount")
+        elseif($action=="ajax_transfer_wo_variety_info")
         {
-            $this->system_edit_outlet_discount($id);
+            $this->system_ajax_transfer_wo_variety_info();
         }
         elseif($action=="set_preference")
         {
@@ -87,7 +87,7 @@ class Transfer_wo_request extends Root_Controller
     private function system_get_items()
     {
         $this->db->from($this->config->item('table_sms_transfer_wo').' transfer_wo');
-        $this->db->select('transfer_wo.id, transfer_wo.date_request date_to_request, transfer_wo.quantity_total_request_kg quantity_total_request');
+        $this->db->select('transfer_wo.id, transfer_wo.date_request date_request, transfer_wo.quantity_total_request_kg');
         $this->db->join($this->config->item('table_login_csetup_cus_info').' outlet_info','outlet_info.customer_id=transfer_wo.outlet_id AND outlet_info.revision=1 AND outlet_info.type="'.$this->config->item('system_customer_type_outlet_id').'"','INNER');
         $this->db->select('outlet_info.name outlet_name, outlet_info.customer_code outlet_code');
         $this->db->join($this->config->item('table_login_setup_location_districts').' districts','districts.id = outlet_info.district_id','INNER');
@@ -145,6 +145,7 @@ class Transfer_wo_request extends Root_Controller
             $data['upazillas']=array();
 
             $data['crops']=Query_helper::get_info($this->config->item('table_login_setup_classification_crops'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
+            $data['quantity_to_maximum_kg']=1000;
 
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/add_edit",$data,true));
@@ -175,16 +176,81 @@ class Transfer_wo_request extends Root_Controller
                 $item_id=$this->input->post('id');
             }
 
-            $data['item']=Query_helper::get_info($this->config->item('table_pos_setup_farmer_type'),array('*'),array('id ='.$item_id,'status !="'.$this->config->item('system_status_delete').'"'),1,0,array('id ASC'));
+
+            //$data['item']=Query_helper::get_info($this->config->item('table_sms_transfer_wo'),array('*'),array('id ='.$item_id,'status !="'.$this->config->item('system_status_delete').'"'),1,0,array('id ASC'));
+            $this->db->from($this->config->item('table_sms_transfer_wo').' transfer_wo');
+            $this->db->select('transfer_wo.id, transfer_wo.date_request, transfer_wo.quantity_total_request_kg, transfer_wo.status_request, transfer_wo.remarks_request');
+            $this->db->join($this->config->item('table_login_csetup_cus_info').' outlet_info','outlet_info.customer_id=transfer_wo.outlet_id AND outlet_info.revision=1 AND outlet_info.type="'.$this->config->item('system_customer_type_outlet_id').'"','INNER');
+            $this->db->select('outlet_info.id outlet_id, outlet_info.name outlet_name, outlet_info.customer_code outlet_code');
+            $this->db->join($this->config->item('table_login_setup_location_districts').' districts','districts.id = outlet_info.district_id','INNER');
+            $this->db->select('districts.id district_id, districts.name district_name');
+            $this->db->join($this->config->item('table_login_setup_location_territories').' territories','territories.id = districts.territory_id','INNER');
+            $this->db->select('territories.id territory_id, territories.name territory_name');
+            $this->db->join($this->config->item('table_login_setup_location_zones').' zones','zones.id = territories.zone_id','INNER');
+            $this->db->select('zones.id zone_id, zones.name zone_name');
+            $this->db->join($this->config->item('table_login_setup_location_divisions').' divisions','divisions.id = zones.division_id','INNER');
+            $this->db->select('divisions.id division_id, divisions.name division_name');
+            $this->db->where('transfer_wo.id',$item_id);
+            $this->db->order_by('transfer_wo.id','DESC');
+            $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
             {
                 System_helper::invalid_try('Edit Non Exists',$item_id);
                 $ajax['status']=false;
-                $ajax['system_message']='Invalid Farmer Type.';
+                $ajax['system_message']='Invalid Try.';
+                $this->json_return($ajax);
+            }
+            if($data['item']['status_request']!=$this->config->item('system_status_pending'))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='Invalid Try.';
                 $this->json_return($ajax);
             }
 
-            $data['title']="Edit Farmer Type :: ". $data['item']['name'];
+            $this->locations['division_id']=$data['item']['division_id'];
+            $this->locations['division_name']=$data['item']['division_name'];
+            $this->locations['zone_id']=$data['item']['zone_id'];
+            $this->locations['zone_name']=$data['item']['zone_name'];
+            $this->locations['territory_id']=$data['item']['territory_id'];
+            $this->locations['territory_name']=$data['item']['territory_name'];
+            $this->locations['district_id']=$data['item']['district_id'];
+            $this->locations['district_name']=$data['item']['district_name'];
+
+            $data['items']=array();
+
+
+
+            $data['crops']=Query_helper::get_info($this->config->item('table_login_setup_classification_crops'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
+            $data['quantity_to_maximum_kg']=1000;
+
+            /*$results=Query_helper::get_info($this->config->item('table_pos_setup_stock_min_max'), array('*'),array('customer_id='.$data['item']['outlet_id']));
+            $data['two_variety_info']=array();
+            foreach($results as $result)
+            {
+                if(isset($two_variety_info[$result['variety_id']][$result['pack_size_id']]))
+                {
+                    $two_variety_info[$result['variety_id']][$result['pack_size_id']]['quantity_min']=number_format($result['quantity_min'],3,'.','');
+                    $two_variety_info[$result['variety_id']][$result['pack_size_id']]['quantity_max']=number_format($result['quantity_max'],3,'.','');
+                }
+            }*/
+
+            $data['two_variety_info']=$this->system_transfer_wo_variety_info($data['item']['outlet_id']);
+
+            $this->db->from($this->config->item('table_sms_transfer_wo_details').' transfer_wo_details');
+            $this->db->select('transfer_wo_details.*');
+            $this->db->join($this->config->item('table_login_setup_classification_varieties').' v','v.id=transfer_wo_details.variety_id','INNER');
+            $this->db->select('v.name variety_name');
+            $this->db->join($this->config->item('table_login_setup_classification_crop_types').' crop_type','crop_type.id=v.crop_type_id','INNER');
+            $this->db->select('crop_type.id crop_type_id, crop_type.name crop_type_name');
+            $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id=crop_type.crop_id','INNER');
+            $this->db->select('crop.id crop_id, crop.name crop_name');
+            $this->db->join($this->config->item('table_login_setup_classification_pack_size').' pack','pack.id=transfer_wo_details.pack_size_id','LEFT');
+            $this->db->select('pack.id pack_size_id, pack.name pack_size');
+            $data['items']=$this->db->get()->result_array();
+
+
+
+            $data['title']="Edit HQ Transfer Order (TO) :: ". Barcode_helper::get_barcode_transfer_warehouse_to_outlet($data['item']['id']);
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/add_edit",$data,true));
             if($this->message)
@@ -201,76 +267,19 @@ class Transfer_wo_request extends Root_Controller
             $this->json_return($ajax);
         }
     }
-    private function system_edit_outlet_discount($id)
-    {
-        if((isset($this->permissions['action7']) && ($this->permissions['action7']==1)))
-        {
-            $user = User_helper::get_user();
-
-            if($id>0)
-            {
-                $item_id=$id;
-            }
-            else
-            {
-                $item_id=$this->input->post('id');
-            }
-
-            $data['item']=Query_helper::get_info($this->config->item('table_pos_setup_farmer_type'),array('*'),array('id ='.$item_id,'status !="'.$this->config->item('system_status_delete').'"'),1,0,array('id ASC'));
-            if(!$data['item'])
-            {
-                System_helper::invalid_try('Edit Discount Non Exists',$item_id);
-                $ajax['status']=false;
-                $ajax['system_message']='Invalid Farmer Type.';
-                $this->json_return($ajax);
-            }
-            $data['user_outlets']=Query_helper::get_info($this->config->item('table_pos_setup_user_outlet'),array('*'),array('id ='.$item_id,'status !="'.$this->config->item('system_status_delete').'"'),1,0,array('id ASC'));
-
-            $this->db->from($this->config->item('table_pos_setup_user_outlet').' user_outlet');
-            $this->db->select('user_outlet.customer_id value, outlet_info.name text');
-            $this->db->join($this->config->item('table_login_csetup_customer').' outlet','outlet.id=user_outlet.customer_id AND outlet.status="'.$this->config->item('system_status_active').'"','INNER');
-            $this->db->join($this->config->item('table_login_csetup_cus_info').' outlet_info','outlet_info.customer_id=outlet.id AND outlet_info.type="'.$this->config->item('system_customer_type_outlet_id').'"','INNER');
-            $this->db->where('user_outlet.revision',1);
-            $this->db->where('user_outlet.user_id',$user->id);
-            $data['user_outlets']=$this->db->get()->result();
-            $data['title']="Outlet Discount :: ". $data['item']['name'];
-            $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/edit_outlet_discount",$data,true));
-            if($this->message)
-            {
-                $ajax['system_message']=$this->message;
-            }
-            $ajax['system_page_url']=site_url($this->controller_url.'/index/edit_outlet_discount/'.$item_id);
-            $this->json_return($ajax);
-        }
-        else
-        {
-            $ajax['status']=false;
-            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
-            $this->json_return($ajax);
-        }
-    }
     private function system_save()
     {
         $id = $this->input->post("id");
         $user = User_helper::get_user();
         $time=time();
-        $item=$this->input->post('item');
+        $item_head=$this->input->post('item');
+        $items=$this->input->post('items');
         if($id>0)
         {
             if(!(isset($this->permissions['action2']) && ($this->permissions['action2']==1)))
             {
                 $ajax['status']=false;
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
-                $this->json_return($ajax);
-            }
-
-            $result=Query_helper::get_info($this->config->item('table_pos_setup_farmer_type'),'*',array('id ='.$id, 'status != "'.$this->config->item('system_status_delete').'"'),1);
-            if(!$result)
-            {
-                System_helper::invalid_try('Update Non Exists',$id);
-                $ajax['status']=false;
-                $ajax['system_message']='Invalid Farmer Type.';
                 $this->json_return($ajax);
             }
         }
@@ -290,11 +299,45 @@ class Transfer_wo_request extends Root_Controller
             $this->json_return($ajax);
         }
 
+        $results=Query_helper::get_info($this->config->item('table_login_setup_classification_pack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('id ASC'));
+        $pack_sizes=array();
+        foreach($results as $result)
+        {
+            $pack_sizes[$result['value']]['value']=$result['value'];
+            $pack_sizes[$result['value']]['text']=$result['text'];
+        }
+
+        $quantity_total_request_kg=0;
+        if($items)
+        {
+            foreach($items as $item)
+            {
+                if($item['pack_size_id']==0)
+                {
+                    $quantity_total_request_kg+=$item['quantity_request'];
+                }
+                else
+                {
+                    if(isset($pack_sizes[$item['pack_size_id']]['text']))
+                    {
+                        $quantity_total_request_kg+=(($pack_sizes[$item['pack_size_id']]['text']*$item['quantity_request'])/1000);
+                    }
+                }
+            }
+        }
+        $quantity_to_maximum_kg=1000;
+        if($quantity_total_request_kg>$quantity_to_maximum_kg)
+        {
+            $ajax['status']=false;
+            $ajax['system_message']='Transfer order maximum quantity '.$quantity_total_request_kg.' kg. you have to already exist quantity.';
+            $this->json_return($ajax);
+        }
+
         $this->db->trans_start();  //DB Transaction Handle START
 
         if($id>0)
         {
-            $data=array();
+            /*$data=array();
             $data['date_updated'] = $time;
             $data['user_updated'] = $user->user_id;
             Query_helper::update($this->config->item('table_pos_setup_farmer_type_histories'),$data, array('id='.$id,'revision=1'), false);
@@ -303,24 +346,51 @@ class Transfer_wo_request extends Root_Controller
             $this->db->set('revision', 'revision+1', FALSE);
             $this->db->update($this->config->item('table_pos_setup_farmer_type_histories'));
 
-            $item['date_updated']=$time;
-            $item['user_updated']=$user->user_id;
+            $item_head['date_updated']=$time;
+            $item_head['user_updated']=$user->user_id;
             $this->db->set('revision_count', 'revision_count+1', FALSE);
-            Query_helper::update($this->config->item('table_pos_setup_farmer_type'),$item,array('id='.$id), false);
+            Query_helper::update($this->config->item('table_pos_setup_farmer_type'),$item_head,array('id='.$id), false);
 
-            $item['revision']=1;
-            $item['date_created']=$time;
-            $item['user_created']=$user->user_id;
-            Query_helper::add($this->config->item('table_pos_setup_farmer_type_histories'),$item, false);
+            $item_head['revision']=1;
+            $item_head['date_created']=$time;
+            $item_head['user_created']=$user->user_id;
+            Query_helper::add($this->config->item('table_pos_setup_farmer_type_histories'),$item_head, false);*/
 
         }
         else
         {
-            $item['date_created']=$time;
-            $item['user_created']=$user->user_id;
-            Query_helper::add($this->config->item('table_pos_setup_farmer_type'),$item, false);
 
-            Query_helper::add($this->config->item('table_pos_setup_farmer_type_histories'),$item, false);
+            $item_head['date_request']=System_helper::get_time($item_head['date_request']);
+            $item_head['revision_count_request']=1;
+            $item_head['status']=$this->config->item('system_status_active');
+            $item_head['status_request']=$this->config->item('system_status_pending');
+            $item_head['quantity_total_request_kg']=$quantity_total_request_kg;
+            $item_head['quantity_total_approve_kg']=$item_head['quantity_total_request_kg'];
+            $item_head['date_created_request']=$time;
+            $item_head['user_created_request']=$user->user_id;
+            $transfer_wo_id=Query_helper::add($this->config->item('table_sms_transfer_wo'),$item_head, false);
+            foreach($items as $item)
+            {
+                $data=array();
+                $data['transfer_wo_id']=$transfer_wo_id;
+                $data['variety_id']=$item['variety_id'];
+                $data['pack_size_id']=$item['pack_size_id'];
+                $data['quantity_request']=$item['quantity_request'];
+                $data['quantity_approve']=$data['quantity_request'];
+                $data['status']=$this->config->item('system_status_active');
+                Query_helper::add($this->config->item('table_sms_transfer_wo_details'),$data, false);
+
+                $data=array();
+                $data['transfer_wo_id']=$transfer_wo_id;
+                $data['variety_id']=$item['variety_id'];
+                $data['pack_size_id']=$item['pack_size_id'];
+                $data['quantity']=$item['quantity_request'];
+                $data['revision']=1;
+                $data['status']=$this->config->item('system_status_active');
+                $data['date_created_request']=$time;
+                $data['user_created_request']=$user->user_id;
+                Query_helper::add($this->config->item('table_sms_transfer_wo_details_histories'),$data, false);
+            }
         }
 
         $this->db->trans_complete();   //DB Transaction Handle END
@@ -344,17 +414,138 @@ class Transfer_wo_request extends Root_Controller
             $this->json_return($ajax);
         }
     }
+    private function system_transfer_wo_variety_info($id=0)
+    {
+        /* HQ stock */
+        $this->db->from($this->config->item('table_sms_stock_summary_variety').' stock_summary_variety');
+        $this->db->select('SUM(stock_summary_variety.current_stock) current_stock, stock_summary_variety.variety_id, stock_summary_variety.pack_size_id');
+        $this->db->join($this->config->item('table_login_setup_classification_pack_size').' pack','pack.id=stock_summary_variety.pack_size_id','LEFT');
+        $this->db->select('pack.name pack_size');
+        $this->db->where('stock_summary_variety.current_stock > 0');
+        $this->db->group_by('stock_summary_variety.variety_id, stock_summary_variety.pack_size_id');
+        $results=$this->db->get()->result_array();
+        //echo $this->db->last_query();
+        /*Initiate variable */
+        $two_variety_info=array();
+        foreach($results as $result)
+        {
+            if($result['pack_size_id']==0)
+            {
+                $pack_size='Bulk';
+            }
+            else
+            {
+                $pack_size=$result['pack_size'];
+            }
+            $two_variety_info[$result['variety_id']][$result['pack_size_id']]['pack_size']=$pack_size;
+            $two_variety_info[$result['variety_id']][$result['pack_size_id']]['stock_available']=number_format($result['current_stock'],3,'.','');
+            $two_variety_info[$result['variety_id']][$result['pack_size_id']]['quantity_min']=number_format(0,3,'.','');
+            $two_variety_info[$result['variety_id']][$result['pack_size_id']]['quantity_max']=number_format(0,3,'.','');
+            $two_variety_info[$result['variety_id']][$result['pack_size_id']]['stock_outlet']=number_format(0,3,'.','');
+        }
+
+        /* calculate available stock */
+        $this->db->from($this->config->item('table_sms_transfer_wo').' transfer_wo');
+        $this->db->join($this->config->item('table_sms_transfer_wo_details').' transfer_wo_details','transfer_wo_details.transfer_wo_id=transfer_wo.id AND transfer_wo_details.status="'.$this->config->item('system_status_active').'"','INNER');
+        $this->db->select('SUM(transfer_wo_details.quantity_approve) quantity_approve, transfer_wo_details.variety_id, transfer_wo_details.pack_size_id');
+        $this->db->where('transfer_wo.status',$this->config->item('system_status_active'));
+        $this->db->where('transfer_wo.status_approve',$this->config->item('system_status_approved'));
+        $this->db->where('transfer_wo.status_delivery',$this->config->item('system_status_pending'));
+        $this->db->group_by('transfer_wo_details.variety_id, transfer_wo_details.pack_size_id');
+        $results=$this->db->get()->result_array();
+        foreach($results as $result)
+        {
+            $two_variety_info[$result['variety_id']][$result['pack_size_id']]['stock_available']=number_format(($two_variety_info[$result['variety_id']][$result['pack_size_id']]['stock_available']-$result['quantity_approve']),3,'.','');
+        }
+
+        /* min max stock */
+        $results=Query_helper::get_info($this->config->item('table_pos_setup_stock_min_max'), array('*'),array('customer_id='.$id));
+        foreach($results as $result)
+        {
+            if(isset($two_variety_info[$result['variety_id']][$result['pack_size_id']]))
+            {
+                $two_variety_info[$result['variety_id']][$result['pack_size_id']]['quantity_min']=number_format($result['quantity_min'],3,'.','');
+                $two_variety_info[$result['variety_id']][$result['pack_size_id']]['quantity_max']=number_format($result['quantity_max'],3,'.','');
+            }
+        }
+
+        /* outlet stock */
+        $this->db->from($this->config->item('table_pos_stock_summary_variety').' pos_stock_summary_variety');
+        $this->db->select('SUM(pos_stock_summary_variety.current_stock) current_stock');
+        $this->db->where('pos_stock_summary_variety.outlet_id',$id);
+        $this->db->group_by('pos_stock_summary_variety.variety_id, pos_stock_summary_variety.pack_size_id');
+        $results=$this->db->get()->result_array();
+        foreach($results as $result)
+        {
+            $two_variety_info[$result['variety_id']][$result['pack_size_id']]['stock_outlet']=number_format($result['current_stock'],3,'.','');
+        }
+
+        return $two_variety_info;
+    }
+    private function system_ajax_transfer_wo_variety_info()
+    {
+        $outlet_id=$this->input->post('outlet_id');
+        $two_variety_info=$this->system_transfer_wo_variety_info($outlet_id);
+        $this->json_return($two_variety_info);
+    }
     private function check_validation()
     {
         $this->load->library('form_validation');
-        $this->form_validation->set_rules('item[name]',$this->lang->line('LABEL_NAME'),'required');
-        $this->form_validation->set_rules('item[discount_self_percentage]',$this->lang->line('LABEL_DISCOUNT_SELF_PERCENTAGE'),'required');
-        $this->form_validation->set_rules('item[discount_referral_percentage]',$this->lang->line('LABEL_DISCOUNT_REFERRAL_PERCENTAGE'),'required');
-        $this->form_validation->set_rules('item[commission_distributor]',$this->lang->line('LABEL_COMMISSION_DISTRIBUTOR'),'required');
-        $this->form_validation->set_rules('item[ordering]',$this->lang->line('LABEL_ORDER'),'required');
+        $this->form_validation->set_rules('item[date_request]',$this->lang->line('LABEL_DATE_TO_REQUEST'),'required');
+        $this->form_validation->set_rules('division_id',$this->lang->line('LABEL_DIVISION_NAME'),'required');
+        $this->form_validation->set_rules('zone_id',$this->lang->line('LABEL_ZONE_NAME'),'required');
+        $this->form_validation->set_rules('territory_id',$this->lang->line('LABEL_TERRITORY_NAME'),'required');
+        $this->form_validation->set_rules('district_id',$this->lang->line('LABEL_DISTRICT_NAME'),'required');
+        $this->form_validation->set_rules('item[outlet_id]',$this->lang->line('LABEL_OUTLET_NAME'),'required');
         if($this->form_validation->run() == FALSE)
         {
             $this->message=validation_errors();
+            return false;
+        }
+
+        //$id = $this->input->post("id");
+        $item_head = $this->input->post("item");
+        $items = $this->input->post("items");
+        if(!isset($item_head['date_request']) || !strtotime($item_head['date_request']))
+        {
+            $this->message=$this->lang->line('LABEL_DATE_TO_REQUEST'). ' field is required.';
+            return false;
+        }
+
+
+        if((sizeof($items)>0))
+        {
+            $duplicate_item=array();
+            $status_duplicate_item=false;
+            $quantity_total_request_kg=0;
+            foreach($items as $item)
+            {
+                /// empty checking
+                if(!(($item['variety_id']>0) && ($item['pack_size_id']>=0) && ($item['quantity_request']>0)))
+                {
+                    $this->message='Un-finish input (variety info :: '.$item['variety_id'].').';
+                    return false;
+                }
+                // duplicate variety checking
+                if(isset($duplicate_item[$item['variety_id']][$item['pack_size_id']]))
+                {
+                    $duplicate_item[$item['variety_id']][$item['pack_size_id']]+=1;
+                    $status_duplicate_item=true;
+                }
+                else
+                {
+                    $duplicate_item[$item['variety_id']][$item['pack_size_id']]=1;
+                }
+            }
+            if($status_duplicate_item==true)
+            {
+                $this->message='Invalid input, variety duplicate entry.';
+                return false;
+            }
+        }
+        else
+        {
+            $this->message='Order item information is empty.';
             return false;
         }
         return true;
@@ -412,88 +603,5 @@ class Transfer_wo_request extends Root_Controller
         }
         return $data;
     }
-    public function get_transfer_wo_variety_info($id=0)
-    {
-        if($id>0)
-        {
-            $outlet_id=$id;
-        }
-        else
-        {
-            $outlet_id=$this->input->post('outlet_id');
-        }
-        /* HQ stock */
-        $this->db->from($this->config->item('table_sms_stock_summary_variety').' stock_summary_variety');
-        $this->db->select('SUM(stock_summary_variety.current_stock) current_stock, stock_summary_variety.variety_id, stock_summary_variety.pack_size_id');
-        $this->db->join($this->config->item('table_login_setup_classification_pack_size').' pack','pack.id=stock_summary_variety.pack_size_id','LEFT');
-        $this->db->select('pack.name pack_size_name');
-        $this->db->where('stock_summary_variety.current_stock > 0');
-        $this->db->group_by('stock_summary_variety.variety_id, stock_summary_variety.pack_size_id');
-        $results=$this->db->get()->result_array();
-        /*Initiate variable */
-        $two_variety_info=array();
-        foreach($results as $result)
-        {
-            if($result['pack_size_id']==0)
-            {
-                $pack_size_name='Bulk';
-            }
-            else
-            {
-                $pack_size_name=$result['pack_size_name'];
-            }
-            $two_variety_info[$result['variety_id']][$result['pack_size_id']]['pack_size_name']=$pack_size_name;
-            $two_variety_info[$result['variety_id']][$result['pack_size_id']]['stock_available']=number_format($result['current_stock'],3,'.','');
-            $two_variety_info[$result['variety_id']][$result['pack_size_id']]['quantity_min']=number_format(0,3,'.','');
-            $two_variety_info[$result['variety_id']][$result['pack_size_id']]['quantity_max']=number_format(0,3,'.','');
-            $two_variety_info[$result['variety_id']][$result['pack_size_id']]['stock_outlet']=number_format(0,3,'.','');
-        }
 
-        /* calculate available stock */
-        $this->db->from($this->config->item('table_sms_transfer_wo').' transfer_wo');
-        $this->db->join($this->config->item('table_sms_transfer_wo_details').' transfer_wo_details','transfer_wo_details.transfer_wo_id=transfer_wo.id AND transfer_wo_details.status="'.$this->config->item('system_status_active').'"','INNER');
-        $this->db->select('SUM(transfer_wo_details.quantity_approve) quantity_approve, transfer_wo_details.variety_id, transfer_wo_details.pack_size_id');
-        $this->db->where('transfer_wo.status',$this->config->item('system_status_active'));
-        $this->db->where('transfer_wo.status_approve',$this->config->item('system_status_approved'));
-        $this->db->where('transfer_wo.status_delivery',$this->config->item('system_status_pending'));
-        $this->db->group_by('transfer_wo_details.variety_id, transfer_wo_details.pack_size_id');
-        $results=$this->db->get()->result_array();
-        foreach($results as $result)
-        {
-            $two_variety_info[$result['variety_id']][$result['pack_size_id']]['stock_available']=number_format(($two_variety_info[$result['variety_id']][$result['pack_size_id']]['stock_available']-$result['quantity_approve']),3,'.','');
-        }
-
-        /* min max stock */
-        $results=Query_helper::get_info($this->config->item('table_pos_setup_stock_min_max'), array('*'),array('customer_id='.$outlet_id));
-        foreach($results as $result)
-        {
-            if(isset($two_variety_info[$result['variety_id']][$result['pack_size_id']]))
-            {
-                $two_variety_info[$result['variety_id']][$result['pack_size_id']]['quantity_min']=number_format($result['quantity_min'],3,'.','');
-                $two_variety_info[$result['variety_id']][$result['pack_size_id']]['quantity_max']=number_format($result['quantity_max'],3,'.','');
-            }
-        }
-
-        /* outlet stock */
-        $this->db->from($this->config->item('table_pos_stock_summary_variety').' pos_stock_summary_variety');
-        $this->db->select('SUM(pos_stock_summary_variety.current_stock) current_stock');
-        $this->db->where('pos_stock_summary_variety.outlet_id',$outlet_id);
-        $this->db->group_by('pos_stock_summary_variety.variety_id, pos_stock_summary_variety.pack_size_id');
-        $results=$this->db->get()->result_array();
-        foreach($results as $result)
-        {
-            $two_variety_info[$result['variety_id']][$result['pack_size_id']]['stock_outlet']=number_format($result['current_stock'],3,'.','');
-        }
-
-        if($id>0)
-        {
-            return $two_variety_info;
-        }
-        else
-        {
-            /*$ajax['status']=true;
-            $ajax['two_variety_info']=$two_variety_info;*/
-            $this->json_return($two_variety_info);
-        }
-    }
 }
