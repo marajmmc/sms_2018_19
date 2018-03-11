@@ -581,7 +581,7 @@ class Transfer_wo_request extends Root_Controller
         $data['zone_name']= 1;
         $data['territory_name']= 1;
         $data['district_name']= 1;
-        $data['quantity_total_request']= 1;
+        $data['quantity_total_request_kg']= 1;
         if($result)
         {
             if($result['preferences']!=null)

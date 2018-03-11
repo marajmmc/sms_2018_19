@@ -81,7 +81,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 ?>
             </div>
         </div>
-        <div class="row show-grid" id="zone_id_container">
+        <div style="<?php if(!($item['id']>0)){ echo 'display:none;';}?>" class="row show-grid" id="zone_id_container">
             <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ZONE_NAME');?><span style="color:#FF0000">*</span></label>
             </div>
@@ -104,7 +104,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 ?>
             </div>
         </div>
-        <div class="row show-grid" id="territory_id_container">
+        <div style="<?php if(!($item['id']>0)){ echo 'display:none;';}?>" class="row show-grid" id="territory_id_container">
             <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TERRITORY_NAME');?><span style="color:#FF0000">*</span></label>
             </div>
@@ -127,7 +127,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 ?>
             </div>
         </div>
-        <div class="row show-grid" id="district_id_container">
+        <div style="<?php if(!($item['id']>0)){ echo 'display:none;';}?>" class="row show-grid" id="district_id_container">
             <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DISTRICT_NAME');?><span style="color:#FF0000">*</span></label>
             </div>
@@ -150,7 +150,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 ?>
             </div>
         </div>
-        <div class="row show-grid" id="outlet_id_container">
+        <div style="<?php if(!($item['id']>0)){ echo 'display:none;';}?>" class="row show-grid" id="outlet_id_container">
             <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_OUTLET_NAME');?><span style="color:#FF0000">*</span></label>
             </div>
@@ -592,7 +592,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         $(document).on("click", ".system_button_add_delete", function(event)
         {
             $(this).closest('tr').remove();
-            //calculate_total();
+            calculate_total();
         });
 
         $(document).off("change","#items_container .crop_id");
@@ -674,7 +674,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             {
                 $('#pack_size_id_'+current_id).show();
                 $('#pack_size_id_'+current_id).append('<option value="">Select</option>');
-                //console.log(two_variety_info)
+                console.log(two_variety_info)
+                var pack_size_name=0;
                 if(two_variety_info[variety_id]!==undefined)
                 {
                     $.each(two_variety_info[variety_id], function(pack_size_id, pack_size)
@@ -682,9 +683,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         console.log(pack_size_id+'  ~~ '+pack_size['pack_size'])
                         if(pack_size_id!=0)
                         {
-                            pack_size=pack_size['pack_size'];
+                            pack_size_name=pack_size['pack_size'];
                         }
-                        $('#pack_size_id_'+current_id).append('<option value="'+pack_size_id+'" data-pack-size-name="'+pack_size+'" >'+pack_size['pack_size']+'</option>');
+                        $('#pack_size_id_'+current_id).append('<option value="'+pack_size_id+'" data-pack-size-name="'+pack_size_name+'" >'+pack_size['pack_size']+'</option>');
                     })
                 }
             }

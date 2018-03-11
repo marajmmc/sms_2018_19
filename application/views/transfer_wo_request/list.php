@@ -109,7 +109,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 { name: 'zone_name', type: 'string'},
                 { name: 'territory_name', type: 'string'},
                 { name: 'district_name', type: 'string'},
-                { name: 'quantity_total_request', type: 'string'}
+                { name: 'quantity_total_request_kg', type: 'string'}
             ],
             id: 'id',
             url: url
@@ -143,7 +143,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     { text: '<?php echo $CI->lang->line('LABEL_ZONE_NAME'); ?>', dataField: 'zone_name',hidden: <?php echo $system_preference_items['zone_name']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_TERRITORY_NAME'); ?>', dataField: 'territory_name',hidden: <?php echo $system_preference_items['territory_name']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_DISTRICT_NAME'); ?>', dataField: 'district_name',hidden: <?php echo $system_preference_items['district_name']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL_REQUEST'); ?>', dataField: 'quantity_total_request', width:'100', cellsAlign:'right', hidden: <?php echo $system_preference_items['quantity_total_request']?0:1;?>}
+                    { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL_REQUEST_KG'); ?>', dataField: 'quantity_total_request_kg', width:'100', cellsAlign:'right', hidden: <?php echo $system_preference_items['quantity_total_request_kg']?0:1;?>}
                 ]
             });
     });
