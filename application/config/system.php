@@ -43,5 +43,7 @@ $config['system_sticker']='Sticker';
 
 //Stock out purpose
 $config['system_purpose_raw_stock_damage']='Damage';
-
+//System Configuration
+$config['system_purpose_config']['sms_date_expire']='sms_date_expire';
+$config['system_purpose_config']['sms_quantity_order_max']='sms_quantity_order_max';
 

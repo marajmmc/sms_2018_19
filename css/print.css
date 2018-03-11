@@ -20,8 +20,7 @@
     font-size: 12px !important;
 }
 /*date, time, calender */
-/*
-.datepicker
+.datepicker, .date_large
 {
-
-}*/
+    cursor: pointer;
+}

@@ -64,3 +64,6 @@ $config['table_login_setup_direct_cost_items'] = 'arm_login_2018_19.login_setup_
 
 //Variety Wise Packing Item Setup
 $config['table_login_setup_classification_variety_raw_config'] = 'arm_login_2018_19.login_setup_classification_variety_raw_config';
+
+// System configuration items
+$config['table_login_setup_system_configures'] = 'arm_login_2018_19.login_setup_system_configures';

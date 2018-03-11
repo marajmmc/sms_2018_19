@@ -184,7 +184,7 @@ $lang['LABEL_DATE_CHALLAN']='Challan Date';
 $lang['LABEL_DATE_CREATED_TIME']='Created Time';
 $lang['LABEL_DATE_UPDATED_TIME']='Updated Time';
 $lang['LABEL_DATE_CONVERT']='Convert Date';
-$lang['LABEL_DATE_TO_REQUEST']='TO Date';
+$lang['LABEL_DATE_REQUEST']='TO Date';
 
 //months array
 $lang['LABEL_MONTH'] = 'Month';

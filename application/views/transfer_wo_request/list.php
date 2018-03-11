@@ -103,13 +103,13 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 { name: 'id', type: 'int' },
                 { name: 'barcode', type: 'string' },
                 { name: 'outlet_name', type: 'string'},
-                { name: 'date_to_request', type: 'string'},
+                { name: 'date_request', type: 'string'},
                 { name: 'outlet_code', type: 'string'},
                 { name: 'division_name', type: 'string'},
                 { name: 'zone_name', type: 'string'},
                 { name: 'territory_name', type: 'string'},
                 { name: 'district_name', type: 'string'},
-                { name: 'quantity_total_request_kg', type: 'string'}
+                { name: 'quantity_total_request', type: 'string'}
             ],
             id: 'id',
             url: url
@@ -137,13 +137,13 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 [
                     { text: '<?php echo $CI->lang->line('LABEL_BARCODE'); ?>', dataField: 'barcode',pinned:true, width:'80',hidden: <?php echo $system_preference_items['barcode']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_OUTLET_NAME'); ?>', dataField: 'outlet_name',pinned:true, width:'100',hidden: <?php echo $system_preference_items['outlet_name']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_DATE_TO_REQUEST'); ?>', dataField: 'date_to_request', width:'100',hidden: <?php echo $system_preference_items['date_to_request']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_DATE_REQUEST'); ?>', dataField: 'date_request', width:'100',hidden: <?php echo $system_preference_items['date_request']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_OUTLET_CODE'); ?>', dataField: 'outlet_code',hidden: <?php echo $system_preference_items['outlet_code']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_DIVISION_NAME'); ?>', dataField: 'division_name',hidden: <?php echo $system_preference_items['division_name']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_ZONE_NAME'); ?>', dataField: 'zone_name',hidden: <?php echo $system_preference_items['zone_name']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_TERRITORY_NAME'); ?>', dataField: 'territory_name',hidden: <?php echo $system_preference_items['territory_name']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_DISTRICT_NAME'); ?>', dataField: 'district_name',hidden: <?php echo $system_preference_items['district_name']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL_REQUEST_KG'); ?>', dataField: 'quantity_total_request_kg', width:'100', cellsAlign:'right', hidden: <?php echo $system_preference_items['quantity_total_request_kg']?0:1;?>}
+                    { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL_REQUEST'); ?>', dataField: 'quantity_total_request', width:'100', cellsAlign:'right', hidden: <?php echo $system_preference_items['quantity_total_request']?0:1;?>}
                 ]
             });
     });

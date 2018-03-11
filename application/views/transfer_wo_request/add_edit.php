@@ -45,7 +45,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         </div>
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_TO_REQUEST');?><span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_REQUEST');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <input type="text" name="item[date_request]" id="date_request" class="form-control datepicker" value="<?php echo System_helper::display_date($item['date_request']);?>" readonly="readonly" />
@@ -201,14 +201,14 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <th rowspan="2" style="width: 150px;"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?></th>
                         <th rowspan="2" style="width: 150px;"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
                         <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
-                        <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY_MIN'); ?></th>
-                        <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY_MAX'); ?></th>
-                        <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_STOCK_AVAILABLE'); ?></th>
+                        <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY_MIN'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
+                        <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY_MAX'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
+                        <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY_TRANSFER_MAXIMUM'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
                         <?php
                         if(!($CI->locations['territory_id']>0))
                         {
                             ?>
-                            <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY_TRANSFER_MAXIMUM'); ?></th>
+                            <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_STOCK_AVAILABLE'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
                         <?php
                         }
                         ?>
@@ -216,7 +216,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <th rowspan="2">&nbsp;</th>
                     </tr>
                     <tr>
-                        <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_PACK');?>/<?php echo $CI->lang->line('LABEL_KG');?></th>
+                        <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_PACK');?></th>
                         <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_KG');?></th>
                     </tr>
                     </thead>
@@ -264,12 +264,25 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                                         ?>
                                     </label>
                                 </td>
-                                <td class="text-right"> <label> </label> </td>
+                                <td class="text-right">
+                                    <label class="control-label quantity_max_transferable"> </label>
+                                </td>
+                                <?php
+                                if(!($CI->locations['territory_id']>0))
+                                {
+                                    ?>
+                                    <td class="text-right"> <label class="control-label stock_available"> </label> </td>
+                                <?php
+                                }
+                                ?>
                                 <td>
                                     <input type="text" value="<?php echo $value['quantity_request']; ?>" class="form-control float_type_positive quantity_request" id="quantity_request_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][quantity_request]">
                                 </td>
                                 <td class="text-right">
                                     <label> <?php echo number_format($quantity_request_kg,3,'.','');?> </label>
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-danger system_button_add_delete"><?php echo $CI->lang->line('DELETE'); ?></button>
                                 </td>
                             </tr>
                         <?php
@@ -278,7 +291,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     </tbody>
                     <tfoot>
                     <tr>
-                        <th colspan="8" class="text-right"><?php echo $CI->lang->line('LABEL_TOTAL');?></th>
+                        <th colspan="<?php if(!($CI->locations['territory_id']>0)){echo 8;}else{echo 6;}?>" class="text-right"><?php echo $CI->lang->line('LABEL_TOTAL');?></th>
                         <th class="text-right"><label class="control-label" id="quantity_total_request"> </label></th>
                         <th class="text-right"><label class="control-label" id="quantity_total_request_kg"> </label></th>
                         <th>&nbsp;</th>
@@ -339,14 +352,14 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <label class="control-label quantity_max"> </label>
             </td>
             <td class="text-right">
-                <label class="control-label stock_available"> </label>
+                <label class="control-label quantity_max_transferable"> </label>
             </td>
             <?php
             if(!($CI->locations['territory_id']>0))
             {
                 ?>
                 <td class="text-right">
-                    <label class="control-label quantity_transferable_max"> </label>
+                    <label class="control-label stock_available"> </label>
                 </td>
             <?php
             }
@@ -383,9 +396,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
     var quantity_to_maximum_kg='<?php echo $quantity_to_maximum_kg;?>';
     function calculate_total()
     {
-        var status_quantity_to_maximum_kg=false;
-        var quantity_current_request=0;
-        var quantity_current_request_kg=0;
         var quantity_total_request=0;
         var quantity_total_request_kg=0;
         $('#items_container .quantity_request').each(function(index, element)
@@ -403,27 +413,19 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 quantity_request_kg=0;
             }
             quantity_total_request_kg+=quantity_request_kg;
-
-            if(quantity_total_request_kg>quantity_to_maximum_kg)
-            {
-                quantity_current_request=parseFloat($(this).val());
-                quantity_current_request_kg=parseFloat($('#quantity_request_kg_'+current_id).html().replace(/,/g,''));
-                $(this).val('');
-                $("#quantity_request_kg_"+current_id).html('');
-                return false;
-            }
         });
         if(quantity_total_request_kg>quantity_to_maximum_kg)
         {
-            alert('Transfer order maximum quantity '+quantity_to_maximum_kg+' kg. you have to already exist quantity.');
-            /*$('#quantity_total_request').html(quantity_total_request-quantity_current_request);
-            $('#quantity_total_request_kg').html(number_format((quantity_total_request_kg-quantity_current_request_kg),3,'.',''));*/
-            //return false;
+            $('#quantity_total_request').css('background','red');
+            $('#quantity_total_request_kg').css('background','red');
         }
-        $('#quantity_total_request').html(quantity_total_request-quantity_current_request);
-        $('#quantity_total_request_kg').html(number_format((quantity_total_request_kg-quantity_current_request_kg),3,'.',''));
-        /*$('#quantity_total_request').html(quantity_total_request);
-        $('#quantity_total_request_kg').html(number_format((quantity_total_request_kg),3,'.',''));*/
+        else
+        {
+            $('#quantity_total_request').css('background','');
+            $('#quantity_total_request_kg').css('background','');
+        }
+        $('#quantity_total_request').html(quantity_total_request);
+        $('#quantity_total_request_kg').html(number_format((quantity_total_request_kg),3,'.',''));
     }
     $(document).ready(function()
     {
@@ -571,11 +573,11 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             $(content_id+' .quantity_max').attr('id','quantity_max_'+current_id);
             $(content_id+' .quantity_max').attr('data-current-id',current_id);
 
+            $(content_id+' .quantity_max_transferable').attr('id','quantity_max_transferable_'+current_id);
+            $(content_id+' .quantity_max_transferable').attr('data-current-id',current_id);
+
             $(content_id+' .stock_available').attr('id','stock_available_'+current_id);
             $(content_id+' .stock_available').attr('data-current-id',current_id);
-
-            $(content_id+' .quantity_transferable_max').attr('id','quantity_transferable_max_'+current_id);
-            $(content_id+' .quantity_transferable_max').attr('data-current-id',current_id);
 
             $(content_id+' .quantity_request').attr('id','quantity_request_'+current_id);
             $(content_id+' .quantity_request').attr('data-current-id',current_id);
@@ -608,7 +610,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             $("#quantity_min_"+current_id).html('');
             $("#quantity_max_"+current_id).html('');
             $("#stock_available_"+current_id).html('');
-            $("#quantity_transferable_max_"+current_id).html('');
+            $("#quantity_max_transferable_"+current_id).html('');
 
             var crop_id=$('#crop_id_'+current_id).val();
             $('#crop_type_id_'+current_id).hide();
@@ -638,7 +640,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             $("#quantity_min_"+current_id).html('');
             $("#quantity_max_"+current_id).html('');
             $("#stock_available_"+current_id).html('');
-            $("#quantity_transferable_max_"+current_id).html('');
+            $("#quantity_max_transferable_"+current_id).html('');
 
             var crop_type_id=$('#crop_type_id_'+current_id).val();
             $('#pack_size_id_'+current_id).hide();
@@ -661,7 +663,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             $("#quantity_min_"+current_id).html('');
             $("#quantity_max_"+current_id).html('');
             $("#stock_available_"+current_id).html('');
-            $("#quantity_transferable_max_"+current_id).html('');
+            $("#quantity_max_transferable_"+current_id).html('');
 
             $("#pack_size_id_"+current_id).empty('');
             $("#quantity_request_"+current_id).val('');
@@ -680,7 +682,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 {
                     $.each(two_variety_info[variety_id], function(pack_size_id, pack_size)
                     {
-                        console.log(pack_size_id+'  ~~ '+pack_size['pack_size'])
+                        //console.log(pack_size_id+'  ~~ '+pack_size['pack_size'])
                         if(pack_size_id!=0)
                         {
                             pack_size_name=pack_size['pack_size'];
@@ -702,7 +704,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             $("#quantity_min_"+current_id).html('');
             $("#quantity_max_"+current_id).html('');
             $("#stock_available_"+current_id).html('');
-            $("#quantity_transferable_max_"+current_id).html('');
+            $("#quantity_max_transferable_"+current_id).html('');
             $("#quantity_request_"+current_id).val('');
             $("#quantity_request_"+current_id).hide();
             $("#quantity_request_kg_"+current_id).html('');
@@ -714,7 +716,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 $("#quantity_min_"+current_id).html(two_variety_info[variety_id][pack_size_id]['quantity_min']);
                 $("#quantity_max_"+current_id).html(two_variety_info[variety_id][pack_size_id]['quantity_max']);
                 $("#stock_available_"+current_id).html(two_variety_info[variety_id][pack_size_id]['stock_available']);
-                $("#quantity_transferable_max_"+current_id).html(two_variety_info[variety_id][pack_size_id]['quantity_transferable_max']);
+                $("#quantity_max_transferable_"+current_id).html(two_variety_info[variety_id][pack_size_id]['quantity_max_transferable']);
                 $("#quantity_request_"+current_id).show();
             }
         });
@@ -739,16 +741,18 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             {
                 quantity_request_kg=parseFloat((pack_size*quantity_request)/1000);
             }
-            //console.log(pack_size+' == '+quantity_request_kg);
-            /*if(quantity_request_kg>quantity_to_maximum_kg)
+            var quantity_max_transferable=parseFloat($('#quantity_max_transferable_'+current_id).html().replace(/,/g,''));
+            if(isNaN(quantity_max_transferable))
+            {
+                quantity_max_transferable=0;
+            }
+            if(quantity_request_kg>quantity_max_transferable)
             {
                 $(this).val('');
                 $("#quantity_request_kg_"+current_id).html('');
-                alert('Transfer order maximum quantity '+quantity_to_maximum_kg+' kg. you have to already exist quantity.');
-                calculate_total();
+                alert('Maximum transferable quantity exist.');
                 return false;
-            }*/
-
+            }
             $("#quantity_request_kg_"+current_id).html(number_format(quantity_request_kg,3,'.',''));
             calculate_total();
         });
