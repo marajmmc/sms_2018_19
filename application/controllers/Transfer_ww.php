@@ -98,7 +98,7 @@ class Transfer_ww extends Root_Controller
             $pagesize=$pagesize*2;
         }
 
-        $this->db->from($this->config->item('table_sms_transfer_warehouse_variety').' transfer_warehouse');
+        $this->db->from($this->config->item('table_sms_transfer_ww').' transfer_warehouse');
         $this->db->select('transfer_warehouse.*');
 
         $this->db->join($this->config->item('table_login_setup_classification_varieties').' variety','variety.id = transfer_warehouse.variety_id','INNER');
@@ -188,7 +188,7 @@ class Transfer_ww extends Root_Controller
             {
                 $item_id=$this->input->post('id');
             }
-            $this->db->from($this->config->item('table_sms_transfer_warehouse_variety').' transfer_warehouse');
+            $this->db->from($this->config->item('table_sms_transfer_ww').' transfer_warehouse');
             $this->db->select('transfer_warehouse.*');
 
             $this->db->join($this->config->item('table_login_setup_classification_varieties').' variety','variety.id = transfer_warehouse.variety_id','INNER');
@@ -253,7 +253,7 @@ class Transfer_ww extends Root_Controller
             {
                 $item_id=$this->input->post('id');
             }
-            $this->db->from($this->config->item('table_sms_transfer_warehouse_variety').' transfer_warehouse');
+            $this->db->from($this->config->item('table_sms_transfer_ww').' transfer_warehouse');
             $this->db->select('transfer_warehouse.*');
 
             $this->db->join($this->config->item('table_login_setup_classification_varieties').' variety','variety.id = transfer_warehouse.variety_id','INNER');
@@ -321,7 +321,7 @@ class Transfer_ww extends Root_Controller
             {
                 $item_id=$this->input->post('id');
             }
-            $this->db->from($this->config->item('table_sms_transfer_warehouse_variety').' transfer_warehouse');
+            $this->db->from($this->config->item('table_sms_transfer_ww').' transfer_warehouse');
             $this->db->select('transfer_warehouse.*');
 
             $this->db->join($this->config->item('table_login_setup_classification_varieties').' variety','variety.id = transfer_warehouse.variety_id','INNER');
@@ -417,7 +417,7 @@ class Transfer_ww extends Root_Controller
         $old_value=0;
         if($id>0)
         {
-            $old_item=Query_helper::get_info($this->config->item('table_sms_transfer_warehouse_variety'),'*',array('status !="'.$this->config->item('system_status_delete').'"','id ='.$id),1);
+            $old_item=Query_helper::get_info($this->config->item('table_sms_transfer_ww'),'*',array('status !="'.$this->config->item('system_status_delete').'"','id ='.$id),1);
             $item['variety_id']=$old_item['variety_id'];
             $item['pack_size_id']=$old_item['pack_size_id'];
             $item['warehouse_id_source']=$old_item['warehouse_id_source'];
@@ -495,7 +495,7 @@ class Transfer_ww extends Root_Controller
             $data['user_updated']=$user->user_id;
             $data['date_updated']=$time;
             $this->db->set('revision_counter', 'revision_counter+1', FALSE);
-            Query_helper::update($this->config->item('table_sms_transfer_warehouse_variety'),$data,array('id='.$id));
+            Query_helper::update($this->config->item('table_sms_transfer_ww'),$data,array('id='.$id));
 
             $data=array(); //Summary Data(for source warehouse)
             $data['out_transfer_warehouse']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id_source']]['out_transfer_warehouse']-$old_value+$item['quantity_transfer'];
@@ -525,7 +525,7 @@ class Transfer_ww extends Root_Controller
             $data['revision_counter']=1;
             $data['user_created']=$user->user_id;
             $data['date_created']=$time;
-            Query_helper::add($this->config->item('table_sms_transfer_warehouse_variety'),$data);
+            Query_helper::add($this->config->item('table_sms_transfer_ww'),$data);
 
             $data=array(); //Summary Data(for source warehouse)
             $data['out_transfer_warehouse']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id_source']]['out_transfer_warehouse']+$item['quantity_transfer'];
@@ -638,7 +638,7 @@ class Transfer_ww extends Root_Controller
             }
             $user = User_helper::get_user();
             $time = time();
-            $item=Query_helper::get_info($this->config->item('table_sms_transfer_warehouse_variety'),'*',array('status !="'.$this->config->item('system_status_delete').'"','id ='.$item_id),1);
+            $item=Query_helper::get_info($this->config->item('table_sms_transfer_ww'),'*',array('status !="'.$this->config->item('system_status_delete').'"','id ='.$item_id),1);
             if(!$item)
             {
                 System_helper::invalid_try('Delete Not Exists',$item_id);
@@ -677,7 +677,7 @@ class Transfer_ww extends Root_Controller
             $data['user_updated']=$user->user_id;
             $data['date_updated']=$time;
             $data['status']=$this->config->item('system_status_delete');
-            Query_helper::update($this->config->item('table_sms_transfer_warehouse_variety'),$data,array('id='.$item_id));
+            Query_helper::update($this->config->item('table_sms_transfer_ww'),$data,array('id='.$item_id));
 
             $data=array(); //Summary data for source warehouse
             $data['out_transfer_warehouse']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id_source']]['out_transfer_warehouse']-$item['quantity_transfer'];

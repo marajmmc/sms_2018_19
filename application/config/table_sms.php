@@ -21,7 +21,7 @@ $config['table_sms_lc_receive_histories'] = 'arm_sms_2018_19.sms_lc_receive_hist
 
 //Transfer
 /* Warehouse to warehouse*/
-$config['table_sms_transfer_warehouse_variety'] = 'arm_sms_2018_19.sms_transfer_warehouse_variety';
+$config['table_sms_transfer_ww'] = 'arm_sms_2018_19.sms_transfer_ww';
 /* Head office to outlet (TO) */
 $config['table_sms_transfer_wo'] = 'arm_sms_2018_19.sms_transfer_wo';
 $config['table_sms_transfer_wo_details'] = 'arm_sms_2018_19.sms_transfer_wo_details';

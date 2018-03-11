@@ -204,7 +204,7 @@ class Report_stock_variety_details extends Root_Controller
 
         //transfer in and out
 
-        $this->db->from($this->config->item('table_sms_transfer_warehouse_variety').' details');
+        $this->db->from($this->config->item('table_sms_transfer_ww').' details');
         $this->db->select('details.variety_id,details.pack_size_id,details.warehouse_id_source,details.warehouse_id_destination');
         $this->db->select('SUM(CASE WHEN details.date_transfer<'.$date_start.' then details.quantity_transfer ELSE 0 END) in_out_opening',false);
 
