@@ -291,7 +291,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     </tbody>
                     <tfoot>
                     <tr>
-                        <th colspan="<?php if(!($CI->locations['territory_id']>0)){echo 8;}else{echo 6;}?>" class="text-right"><?php echo $CI->lang->line('LABEL_TOTAL');?></th>
+                        <th colspan="<?php if(!($CI->locations['territory_id']>0)){echo 8;}else{echo 7;}?>" class="text-right"><?php echo $CI->lang->line('LABEL_TOTAL');?></th>
                         <th class="text-right"><label class="control-label" id="quantity_total_request"> </label></th>
                         <th class="text-right"><label class="control-label" id="quantity_total_request_kg"> </label></th>
                         <th>&nbsp;</th>
