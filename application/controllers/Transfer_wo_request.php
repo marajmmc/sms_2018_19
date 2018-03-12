@@ -298,6 +298,7 @@ class Transfer_wo_request extends Root_Controller
                 $ajax['system_message']='TO already forwarded.';
                 $this->json_return($ajax);
             }
+            $two_variety_info=$this->system_transfer_wo_variety_info($data['item']['outlet_id']);
         }
         else
         {
@@ -307,6 +308,7 @@ class Transfer_wo_request extends Root_Controller
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->json_return($ajax);
             }
+            $two_variety_info=$this->system_transfer_wo_variety_info($item_head['outlet_id']);
         }
         if(!$this->check_validation())
         {
@@ -322,8 +324,6 @@ class Transfer_wo_request extends Root_Controller
             $pack_sizes[$result['value']]['value']=$result['value'];
             $pack_sizes[$result['value']]['text']=$result['text'];
         }
-
-        $two_variety_info=$this->system_transfer_wo_variety_info($data['item']['outlet_id']);
 
         $quantity_total_request_kg=0;
         if($items)
