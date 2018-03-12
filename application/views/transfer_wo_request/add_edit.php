@@ -702,8 +702,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
             $("#quantity_min_"+current_id).html('');
             $("#quantity_max_"+current_id).html('');
-            $("#stock_available_"+current_id).html('');
+            $("#stock_outlet_"+current_id).html('');
             $("#quantity_max_transferable_"+current_id).html('');
+            $("#stock_available_"+current_id).html('');
 
             var crop_id=$('#crop_id_'+current_id).val();
             $('#crop_type_id_'+current_id).hide();
@@ -719,6 +720,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             {
                 $('#crop_type_id_'+current_id).hide();
             }
+            calculate_total();
         });
 
         $(document).off("change","#items_container .crop_type_id");
@@ -732,8 +734,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
             $("#quantity_min_"+current_id).html('');
             $("#quantity_max_"+current_id).html('');
-            $("#stock_available_"+current_id).html('');
+            $("#stock_outlet_"+current_id).html('');
             $("#quantity_max_transferable_"+current_id).html('');
+            $("#stock_available_"+current_id).html('');
 
             var crop_type_id=$('#crop_type_id_'+current_id).val();
             $('#pack_size_id_'+current_id).hide();
@@ -747,6 +750,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             {
                 $('#variety_id_'+current_id).hide();
             }
+            calculate_total();
         });
 
         $(document).off("change","#items_container .variety_id");
@@ -755,8 +759,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             var current_id=$(this).attr('data-current-id');
             $("#quantity_min_"+current_id).html('');
             $("#quantity_max_"+current_id).html('');
-            $("#stock_available_"+current_id).html('');
+            $("#stock_outlet_"+current_id).html('');
             $("#quantity_max_transferable_"+current_id).html('');
+            $("#stock_available_"+current_id).html('');
 
             $("#pack_size_id_"+current_id).empty('');
             $("#quantity_request_"+current_id).val('');
@@ -786,6 +791,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             {
                 $('#pack_size_id_'+current_id).hide();
             }
+            calculate_total();
         });
 
         $(document).off("change","#items_container .pack_size_id");
@@ -794,8 +800,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             var current_id=$(this).attr('data-current-id');
             $("#quantity_min_"+current_id).html('');
             $("#quantity_max_"+current_id).html('');
-            $("#stock_available_"+current_id).html('');
+            $("#stock_outlet_"+current_id).html('');
             $("#quantity_max_transferable_"+current_id).html('');
+            $("#stock_available_"+current_id).html('');
             $("#quantity_request_"+current_id).val('');
             $("#quantity_request_"+current_id).hide();
             $("#quantity_request_kg_"+current_id).html('');
@@ -811,6 +818,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 $("#quantity_max_transferable_"+current_id).html(two_variety_info[variety_id][pack_size_id]['quantity_max_transferable']);
                 $("#quantity_request_"+current_id).show();
             }
+            calculate_total();
         });
 
         $(document).off('input', '#items_container .quantity_request');
