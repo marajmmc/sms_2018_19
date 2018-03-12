@@ -262,3 +262,8 @@ footer a{
     width: 8.27in;
     margin: .5in;
 }
+/*date, time, calender */
+.datepicker, .date_large
+{
+    cursor: pointer !important;
+}
