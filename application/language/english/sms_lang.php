@@ -260,6 +260,7 @@ $lang['LABEL_TOTAL_STOCK_IN'] = 'Total Stock In';
 $lang['LABEL_TOTAL_STOCK_OUT'] = 'Total Stock Out';
 
 $lang['LABEL_STOCK_AVAILABLE'] = 'Available Stock';
+$lang['LABEL_STOCK_OUTLET'] = 'Outlet Stock';
 
 
 /* Currency */
@@ -391,3 +392,4 @@ $lang['LABEL_QUANTITY_PACKET_ACTUAL']='Converted Packets';
 
 // Transfer HQ to TO
 $lang['LABEL_QUANTITY_TRANSFER_MAXIMUM']='Max Transferable';
+$lang['LABEL_TO_FORWARD']='Forward TO';
