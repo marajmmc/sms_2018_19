@@ -377,7 +377,13 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         </tbody>
     </table>
 </div>
-
+<style>
+    .quantity_exist_warning
+    {
+        background-color: red;
+        color: #FFFFFF;
+    }
+</style>
 <script>
     <?php
     if(sizeof($two_variety_info)>0)
@@ -416,13 +422,13 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         });
         if(quantity_total_request_kg>quantity_to_maximum_kg)
         {
-            $('#quantity_total_request').css('background','red');
-            $('#quantity_total_request_kg').css('background','red');
+            $('#quantity_total_request').addClass('quantity_exist_warning');
+            $('#quantity_total_request_kg').addClass('quantity_exist_warning');
         }
         else
         {
-            $('#quantity_total_request').css('background','');
-            $('#quantity_total_request_kg').css('background','');
+            $('#quantity_total_request').removeClass('quantity_exist_warning');
+            $('#quantity_total_request_kg').removeClass('quantity_exist_warning');
         }
         $('#quantity_total_request').html(quantity_total_request);
         $('#quantity_total_request_kg').html(number_format((quantity_total_request_kg),3,'.',''));
@@ -746,13 +752,19 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             {
                 quantity_max_transferable=0;
             }
+            $(this).removeClass('quantity_exist_warning');
+            $("#quantity_request_kg_"+current_id).removeClass('quantity_exist_warning');
+            $("#quantity_max_transferable_"+current_id).removeClass('quantity_exist_warning');
             if(quantity_request_kg>quantity_max_transferable)
             {
-                $(this).val('');
+                /*$(this).val('');
                 $("#quantity_request_kg_"+current_id).html('');
-                alert('Maximum transferable quantity exist.');
-                return false;
+                alert('Maximum transferable quantity exist.');*/
+                $(this).addClass('quantity_exist_warning');
+                $("#quantity_request_kg_"+current_id).addClass('quantity_exist_warning');
+                $("#quantity_max_transferable_"+current_id).addClass('quantity_exist_warning');
             }
+
             $("#quantity_request_kg_"+current_id).html(number_format(quantity_request_kg,3,'.',''));
             calculate_total();
         });

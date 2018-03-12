@@ -22,5 +22,5 @@
 /*date, time, calender */
 .datepicker, .date_large
 {
-    cursor: pointer;
+    cursor: pointer !important;
 }
