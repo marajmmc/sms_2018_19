@@ -18,7 +18,6 @@ if((isset($CI->permissions['action7']) && ($CI->permissions['action7']==1)))
     );
 }
 $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
-
 ?>
 <form id="save_form" action="<?php echo site_url($CI->controller_url.'/index/save_forward');?>" method="post">
     <input type="hidden" id="id" name="id" value="<?php echo $item['id']; ?>" />
