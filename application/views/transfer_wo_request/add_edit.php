@@ -166,13 +166,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     ?>
                     <select id="outlet_id" name="item[outlet_id]" class="form-control">
                         <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                        <?php
-                        foreach($outlets as $outlet)
-                        {?>
-                            <option value="<?php echo $outlet['value']?>"><?php echo $outlet['text'];?></option>
-                        <?php
-                        }
-                        ?>
+
                     </select>
                 <?php
                 }

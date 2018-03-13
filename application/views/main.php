@@ -38,10 +38,11 @@ foreach($results as $result)
 }
 
 $CI->db->from($CI->config->item('table_login_csetup_customer').' customer');
-$CI->db->join($CI->config->item('table_login_csetup_cus_info').' cus_info','cus_info.customer_id = customer.id','LEFT');
+$CI->db->join($CI->config->item('table_login_csetup_cus_info').' cus_info','cus_info.customer_id = customer.id','INNER');
 $CI->db->select('customer.id');
 $CI->db->select('cus_info.type, cus_info.district_id, cus_info.customer_id value, cus_info.name text');
 $CI->db->where('customer.status',$CI->config->item('system_status_active'));
+$this->db->where('cus_info.revision',1);
 $results=$CI->db->get()->result_array();
 $system_customers=array();
 $system_outlets=array();
