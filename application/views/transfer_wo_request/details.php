@@ -39,22 +39,22 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             </tr>
             <tr>
                 <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DIVISION_NAME');?></label></th>
-                <th class=" header_value"><label class="control-label"><?php echo $CI->locations['division_name'];?></label></th>
+                <th class=" header_value"><label class="control-label"><?php echo $item['division_name'];?></label></th>
                 <th colspan="2">&nbsp;</th>
             </tr>
             <tr>
                 <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_ZONE_NAME');?></label></th>
-                <th class=" header_value"><label class="control-label"><?php echo $CI->locations['zone_name'];?></label></th>
+                <th class=" header_value"><label class="control-label"><?php echo $item['zone_name'];?></label></th>
                 <th colspan="2">&nbsp;</th>
             </tr>
             <tr>
                 <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_TERRITORY_NAME');?></label></th>
-                <th class=" header_value"><label class="control-label"><?php echo $CI->locations['territory_name'];?></label></th>
+                <th class=" header_value"><label class="control-label"><?php echo $item['territory_name'];?></label></th>
                 <th colspan="2">&nbsp;</th>
             </tr>
             <tr>
                 <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DISTRICT_NAME');?></label></th>
-                <th class=" header_value"><label class="control-label"><?php echo $CI->locations['district_name'];?></label></th>
+                <th class=" header_value"><label class="control-label"><?php echo $item['district_name'];?></label></th>
                 <th colspan="2">&nbsp;</th>
             </tr>
             <tr>
@@ -113,23 +113,11 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_STOCK_OUTLET'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
                     <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY_TRANSFER_MAXIMUM'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
                     <?php
-                    if($item['id']>0)
+                    if(!($CI->locations['territory_id']>0))
                     {
-                        if(!($user_location['territory_id']>0))
-                        {
-                            ?>
-                            <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_STOCK_AVAILABLE'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
-                        <?php
-                        }
-                    }
-                    else
-                    {
-                        if(!($CI->locations['territory_id']>0))
-                        {
-                            ?>
-                            <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_STOCK_AVAILABLE'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
-                        <?php
-                        }
+                        ?>
+                        <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_STOCK_AVAILABLE'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
+                    <?php
                     }
                     ?>
                     <th colspan="2" class="text-center" style="width: 300px;"><?php echo $CI->lang->line('LABEL_QUANTITY_REQUEST'); ?></th>
@@ -198,35 +186,17 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                             </label>
                         </td>
                         <?php
-                        if($item['id']>0)
+                        if(!($CI->locations['territory_id']>0))
                         {
-                            if(!($user_location['territory_id']>0))
-                            {
-                                ?>
-                                <td class="text-right">
-                                    <label class="control-label stock_available" id="stock_available_id_<?php echo $index+1;?>">
-                                        <?php
-                                        echo isset($two_variety_info[$value['variety_id']][$value['pack_size_id']])?$two_variety_info[$value['variety_id']][$value['pack_size_id']]['stock_available']:'';
-                                        ?>
-                                    </label>
-                                </td>
-                            <?php
-                            }
-                        }
-                        else
-                        {
-                            if(!($CI->locations['territory_id']>0))
-                            {
-                                ?>
-                                <td class="text-right">
-                                    <label class="control-label stock_available" id="stock_available_id_<?php echo $index+1;?>">
-                                        <?php
-                                        echo isset($two_variety_info[$value['variety_id']][$value['pack_size_id']])?$two_variety_info[$value['variety_id']][$value['pack_size_id']]['stock_available']:'';
-                                        ?>
-                                    </label>
-                                </td>
-                            <?php
-                            }
+                            ?>
+                            <td class="text-right">
+                                <label class="control-label stock_available" id="stock_available_id_<?php echo $index+1;?>">
+                                    <?php
+                                    echo isset($two_variety_info[$value['variety_id']][$value['pack_size_id']])?$two_variety_info[$value['variety_id']][$value['pack_size_id']]['stock_available']:'';
+                                    ?>
+                                </label>
+                            </td>
+                        <?php
                         }
                         ?>
                         <td class="text-right">
@@ -244,20 +214,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <tr>
                     <?php
                     $quantity_total_colspan=8;
-                    if($item['id']>0)
+                    if(!($CI->locations['territory_id']>0))
                     {
-                        if(!($user_location['territory_id']>0))
-                        {
-                            $quantity_total_colspan+=1;
-                        }
-                    }
-                    else
-                    {
-
-                        if(!($CI->locations['territory_id']>0))
-                        {
-                            $quantity_total_colspan+=1;
-                        }
+                        $quantity_total_colspan+=1;
                     }
                     ?>
                     <th colspan="<?php echo $quantity_total_colspan?>" class="text-right"><?php echo $CI->lang->line('LABEL_TOTAL');?></th>

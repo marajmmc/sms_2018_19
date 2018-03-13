@@ -112,6 +112,22 @@ class Transfer_wo_request extends Root_Controller
         $this->db->select('divisions.name division_name');
         $this->db->where('transfer_wo.status_request',$this->config->item('system_status_pending'));
         $this->db->order_by('transfer_wo.id','DESC');
+        if($this->locations['division_id']>0)
+        {
+            $this->db->where('divisions.id',$this->locations['division_id']);
+            if($this->locations['zone_id']>0)
+            {
+                $this->db->where('zones.id',$this->locations['zone_id']);
+                if($this->locations['territory_id']>0)
+                {
+                    $this->db->where('territories.id',$this->locations['territory_id']);
+                    if($this->locations['district_id']>0)
+                    {
+                        $this->db->where('districts.id',$this->locations['district_id']);
+                    }
+                }
+            }
+        }
         $results=$this->db->get()->result_array();
         $items=array();
         foreach($results as $result)
@@ -144,6 +160,8 @@ class Transfer_wo_request extends Root_Controller
             $data['title']="HQ TO Create";
             $data['item']['id']=0;
             $data['item']['outlet_id']='';
+            $data['item']['zone_id']='';
+            $data['item']['territory_id']='';
             $data['item']['date_request']=time();
             $data['item']['remarks_request']='';
             $data['items']=[];
@@ -154,6 +172,28 @@ class Transfer_wo_request extends Root_Controller
             $data['territories']=array();
             $data['districts']=array();
             $data['outlets']=array();
+            if($this->locations['division_id']>0)
+            {
+                $data['zones']=Query_helper::get_info($this->config->item('table_login_setup_location_zones'),array('id value','name text'),array('division_id ='.$this->locations['division_id'],'status ="'.$this->config->item('system_status_active').'"'));
+                if($this->locations['zone_id']>0)
+                {
+                    $data['territories']=Query_helper::get_info($this->config->item('table_login_setup_location_territories'),array('id value','name text'),array('zone_id ='.$this->locations['zone_id'],'status ="'.$this->config->item('system_status_active').'"'));
+                    if($this->locations['territory_id']>0)
+                    {
+                        $data['districts']=Query_helper::get_info($this->config->item('table_login_setup_location_districts'),array('id value','name text'),array('territory_id ='.$this->locations['territory_id'],'status ="'.$this->config->item('system_status_active').'"'));
+                        if($this->locations['district_id']>0)
+                        {
+                            $this->db->from($this->config->item('table_login_csetup_customer').' customer');
+                            $this->db->join($this->config->item('table_login_csetup_cus_info').' cus_info','cus_info.customer_id=customer.id','INNER');
+                            $this->db->select('customer.id value, cus_info.name text');
+                            $this->db->where('customer.status',$this->config->item('system_status_active'));
+                            $this->db->where('cus_info.district_id',$this->locations['district_id']);
+                            $this->db->where('cus_info.revision',1);
+                            $data['outlets']=$this->db->get()->result_array();
+                        }
+                    }
+                }
+            }
 
             $data['crops']=Query_helper::get_info($this->config->item('table_login_setup_classification_crops'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
 
@@ -181,7 +221,6 @@ class Transfer_wo_request extends Root_Controller
     {
         if(isset($this->permissions['action2'])&&($this->permissions['action2']==1))
         {
-            $data['user_location']=$this->locations;
             if($id>0)
             {
                 $item_id=$id;
@@ -191,7 +230,6 @@ class Transfer_wo_request extends Root_Controller
                 $item_id=$this->input->post('id');
             }
 
-            //$data['item']=Query_helper::get_info($this->config->item('table_sms_transfer_wo'),array('*'),array('id ='.$item_id,'status !="'.$this->config->item('system_status_delete').'"'),1,0,array('id ASC'));
             $this->db->from($this->config->item('table_sms_transfer_wo').' transfer_wo');
             $this->db->select('transfer_wo.id, transfer_wo.date_request, transfer_wo.quantity_total_request_kg, transfer_wo.status_request, transfer_wo.remarks_request');
             $this->db->join($this->config->item('table_login_csetup_cus_info').' outlet_info','outlet_info.customer_id=transfer_wo.outlet_id AND outlet_info.revision=1 AND outlet_info.type="'.$this->config->item('system_customer_type_outlet_id').'"','INNER');
@@ -220,15 +258,25 @@ class Transfer_wo_request extends Root_Controller
                 $ajax['system_message']='Invalid Try.';
                 $this->json_return($ajax);
             }
+            if(!$this->check_my_editable($data['item']))
+            {
+                System_helper::invalid_try('Edit Permission Non Exists',$item_id);
+                $ajax['status']=false;
+                $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+                $this->json_return($ajax);
+            }
 
-            $this->locations['division_id']=$data['item']['division_id'];
-            $this->locations['division_name']=$data['item']['division_name'];
-            $this->locations['zone_id']=$data['item']['zone_id'];
-            $this->locations['zone_name']=$data['item']['zone_name'];
-            $this->locations['territory_id']=$data['item']['territory_id'];
-            $this->locations['territory_name']=$data['item']['territory_name'];
-            $this->locations['district_id']=$data['item']['district_id'];
-            $this->locations['district_name']=$data['item']['district_name'];
+            $data['divisions']=Query_helper::get_info($this->config->item('table_login_setup_location_divisions'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
+            $data['zones']=Query_helper::get_info($this->config->item('table_login_setup_location_zones'),array('id value','name text'),array('division_id ='.$data['item']['division_id'],'status ="'.$this->config->item('system_status_active').'"'));
+            $data['territories']=Query_helper::get_info($this->config->item('table_login_setup_location_territories'),array('id value','name text'),array('zone_id ='.$data['item']['zone_id'],'status ="'.$this->config->item('system_status_active').'"'));
+            $data['districts']=Query_helper::get_info($this->config->item('table_login_setup_location_districts'),array('id value','name text'),array('territory_id ='.$data['item']['territory_id'],'status ="'.$this->config->item('system_status_active').'"'));
+            $this->db->from($this->config->item('table_login_csetup_customer').' customer');
+            $this->db->join($this->config->item('table_login_csetup_cus_info').' cus_info','cus_info.customer_id=customer.id','INNER');
+            $this->db->select('customer.id value, cus_info.name text');
+            $this->db->where('customer.status',$this->config->item('system_status_active'));
+            $this->db->where('cus_info.district_id',$data['item']['district_id']);
+            $this->db->where('cus_info.revision',1);
+            $data['outlets']=$this->db->get()->result_array();
 
             $this->db->from($this->config->item('table_sms_transfer_wo_details').' transfer_wo_details');
             $this->db->select('transfer_wo_details.*');
@@ -295,6 +343,13 @@ class Transfer_wo_request extends Root_Controller
             {
                 $ajax['status']=false;
                 $ajax['system_message']='TO already forwarded.';
+                $this->json_return($ajax);
+            }
+            if(!$this->check_my_editable($data['item']))
+            {
+                System_helper::invalid_try('Edit Permission Non Exists',$id);
+                $ajax['status']=false;
+                $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->json_return($ajax);
             }
             $two_variety_info=$this->system_transfer_wo_variety_info($data['item']['outlet_id']);
@@ -492,7 +547,6 @@ class Transfer_wo_request extends Root_Controller
     {
         if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
         {
-            $data['user_location']=$this->locations;
             if($id>0)
             {
                 $item_id=$id;
@@ -529,15 +583,13 @@ class Transfer_wo_request extends Root_Controller
                 $ajax['system_message']='Invalid Try.';
                 $this->json_return($ajax);
             }
-
-            $this->locations['division_id']=$data['item']['division_id'];
-            $this->locations['division_name']=$data['item']['division_name'];
-            $this->locations['zone_id']=$data['item']['zone_id'];
-            $this->locations['zone_name']=$data['item']['zone_name'];
-            $this->locations['territory_id']=$data['item']['territory_id'];
-            $this->locations['territory_name']=$data['item']['territory_name'];
-            $this->locations['district_id']=$data['item']['district_id'];
-            $this->locations['district_name']=$data['item']['district_name'];
+            if(!$this->check_my_editable($data['item']))
+            {
+                System_helper::invalid_try('View Permission Non Exists',$item_id);
+                $ajax['status']=false;
+                $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+                $this->json_return($ajax);
+            }
 
             $this->db->from($this->config->item('table_sms_transfer_wo_details').' transfer_wo_details');
             $this->db->select('transfer_wo_details.*');
@@ -580,7 +632,6 @@ class Transfer_wo_request extends Root_Controller
     {
         if(isset($this->permissions['action7'])&&($this->permissions['action7']==1))
         {
-            $data['user_location']=$this->locations;
             if($id>0)
             {
                 $item_id=$id;
@@ -617,15 +668,14 @@ class Transfer_wo_request extends Root_Controller
                 $ajax['system_message']='Invalid Try.';
                 $this->json_return($ajax);
             }
+            if(!$this->check_my_editable($data['item']))
+            {
+                System_helper::invalid_try('Edit Permission Non Exists',$item_id);
+                $ajax['status']=false;
+                $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+                $this->json_return($ajax);
+            }
 
-            $this->locations['division_id']=$data['item']['division_id'];
-            $this->locations['division_name']=$data['item']['division_name'];
-            $this->locations['zone_id']=$data['item']['zone_id'];
-            $this->locations['zone_name']=$data['item']['zone_name'];
-            $this->locations['territory_id']=$data['item']['territory_id'];
-            $this->locations['territory_name']=$data['item']['territory_name'];
-            $this->locations['district_id']=$data['item']['district_id'];
-            $this->locations['district_name']=$data['item']['district_name'];
 
             $this->db->from($this->config->item('table_sms_transfer_wo_details').' transfer_wo_details');
             $this->db->select('transfer_wo_details.*');
@@ -795,25 +845,70 @@ class Transfer_wo_request extends Root_Controller
         $two_variety_info=$this->system_transfer_wo_variety_info($outlet_id);
         $this->json_return($two_variety_info);
     }
+    private function check_my_editable($outlet)
+    {
+        if(($this->locations['division_id']>0)&&($this->locations['division_id']!=$outlet['division_id']))
+        {
+            return false;
+        }
+        if(($this->locations['zone_id']>0)&&($this->locations['zone_id']!=$outlet['zone_id']))
+        {
+            return false;
+        }
+        if(($this->locations['territory_id']>0)&&($this->locations['territory_id']!=$outlet['territory_id']))
+        {
+            return false;
+        }
+        if(($this->locations['district_id']>0)&&($this->locations['district_id']!=$outlet['district_id']))
+        {
+            return false;
+        }
+        return true;
+    }
     private function check_validation()
     {
         $id = $this->input->post("id");
         $this->load->library('form_validation');
         $this->form_validation->set_rules('item[date_request]',$this->lang->line('LABEL_DATE_TO_REQUEST'),'required');
-        if($id==0)
+        /*if($id==0)
         {
             $this->form_validation->set_rules('division_id',$this->lang->line('LABEL_DIVISION_NAME'),'required');
             $this->form_validation->set_rules('zone_id',$this->lang->line('LABEL_ZONE_NAME'),'required');
             $this->form_validation->set_rules('territory_id',$this->lang->line('LABEL_TERRITORY_NAME'),'required');
             $this->form_validation->set_rules('district_id',$this->lang->line('LABEL_DISTRICT_NAME'),'required');
             $this->form_validation->set_rules('item[outlet_id]',$this->lang->line('LABEL_OUTLET_NAME'),'required');
+        }*/
+        if(!($this->locations['division_id']>0))
+        {
+            $this->form_validation->set_rules('zone_id',$this->lang->line('LABEL_ZONE_NAME'),'required');
+            $this->form_validation->set_rules('territory_id',$this->lang->line('LABEL_TERRITORY_NAME'),'required');
+            $this->form_validation->set_rules('district_id',$this->lang->line('LABEL_DISTRICT_NAME'),'required');
+            $this->form_validation->set_rules('item[outlet_id]',$this->lang->line('LABEL_OUTLET_NAME'),'required');
         }
+        elseif(!($this->locations['zone_id']>0))
+        {
+            $this->form_validation->set_rules('territory_id',$this->lang->line('LABEL_TERRITORY_NAME'),'required');
+            $this->form_validation->set_rules('district_id',$this->lang->line('LABEL_DISTRICT_NAME'),'required');
+            $this->form_validation->set_rules('item[outlet_id]',$this->lang->line('LABEL_OUTLET_NAME'),'required');
+        }
+        elseif(!($this->locations['territory_id']>0))
+        {
+            $this->form_validation->set_rules('district_id',$this->lang->line('LABEL_DISTRICT_NAME'),'required');
+
+        }
+        else
+        {
+            if($id==0)
+            {
+                $this->form_validation->set_rules('item[outlet_id]',$this->lang->line('LABEL_OUTLET_NAME'),'required');
+            }
+        }
+
         if($this->form_validation->run() == FALSE)
         {
             $this->message=validation_errors();
             return false;
         }
-
 
         $item_head = $this->input->post("item");
         $items = $this->input->post("items");
@@ -822,7 +917,6 @@ class Transfer_wo_request extends Root_Controller
             $this->message=$this->lang->line('LABEL_DATE_TO_REQUEST'). ' field is required.';
             return false;
         }
-
 
         if((sizeof($items)>0))
         {
