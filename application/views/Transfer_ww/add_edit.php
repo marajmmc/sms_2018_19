@@ -40,51 +40,14 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             <div class="clearfix"></div>
         </div>
 
-        <?php
-        if($item['id']>0)
-        {
-            ?>
-            <div class="row show-grid">
-                <?php
-                if(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1))
-                {
-                    ?>
-                    <div class="row show-grid">
-                        <div class="col-xs-4">
-                            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_TRANSFER');?><span style="color:#FF0000">*</span></label>
-                        </div>
-                        <div class="col-sm-4 col-xs-8">
-                            <input type="text" name="item[date_transfer]" class="form-control datepicker" value="<?php echo System_helper::display_date($item['date_transfer']);?>"/>
-                        </div>
-                    </div>
-                <?php
-                }
-                else
-                {
-                    ?>
-                    <div class="col-sm-4 col-xs-8">
-                        <?php echo System_helper::display_date($item['date_transfer']);?>
-                    </div>
-                <?php
-                }
-                ?>
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_TRANSFER');?><span style="color:#FF0000">*</span></label>
             </div>
-        <?php
-        }
-        else
-        {
-            ?>
-            <div class="row show-grid">
-                <div class="col-xs-4">
-                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_TRANSFER');?><span style="color:#FF0000">*</span></label>
-                </div>
-                <div class="col-sm-4 col-xs-8">
-                    <input type="text" name="item[date_transfer]" class="form-control datepicker" value="<?php echo System_helper::display_date($item['date_transfer']);?>"/>
-                </div>
+            <div class="col-sm-4 col-xs-8">
+                <input type="text" name="item[date_transfer]" class="form-control datepicker" value="<?php echo System_helper::display_date($item['date_transfer']);?>"/>
             </div>
-        <?php
-        }
-        ?>
+        </div>
 
         <div style="" class="row show-grid">
             <div class="col-xs-4">
