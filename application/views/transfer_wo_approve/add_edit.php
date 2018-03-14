@@ -48,188 +48,39 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DIVISION_NAME');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <?php
-                if($CI->locations['division_id']>0)
-                {
-                    ?>
-                    <label class="control-label"><?php echo $CI->locations['division_name'];?></label>
-                <?php
-                }
-                else
-                {
-                    if($item['id']>0)
-                    {
-                        ?>
-                        <label class="control-label"><?php echo $item['division_name'];?></label>
-                    <?php
-                    }
-                    else
-                    {
-                        ?>
-                        <select id="division_id" name="division_id" class="form-control">
-                            <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                            <?php
-                            foreach($divisions as $division)
-                            {?>
-                                <option value="<?php echo $division['value']?>"><?php echo $division['text'];?></option>
-                            <?php
-                            }
-                            ?>
-                        </select>
-                        <?php
-                    }
-                    ?>
-                <?php
-                }
-                ?>
+                <label class="control-label"><?php echo $item['division_name'];?></label>
             </div>
         </div>
-        <div style="<?php if(!(sizeof($zones)>0)){echo 'display:none';} ?>" class="row show-grid" id="zone_id_container">
+        <div class="row show-grid" id="zone_id_container">
             <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ZONE_NAME');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <?php
-                if($CI->locations['zone_id']>0)
-                {
-                    ?>
-                    <label class="control-label"><?php echo $CI->locations['zone_name'];?></label>
-                <?php
-                }
-                else
-                {
-                    if($item['id']>0)
-                    {
-                        ?>
-                        <label class="control-label"><?php echo $item['zone_name'];?></label>
-                    <?php
-                    }
-                    else
-                    {
-                        ?>
-                        <select id="zone_id" name="zone_id" class="form-control">
-                            <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                            <?php
-                            foreach($zones as $zone)
-                            {?>
-                                <option value="<?php echo $zone['value']?>" <?php if($zone['value']==$item['zone_id']){ echo "selected";}?>><?php echo $zone['text'];?></option>
-                            <?php
-                            }
-                            ?>
-                        </select>
-                    <?php
-                    }
-                }
-                ?>
+                <label class="control-label"><?php echo $item['zone_name'];?></label>
             </div>
         </div>
-        <div style="<?php if(!(sizeof($territories)>0)){echo 'display:none';} ?>" class="row show-grid" id="territory_id_container">
+        <div class="row show-grid" id="territory_id_container">
             <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TERRITORY_NAME');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <?php
-                if($CI->locations['territory_id']>0)
-                {
-                    ?>
-                    <label class="control-label"><?php echo $CI->locations['territory_name'];?></label>
-                <?php
-                }
-                else
-                {
-                    if($item['id']>0)
-                    {
-                        ?>
-                        <label class="control-label"><?php echo $item['territory_name'];?></label>
-                    <?php
-                    }
-                    else
-                    {
-                        ?>
-                        <select id="territory_id" name="territory_id" class="form-control">
-                            <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                            <?php
-                            foreach($territories as $territory)
-                            {?>
-                                <option value="<?php echo $territory['value']?>" <?php if($territory['value']==$item['territory_id']){ echo "selected";}?>><?php echo $territory['text'];?></option>
-                            <?php
-                            }
-                            ?>
-                        </select>
-                    <?php
-                    }
-                }
-                ?>
+                <label class="control-label"><?php echo $item['territory_name'];?></label>
             </div>
         </div>
-        <div style="<?php if(!(sizeof($districts)>0)){echo 'display:none';} ?>" class="row show-grid" id="district_id_container">
+        <div class="row show-grid" id="district_id_container">
             <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DISTRICT_NAME');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <?php
-                if($CI->locations['district_id']>0)
-                {
-                    ?>
-                    <label class="control-label"><?php echo $CI->locations['district_name'];?></label>
-                <?php
-                }
-                else
-                {
-                    if($item['id']>0)
-                    {
-                        ?>
-                        <label class="control-label"><?php echo $item['district_name'];?></label>
-                    <?php
-                    }
-                    else
-                    {
-                        ?>
-                        <select id="district_id" name="district_id" class="form-control">
-                            <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                            <?php
-                            foreach($districts as $district)
-                            {?>
-                                <option value="<?php echo $district['value']?>" <?php if($district['value']==$item['district_id']){ echo "selected";}?>><?php echo $district['text'];?></option>
-                            <?php
-                            }
-                            ?>
-                        </select>
-                    <?php
-                    }
-                }
-                ?>
+                <label class="control-label"><?php echo $item['district_name'];?></label>
             </div>
         </div>
-        <div style="<?php if(!(sizeof($outlets)>0)){echo 'display:none';} ?>" class="row show-grid" id="outlet_id_container">
+        <div class="row show-grid" id="outlet_id_container">
             <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_OUTLET_NAME');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <?php
-                if($item['id']>0)
-                {
-                    ?>
-                    <label class="control-label"><?php echo $item['outlet_name'];?></label>
-                <?php
-                }
-                else
-                {
-                    ?>
-                    <select id="outlet_id" name="item[outlet_id]" class="form-control">
-                        <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                        <?php
-                        foreach($outlets as $outlet)
-                        {?>
-                            <option value="<?php echo $outlet['value']?>" <?php if($outlet['value']==$item['outlet_id']){ echo "selected";}?>><?php echo $outlet['text'];?></option>
-                        <?php
-                        }
-                        ?>
-                    </select>
-                <?php
-                }
-                ?>
-
+                <label class="control-label"><?php echo $item['outlet_name'];?></label>
             </div>
         </div>
         <div class="row show-grid">
@@ -237,7 +88,15 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS_REQUEST');?> </label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <textarea name="item[remarks_request]" id="remarks" class="form-control" ><?php echo $item['remarks_request'];?></textarea>
+                <?php echo nl2br($item['remarks_request']);?>
+            </div>
+        </div>
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS_APPROVE');?> </label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <textarea name="item[remarks_approve]" id="remarks_approve" class="form-control" ><?php echo $item['remarks_approve'];?></textarea>
             </div>
         </div>
 
@@ -257,38 +116,50 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY_MAX'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
                         <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_STOCK_OUTLET'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
                         <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY_TRANSFER_MAXIMUM'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
-                        <?php
-                        if(!($CI->locations['territory_id']>0))
-                        {
-                            ?>
-                            <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_STOCK_AVAILABLE'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
-                        <?php
-                        }
-                        ?>
+                        <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_STOCK_AVAILABLE'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
                         <th colspan="2" class="text-center" style="width: 300px;"><?php echo $CI->lang->line('LABEL_QUANTITY_ORDER'); ?></th>
+                        <th colspan="2" class="text-center" style="width: 300px;"><?php echo $CI->lang->line('LABEL_QUANTITY_APPROVE'); ?></th>
                         <th rowspan="2">&nbsp;</th>
                     </tr>
                     <tr>
+                        <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_PACK');?></th>
+                        <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_KG');?></th>
                         <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_PACK');?></th>
                         <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_KG');?></th>
                     </tr>
                     </thead>
                     <tbody id="items_container">
                         <?php
+                        $quantity_approve=0;
                         $quantity_total_request=0;
                         $quantity_total_request_kg=0;
+                        $quantity_total_approve=0;
+                        $quantity_total_approve_kg=0;
                         foreach($items as $index=>$value)
                         {
+                            if($item['user_updated_approve'])
+                            {
+                                $quantity_approve=$value['quantity_approve'];
+                            }
+                            else
+                            {
+                                $quantity_approve=0;
+                            }
                             if($value['pack_size_id']==0)
                             {
                                 $quantity_request_kg=$value['quantity_request'];
+                                $quantity_approve_kg=$quantity_approve;
                             }
                             else
                             {
                                 $quantity_request_kg=(($value['quantity_request']*$value['pack_size'])/1000);
+                                $quantity_approve_kg=(($quantity_approve*$value['pack_size'])/1000);
                             }
                             $quantity_total_request+=$value['quantity_request'];
                             $quantity_total_request_kg+=$quantity_request_kg;
+
+                            $quantity_total_approve+=$quantity_approve;
+                            $quantity_total_approve_kg+=$quantity_approve_kg;
                             ?>
                             <tr>
                                 <td>
@@ -333,25 +204,24 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                                         ?>
                                     </label>
                                 </td>
-                                <?php
-                                if(!($CI->locations['territory_id']>0))
-                                {
-                                    ?>
-                                    <td class="text-right">
-                                        <label class="control-label stock_available" id="stock_available_id_<?php echo $index+1;?>">
-                                            <?php
-                                            echo isset($two_variety_info[$value['variety_id']][$value['pack_size_id']])?number_format($two_variety_info[$value['variety_id']][$value['pack_size_id']]['stock_available'],3,'.',''):'0.000';
-                                            ?>
-                                        </label>
-                                    </td>
-                                <?php
-                                }
-                                ?>
-                                <td>
-                                    <input type="text" value="<?php echo $value['quantity_request']; ?>" class="form-control float_type_positive quantity_request" id="quantity_request_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][quantity_request]">
+                                <td class="text-right">
+                                    <label class="control-label stock_available" id="stock_available_id_<?php echo $index+1;?>">
+                                        <?php
+                                        echo isset($two_variety_info[$value['variety_id']][$value['pack_size_id']])?number_format($two_variety_info[$value['variety_id']][$value['pack_size_id']]['stock_available'],3,'.',''):'0.000';
+                                        ?>
+                                    </label>
+                                </td>
+                                <td class="text-right">
+                                    <label id="quantity_request_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>"><?php echo $value['quantity_request']; ?></label>
                                 </td>
                                 <td class="text-right">
                                     <label id="quantity_request_kg_<?php echo $index+1;?>"> <?php echo number_format($quantity_request_kg,3,'.','');?> </label>
+                                </td>
+                                <td>
+                                    <input type="text" value="<?php echo $quantity_approve; ?>" class="form-control float_type_positive quantity_approve" id="quantity_approve_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][quantity_approve]">
+                                </td>
+                                <td class="text-right">
+                                    <label id="quantity_approve_kg_<?php echo $index+1;?>"> <?php echo number_format($quantity_approve_kg,3,'.','');?> </label>
                                 </td>
                                 <td>
                                     <button type="button" class="btn btn-danger system_button_add_delete"><?php echo $CI->lang->line('DELETE'); ?></button>
@@ -363,16 +233,11 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     </tbody>
                     <tfoot>
                     <tr>
-                        <?php
-                        $quantity_total_colspan=8;
-                        if(!($CI->locations['territory_id']>0))
-                        {
-                            $quantity_total_colspan+=1;
-                        }
-                        ?>
-                        <th colspan="<?php echo $quantity_total_colspan?>" class="text-right"><?php echo $CI->lang->line('LABEL_TOTAL');?></th>
+                        <th colspan="9" class="text-right"><?php echo $CI->lang->line('LABEL_TOTAL');?></th>
                         <th class="text-right"><label class="control-label" id="quantity_total_request"> <?php echo $quantity_total_request;?></label></th>
                         <th class="text-right"><label class="control-label" id="quantity_total_request_kg"> <?php echo number_format($quantity_total_request_kg,3,'.','');?></label></th>
+                        <th class="text-right"><label class="control-label" id="quantity_total_approve"> <?php echo $quantity_total_approve;?></label></th>
+                        <th class="text-right"><label class="control-label" id="quantity_total_approve_kg"> <?php echo number_format($quantity_total_approve_kg,3,'.','');?></label></th>
                         <th>&nbsp;</th>
                     </tr>
                     </tfoot>
@@ -436,21 +301,20 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             <td class="text-right">
                 <label class="control-label quantity_max_transferable"> </label>
             </td>
-            <?php
-            if(!($CI->locations['territory_id']>0))
-            {
-                ?>
-                <td class="text-right">
-                    <label class="control-label stock_available"> </label>
-                </td>
-            <?php
-            }
-            ?>
             <td class="text-right">
-                <input type="text" class="form-control float_type_positive quantity_request" value="" style="display: none;" />
+                <label class="control-label stock_available"> </label>
+            </td>
+            <td class="text-right">
+                <label class="control-label quantity_request"> </label>
             </td>
             <td class="text-right">
                 <label class="control-label quantity_request_kg"> </label>
+            </td>
+            <td class="text-right">
+                <input type="text" class="form-control float_type_positive quantity_approve" value="" style="display: none;" />
+            </td>
+            <td class="text-right">
+                <label class="control-label quantity_approve_kg"> </label>
             </td>
             <td>
                 <button type="button" class="btn btn-danger system_button_add_delete"><?php echo $CI->lang->line('DELETE'); ?></button>
@@ -484,36 +348,36 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
     var quantity_to_maximum_kg='<?php echo $quantity_to_maximum_kg;?>';
     function calculate_total()
     {
-        var quantity_total_request=0;
-        var quantity_total_request_kg=0;
-        $('#items_container .quantity_request').each(function(index, element)
+        var quantity_total_approve=0;
+        var quantity_total_approve_kg=0;
+        $('#items_container .quantity_approve').each(function(index, element)
         {
             var current_id=parseInt($(this).attr('data-current-id'));
-            var quantity_request=parseFloat($(this).val());
-            if(isNaN(quantity_request))
+            var quantity_approve=parseFloat($(this).val());
+            if(isNaN(quantity_approve))
             {
-                quantity_request=0;
+                quantity_approve=0;
             }
-            quantity_total_request+=quantity_request;
-            var quantity_request_kg=parseFloat($('#quantity_request_kg_'+current_id).html().replace(/,/g,''));
-            if(isNaN(quantity_request_kg))
+            quantity_total_approve+=quantity_approve;
+            var quantity_approve_kg=parseFloat($('#quantity_approve_kg_'+current_id).html().replace(/,/g,''));
+            if(isNaN(quantity_approve_kg))
             {
-                quantity_request_kg=0;
+                quantity_approve_kg=0;
             }
-            quantity_total_request_kg+=quantity_request_kg;
+            quantity_total_approve_kg+=quantity_approve_kg;
         });
-        if(quantity_total_request_kg>quantity_to_maximum_kg)
+        if(quantity_total_approve_kg>quantity_to_maximum_kg)
         {
-            $('#quantity_total_request').addClass('quantity_exist_warning');
-            $('#quantity_total_request_kg').addClass('quantity_exist_warning');
+            $('#quantity_total_approve').addClass('quantity_exist_warning');
+            $('#quantity_total_approve_kg').addClass('quantity_exist_warning');
         }
         else
         {
-            $('#quantity_total_request').removeClass('quantity_exist_warning');
-            $('#quantity_total_request_kg').removeClass('quantity_exist_warning');
+            $('#quantity_total_approve').removeClass('quantity_exist_warning');
+            $('#quantity_total_approve_kg').removeClass('quantity_exist_warning');
         }
-        $('#quantity_total_request').html(quantity_total_request);
-        $('#quantity_total_request_kg').html(number_format((quantity_total_request_kg),3,'.',''));
+        $('#quantity_total_approve').html(quantity_total_approve);
+        $('#quantity_total_approve_kg').html(number_format((quantity_total_approve_kg),3,'.',''));
     }
     $(document).ready(function()
     {
@@ -675,8 +539,15 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             $(content_id+' .quantity_request').attr('data-current-id',current_id);
             $(content_id+' .quantity_request').attr('name','items['+current_id+'][quantity_request]');
 
-            $(content_id+' .quantity_request_kg').attr('id','quantity_request_kg_'+current_id);
-            $(content_id+' .quantity_request_kg').attr('data-current-id',current_id);
+            $(content_id+' .quantity_approve_kg').attr('id','quantity_approve_kg_'+current_id);
+            $(content_id+' .quantity_approve_kg').attr('data-current-id',current_id);
+
+            $(content_id+' .quantity_approve').attr('id','quantity_approve_'+current_id);
+            $(content_id+' .quantity_approve').attr('data-current-id',current_id);
+            $(content_id+' .quantity_approve').attr('name','items['+current_id+'][quantity_approve]');
+
+            $(content_id+' .quantity_approve_kg').attr('id','quantity_approve_kg_'+current_id);
+            $(content_id+' .quantity_approve_kg').attr('data-current-id',current_id);
 
             var html=$(content_id).html();
             $("#items_container").append(html);
@@ -696,8 +567,10 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             $("#crop_type_id_"+current_id).val('');
             $("#variety_id_"+current_id).val('');
             $("#pack_size_id_"+current_id).val('');
-            $("#quantity_request_"+current_id).val('');
+            $("#quantity_request_"+current_id).html('');
             $("#quantity_request_kg_"+current_id).html('');
+            $("#quantity_approve_"+current_id).val('');
+            $("#quantity_approve_kg_"+current_id).html('');
 
             $("#quantity_min_"+current_id).html('');
             $("#quantity_max_"+current_id).html('');
@@ -710,6 +583,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             $('#variety_id_'+current_id).hide();
             $('#pack_size_id_'+current_id).hide();
             $('#quantity_request_'+current_id).hide();
+            $('#quantity_approve_'+current_id).hide();
             if(crop_id>0)
             {
                 $('#crop_type_id_'+current_id).show();
@@ -728,8 +602,10 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             var current_id=$(this).attr('data-current-id');
             $("#variety_id_"+current_id).val('');
             $("#pack_size_id_"+current_id).val('');
-            $("#quantity_request_"+current_id).val('');
+            $("#quantity_request_"+current_id).html('');
             $("#quantity_request_kg_"+current_id).html('');
+            $("#quantity_approve_"+current_id).val('');
+            $("#quantity_approve_kg_"+current_id).html('');
 
             $("#quantity_min_"+current_id).html('');
             $("#quantity_max_"+current_id).html('');
@@ -739,7 +615,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
             var crop_type_id=$('#crop_type_id_'+current_id).val();
             $('#pack_size_id_'+current_id).hide();
-            $('#quantity_request_'+current_id).hide();
+            $('#quantity_approve_'+current_id).hide();
             if(crop_type_id>0)
             {
                 $('#variety_id_'+current_id).show();
@@ -763,9 +639,11 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             $("#stock_available_"+current_id).html('');
 
             $("#pack_size_id_"+current_id).empty('');
-            $("#quantity_request_"+current_id).val('');
-            $("#quantity_request_"+current_id).hide();
+            $("#quantity_request_"+current_id).html('');
             $("#quantity_request_kg_"+current_id).html('');
+            $("#quantity_approve_"+current_id).val('');
+            $("#quantity_approve_"+current_id).hide();
+            $("#quantity_approve_kg_"+current_id).html('');
             var variety_id=$('#variety_id_'+current_id).val();
 
             var pack_size=0;
@@ -802,9 +680,11 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             $("#stock_outlet_"+current_id).html('');
             $("#quantity_max_transferable_"+current_id).html('');
             $("#stock_available_"+current_id).html('');
-            $("#quantity_request_"+current_id).val('');
-            $("#quantity_request_"+current_id).hide();
+            $("#quantity_request_"+current_id).html('');
             $("#quantity_request_kg_"+current_id).html('');
+            $("#quantity_approve_"+current_id).val('');
+            $("#quantity_approve_"+current_id).hide();
+            $("#quantity_approve_kg_"+current_id).html('');
             var variety_id=$('#variety_id_'+current_id).val();
             var pack_size_id=$('#pack_size_id_'+current_id).val();
             if(two_variety_info[variety_id][pack_size_id]!==undefined)
@@ -815,17 +695,17 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 $("#stock_available_"+current_id).html(number_format(two_variety_info[variety_id][pack_size_id]['stock_available'],3,'.',''));
                 $("#stock_outlet_"+current_id).html(number_format(two_variety_info[variety_id][pack_size_id]['stock_outlet'],3,'.',''));
                 $("#quantity_max_transferable_"+current_id).html(number_format(two_variety_info[variety_id][pack_size_id]['quantity_max_transferable'],3,'.',''));
-                $("#quantity_request_"+current_id).show();
+                $("#quantity_approve_"+current_id).show();
             }
             calculate_total();
         });
 
-        $(document).off('input', '#items_container .quantity_request');
-        $(document).on('input','#items_container .quantity_request',function()
+        $(document).off('input', '#items_container .quantity_approve');
+        $(document).on('input','#items_container .quantity_approve',function()
         {
             var current_id=$(this).attr('data-current-id');
-            var quantity_request=parseFloat($(this).val());
-            var quantity_request_kg=0;
+            var quantity_approve=parseFloat($(this).val());
+            var quantity_approve_kg=0;
 
             var pack_size=parseFloat($("#pack_size_id_"+current_id).attr('data-pack-size-name'));
             if($("#pack_size_id_"+current_id).attr('data-new-pack-size')==0)
@@ -834,11 +714,11 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             }
             if(pack_size==0)
             {
-                quantity_request_kg=quantity_request;
+                quantity_approve_kg=quantity_approve;
             }
             else
             {
-                quantity_request_kg=parseFloat((pack_size*quantity_request)/1000);
+                quantity_approve_kg=parseFloat((pack_size*quantity_approve)/1000);
             }
             var quantity_max_transferable=parseFloat($('#quantity_max_transferable_'+current_id).html().replace(/,/g,''));
             if(isNaN(quantity_max_transferable))
@@ -846,16 +726,16 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 quantity_max_transferable=0;
             }
             $(this).removeClass('quantity_exist_warning');
-            $("#quantity_request_kg_"+current_id).removeClass('quantity_exist_warning');
+            $("#quantity_approve_kg_"+current_id).removeClass('quantity_exist_warning');
             $("#quantity_max_transferable_"+current_id).removeClass('quantity_exist_warning');
-            if(quantity_request_kg>quantity_max_transferable)
+            if(quantity_approve_kg>quantity_max_transferable)
             {
                 $(this).addClass('quantity_exist_warning');
-                $("#quantity_request_kg_"+current_id).addClass('quantity_exist_warning');
+                $("#quantity_approve_kg_"+current_id).addClass('quantity_exist_warning');
                 $("#quantity_max_transferable_"+current_id).addClass('quantity_exist_warning');
             }
 
-            $("#quantity_request_kg_"+current_id).html(number_format(quantity_request_kg,3,'.',''));
+            $("#quantity_approve_kg_"+current_id).html(number_format(quantity_approve_kg,3,'.',''));
             calculate_total();
         });
     });

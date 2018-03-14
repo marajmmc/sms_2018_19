@@ -110,6 +110,9 @@ $lang['LABEL_STATUS_LC_PENDING']='Pending';
 $lang['LABEL_STATUS_LC_COMPLETE']='Completed';
 $lang['LABEL_STATUS_OPEN_FORWARD']='Forward Status';
 $lang['LABEL_STATUS_OPEN']='LC Status';
+$lang['LABEL_STATUS_REQUEST']='Request Status';
+$lang['LABEL_STATUS_APPROVE']='Approve Status';
+$lang['LABEL_STATUS_DELIVERY']='Delivery Status';
 
 // Common information related
 // ID or Code
@@ -184,7 +187,8 @@ $lang['LABEL_DATE_CHALLAN']='Challan Date';
 $lang['LABEL_DATE_CREATED_TIME']='Created Time';
 $lang['LABEL_DATE_UPDATED_TIME']='Updated Time';
 $lang['LABEL_DATE_CONVERT']='Convert Date';
-$lang['LABEL_DATE_REQUEST']='TO Date';
+$lang['LABEL_DATE_REQUEST']='Date for Request';
+$lang['LABEL_DATE_APPROVE']='Date for Approve';
 
 //months array
 $lang['LABEL_MONTH'] = 'Month';
@@ -219,7 +223,8 @@ $lang['LABEL_REMARKS_LC_OPEN']='LC Open Remarks';
 $lang['LABEL_REMARKS_LC_RELEASE']='Release Remarks';
 $lang['LABEL_REMARKS_LC_RECEIVE']='Receive Remarks';
 $lang['LABEL_REMARKS_LC_EXPENSE']='Expense Remarks';
-$lang['LABEL_REMARKS_TO_REQUEST']='TO Create Remarks';
+$lang['LABEL_REMARKS_REQUEST']='Remarks for Request';
+$lang['LABEL_REMARKS_APPROVE']='Remarks for Approve';
 
 // Unit
 $lang['LABEL_PACK'] = 'Pkt';
@@ -237,10 +242,11 @@ $lang['LABEL_QUANTITY_TOTAL_PACK_KG']='Total Quantity (Pkt/Kg)';
 $lang['LABEL_QUANTITY_TOTAL_PIECES']='Total Quantity (Pcs)';
 $lang['LABEL_QUANTITY_KG_PACK']='Quantity (Pkt/Kg)';
 
-$lang['LABEL_QUANTITY_REQUEST'] = 'Order Quantity';
+$lang['LABEL_QUANTITY_APPROVE'] = 'Approve Quantity';
 
 $lang['LABEL_QUANTITY_TOTAL_REQUEST'] = 'Total Request Quantity (Kg)';
 $lang['LABEL_QUANTITY_TOTAL_RECEIVE'] = 'Total Receive Quantity (Kg)';
+$lang['LABEL_QUANTITY_TOTAL_APPROVE'] = 'Total Approve Quantity (Kg)';
 
 $lang['LABEL_QUANTITY_MIN'] = 'Min Qty';
 $lang['LABEL_QUANTITY_MAX'] = 'Max Qty';

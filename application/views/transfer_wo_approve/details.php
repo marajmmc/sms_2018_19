@@ -38,6 +38,11 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <th colspan="2">&nbsp;</th>
             </tr>
             <tr>
+                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_APPROVE');?></label></th>
+                <th class=" header_value"><label class="control-label"><?php echo System_helper::display_date($item['date_approve']);?></label></th>
+                <th colspan="2">&nbsp;</th>
+            </tr>
+            <tr>
                 <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DIVISION_NAME');?></label></th>
                 <th class=" header_value"><label class="control-label"><?php echo $item['division_name'];?></label></th>
                 <th colspan="2">&nbsp;</th>
@@ -63,9 +68,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <th colspan="2">&nbsp;</th>
             </tr>
             <tr>
-                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_CREATED_BY');?></label></th>
+                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_CREATED_BY');?> (TO Request)</label></th>
                 <th class=" header_value"><label class="control-label"><?php echo $item['user_created_full_name'];?></label></th>
-                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_CREATED_TIME');?></label></th>
+                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_CREATED_TIME');?> (TO Request)</label></th>
                 <th class=""><label class="control-label"><?php echo System_helper::display_date_time($item['date_created_request']);?></label></th>
             </tr>
             <?php
@@ -73,10 +78,23 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             {
                 ?>
                 <tr>
-                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_UPDATED_BY');?></label></th>
+                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_UPDATED_BY');?> (TO Request)</label></th>
                     <th class=" header_value"><label class="control-label"><?php echo $item['user_updated_full_name'];?></label></th>
-                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_UPDATED_TIME');?></label></th>
+                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_UPDATED_TIME');?> (TO Request)</label></th>
                     <th class=""><label class="control-label"><?php echo System_helper::display_date_time($item['date_updated_request']);?></label></th>
+                </tr>
+            <?php
+            }
+            ?>
+            <?php
+            if($item['user_updated_approve'])
+            {
+                ?>
+                <tr>
+                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_UPDATED_BY');?> (TO Approve)</label></th>
+                    <th class=" header_value"><label class="control-label"><?php echo $item['user_updated_approve_full_name'];?></label></th>
+                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_UPDATED_TIME');?> (TO Approve)</label></th>
+                    <th class=""><label class="control-label"><?php echo System_helper::display_date_time($item['date_updated_approve']);?></label></th>
                 </tr>
             <?php
             }
@@ -88,6 +106,17 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <tr>
                     <th class="widget-header header_caption" style="vertical-align: top"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS_REQUEST');?></label></th>
                     <th class=" header_value" colspan="3"><label class="control-label"><?php echo nl2br($item['remarks_request']);?></label></th>
+                </tr>
+            <?php
+            }
+            ?>
+            <?php
+            if($item['remarks_approve'])
+            {
+                ?>
+                <tr>
+                    <th class="widget-header header_caption" style="vertical-align: top"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS_APPROVE');?></label></th>
+                    <th class=" header_value" colspan="3"><label class="control-label"><?php echo nl2br($item['remarks_approve']);?></label></th>
                 </tr>
             <?php
             }
@@ -112,37 +141,50 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY_MAX'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
                     <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_STOCK_OUTLET'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
                     <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY_TRANSFER_MAXIMUM'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
-                    <?php
-                    if(!($CI->locations['territory_id']>0))
-                    {
-                        ?>
-                        <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_STOCK_AVAILABLE'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
-                    <?php
-                    }
-                    ?>
+                    <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_STOCK_AVAILABLE'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
                     <th colspan="2" class="text-center" style="width: 300px;"><?php echo $CI->lang->line('LABEL_QUANTITY_ORDER'); ?></th>
+                    <th colspan="2" class="text-center" style="width: 300px;"><?php echo $CI->lang->line('LABEL_QUANTITY_APPROVE'); ?></th>
                 </tr>
                 <tr>
+                    <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_PACK');?></th>
+                    <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_KG');?></th>
                     <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_PACK');?></th>
                     <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_KG');?></th>
                 </tr>
                 </thead>
                 <tbody id="items_container">
                 <?php
+                $quantity_approve=0;
                 $quantity_total_request=0;
                 $quantity_total_request_kg=0;
+                $quantity_total_approve=0;
+                $quantity_total_approve_kg=0;
                 foreach($items as $index=>$value)
                 {
+                    if($item['user_updated_approve'])
+                    {
+                        $quantity_approve=$value['quantity_approve'];
+                    }
+                    else
+                    {
+                        $quantity_approve=0;
+                    }
                     if($value['pack_size_id']==0)
                     {
                         $quantity_request_kg=$value['quantity_request'];
+                        $quantity_approve_kg=$quantity_approve;
                     }
                     else
                     {
                         $quantity_request_kg=(($value['quantity_request']*$value['pack_size'])/1000);
+                        $quantity_approve_kg=(($quantity_approve*$value['pack_size'])/1000);
                     }
                     $quantity_total_request+=$value['quantity_request'];
                     $quantity_total_request_kg+=$quantity_request_kg;
+
+
+                    $quantity_total_approve+=$quantity_approve;
+                    $quantity_total_approve_kg+=$quantity_approve_kg;
                     ?>
                     <tr>
                         <td>
@@ -185,25 +227,24 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                                 ?>
                             </label>
                         </td>
-                        <?php
-                        if(!($CI->locations['territory_id']>0))
-                        {
-                            ?>
-                            <td class="text-right">
-                                <label class="control-label stock_available" id="stock_available_id_<?php echo $index+1;?>">
-                                    <?php
-                                    echo isset($two_variety_info[$value['variety_id']][$value['pack_size_id']])?number_format($two_variety_info[$value['variety_id']][$value['pack_size_id']]['stock_available'],3,'.',''):'0.000';
-                                    ?>
-                                </label>
-                            </td>
-                        <?php
-                        }
-                        ?>
+                        <td class="text-right">
+                            <label class="control-label stock_available" id="stock_available_id_<?php echo $index+1;?>">
+                                <?php
+                                echo isset($two_variety_info[$value['variety_id']][$value['pack_size_id']])?number_format($two_variety_info[$value['variety_id']][$value['pack_size_id']]['stock_available'],3,'.',''):'0.000';
+                                ?>
+                            </label>
+                        </td>
                         <td class="text-right">
                             <label ><?php echo $value['quantity_request']; ?></label>
                         </td>
                         <td class="text-right">
                             <label id="quantity_request_kg_<?php echo $index+1;?>"> <?php echo number_format($quantity_request_kg,3,'.','');?> </label>
+                        </td>
+                        <td class="text-right">
+                            <label ><?php echo $quantity_approve; ?></label>
+                        </td>
+                        <td class="text-right">
+                            <label id="quantity_approve_kg_<?php echo $index+1;?>"> <?php echo number_format($quantity_approve_kg,3,'.','');?> </label>
                         </td>
                     </tr>
                 <?php
@@ -212,16 +253,11 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 </tbody>
                 <tfoot>
                 <tr>
-                    <?php
-                    $quantity_total_colspan=8;
-                    if(!($CI->locations['territory_id']>0))
-                    {
-                        $quantity_total_colspan+=1;
-                    }
-                    ?>
-                    <th colspan="<?php echo $quantity_total_colspan?>" class="text-right"><?php echo $CI->lang->line('LABEL_TOTAL');?></th>
+                    <th colspan="9" class="text-right"><?php echo $CI->lang->line('LABEL_TOTAL');?></th>
                     <th class="text-right"><label class="control-label" id="quantity_total_request"> <?php echo $quantity_total_request;?></label></th>
                     <th class="text-right"><label class="control-label" id="quantity_total_request_kg"> <?php echo number_format($quantity_total_request_kg,3,'.','');?></label></th>
+                    <th class="text-right"><label class="control-label" id="quantity_total_approve"> <?php echo $quantity_total_approve;?></label></th>
+                    <th class="text-right"><label class="control-label" id="quantity_total_approve_kg"> <?php echo number_format($quantity_total_approve_kg,3,'.','');?></label></th>
                 </tr>
                 </tfoot>
             </table>
