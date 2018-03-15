@@ -375,8 +375,6 @@ class Transfer_wo_request extends Root_Controller
             $this->db->select('crop_type.id crop_type_id, crop_type.name crop_type_name');
             $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id=crop_type.crop_id','INNER');
             $this->db->select('crop.id crop_id, crop.name crop_name');
-            $this->db->join($this->config->item('table_login_setup_classification_pack_size').' pack','pack.id=transfer_wo_details.pack_size_id','LEFT');
-            $this->db->select('pack.id pack_size_id, pack.name pack_size');
             $this->db->where('transfer_wo_details.transfer_wo_id',$item_id);
             $this->db->where('transfer_wo_details.status',$this->config->item('system_status_active'));
             $data['items']=$this->db->get()->result_array();
@@ -554,6 +552,7 @@ class Transfer_wo_request extends Root_Controller
                 if(isset($old_items[$item['variety_id']][$item['pack_size_id']]))
                 {
                     $data=array();
+                    $data['pack_size']=$pack_sizes[$item['pack_size_id']]['text'];
                     $data['quantity_request']=$item['quantity_request'];
                     $data['quantity_approve']=$data['quantity_request'];
                     $data['status']=$this->config->item('system_status_active');
@@ -565,6 +564,7 @@ class Transfer_wo_request extends Root_Controller
                     $data['transfer_wo_id']=$id;
                     $data['variety_id']=$item['variety_id'];
                     $data['pack_size_id']=$item['pack_size_id'];
+                    $data['pack_size']=$pack_sizes[$item['pack_size_id']]['text'];
                     $data['quantity_request']=$item['quantity_request'];
                     $data['quantity_approve']=$data['quantity_request'];
                     $data['status']=$this->config->item('system_status_active');
@@ -575,6 +575,7 @@ class Transfer_wo_request extends Root_Controller
                 $data['transfer_wo_id']=$id;
                 $data['variety_id']=$item['variety_id'];
                 $data['pack_size_id']=$item['pack_size_id'];
+                $data['pack_size']=$pack_sizes[$item['pack_size_id']]['text'];
                 $data['quantity']=$item['quantity_request'];
                 $data['revision']=1;
                 $data['date_created']=$time;
@@ -599,6 +600,7 @@ class Transfer_wo_request extends Root_Controller
                 $data['transfer_wo_id']=$transfer_wo_id;
                 $data['variety_id']=$item['variety_id'];
                 $data['pack_size_id']=$item['pack_size_id'];
+                $data['pack_size']=$pack_sizes[$item['pack_size_id']]['text'];
                 $data['quantity_request']=$item['quantity_request'];
                 $data['quantity_approve']=$data['quantity_request'];
                 $data['status']=$this->config->item('system_status_active');
@@ -608,6 +610,7 @@ class Transfer_wo_request extends Root_Controller
                 $data['transfer_wo_id']=$transfer_wo_id;
                 $data['variety_id']=$item['variety_id'];
                 $data['pack_size_id']=$item['pack_size_id'];
+                $data['pack_size']=$pack_sizes[$item['pack_size_id']]['text'];
                 $data['quantity']=$item['quantity_request'];
                 $data['revision']=1;
                 $data['date_created']=$time;
@@ -686,8 +689,6 @@ class Transfer_wo_request extends Root_Controller
             $this->db->select('crop_type.id crop_type_id, crop_type.name crop_type_name');
             $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id=crop_type.crop_id','INNER');
             $this->db->select('crop.id crop_id, crop.name crop_name');
-            $this->db->join($this->config->item('table_login_setup_classification_pack_size').' pack','pack.id=transfer_wo_details.pack_size_id','LEFT');
-            $this->db->select('pack.id pack_size_id, pack.name pack_size');
             $this->db->where('transfer_wo_details.transfer_wo_id',$item_id);
             $this->db->where('transfer_wo_details.status',$this->config->item('system_status_active'));
             $data['items']=$this->db->get()->result_array();
@@ -772,8 +773,6 @@ class Transfer_wo_request extends Root_Controller
             $this->db->select('crop_type.id crop_type_id, crop_type.name crop_type_name');
             $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id=crop_type.crop_id','INNER');
             $this->db->select('crop.id crop_id, crop.name crop_name');
-            $this->db->join($this->config->item('table_login_setup_classification_pack_size').' pack','pack.id=transfer_wo_details.pack_size_id','LEFT');
-            $this->db->select('pack.id pack_size_id, pack.name pack_size');
             $this->db->where('transfer_wo_details.transfer_wo_id',$item_id);
             $this->db->where('transfer_wo_details.status',$this->config->item('system_status_active'));
             $data['items']=$this->db->get()->result_array();
@@ -864,8 +863,6 @@ class Transfer_wo_request extends Root_Controller
             $this->db->select('crop_type.id crop_type_id, crop_type.name crop_type_name');
             $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id=crop_type.crop_id','INNER');
             $this->db->select('crop.id crop_id, crop.name crop_name');
-            $this->db->join($this->config->item('table_login_setup_classification_pack_size').' pack','pack.id=transfer_wo_details.pack_size_id','LEFT');
-            $this->db->select('pack.id pack_size_id, pack.name pack_size');
             $this->db->where('transfer_wo_details.transfer_wo_id',$item_id);
             $this->db->where('transfer_wo_details.status',$this->config->item('system_status_active'));
             $data['items']=$this->db->get()->result_array();
