@@ -82,7 +82,7 @@ $action_buttons[]=array(
     'id'=>'button_jqx_load_more'
 );
 $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
-//echo System_helper::get_generated_id('IN',1);
+//echo Stock_helper::get_generated_id('IN',1);
 ?>
 
 <div class="row widget">

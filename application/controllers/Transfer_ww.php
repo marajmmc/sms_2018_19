@@ -221,7 +221,7 @@ class Transfer_ww extends Root_Controller
                 $this->json_return($ajax);
             }
 
-            $current_stocks=System_helper::get_variety_stock(array($data['item']['variety_id']));
+            $current_stocks=Stock_helper::get_variety_stock(array($data['item']['variety_id']));
             $data['item']['current_stock']=$current_stocks[$data['item']['variety_id']][$data['item']['pack_size_id']][$data['item']['warehouse_id_source']]['current_stock'];
 
             $data['title']="Edit Transfer (Warehouse to Warehouse)";
@@ -424,7 +424,7 @@ class Transfer_ww extends Root_Controller
             $item['warehouse_id_destination']=$old_item['warehouse_id_destination'];
             $old_value=$old_item['quantity_transfer'];
         }
-        $current_stocks=System_helper::get_variety_stock(array($item['variety_id']));
+        $current_stocks=Stock_helper::get_variety_stock(array($item['variety_id']));
 
         /*-- Start-- Validation Checking */
 
@@ -648,7 +648,7 @@ class Transfer_ww extends Root_Controller
             }
 
             // Getting current stocks
-            $current_stocks=System_helper::get_variety_stock(array($item['variety_id']));
+            $current_stocks=Stock_helper::get_variety_stock(array($item['variety_id']));
 
             /*--Start-- Validation Checking */
 

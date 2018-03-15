@@ -993,7 +993,7 @@ class Lc_receive extends Root_Controller
         {
             $variety_ids[$result['variety_id']]=$result['variety_id'];
         }
-        $current_stocks=System_helper::get_variety_stock($variety_ids);
+        $current_stocks=Stock_helper::get_variety_stock($variety_ids);
 
         foreach($results as $result)
         {

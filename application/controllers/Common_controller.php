@@ -20,7 +20,7 @@ class Common_controller extends Root_Controller
         {
             $html_container_id=$this->input->post('html_container_id');
         }
-        $result=System_helper::get_variety_stock(array($variety_id));
+        $result=Stock_helper::get_variety_stock(array($variety_id));
         $stock_current=0;
         if(isset($result[$variety_id][$pack_size_id][$warehouse_id]))
         {
@@ -44,7 +44,7 @@ class Common_controller extends Root_Controller
             $html_container_id=$this->input->post('html_container_id');
         }
 
-        $result=System_helper::get_raw_stock(array($variety_id));
+        $result=Stock_helper::get_raw_stock(array($variety_id));
         $stock_current=0;
         if(isset($result[$variety_id][$pack_size_id][$packing_item]))
         {

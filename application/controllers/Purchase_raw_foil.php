@@ -182,7 +182,7 @@ class Purchase_raw_foil extends Root_Controller
                 $this->json_return($ajax);
             }
 
-            $current_stocks=System_helper::get_raw_stock(array($item['variety_id']));
+            $current_stocks=Stock_helper::get_raw_stock(array($item['variety_id']));
 
             $data['item']['current_stock']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$packing_item]['current_stock'];
 
@@ -215,7 +215,7 @@ class Purchase_raw_foil extends Root_Controller
         $pack_size_id=0;
         $packing_item=$this->config->item('system_common_foil');
         $old_value=0;
-        $current_stocks=System_helper::get_raw_stock(array($variety_id)); //Getting Current Stocks
+        $current_stocks=Stock_helper::get_raw_stock(array($variety_id)); //Getting Current Stocks
 
         /*--Start-- Permission and negative stock checking */
         if($id>0)
@@ -424,7 +424,7 @@ class Purchase_raw_foil extends Root_Controller
                 $this->json_return($ajax);
             }
 
-            $current_stocks=System_helper::get_raw_stock(array($item['variety_id']));
+            $current_stocks=Stock_helper::get_raw_stock(array($item['variety_id']));
 
             $data['item']['current_stock']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$packing_item]['current_stock'];
 
@@ -477,7 +477,7 @@ class Purchase_raw_foil extends Root_Controller
                 $this->json_return($ajax);
             }
 
-            $current_stocks=System_helper::get_raw_stock(array($item['variety_id']));
+            $current_stocks=Stock_helper::get_raw_stock(array($item['variety_id']));
 
             $data['item']['current_stock']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$packing_item]['current_stock'];
 
@@ -525,7 +525,7 @@ class Purchase_raw_foil extends Root_Controller
             $item['variety_id']=0;
             $item['pack_size_id']=0;
 
-            $current_stocks=System_helper::get_raw_stock(array($item['variety_id'])); // Getting current stocks
+            $current_stocks=Stock_helper::get_raw_stock(array($item['variety_id'])); // Getting current stocks
             /*--Start-- Validation Checking */
 
             //Negative Stock Checking

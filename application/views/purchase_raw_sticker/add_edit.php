@@ -141,7 +141,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
                         </td>
                         <td class="text-right">
-                            <label><?php $current_stock=System_helper::get_raw_stock(array($sticker['variety_id'])); if(isset($current_stock)){echo $current_stock[$sticker['variety_id']][$sticker['pack_size_id']][$CI->config->item('system_sticker')]['current_stock'];}else{echo 0;}?></label>
+                            <label><?php $current_stock=Stock_helper::get_raw_stock(array($sticker['variety_id'])); if(isset($current_stock)){echo $current_stock[$sticker['variety_id']][$sticker['pack_size_id']][$CI->config->item('system_sticker')]['current_stock'];}else{echo 0;}?></label>
                         </td>
                         <td class="text-right">
                             <input type="text" id="quantity_supply_<?php echo $index+1;?>" value="<?php echo $sticker['quantity_supply']; ?>" class="form-control text-right float_type_positive quantity_supply" data-current-id="<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][quantity_supply]">

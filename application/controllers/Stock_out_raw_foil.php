@@ -174,7 +174,7 @@ class Stock_out_raw_foil extends Root_Controller
                 $this->json_return($ajax);
             }
 
-            $current_stocks=System_helper::get_raw_stock(array($item['variety_id']));
+            $current_stocks=Stock_helper::get_raw_stock(array($item['variety_id']));
 
             $data['item']['current_stock']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$packing_item]['current_stock'];
 
@@ -205,7 +205,7 @@ class Stock_out_raw_foil extends Root_Controller
         $item['pack_size_id']=0;
         $packing_item=$this->config->item('system_common_foil');
         $old_value=0;
-        $current_stocks=System_helper::get_raw_stock(array($item['variety_id']));
+        $current_stocks=Stock_helper::get_raw_stock(array($item['variety_id']));
         $old_item=array();
 
         /*--Start-- Permission checking */
@@ -448,7 +448,7 @@ class Stock_out_raw_foil extends Root_Controller
             }
             $item['variety_id']=0;
             $item['pack_size_id']=0;
-            $current_stocks=System_helper::get_raw_stock(array($item['variety_id'])); //Getting current stock
+            $current_stocks=Stock_helper::get_raw_stock(array($item['variety_id'])); //Getting current stock
 
             // Validation Checking
             if(!(isset($current_stocks[$item['variety_id']][$item['pack_size_id']][$packing_item]['current_stock'])))

@@ -258,7 +258,7 @@ class Stock_out_raw_sticker extends Root_Controller
                 $variety_ids[$item['variety_id']]=$item['variety_id'];
                 $quantity_total+=$item['quantity'];
             }
-            $current_stocks=System_helper::get_raw_stock($variety_ids);
+            $current_stocks=Stock_helper::get_raw_stock($variety_ids);
             if($id>0)
             {
                 $results=Query_helper::get_info($this->config->item('table_sms_stock_out_raw_sticker_details'),'*',array('stock_out_id ='.$id,'revision ='.'1'));
@@ -618,7 +618,7 @@ class Stock_out_raw_sticker extends Root_Controller
             {
                 $variety_ids[$result['variety_id']]=$result['variety_id'];
             }
-            $current_stocks=System_helper::get_raw_stock($variety_ids);
+            $current_stocks=Stock_helper::get_raw_stock($variety_ids);
 
             // Validation Checking
             foreach($results as $result)

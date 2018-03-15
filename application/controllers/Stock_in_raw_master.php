@@ -257,7 +257,7 @@ class Stock_in_raw_master extends Root_Controller
                 $variety_ids[$item['variety_id']]=$item['variety_id'];
                 $quantity_total+=$item['quantity'];
             }
-            $current_stocks=System_helper::get_raw_stock($variety_ids);
+            $current_stocks=Stock_helper::get_raw_stock($variety_ids);
 
             if($id>0)
             {
@@ -652,7 +652,7 @@ class Stock_in_raw_master extends Root_Controller
             {
                 $variety_ids[$result['variety_id']]=$result['variety_id'];
             }
-            $current_stocks=System_helper::get_raw_stock($variety_ids);
+            $current_stocks=Stock_helper::get_raw_stock($variety_ids);
             /*--Start-- Validation Checking */
 
             //Negative Stock Checking

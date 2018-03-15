@@ -219,7 +219,7 @@ class Convert_bp extends Root_Controller
         $item['quantity_packet_expected']=floor($item['quantity_convert']*1000/$pack_size);
 
         //variety Stock
-        $current_stocks=System_helper::get_variety_stock(array($item['variety_id']));
+        $current_stocks=Stock_helper::get_variety_stock(array($item['variety_id']));
         if(!((isset($current_stocks[$item['variety_id']][0][$item['warehouse_id_source']]))&&($current_stocks[$item['variety_id']][0][$item['warehouse_id_source']]['current_stock']>=$item['quantity_convert'])))
         {
             $ajax['status']=false;
@@ -257,8 +257,8 @@ class Convert_bp extends Root_Controller
             $this->json_return($ajax);
         }
         //raw stock validation checking
-        $current_raw_stocks=System_helper::get_raw_stock(array($item['variety_id']));
-        $current_foil_stocks=System_helper::get_raw_stock(array(0));
+        $current_raw_stocks=Stock_helper::get_raw_stock(array($item['variety_id']));
+        $current_foil_stocks=Stock_helper::get_raw_stock(array(0));
         $current_stock_master=0;
         $current_stock_foil=0;
         $current_stock_sticker=0;
@@ -429,8 +429,8 @@ class Convert_bp extends Root_Controller
                 $result['current_stock_master']=0;
                 $result['current_stock_foil']=0;
                 $result['current_stock_sticker']=0;
-                $current_raw_stocks=System_helper::get_raw_stock($variety_id);
-                $current_foil_stocks=System_helper::get_raw_stock(array(0));
+                $current_raw_stocks=Stock_helper::get_raw_stock($variety_id);
+                $current_foil_stocks=Stock_helper::get_raw_stock(array(0));
                 if(isset($current_raw_stocks[$variety_id][$pack_size_id][$this->config->item('system_master_foil')]))
                 {
                     $result['current_stock_master']=number_format($current_raw_stocks[$variety_id][$pack_size_id][$this->config->item('system_master_foil')]['current_stock'],3,'.','');
@@ -598,9 +598,9 @@ class Convert_bp extends Root_Controller
             }
 
             // Getting current stocks and raw stocks
-            $current_stocks=System_helper::get_variety_stock(array($item['variety_id']));
-            $current_raw_stocks=System_helper::get_raw_stock(array($item['variety_id']));
-            $current_foil_stocks=System_helper::get_raw_stock(array(0));
+            $current_stocks=Stock_helper::get_variety_stock(array($item['variety_id']));
+            $current_raw_stocks=Stock_helper::get_raw_stock(array($item['variety_id']));
+            $current_foil_stocks=Stock_helper::get_raw_stock(array(0));
 
             /*--Start-- Validation Checking */
 

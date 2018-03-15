@@ -292,7 +292,7 @@ class Stock_out_variety extends Root_Controller
             {
                 $variety_ids[$item['variety_id']]=$item['variety_id'];
             }
-            $current_stocks=System_helper::get_variety_stock($variety_ids);
+            $current_stocks=Stock_helper::get_variety_stock($variety_ids);
 
             if($id>0)
             {
@@ -757,7 +757,7 @@ class Stock_out_variety extends Root_Controller
             {
                 $variety_ids[$result['variety_id']]=$result['variety_id'];
             }
-            $current_stocks=System_helper::get_variety_stock($variety_ids);
+            $current_stocks=Stock_helper::get_variety_stock($variety_ids);
 
             // Validation Checking
             foreach($results as $result)

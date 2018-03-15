@@ -145,7 +145,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         </td>
 
                         <td class="text-right">
-                            <label><?php $current_stock=System_helper::get_raw_stock(array($master['variety_id'])); if(isset($current_stock)){echo $current_stock[$master['variety_id']][$master['pack_size_id']][$CI->config->item('system_master_foil')]['current_stock'];}else{echo 0;}?></label>
+                            <label><?php $current_stock=Stock_helper::get_raw_stock(array($master['variety_id'])); if(isset($current_stock)){echo $current_stock[$master['variety_id']][$master['pack_size_id']][$CI->config->item('system_master_foil')]['current_stock'];}else{echo 0;}?></label>
                         </td>
                         <td class="text-right">
                             <input type="text" id="number_of_reel_<?php echo $index+1;?>" value="<?php echo $master['number_of_reel']; ?>" class="form-control text-right float_type_positive number_of_reel" data-current-id="<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][number_of_reel]">
