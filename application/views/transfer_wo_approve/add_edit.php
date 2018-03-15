@@ -37,7 +37,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         </div>
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_REQUEST');?><span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_REQUEST');?></label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <label class="control-label"><?php echo System_helper::display_date($item['date_request']);?></label>
@@ -45,7 +45,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         </div>
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DIVISION_NAME');?><span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DIVISION_NAME');?></label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <label class="control-label"><?php echo $item['division_name'];?></label>
@@ -53,7 +53,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         </div>
         <div class="row show-grid" id="zone_id_container">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ZONE_NAME');?><span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ZONE_NAME');?></label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <label class="control-label"><?php echo $item['zone_name'];?></label>
@@ -61,7 +61,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         </div>
         <div class="row show-grid" id="territory_id_container">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TERRITORY_NAME');?><span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TERRITORY_NAME');?></label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <label class="control-label"><?php echo $item['territory_name'];?></label>
@@ -69,7 +69,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         </div>
         <div class="row show-grid" id="district_id_container">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DISTRICT_NAME');?><span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DISTRICT_NAME');?></label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <label class="control-label"><?php echo $item['district_name'];?></label>
@@ -77,7 +77,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         </div>
         <div class="row show-grid" id="outlet_id_container">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_OUTLET_NAME');?><span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_OUTLET_NAME');?></label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <label class="control-label"><?php echo $item['outlet_name'];?></label>
@@ -137,14 +137,15 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         $quantity_total_approve_kg=0;
                         foreach($items as $index=>$value)
                         {
-                            if($item['user_updated_approve'])
+                            /*if($item['user_updated_approve'])
                             {
                                 $quantity_approve=$value['quantity_approve'];
                             }
                             else
                             {
                                 $quantity_approve=0;
-                            }
+                            }*/
+                            $quantity_approve=$value['quantity_approve'];
                             if($value['pack_size_id']==0)
                             {
                                 $quantity_request_kg=$value['quantity_request'];

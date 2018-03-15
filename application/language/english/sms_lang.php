@@ -332,6 +332,9 @@ $lang['LABEL_PURPOSE'] = 'Purpose';
 $lang['LABEL_EXCESS']='Excess';
 $lang['LABEL_STOCK_IN']='Stock In';
 $lang['LABEL_STOCK_OUT']='Stock Out';
+$lang['LABEL_FORWARD']='Forwarded';
+$lang['LABEL_APPROVED']='Approved';
+
 /* Stock out purpose */
 $lang['LABEL_STOCK_OUT_SHORT_INVENTORY']='Short Inventory';
 $lang['LABEL_STOCK_OUT_RND']='R&D Purpose';
