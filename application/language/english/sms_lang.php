@@ -189,6 +189,8 @@ $lang['LABEL_DATE_UPDATED_TIME']='Updated Time';
 $lang['LABEL_DATE_CONVERT']='Convert Date';
 $lang['LABEL_DATE_REQUEST']='Date for Request';
 $lang['LABEL_DATE_APPROVE']='Date for Approve';
+$lang['LABEL_DATE_DELIVERY']='Date for Delivery';
+$lang['LABEL_DATE_CHALLAN']='Date for Challan';
 
 //months array
 $lang['LABEL_MONTH'] = 'Month';
@@ -334,6 +336,7 @@ $lang['LABEL_STOCK_IN']='Stock In';
 $lang['LABEL_STOCK_OUT']='Stock Out';
 $lang['LABEL_FORWARD']='Forwarded';
 $lang['LABEL_APPROVED']='Approved';
+$lang['LABEL_REJECTED']='Rejected';
 
 /* Stock out purpose */
 $lang['LABEL_STOCK_OUT_SHORT_INVENTORY']='Short Inventory';
