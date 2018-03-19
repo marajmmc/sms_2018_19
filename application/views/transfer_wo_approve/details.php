@@ -182,16 +182,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         $quantity_approve=0;
                     }*/
                     $quantity_approve=$value['quantity_approve'];
-                    if($value['pack_size_id']==0)
-                    {
-                        $quantity_request_kg=$value['quantity_request'];
-                        $quantity_approve_kg=$quantity_approve;
-                    }
-                    else
-                    {
-                        $quantity_request_kg=(($value['quantity_request']*$value['pack_size'])/1000);
-                        $quantity_approve_kg=(($quantity_approve*$value['pack_size'])/1000);
-                    }
+                    $quantity_request_kg=(($value['quantity_request']*$value['pack_size'])/1000);
+                    $quantity_approve_kg=(($quantity_approve*$value['pack_size'])/1000);
+
                     $quantity_total_request+=$value['quantity_request'];
                     $quantity_total_request_kg+=$quantity_request_kg;
 
@@ -218,7 +211,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                             <label><?php echo $value['variety_name']; ?></label>
                         </td>
                         <td class="text-right">
-                            <label><?php if($value['pack_size_id']==0){echo 'Bulk';}else{echo $value['pack_size'];} ?></label>
+                            <label><?php echo $value['pack_size']; ?></label>
                         </td>
                         <td class="text-right">
                             <label id="quantity_min_<?php echo $index+1;?>">

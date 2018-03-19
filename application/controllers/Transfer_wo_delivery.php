@@ -191,6 +191,7 @@ class Transfer_wo_delivery extends Root_Controller
             $this->db->where('transfer_wo_details.status',$this->config->item('system_status_active'));
             $data['items']=$this->db->get()->result_array();
 
+            $data['warehouses']=Query_helper::get_info($this->config->item('table_login_basic_setup_warehouse'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $data['couriers']=Query_helper::get_info($this->config->item('table_login_basic_setup_couriers'),array('id, name'),array('status="'.$this->config->item('system_status_active').'"'), '','',array('ordering'));
             $data['courier']=Query_helper::get_info($this->config->item('table_sms_transfer_wo_courier_details'),array('*'),array('transfer_wo_id='.$item_id),1);
             if(!$data['courier'])
@@ -200,6 +201,8 @@ class Transfer_wo_delivery extends Root_Controller
                 $data['courier']['challan_no']='';
                 $data['courier']['courier_id']='';
                 $data['courier']['courier_tracing_no']='';
+                $data['courier']['place_booking_source']='';
+                $data['courier']['place_destination']='';
                 $data['courier']['date_booking']='';
                 $data['courier']['remarks']='';
             }
@@ -232,6 +235,8 @@ class Transfer_wo_delivery extends Root_Controller
         $id = $this->input->post("id");
         $user = User_helper::get_user();
         $time=time();
+        $item_head=$this->input->post('item');
+        $items=$this->input->post('items');
         $courier=$this->input->post('courier');
         if($id>0)
         {
@@ -291,7 +296,7 @@ class Transfer_wo_delivery extends Root_Controller
                 $ajax['system_message']='TO already delivered.';
                 $this->json_return($ajax);
             }
-            $two_variety_info=Stock_helper::transfer_wo_variety_stock_info($data['item']['outlet_id']);
+            //$two_variety_info=Stock_helper::transfer_wo_variety_stock_info($data['item']['outlet_id']);
         }
         else
         {
@@ -321,7 +326,7 @@ class Transfer_wo_delivery extends Root_Controller
         $old_items=array();
         foreach($data['items'] as $item)
         {
-            if(!isset($two_variety_info[$item['variety_id']][$item['pack_size_id']]))
+            /*if(!isset($two_variety_info[$item['variety_id']][$item['pack_size_id']]))
             {
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid variety information :: ( Variety ID: '.$item['variety_id'].' )';
@@ -343,8 +348,7 @@ class Transfer_wo_delivery extends Root_Controller
                 $ajax['status']=false;
                 $ajax['system_message']='Available quantity already exist. ( Excess approve quantity: '.$stock_available_excess.' kg.)';
                 $this->json_return($ajax);
-            }
-
+            }*/
             $old_items[$item['variety_id']][$item['pack_size_id']]=$item;
         }
 
@@ -358,8 +362,17 @@ class Transfer_wo_delivery extends Root_Controller
             $this->json_return($ajax);
         }
 
+        $results=Query_helper::get_info($this->config->item('table_login_setup_classification_pack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('id ASC'));
+        $pack_sizes=array();
+        foreach($results as $result)
+        {
+            $pack_sizes[$result['value']]['value']=$result['value'];
+            $pack_sizes[$result['value']]['text']=$result['text'];
+        }
+
         $this->db->trans_start();  //DB Transaction Handle START
 
+        /* Courier relational table insert & update*/
         $data=array();
         $data['date_updated'] = $time;
         $data['user_updated'] = $user->user_id;
@@ -406,6 +419,47 @@ class Transfer_wo_delivery extends Root_Controller
         $data['date_created']=$time;
         $data['user_created']=$user->user_id;
         Query_helper::add($this->config->item('table_sms_transfer_wo_courier_histories'),$data, false);
+
+        /* variety relational table insert & update*/
+        $data=array();
+        $data['date_updated'] = $time;
+        $data['user_updated'] = $user->user_id;
+        Query_helper::update($this->config->item('table_sms_transfer_wo_details_histories'),$data, array('transfer_wo_id='.$id,'revision=1'), false);
+
+        $this->db->where('transfer_wo_id',$id);
+        $this->db->set('revision', 'revision+1', FALSE);
+        $this->db->update($this->config->item('table_sms_transfer_wo_details_histories'));
+
+        $data=array();
+        $data['remarks_challan']=$item_head['remarks_challan'];
+        $item_head['date_updated_delivery']=$time;
+        $item_head['user_updated_delivery']=$user->user_id;
+        $this->db->set('revision_count_delivery', 'revision_count_delivery+1', FALSE);
+        Query_helper::update($this->config->item('table_sms_transfer_wo'),$item_head, array('id='.$id), false);
+
+        foreach($items as $item)
+        {
+            // this isset condition using for insert row information history table
+            if(isset($old_items[$item['variety_id']][$item['pack_size_id']]))
+            {
+                $data=array();
+                $data['warehouse_id']=$item['warehouse_id'];
+                Query_helper::update($this->config->item('table_sms_transfer_wo_details'),$data, array('transfer_wo_id='.$id, 'variety_id ='.$item['variety_id'], 'pack_size_id ='.$item['pack_size_id']), false);
+
+                $data=array();
+                $data['transfer_wo_id']=$id;
+                $data['variety_id']=$item['variety_id'];
+                $data['pack_size_id']=$item['pack_size_id'];
+                $data['pack_size']=$pack_sizes[$item['pack_size_id']]['text'];
+                $data['quantity']=$old_items[$item['variety_id']][$item['pack_size_id']]['quantity_approve'];
+                $data['revision']=1;
+                $data['date_created']=$time;
+                $data['user_created']=$user->user_id;
+                Query_helper::add($this->config->item('table_sms_transfer_wo_details_histories'),$data, false);
+            }
+        }
+
+
 
         $this->db->trans_complete();   //DB Transaction Handle END
         if ($this->db->trans_status() === TRUE)

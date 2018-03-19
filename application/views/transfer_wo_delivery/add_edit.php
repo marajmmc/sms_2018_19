@@ -159,17 +159,11 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <th rowspan="2" style="width: 150px;"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?></th>
                         <th rowspan="2" style="width: 150px;"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
                         <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
-                        <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY_MIN'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
-                        <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY_MAX'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
-                        <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_STOCK_OUTLET'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
-                        <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY_TRANSFER_MAXIMUM'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
-                        <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_STOCK_AVAILABLE'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
-                        <th colspan="2" class="text-center" style="width: 300px;"><?php echo $CI->lang->line('LABEL_QUANTITY_ORDER'); ?></th>
+                        <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_WAREHOUSE_NAME'); ?></th>
                         <th colspan="2" class="text-center" style="width: 300px;"><?php echo $CI->lang->line('LABEL_QUANTITY_APPROVE'); ?></th>
+                        <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_CURRENT_STOCK_KG'); ?></th>
                     </tr>
                     <tr>
-                        <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_PACK');?></th>
-                        <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_KG');?></th>
                         <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_PACK');?></th>
                         <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_KG');?></th>
                     </tr>
@@ -184,39 +178,12 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     $class_quantity_exist_warning='';
                     foreach($items as $index=>$value)
                     {
-                        /*if($item['user_updated_approve'])
-                        {
-                            $quantity_approve=$value['quantity_approve'];
-                        }
-                        else
-                        {
-                            $quantity_approve=0;
-                        }*/
                         $quantity_approve=$value['quantity_approve'];
-                        if($value['pack_size_id']==0)
-                        {
-                            $quantity_request_kg=$value['quantity_request'];
-                            $quantity_approve_kg=$quantity_approve;
-                        }
-                        else
-                        {
-                            $quantity_request_kg=(($value['quantity_request']*$value['pack_size'])/1000);
-                            $quantity_approve_kg=(($quantity_approve*$value['pack_size'])/1000);
-                        }
-                        $quantity_total_request+=$value['quantity_request'];
-                        $quantity_total_request_kg+=$quantity_request_kg;
-
+                        $quantity_approve_kg=(($quantity_approve*$value['pack_size'])/1000);
 
                         $quantity_total_approve+=$quantity_approve;
                         $quantity_total_approve_kg+=$quantity_approve_kg;
-                        if($quantity_request_kg>$two_variety_info[$value['variety_id']][$value['pack_size_id']]['quantity_max_transferable'] || $quantity_request_kg>$two_variety_info[$value['variety_id']][$value['pack_size_id']]['stock_available'])
-                        {
-                            $class_quantity_exist_warning='quantity_exist_warning';
-                        }
-                        else
-                        {
-                            $class_quantity_exist_warning='';
-                        }
+
                         ?>
                         <tr>
                             <td>
@@ -227,56 +194,37 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                             </td>
                             <td>
                                 <label><?php echo $value['variety_name']; ?></label>
+                                <input type="hidden" name="items[<?php echo $index+1;?>][variety_id]" value="<?php echo $value['variety_id']; ?>">
                             </td>
                             <td class="text-right">
-                                <label><?php if($value['pack_size_id']==0){echo 'Bulk';}else{echo $value['pack_size'];} ?></label>
+                                <label><?php echo $value['pack_size']; ?></label>
+                                <input type="hidden" name="items[<?php echo $index+1;?>][pack_size_id]" id="pack_size_id_<?php echo $index+1;?>" value="<?php echo $value['pack_size_id']; ?>" class="pack_size_id" data-pack-size-name="<?php if($value['pack_size_id']==0){echo 0;}else{echo $value['pack_size'];} ?>">
                             </td>
-                            <td class="text-right">
-                                <label id="quantity_min_<?php echo $index+1;?>">
+                            <td>
+                                <select id="warehouse_id" class="form-control" name="items[warehouse_id]" >
+                                    <option value=""><?php echo $this->lang->line('SELECT');?></option>
                                     <?php
-                                    echo isset($two_variety_info[$value['variety_id']][$value['pack_size_id']])?number_format($two_variety_info[$value['variety_id']][$value['pack_size_id']]['quantity_min'],3,'.',''):'0.000';
-                                    ?>
-                                </label>
-                            </td>
-                            <td class="text-right">
-                                <label id="quantity_max_<?php echo $index+1;?>">
+                                    foreach($warehouses as $warehouse)
+                                    {
+                                        ?>
+                                        <option value="<?php echo $warehouse['value'];?>" <?php if($warehouse['value']==$value['warehouse_id']){echo "selected='selected'";}?>><?php echo $warehouse['text'];?></option>
                                     <?php
-                                    echo isset($two_variety_info[$value['variety_id']][$value['pack_size_id']])?number_format($two_variety_info[$value['variety_id']][$value['pack_size_id']]['quantity_max'],3,'.',''):'0.000';
+                                    }
                                     ?>
-                                </label>
+                                </select>
                             </td>
                             <td class="text-right">
-                                <label class="control-label stock_outlet" id="stock_outlet_<?php echo $index+1;?>">
-                                    <?php
-                                    echo isset($two_variety_info[$value['variety_id']][$value['pack_size_id']])?number_format($two_variety_info[$value['variety_id']][$value['pack_size_id']]['stock_outlet'],3,'.',''):'0.000';
-                                    ?>
-                                </label>
+                                <label class=" "><?php echo $quantity_approve; ?></label>
                             </td>
                             <td class="text-right">
-                                <label class="control-label quantity_max_transferable <?php echo $class_quantity_exist_warning;?>" id="quantity_max_transferable_<?php echo $index+1;?>">
-                                    <?php
-                                    echo isset($two_variety_info[$value['variety_id']][$value['pack_size_id']])?number_format($two_variety_info[$value['variety_id']][$value['pack_size_id']]['quantity_max_transferable'],3,'.',''):'0.000';
-                                    ?>
-                                </label>
+                                <label class=" " id="quantity_approve_kg_<?php echo $index+1;?>"> <?php echo number_format($quantity_approve_kg,3,'.','');?> </label>
                             </td>
                             <td class="text-right">
-                                <label class="control-label stock_available <?php echo $class_quantity_exist_warning;?>" id="stock_available_id_<?php echo $index+1;?>">
+                                <label class="control-label stock_available " id="stock_available_id_<?php echo $index+1;?>">
                                     <?php
                                     echo isset($two_variety_info[$value['variety_id']][$value['pack_size_id']])?number_format($two_variety_info[$value['variety_id']][$value['pack_size_id']]['stock_available'],3,'.',''):'0.000';
                                     ?>
                                 </label>
-                            </td>
-                            <td class="text-right">
-                                <label ><?php echo $value['quantity_request']; ?></label>
-                            </td>
-                            <td class="text-right">
-                                <label id="quantity_request_kg_<?php echo $index+1;?>"> <?php echo number_format($quantity_request_kg,3,'.','');?> </label>
-                            </td>
-                            <td class="text-right">
-                                <label class=" <?php echo $class_quantity_exist_warning;?>"><?php echo $quantity_approve; ?></label>
-                            </td>
-                            <td class="text-right">
-                                <label class=" <?php echo $class_quantity_exist_warning;?>" id="quantity_approve_kg_<?php echo $index+1;?>"> <?php echo number_format($quantity_approve_kg,3,'.','');?> </label>
                             </td>
                         </tr>
                     <?php
@@ -285,14 +233,21 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     </tbody>
                     <tfoot>
                     <tr>
-                        <th colspan="9" class="text-right"><?php echo $CI->lang->line('LABEL_TOTAL');?></th>
-                        <th class="text-right"><label class="control-label" id="quantity_total_request"> <?php echo $quantity_total_request;?></label></th>
-                        <th class="text-right"><label class="control-label" id="quantity_total_request_kg"> <?php echo number_format($quantity_total_request_kg,3,'.','');?></label></th>
-                        <th class="text-right"><label class="control-label <?php if($quantity_total_approve_kg>$quantity_to_maximum_kg){echo 'quantity_exist_warning';}?>" id="quantity_total_approve"> <?php echo $quantity_total_approve;?></label></th>
-                        <th class="text-right"><label class="control-label <?php if($quantity_total_approve_kg>$quantity_to_maximum_kg){echo 'quantity_exist_warning';}?>" id="quantity_total_approve_kg"> <?php echo number_format($quantity_total_approve_kg,3,'.','');?></label></th>
+                        <th colspan="5" class="text-right"><?php echo $CI->lang->line('LABEL_TOTAL');?></th>
+                        <th class="text-right"><label class="control-label" id="quantity_total_approve"> <?php echo $quantity_total_approve;?></label></th>
+                        <th class="text-right"><label class="control-label" id="quantity_total_approve_kg"> <?php echo number_format($quantity_total_approve_kg,3,'.','');?></label></th>
+                        <th colspan="5">&nbsp;</th>
                     </tr>
                     </tfoot>
                 </table>
+            </div>
+            <div class="row show-grid">
+                <div class="col-xs-4">
+                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS_CHALLAN');?></label>
+                </div>
+                <div class="col-sm-4 col-xs-8">
+                    <textarea name="item[remarks_challan]" id="remarks_challan" class="form-control"><?php echo $item['remarks_challan'];?></textarea>
+                </div>
             </div>
         </div>
         <div class="widget-header">
@@ -353,6 +308,22 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         </div>
         <div class="row show-grid">
             <div class="col-xs-4">
+                <label class="control-label pull-right">Booking Branch (Place)</label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <textarea name="courier[place_booking_source]" id="place_booking_source" class="form-control"><?php echo $courier['place_booking_source'];?></textarea>
+            </div>
+        </div>
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right">Receive Branch (Place)</label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <textarea name="courier[place_destination]" id="place_destination" class="form-control"><?php echo $courier['place_destination'];?></textarea>
+            </div>
+        </div>
+        <div class="row show-grid">
+            <div class="col-xs-4">
                 <label class="control-label pull-right">Booking Date</label>
             </div>
             <div class="col-sm-4 col-xs-8">
@@ -361,7 +332,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         </div>
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS');?></label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS_COURIER');?></label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <textarea name="courier[remarks]" id="remarks" class="form-control"><?php echo $courier['remarks'];?></textarea>

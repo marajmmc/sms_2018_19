@@ -279,14 +279,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         $quantity_total_request_kg=0;
                         foreach($items as $index=>$value)
                         {
-                            if($value['pack_size_id']==0)
-                            {
-                                $quantity_request_kg=$value['quantity_request'];
-                            }
-                            else
-                            {
-                                $quantity_request_kg=(($value['quantity_request']*$value['pack_size'])/1000);
-                            }
+                            $quantity_request_kg=(($value['quantity_request']*$value['pack_size'])/1000);
                             $quantity_total_request+=$value['quantity_request'];
                             $quantity_total_request_kg+=$quantity_request_kg;
                             ?>
@@ -302,8 +295,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                                     <input type="hidden" name="items[<?php echo $index+1;?>][variety_id]" value="<?php echo $value['variety_id']; ?>">
                                 </td>
                                 <td class="text-right">
-                                    <label><?php if($value['pack_size_id']==0){echo 'Bulk';}else{echo $value['pack_size'];} ?></label>
-                                    <input type="hidden" name="items[<?php echo $index+1;?>][pack_size_id]" id="pack_size_id_<?php echo $index+1;?>" value="<?php echo $value['pack_size_id']; ?>" class="pack_size_id" data-pack-size-name="<?php if($value['pack_size_id']==0){echo 0;}else{echo $value['pack_size'];} ?>">
+                                    <label><?php echo $value['pack_size']; ?></label>
+                                    <input type="hidden" name="items[<?php echo $index+1;?>][pack_size_id]" id="pack_size_id_<?php echo $index+1;?>" value="<?php echo $value['pack_size_id']; ?>" class="pack_size_id" data-pack-size-name="<?php echo $value['pack_size']; ?>">
                                 </td>
                                 <td class="text-right">
                                     <label id="quantity_min_<?php echo $index+1;?>">
