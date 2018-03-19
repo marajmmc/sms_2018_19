@@ -171,11 +171,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <tbody id="items_container">
                     <?php
                     $quantity_approve=0;
-                    $quantity_total_request=0;
-                    $quantity_total_request_kg=0;
                     $quantity_total_approve=0;
                     $quantity_total_approve_kg=0;
-                    $class_quantity_exist_warning='';
+
                     foreach($items as $index=>$value)
                     {
                         $quantity_approve=$value['quantity_approve'];
@@ -183,7 +181,15 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
                         $quantity_total_approve+=$quantity_approve;
                         $quantity_total_approve_kg+=$quantity_approve_kg;
-
+                        if(isset($stocks[$value['variety_id']][$value['pack_size_id']][$value['warehouse_id']]))
+                        {
+                            $stock_current=$stocks[$value['variety_id']][$value['pack_size_id']][$value['warehouse_id']]['current_stock'];
+                        }
+                        else
+                        {
+                            $stock_current=0;
+                        }
+                        $stock_current=(($stock_current*$value['pack_size'])/1000);
                         ?>
                         <tr>
                             <td>
@@ -194,14 +200,14 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                             </td>
                             <td>
                                 <label><?php echo $value['variety_name']; ?></label>
-                                <input type="hidden" name="items[<?php echo $index+1;?>][variety_id]" value="<?php echo $value['variety_id']; ?>">
+                                <input type="hidden" name="items[<?php echo $index+1;?>][variety_id]" id="variety_id_<?php echo $index+1;?>" value="<?php echo $value['variety_id']; ?>" data-current-id="<?php echo $index+1;?>" />
                             </td>
                             <td class="text-right">
                                 <label><?php echo $value['pack_size']; ?></label>
-                                <input type="hidden" name="items[<?php echo $index+1;?>][pack_size_id]" id="pack_size_id_<?php echo $index+1;?>" value="<?php echo $value['pack_size_id']; ?>" class="pack_size_id" data-pack-size-name="<?php if($value['pack_size_id']==0){echo 0;}else{echo $value['pack_size'];} ?>">
+                                <input type="hidden" name="items[<?php echo $index+1;?>][pack_size_id]" id="pack_size_id_<?php echo $index+1;?>" value="<?php echo $value['pack_size_id']; ?>" class="pack_size_id" data-current-id="<?php echo $index+1;?>" data-pack-size-name="<?php echo $value['pack_size']; ?>">
                             </td>
                             <td>
-                                <select id="warehouse_id" class="form-control" name="items[warehouse_id]" >
+                                <select id="warehouse_id_<?php echo $index+1;?>" class="form-control warehouse_id" name="items[<?php echo $index+1;?>][warehouse_id]" data-current-id="<?php echo $index+1;?>">
                                     <option value=""><?php echo $this->lang->line('SELECT');?></option>
                                     <?php
                                     foreach($warehouses as $warehouse)
@@ -220,9 +226,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                                 <label class=" " id="quantity_approve_kg_<?php echo $index+1;?>"> <?php echo number_format($quantity_approve_kg,3,'.','');?> </label>
                             </td>
                             <td class="text-right">
-                                <label class="control-label stock_available " id="stock_available_id_<?php echo $index+1;?>">
+                                <label class="control-label stock_current " id="stock_current_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>">
                                     <?php
-                                    echo isset($two_variety_info[$value['variety_id']][$value['pack_size_id']])?number_format($two_variety_info[$value['variety_id']][$value['pack_size_id']]['stock_available'],3,'.',''):'0.000';
+                                    echo number_format($stock_current,3,'.','');
                                     ?>
                                 </label>
                             </td>
@@ -347,14 +353,57 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         color: #FFFFFF;
     }
 </style>
-<script>
 
+<script>
+    <?php
+        if(sizeof($stocks)>0)
+        {
+        ?>
+        var hq_variety_stocks=JSON.parse('<?php echo json_encode($stocks);?>');
+        <?php
+        }
+        else
+        {
+            ?>
+            var hq_variety_stocks={};
+            <?php
+        }
+    ?>
     $(document).ready(function()
     {
-        //console.log(two_variety_info)
+        console.log(hq_variety_stocks)
         system_preset({controller:'<?php echo $CI->router->class; ?>'});
         //$(".date_large").datepicker({dateFormat : display_date_format,changeMonth: true,changeYear: true,yearRange: "2015:+2"});
         $(".datepicker").datepicker({dateFormat : display_date_format});
+
+        $(document).off("change",".warehouse_id");
+        $(document).on("change",".warehouse_id",function()
+        {
+            var current_id=$(this).attr('data-current-id');
+            $('#quantity_approve_kg_'+current_id).removeClass('quantity_exist_warning');
+            $('#stock_current_'+current_id).removeClass('quantity_exist_warning');
+
+            $("#stock_current_"+current_id).html("");
+            var variety_id=$('#variety_id_'+current_id).val();
+            var pack_size_id=$('#pack_size_id_'+current_id).val();
+            var warehouse_id=$('#warehouse_id_'+current_id).val();
+            var quantity_approve_kg=parseFloat($('#quantity_approve_kg_'+current_id).html().replace(/,/g,''));
+            var current_stock=0;
+            if(variety_id>0 && pack_size_id>0 && warehouse_id>0)
+            {
+                if(hq_variety_stocks[variety_id][pack_size_id][warehouse_id]!=undefined)
+                {
+                    current_stock=hq_variety_stocks[variety_id][pack_size_id][warehouse_id]['current_stock'];
+                }
+                current_stock=((current_stock*pack_size_id)/1000);
+                $('#stock_current_'+current_id).html(number_format(current_stock,'3','.',''));
+                if(quantity_approve_kg>current_stock)
+                {
+                    $('#quantity_approve_kg_'+current_id).addClass('quantity_exist_warning');
+                    $('#stock_current_'+current_id).addClass('quantity_exist_warning');
+                }
+            }
+        });
     });
 
 </script>

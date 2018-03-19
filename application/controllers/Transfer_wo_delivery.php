@@ -191,6 +191,13 @@ class Transfer_wo_delivery extends Root_Controller
             $this->db->where('transfer_wo_details.status',$this->config->item('system_status_active'));
             $data['items']=$this->db->get()->result_array();
 
+            $variety_ids=array();
+            foreach($data['items'] as $row)
+            {
+                $variety_ids[$row['variety_id']]=$row['variety_id'];
+            }
+            $data['stocks']=Stock_helper::get_variety_stock($variety_ids);
+
             $data['warehouses']=Query_helper::get_info($this->config->item('table_login_basic_setup_warehouse'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $data['couriers']=Query_helper::get_info($this->config->item('table_login_basic_setup_couriers'),array('id, name'),array('status="'.$this->config->item('system_status_active').'"'), '','',array('ordering'));
             $data['courier']=Query_helper::get_info($this->config->item('table_sms_transfer_wo_courier_details'),array('*'),array('transfer_wo_id='.$item_id),1);
@@ -304,12 +311,12 @@ class Transfer_wo_delivery extends Root_Controller
             $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
             $this->json_return($ajax);
         }
-        if(!$this->check_validation())
+        /*if(!$this->check_validation())
         {
             $ajax['status']=false;
             $ajax['system_message']=$this->message;
             $this->json_return($ajax);
-        }
+        }*/
 
         $this->db->from($this->config->item('table_sms_transfer_wo_details').' transfer_wo_details');
         $this->db->select('transfer_wo_details.*');
@@ -322,34 +329,37 @@ class Transfer_wo_delivery extends Root_Controller
         $this->db->where('transfer_wo_details.transfer_wo_id',$id);
         $this->db->where('transfer_wo_details.status',$this->config->item('system_status_active'));
         $data['items']=$this->db->get()->result_array();
+
         $quantity_total_approve_kg=0;
         $old_items=array();
+        $variety_ids=array();
         foreach($data['items'] as $item)
         {
-            /*if(!isset($two_variety_info[$item['variety_id']][$item['pack_size_id']]))
+            $old_items[$item['variety_id']][$item['pack_size_id']]=$item;
+            $variety_ids[$item['variety_id']]=$item['variety_id'];
+        }
+
+        $current_stocks=Stock_helper::get_variety_stock($variety_ids);
+        foreach($items as $item)
+        {
+            if(!isset($old_items[$item['variety_id']][$item['pack_size_id']]))
             {
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid variety information :: ( Variety ID: '.$item['variety_id'].' )';
                 $this->json_return($ajax);
             }
-
-            $quantity_total_approve=(($item['pack_size']*$item['quantity_approve'])/1000);
-            $quantity_total_approve_kg+=$quantity_total_approve;
-            if($quantity_total_approve>$two_variety_info[$item['variety_id']][$item['pack_size_id']]['quantity_max_transferable'])
+            if(!isset($current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]) || !($current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]>0))
             {
-                $quantity_max_transferable_excess=($quantity_total_approve-$two_variety_info[$item['variety_id']][$item['pack_size_id']]['quantity_max_transferable']);
                 $ajax['status']=false;
-                $ajax['system_message']='Outlet maximum transferable quantity already exist. ( Excess order quantity: '.$quantity_max_transferable_excess.' kg.)';
+                $ajax['system_message']='Stock not available :: ( Variety ID: '.$item['variety_id'].' - Pack Size ID: '.$item['pack_size_id'].' - Warehouse ID: '.$item['warehouse_id'].')';
                 $this->json_return($ajax);
             }
-            if($quantity_total_approve>$two_variety_info[$item['variety_id']][$item['pack_size_id']]['stock_available'])
+            if($old_items[$item['variety_id']][$item['pack_size_id']]['quantity_approve']>$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]['current_stock'])
             {
-                $stock_available_excess=($quantity_total_approve-$two_variety_info[$item['variety_id']][$item['pack_size_id']]['stock_available']);
                 $ajax['status']=false;
-                $ajax['system_message']='Available quantity already exist. ( Excess approve quantity: '.$stock_available_excess.' kg.)';
+                $ajax['system_message']='Current Stock Exist :: ( '.($old_items[$item['variety_id']][$item['pack_size_id']]['quantity_approve']-$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]['current_stock']).' )';
                 $this->json_return($ajax);
-            }*/
-            $old_items[$item['variety_id']][$item['pack_size_id']]=$item;
+            }
         }
 
         $system_purpose_config=$this->config->item('system_purpose_config');
@@ -371,16 +381,6 @@ class Transfer_wo_delivery extends Root_Controller
         }
 
         $this->db->trans_start();  //DB Transaction Handle START
-
-        /* Courier relational table insert & update*/
-        $data=array();
-        $data['date_updated'] = $time;
-        $data['user_updated'] = $user->user_id;
-        Query_helper::update($this->config->item('table_sms_transfer_wo_courier_histories'),$data, array('transfer_wo_id='.$id,'revision=1'), false);
-
-        $this->db->where('transfer_wo_id',$id);
-        $this->db->set('revision', 'revision+1', FALSE);
-        $this->db->update($this->config->item('table_sms_transfer_wo_courier_histories'));
 
         $result=Query_helper::get_info($this->config->item('table_sms_transfer_wo_courier_details'),array('*'),array('transfer_wo_id='.$id));
         if($result)
@@ -404,21 +404,6 @@ class Transfer_wo_delivery extends Root_Controller
             $courier['user_updated']=$user->user_id;
             Query_helper::add($this->config->item('table_sms_transfer_wo_courier_details'),$courier, false);
         }
-
-
-        $data=array();
-        $data['transfer_wo_id']=$id;
-        $data['date_delivery']=System_helper::get_time($courier['date_delivery']);
-        $data['date_challan']=System_helper::get_time($courier['date_challan']);
-        $data['challan_no']=$courier['challan_no'];
-        $data['courier_id']=$courier['courier_id'];
-        $data['courier_tracing_no']=$courier['courier_tracing_no'];
-        $data['date_booking']=System_helper::get_time($courier['date_booking']);
-        $data['remarks']=$courier['remarks'];
-        $data['revision']=1;
-        $data['date_created']=$time;
-        $data['user_created']=$user->user_id;
-        Query_helper::add($this->config->item('table_sms_transfer_wo_courier_histories'),$data, false);
 
         /* variety relational table insert & update*/
         $data=array();
