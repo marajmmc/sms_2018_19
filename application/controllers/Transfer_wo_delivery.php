@@ -259,7 +259,15 @@ class Transfer_wo_delivery extends Root_Controller
 
             //$data['item']=Query_helper::get_info($this->config->item('table_sms_transfer_wo'),'*',array('id ='.$id, 'status != "'.$this->config->item('system_status_delete').'"'),1);
             $this->db->from($this->config->item('table_sms_transfer_wo').' transfer_wo');
-            $this->db->select('transfer_wo.id, transfer_wo.date_request, transfer_wo.quantity_total_request_kg, transfer_wo.status_request, transfer_wo.remarks_request, transfer_wo.status_approve, transfer_wo.status_delivery');
+            $this->db->select('
+            transfer_wo.id,
+            transfer_wo.date_request,
+            transfer_wo.quantity_total_request_kg,
+            transfer_wo.status_request,
+            transfer_wo.remarks_request,
+            transfer_wo.date_approve,
+            transfer_wo.status_approve,
+            transfer_wo.status_delivery');
             $this->db->join($this->config->item('table_login_csetup_cus_info').' outlet_info','outlet_info.customer_id=transfer_wo.outlet_id AND outlet_info.type="'.$this->config->item('system_customer_type_outlet_id').'"','INNER');
             $this->db->select('outlet_info.customer_id outlet_id, outlet_info.name outlet_name, outlet_info.customer_code outlet_code');
             $this->db->join($this->config->item('table_login_setup_location_districts').' districts','districts.id = outlet_info.district_id','INNER');
