@@ -111,12 +111,12 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             }
             ?>
             <?php
-            if($item['remarks_approve_re'])
+            if($item['remarks_approve_edit'])
             {
                 ?>
                 <tr>
-                    <th class="widget-header header_caption" style="vertical-align: top"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS_APPROVE');?></label></th>
-                    <th class=" header_value" colspan="3"><label class="control-label"><?php echo nl2br($item['remarks_approve']);?></label></th>
+                    <th class="widget-header header_caption" style="vertical-align: top"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS_APPROVE');?> (Edit)</label></th>
+                    <th class=" header_value" colspan="3"><label class="control-label"><?php echo nl2br($item['remarks_approve_edit']);?></label></th>
                 </tr>
             <?php
             }
