@@ -323,6 +323,7 @@ class Transfer_wo_delivery extends Root_Controller
                 $ajax['system_message']=$this->lang->line('LABEL_DATE_DELIVERY'). ' field is required.';
                 $this->json_return($ajax);
             }
+            /*same date problem solution needed.*/
             if(!(strtotime($courier['date_delivery'])>$data['item']['date_approve']))
             {
                 $ajax['status']=false;
