@@ -7,7 +7,7 @@ $action_buttons[]=array
     'label'=>$CI->lang->line("ACTION_BACK"),
     'href'=>site_url($CI->controller_url)
 );
-if((isset($CI->permissions['action1']) && ($CI->permissions['action1']==1)) || (isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)))
+if((isset($CI->permissions['action7']) && ($CI->permissions['action7']==1)))
 {
     $action_buttons[]=array
     (
@@ -17,16 +17,10 @@ if((isset($CI->permissions['action1']) && ($CI->permissions['action1']==1)) || (
         'data-form'=>'#save_form'
     );
 }
-$action_buttons[]=array(
-    'type'=>'button',
-    'label'=>$CI->lang->line("ACTION_CLEAR"),
-    'id'=>'button_action_clear',
-    'data-form'=>'#save_form'
-);
 $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 ?>
-<form id="save_form" action="<?php echo site_url($CI->controller_url.'/index/save');?>" method="post">
-    <input type="hidden" id="id" name="id" value="<?php echo $item['id']?>" />
+<form id="save_form" action="<?php echo site_url($CI->controller_url.'/index/save_delivery');?>" method="post">
+    <input type="hidden" id="id" name="id" value="<?php echo $item['id']; ?>" />
     <input type="hidden" id="system_save_new_status" name="system_save_new_status" value="0" />
     <div class="row widget">
         <div class="widget-header">
@@ -41,42 +35,31 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <tr>
                     <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_ID');?></label></th>
                     <th class=""><label class="control-label"><?php echo Barcode_helper::get_barcode_transfer_warehouse_to_outlet($item['id']);?></label></th>
-                    <th colspan="2">&nbsp;</th>
+                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DIVISION_NAME');?></label></th>
+                    <th class=" header_value"><label class="control-label"><?php echo $item['division_name'];?></label></th>
                 </tr>
                 <tr>
                     <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_REQUEST');?></label></th>
                     <th class=" header_value"><label class="control-label"><?php echo System_helper::display_date($item['date_request']);?></label></th>
-                    <th colspan="2">&nbsp;</th>
+                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_ZONE_NAME');?></label></th>
+                    <th class=" header_value"><label class="control-label"><?php echo $item['zone_name'];?></label></th>
                 </tr>
                 <tr>
                     <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_APPROVE');?></label></th>
                     <th class=" header_value"><label class="control-label"><?php echo System_helper::display_date($item['date_approve']);?></label></th>
-                    <th colspan="2">&nbsp;</th>
-                </tr>
-                <tr>
-                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DIVISION_NAME');?></label></th>
-                    <th class=" header_value"><label class="control-label"><?php echo $item['division_name'];?></label></th>
-                    <th colspan="2">&nbsp;</th>
-                </tr>
-                <tr>
-                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_ZONE_NAME');?></label></th>
-                    <th class=" header_value"><label class="control-label"><?php echo $item['zone_name'];?></label></th>
-                    <th colspan="2">&nbsp;</th>
-                </tr>
-                <tr>
                     <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_TERRITORY_NAME');?></label></th>
                     <th class=" header_value"><label class="control-label"><?php echo $item['territory_name'];?></label></th>
-                    <th colspan="2">&nbsp;</th>
                 </tr>
                 <tr>
+                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_DELIVERY');?></label></th>
+                    <th class=" header_value"><label class="control-label"><?php echo $item['date_delivery']?System_helper::display_date($item['date_delivery']):System_helper::display_date(time());?></label></th>
                     <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DISTRICT_NAME');?></label></th>
                     <th class=" header_value"><label class="control-label"><?php echo $item['district_name'];?></label></th>
-                    <th colspan="2">&nbsp;</th>
                 </tr>
                 <tr>
+                    <th colspan="2">&nbsp;</th>
                     <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_OUTLET_NAME');?></label></th>
                     <th class=" header_value"><label class="control-label"><?php echo $item['outlet_name'];?></label></th>
-                    <th colspan="2">&nbsp;</th>
                 </tr>
                 <tr>
                     <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_CREATED_BY');?> (TO Request)</label></th>
@@ -102,9 +85,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 {
                     ?>
                     <tr>
-                        <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_UPDATED_BY');?> (TO Approve)</label></th>
+                        <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_APPROVED_BY');?></label></th>
                         <th class=" header_value"><label class="control-label"><?php echo $item['user_updated_approve_full_name'];?></label></th>
-                        <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_UPDATED_TIME');?> (TO Approve)</label></th>
+                        <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_APPROVED_TIME');?> </label></th>
                         <th class=""><label class="control-label"><?php echo System_helper::display_date_time($item['date_updated_approve']);?></label></th>
                     </tr>
                 <?php
@@ -159,7 +142,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <th rowspan="2" style="width: 150px;"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?></th>
                         <th rowspan="2" style="width: 150px;"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
                         <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
-                        <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_WAREHOUSE_NAME'); ?></th>
+                        <th rowspan="2" style="width: 150px;"><?php echo $CI->lang->line('LABEL_WAREHOUSE_NAME'); ?></th>
                         <th colspan="2" class="text-center" style="width: 300px;"><?php echo $CI->lang->line('LABEL_QUANTITY_APPROVE'); ?></th>
                         <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_CURRENT_STOCK_KG'); ?></th>
                     </tr>
@@ -207,17 +190,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                                 <input type="hidden" name="items[<?php echo $index+1;?>][pack_size_id]" id="pack_size_id_<?php echo $index+1;?>" value="<?php echo $value['pack_size_id']; ?>" class="pack_size_id" data-current-id="<?php echo $index+1;?>" data-pack-size-name="<?php echo $value['pack_size']; ?>">
                             </td>
                             <td>
-                                <select id="warehouse_id_<?php echo $index+1;?>" class="form-control warehouse_id" name="items[<?php echo $index+1;?>][warehouse_id]" data-current-id="<?php echo $index+1;?>">
-                                    <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                                    <?php
-                                    foreach($warehouses as $warehouse)
-                                    {
-                                        ?>
-                                        <option value="<?php echo $warehouse['value'];?>" <?php if($warehouse['value']==$value['warehouse_id']){echo "selected='selected'";}?>><?php echo $warehouse['text'];?></option>
-                                    <?php
-                                    }
-                                    ?>
-                                </select>
+                                <label><?php echo $value['warehouse_name']; ?></label>
                             </td>
                             <td class="text-right">
                                 <label class=" "><?php echo $quantity_approve; ?></label>
@@ -244,16 +217,14 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <th class="text-right"><label class="control-label" id="quantity_total_approve_kg"> <?php echo number_format($quantity_total_approve_kg,3,'.','');?></label></th>
                         <th colspan="5">&nbsp;</th>
                     </tr>
+                    <tr>
+                        <td colspan="21">
+                            <strong><?php echo $CI->lang->line('LABEL_REMARKS_CHALLAN');?>: </strong>
+                            <?php echo nl2br($item['remarks_challan']);?>
+                        </td>
+                    </tr>
                     </tfoot>
                 </table>
-            </div>
-            <div class="row show-grid">
-                <div class="col-xs-4">
-                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS_CHALLAN');?></label>
-                </div>
-                <div class="col-sm-4 col-xs-8">
-                    <textarea name="item[remarks_challan]" id="remarks_challan" class="form-control"><?php echo $item['remarks_challan'];?></textarea>
-                </div>
             </div>
         </div>
         <div class="widget-header">
@@ -263,147 +234,68 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             <div class="clearfix"></div>
         </div>
         <div class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_DELIVERY');?><span style="color:#FF0000">*</span></label>
+            <div class="col-md-12">
+                <table class="table table-bordered table-responsive system_table_details_view">
+                    <thead>
+                    <tr>
+                        <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_DELIVERY');?></label></th>
+                        <th class="alert-warning header_value"><label class="control-label"><?php echo System_helper::display_date($item['courier_date_delivery']);?></label></th>
+                        <th class="widget-header header_caption"><label class="control-label pull-right">Challan No</label></th>
+                        <th class=""><label class="control-label"><?php echo $item['challan_no'];?></label></th>
+                    </tr>
+                    <tr>
+                        <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_CHALLAN');?></label></th>
+                        <th class=" header_value"><label class="control-label"><?php echo System_helper::display_date($item['date_challan']);?></label></th>
+                        <th class="widget-header header_caption"><label class="control-label pull-right">Courier Name</label></th>
+                        <th class="alert-warning"><label class="control-label"><?php echo $item['courier_name'];?></label></th>
+                    </tr>
+                    <tr>
+                        <th class="widget-header header_caption"><label class="control-label pull-right">Booking Date</label></th>
+                        <th class=" header_value"><label class="control-label"><?php echo System_helper::display_date($item['date_booking']);?></label></th>
+                        <th class="widget-header header_caption"><label class="control-label pull-right">Courier Tracing No</label></th>
+                        <th class=""><label class="control-label"><?php echo $item['courier_tracing_no'];?></label></th>
+                    </tr>
+                    <tr>
+                        <th class="widget-header header_caption" style="vertical-align: top"><label class="control-label pull-right">Booking Branch (Place)</label></th>
+                        <th class=" header_value" colspan="3"><label class="control-label"><?php echo nl2br($item['place_booking_source']);?></label></th>
+                    </tr>
+                    <tr>
+                        <th class="widget-header header_caption" style="vertical-align: top"><label class="control-label pull-right">Receive Branch (Place)</label></th>
+                        <th class=" header_value" colspan="3"><label class="control-label"><?php echo nl2br($item['place_destination']);?></label></th>
+                    </tr>
+                    <tr>
+                        <th class="widget-header header_caption" style="vertical-align: top"><label class="control-label pull-right">Remarks for Courier</label></th>
+                        <th class=" header_value" colspan="3"><label class="control-label"><?php echo nl2br($item['remarks_couriers']);?></label></th>
+                    </tr>
+                    </thead>
+                </table>
             </div>
-            <div class="col-sm-4 col-xs-8">
-                <input type="text" name="courier[date_delivery]" id="date_delivery" class="form-control datepicker" value="<?php echo System_helper::display_date($courier['date_delivery']);?>" readonly="readonly" />
+        </div>
+
+        <div class="widget-header">
+            <div class="title">
+                Delivery Confirmation
             </div>
+            <div class="clearfix"></div>
         </div>
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_CHALLAN');?></label>
+                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DELIVERED');?> <span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <input type="text" name="courier[date_challan]" id="date_challan" class="form-control datepicker" value="<?php echo $courier['date_challan']?System_helper::display_date($courier['date_challan']):'';?>" readonly="readonly" />
-            </div>
-        </div>
-        <div class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right">Challan No</label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <input type="text" name="courier[challan_no]" id="challan_no" class="form-control" value="<?php echo $courier['challan_no'];?>" />
-            </div>
-        </div>
-        <div class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right">Courier Name</label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <select id="courier_id" class="form-control" name="courier[courier_id]" >
+                <select id="status_delivery" class="form-control" name="item[status_delivery]">
                     <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                    <?php
-                    foreach($couriers as $row)
-                    {
-                        ?>
-                        <option value="<?php echo $row['id'];?>" <?php if($row['id']==$courier['courier_id']){echo "selected='selected'";}?>><?php echo $row['name'];?></option>
-                    <?php
-                    }
-                    ?>
+                    <option value="<?php echo $this->config->item('system_status_delivered')?>"><?php echo $this->config->item('system_status_delivered')?></option>
                 </select>
             </div>
         </div>
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right">Courier Tracing No</label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS_DELIVERY');?></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <input type="text" name="courier[courier_tracing_no]" id="courier_tracing_no" class="form-control" value="<?php echo $courier['courier_tracing_no'];?>" />
-            </div>
-        </div>
-        <div class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right">Booking Branch (Place)</label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <textarea name="courier[place_booking_source]" id="place_booking_source" class="form-control"><?php echo $courier['place_booking_source'];?></textarea>
-            </div>
-        </div>
-        <div class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right">Receive Branch (Place)</label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <textarea name="courier[place_destination]" id="place_destination" class="form-control"><?php echo $courier['place_destination'];?></textarea>
-            </div>
-        </div>
-        <div class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right">Booking Date</label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <input type="text" name="courier[date_booking]" id="date_booking" class="form-control datepicker" value="<?php echo $courier['date_booking']?System_helper::display_date($courier['date_booking']):'';?>" readonly="readonly" />
-            </div>
-        </div>
-        <div class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS_COURIER');?></label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <textarea name="courier[remarks]" id="remarks" class="form-control"><?php echo $courier['remarks'];?></textarea>
+                <textarea name="item[remarks_delivery]" id="remarks_delivery" class="form-control"><?php echo $item['remarks_delivery'];?></textarea>
             </div>
         </div>
     </div>
 </form>
-<style>
-    .quantity_exist_warning
-    {
-        background-color: red;
-        color: #FFFFFF;
-    }
-</style>
-
-<script>
-    <?php
-        if(sizeof($stocks)>0)
-        {
-        ?>
-        var hq_variety_stocks=JSON.parse('<?php echo json_encode($stocks);?>');
-        <?php
-        }
-        else
-        {
-            ?>
-            var hq_variety_stocks={};
-            <?php
-        }
-    ?>
-    $(document).ready(function()
-    {
-        console.log(hq_variety_stocks)
-        system_preset({controller:'<?php echo $CI->router->class; ?>'});
-        //$(".date_large").datepicker({dateFormat : display_date_format,changeMonth: true,changeYear: true,yearRange: "2015:+2"});
-        $(".datepicker").datepicker({dateFormat : display_date_format});
-
-        $(document).off("change",".warehouse_id");
-        $(document).on("change",".warehouse_id",function()
-        {
-            var current_id=$(this).attr('data-current-id');
-            $('#quantity_approve_kg_'+current_id).removeClass('quantity_exist_warning');
-            $('#stock_current_'+current_id).removeClass('quantity_exist_warning');
-
-            $("#stock_current_"+current_id).html("");
-            var variety_id=$('#variety_id_'+current_id).val();
-            var pack_size_id=$('#pack_size_id_'+current_id).val();
-            var pack_size=$('#pack_size_id_'+current_id).attr('data-pack-size-name');
-            var warehouse_id=$('#warehouse_id_'+current_id).val();
-            var quantity_approve_kg=parseFloat($('#quantity_approve_kg_'+current_id).html().replace(/,/g,''));
-            var current_stock=0;
-            if(variety_id>0 && pack_size_id>0 && warehouse_id>0)
-            {
-                if(hq_variety_stocks[variety_id][pack_size_id][warehouse_id]!=undefined)
-                {
-                    current_stock=((hq_variety_stocks[variety_id][pack_size_id][warehouse_id]['current_stock']*pack_size)/1000);
-                }
-                $('#stock_current_'+current_id).html(number_format(current_stock,'3','.',''));
-                if(quantity_approve_kg>current_stock)
-                {
-                    $('#quantity_approve_kg_'+current_id).addClass('quantity_exist_warning');
-                    $('#stock_current_'+current_id).addClass('quantity_exist_warning');
-                }
-            }
-        });
-    });
-
-</script>

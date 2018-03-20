@@ -99,6 +99,8 @@ $lang['LABEL_DESCRIPTION'] = 'Description';
 $lang['LABEL_ITEM'] = 'Item';
 $lang['LABEL_CREATED_BY'] = 'Created By';
 $lang['LABEL_UPDATED_BY'] = 'Updated By';
+$lang['LABEL_APPROVED_BY'] = 'Approved By';
+$lang['LABEL_DELIVERED_BY'] = 'Delivered By';
 
 /* Status */
 $lang['LABEL_STATUS']='Status';
@@ -186,6 +188,8 @@ $lang['LABEL_DATE_PURCHASE']='Purchase date';
 $lang['LABEL_DATE_CHALLAN']='Challan Date';
 $lang['LABEL_DATE_CREATED_TIME']='Created Time';
 $lang['LABEL_DATE_UPDATED_TIME']='Updated Time';
+$lang['LABEL_DATE_APPROVED_TIME']='Approved Time';
+$lang['LABEL_DATE_DELIVERED_TIME']='Delivered Time';
 $lang['LABEL_DATE_CONVERT']='Convert Date';
 $lang['LABEL_DATE_REQUEST']='Date for Request';
 $lang['LABEL_DATE_APPROVE']='Date for Approve';
@@ -340,6 +344,7 @@ $lang['LABEL_STOCK_OUT']='Stock Out';
 $lang['LABEL_FORWARD']='Forwarded';
 $lang['LABEL_APPROVED']='Approved';
 $lang['LABEL_REJECTED']='Rejected';
+$lang['LABEL_DELIVERED']='Delivered';
 
 /* Stock out purpose */
 $lang['LABEL_STOCK_OUT_SHORT_INVENTORY']='Short Inventory';
