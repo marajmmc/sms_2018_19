@@ -256,8 +256,6 @@ class Transfer_wo_delivery extends Root_Controller
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->json_return($ajax);
             }
-
-            //$data['item']=Query_helper::get_info($this->config->item('table_sms_transfer_wo'),'*',array('id ='.$id, 'status != "'.$this->config->item('system_status_delete').'"'),1);
             $this->db->from($this->config->item('table_sms_transfer_wo').' transfer_wo');
             $this->db->select('
             transfer_wo.id,
@@ -315,21 +313,6 @@ class Transfer_wo_delivery extends Root_Controller
                 $this->json_return($ajax);
             }
             //$two_variety_info=Stock_helper::transfer_wo_variety_stock_info($data['item']['outlet_id']);
-
-            /*validation*/
-            if(!isset($courier['date_delivery']) || !strtotime($courier['date_delivery']))
-            {
-                $ajax['status']=false;
-                $ajax['system_message']=$this->lang->line('LABEL_DATE_DELIVERY'). ' field is required.';
-                $this->json_return($ajax);
-            }
-            /*same date problem solution needed.*/
-            if(!(strtotime($courier['date_delivery'])>$data['item']['date_approve']))
-            {
-                $ajax['status']=false;
-                $ajax['system_message']='Delivery date should be is greater than approval date.';
-                $this->json_return($ajax);
-            }
         }
         else
         {
@@ -343,6 +326,19 @@ class Transfer_wo_delivery extends Root_Controller
             $ajax['system_message']=$this->message;
             $this->json_return($ajax);
         }*/
+        /*date validation*/
+        if(!isset($courier['date_delivery']) || !strtotime($courier['date_delivery']))
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line('LABEL_DATE_DELIVERY'). ' field is required.';
+            $this->json_return($ajax);
+        }
+        if(!(System_helper::get_time($courier['date_delivery'])>=System_helper::get_time(System_helper::display_date($data['item']['date_approve']))))
+        {
+            $ajax['status']=false;
+            $ajax['system_message']='Delivery date should be is greater than approval date.';
+            $this->json_return($ajax);
+        }
 
         $this->db->from($this->config->item('table_sms_transfer_wo_details').' transfer_wo_details');
         $this->db->select('transfer_wo_details.*');
@@ -469,8 +465,6 @@ class Transfer_wo_delivery extends Root_Controller
                 Query_helper::add($this->config->item('table_sms_transfer_wo_details_histories'),$data, false);
             }
         }
-
-
 
         $this->db->trans_complete();   //DB Transaction Handle END
         if ($this->db->trans_status() === TRUE)
@@ -913,7 +907,6 @@ class Transfer_wo_delivery extends Root_Controller
                 $ajax['system_message']='TO already delivered.';
                 $this->json_return($ajax);
             }
-            //$two_variety_info=Stock_helper::transfer_wo_variety_stock_info($data['item']['outlet_id']);
         }
         else
         {
@@ -921,13 +914,19 @@ class Transfer_wo_delivery extends Root_Controller
             $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
             $this->json_return($ajax);
         }
-        /*if(!$this->check_validation())
+        /*date validation*/
+        if(!isset($courier['date_delivery']) || !strtotime($courier['date_delivery']))
         {
             $ajax['status']=false;
-            $ajax['system_message']=$this->message;
+            $ajax['system_message']=$this->lang->line('LABEL_DATE_DELIVERY'). ' field is required.';
             $this->json_return($ajax);
-        }*/
-
+        }
+        if(!(System_helper::get_time($courier['date_delivery'])>=System_helper::get_time(System_helper::display_date($data['item']['date_approve']))))
+        {
+            $ajax['status']=false;
+            $ajax['system_message']='Delivery date should be is greater than approval date.';
+            $this->json_return($ajax);
+        }
         $this->db->from($this->config->item('table_sms_transfer_wo_details').' transfer_wo_details');
         $this->db->select('transfer_wo_details.*');
         $this->db->join($this->config->item('table_login_setup_classification_varieties').' v','v.id=transfer_wo_details.variety_id','INNER');
@@ -994,23 +993,12 @@ class Transfer_wo_delivery extends Root_Controller
         $this->db->trans_start();  //DB Transaction Handle START
 
         /* variety relational table insert & update*/
-        // *** revision + revision count confused
-        /*$data=array();
-        $data['date_updated'] = $time;
-        $data['user_updated'] = $user->user_id;
-        Query_helper::update($this->config->item('table_sms_transfer_wo_details_histories'),$data, array('transfer_wo_id='.$id,'revision=1'), false);
-
-        $this->db->where('transfer_wo_id',$id);
-        $this->db->set('revision', 'revision+1', FALSE);
-        $this->db->update($this->config->item('table_sms_transfer_wo_details_histories'));*/
-
         $data=array();
         $data['date_delivery']=$time;
         $data['status_delivery']=$item_head['status_delivery'];
         $data['remarks_delivery']=$item_head['remarks_delivery'];
-        $data['date_updated_delivery']=$time;
-        $data['user_updated_delivery']=$user->user_id;
-        //$this->db->set('revision_count_delivery', 'revision_count_delivery+1', FALSE);
+        $data['date_updated_delivery_forward']=$time;
+        $data['user_updated_delivery_forward']=$user->user_id;
         Query_helper::update($this->config->item('table_sms_transfer_wo'),$data, array('id='.$id), false);
 
         foreach($items as $item)
@@ -1022,17 +1010,6 @@ class Transfer_wo_delivery extends Root_Controller
             $data['date_updated'] = $time;
             $data['user_updated'] = $user->user_id;
             Query_helper::update($this->config->item('table_sms_stock_summary_variety'),$data,array('variety_id='.$item['variety_id'],'pack_size_id='.$item['pack_size_id'],'warehouse_id='.$item['warehouse_id']));
-
-            /*$data=array();
-            $data['transfer_wo_id']=$id;
-            $data['variety_id']=$item['variety_id'];
-            $data['pack_size_id']=$item['pack_size_id'];
-            $data['pack_size']=$item['pack_size'];
-            $data['quantity']=$item['quantity_approve'];
-            $data['revision']=1;
-            $data['date_created']=$time;
-            $data['user_created']=$user->user_id;
-            Query_helper::add($this->config->item('table_sms_transfer_wo_details_histories'),$data, false);*/
         }
 
         $this->db->trans_complete();   //DB Transaction Handle END
@@ -1048,18 +1025,18 @@ class Transfer_wo_delivery extends Root_Controller
             $this->json_return($ajax);
         }
     }
-    private function check_validation()
+    /*private function check_validation()
     {
-        /*$this->load->library('form_validation');
+        $this->load->library('form_validation');
         $this->form_validation->set_rules('item[status_delivery]',$this->lang->line('LABEL_STATUS_DELIVERY'),'required');
         $this->form_validation->set_rules('id',$this->lang->line('LABEL_ID'),'required');
         if($this->form_validation->run() == FALSE)
         {
             $this->message=validation_errors();
             return false;
-        }*/
+        }
         return true;
-    }
+    }*/
     private function system_set_preference()
     {
         if(isset($this->permissions['action6']) && ($this->permissions['action6']==1))

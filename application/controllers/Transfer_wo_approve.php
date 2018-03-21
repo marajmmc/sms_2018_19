@@ -782,8 +782,8 @@ class Transfer_wo_approve extends Root_Controller
         $this->db->trans_start();  //DB Transaction Handle START
 
         $item_head['date_approve']=$time;
-        $item_head['date_updated_approve']=$time;
-        $item_head['user_updated_approve']=$user->user_id;
+        $item_head['date_updated_approve_forward']=$time;
+        $item_head['user_updated_approve_forward']=$user->user_id;
         Query_helper::update($this->config->item('table_sms_transfer_wo'),$item_head,array('id='.$id));
 
         $this->db->trans_complete();   //DB Transaction Handle END
