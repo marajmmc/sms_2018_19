@@ -30,6 +30,12 @@ $config['system_purpose_variety_rnd']='R&D Purpose';
 $config['system_purpose_variety_short_inventory']='Short Inventory';
 $config['system_purpose_variety_demonstration']='Demonstration';
 $config['system_purpose_variety_sample']='Sample Purpose';
+$config['system_purpose_variety_in_delivery_short']='Delivery Short';
+$config['system_purpose_variety_out_delivery_excess']='Deliver Excess';
+
+
+
+
 
 $config['system_customer_type_outlet_id']=1;
 $config['system_customer_type_customer_id']=2;
