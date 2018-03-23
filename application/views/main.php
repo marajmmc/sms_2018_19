@@ -64,7 +64,7 @@ $system_warehouses=Query_helper::get_info($CI->config->item('table_login_basic_s
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>Stock Management System (SMS) V 2.0.1.18.19.1</title>
+        <title>SMS 2018_19.1</title>
         <link rel="icon" type="image/ico" href="http://malikseeds.com/favicon.ico"/>
         <meta charset="utf-8">
 
@@ -162,7 +162,7 @@ $system_warehouses=Query_helper::get_info($CI->config->item('table_login_basic_s
             <div>
                 All Rights Reserved & &copy; Copyright 2017 by A.R. Malik Seeds (Pvt.) Ltd. Design & Developed by :
                 <a href="http://disb.solutions/" target="_blank" class="external">
-                    <img src="<?php echo base_url()?>images/logo_disb.png" alt="DISB Logo" style="width: 50px"/>
+                    <img src="<?php echo base_url('images/logo_disb.png');?>" alt="DISB Logo" style="width: 50px"/>
                 </a>
             </div>
             <div class="clearfix"></div>
