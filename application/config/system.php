@@ -31,7 +31,7 @@ $config['system_purpose_variety_short_inventory']='Short Inventory';
 $config['system_purpose_variety_demonstration']='Demonstration';
 $config['system_purpose_variety_sample']='Sample Purpose';
 $config['system_purpose_variety_in_delivery_short']='Delivery Short';
-$config['system_purpose_variety_out_delivery_excess']='Deliver Excess';
+$config['system_purpose_variety_delivery_excess']='Deliver Excess';
 
 
 

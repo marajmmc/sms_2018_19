@@ -14,52 +14,52 @@ class Stock_in_variety extends Root_Controller
         $this->load->helper('barcode_helper');
     }
     public function index($action='list',$id=0)
+{
+    if($action=='list')
     {
-        if($action=='list')
-        {
-            $this->system_list();
-        }
-        elseif($action=='get_items')
-        {
-            $this->system_get_items();
-        }
-        elseif($action=='add')
-        {
-            $this->system_add();
-        }
-        elseif($action=="edit")
-        {
-            $this->system_edit($id);
-        }
-        elseif($action=="details")
-        {
-            $this->system_details($id);
-        }
-        elseif($action=="details_print")
-        {
-            $this->system_details_print($id);
-        }
-        elseif($action=="delete")
-        {
-            $this->system_delete($id);
-        }
-        elseif($action=='save')
-        {
-            $this->system_save();
-        }
-        elseif($action=="set_preference")
-        {
-            $this->system_set_preference();
-        }
-        elseif($action=="save_preference")
-        {
-            System_helper::save_preference();
-        }
-        else
-        {
-            $this->system_list();
-        }
+        $this->system_list();
     }
+    elseif($action=='get_items')
+    {
+        $this->system_get_items();
+    }
+    elseif($action=='add')
+    {
+        $this->system_add();
+    }
+    elseif($action=="edit")
+    {
+        $this->system_edit($id);
+    }
+    elseif($action=="details")
+    {
+        $this->system_details($id);
+    }
+    elseif($action=="details_print")
+    {
+        $this->system_details_print($id);
+    }
+    elseif($action=="delete")
+    {
+        $this->system_delete($id);
+    }
+    elseif($action=='save')
+    {
+        $this->system_save();
+    }
+    elseif($action=="set_preference")
+    {
+        $this->system_set_preference();
+    }
+    elseif($action=="save_preference")
+    {
+        System_helper::save_preference();
+    }
+    else
+    {
+        $this->system_list();
+    }
+}
     private function system_list()
     {
         if(isset($this->permissions['action0']) && ($this->permissions['action0']==1))
@@ -304,7 +304,6 @@ class Stock_in_variety extends Root_Controller
                 $ajax['system_message']='You are trying to entry duplicate variety.';
                 $this->json_return($ajax);
             }
-
         }
 
         // When Stock in quantity entry (updating time) exceeded current stock quantity
@@ -392,6 +391,7 @@ class Stock_in_variety extends Root_Controller
                 $data=array();
                 $data['in_stock']=0;
                 $data['in_excess']=0;
+                $data['in_delivery_short']=0;
                 //checking variance
                 if(isset($old_quantities[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]))
                 {
@@ -399,6 +399,10 @@ class Stock_in_variety extends Root_Controller
                     if($old_item['purpose']==$this->config->item('system_purpose_variety_excess'))
                     {
                         $data['in_excess']=$variance;
+                    }
+                    else if($old_item['purpose']==$this->config->item('system_purpose_variety_in_delivery_short'))
+                    {
+                        $data['in_delivery_short']=$variance;
                     }
                     else
                     {
@@ -411,6 +415,10 @@ class Stock_in_variety extends Root_Controller
                     {
                         $data['in_excess']=$item['quantity'];
                     }
+                    else if($old_item['purpose']==$this->config->item('system_purpose_variety_in_delivery_short'))
+                    {
+                        $data['in_delivery_short']=$item['quantity'];
+                    }
                     else
                     {
                         $data['in_stock']=$item['quantity'];
@@ -419,9 +427,10 @@ class Stock_in_variety extends Root_Controller
                 //fixing current stock table
                 if(isset($current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]))
                 {
-                    $data['current_stock']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]['current_stock']+$data['in_excess']+$data['in_stock'];
+                    $data['current_stock']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]['current_stock']+$data['in_excess']+$data['in_stock']+$data['in_delivery_short'];
                     $data['in_excess']=$data['in_excess']+$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]['in_excess'];
                     $data['in_stock']=$data['in_stock']+$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]['in_stock'];
+                    $data['in_delivery_short']=$data['in_delivery_short']+$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]['in_delivery_short'];
                     $data['date_updated'] = $time;
                     $data['user_updated'] = $user->user_id;
                     Query_helper::update($this->config->item('table_sms_stock_summary_variety'),$data,array('variety_id='.$item['variety_id'],'pack_size_id='.$item['pack_size_id'],'warehouse_id='.$item['warehouse_id']));
@@ -432,7 +441,7 @@ class Stock_in_variety extends Root_Controller
                     $data['variety_id'] = $item['variety_id'];
                     $data['pack_size_id'] = $item['pack_size_id'];
                     $data['warehouse_id'] = $item['warehouse_id'];
-                    $data['current_stock'] = $data['in_excess']+$data['in_stock'];
+                    $data['current_stock'] = $data['in_excess']+$data['in_stock']+$data['in_delivery_short'];
                     $data['date_updated'] = $time;
                     $data['user_updated'] = $user->user_id;
                     Query_helper::add($this->config->item('table_sms_stock_summary_variety'),$data);
@@ -472,6 +481,10 @@ class Stock_in_variety extends Root_Controller
                     {
                         $data['in_stock']=($item['quantity']+$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]['in_stock']);
                     }
+                    elseif($item_head['purpose']==$this->config->item('system_purpose_variety_in_delivery_short'))
+                    {
+                        $data['in_delivery_short']=($item['quantity']+$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]['in_delivery_short']);
+                    }
                     elseif($item_head['purpose']==$this->config->item('system_purpose_variety_excess'))
                     {
                         $data['in_excess']=($item['quantity']+$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]['in_excess']);
@@ -490,6 +503,10 @@ class Stock_in_variety extends Root_Controller
                     if($item_head['purpose']==$this->config->item('system_purpose_variety_stock_in'))
                     {
                         $data['in_stock']=$item['quantity'];
+                    }
+                    elseif($item_head['purpose']==$this->config->item('system_purpose_variety_in_delivery_short'))
+                    {
+                        $data['in_delivery_short']=$item['quantity'];
                     }
                     elseif($item_head['purpose']==$this->config->item('system_purpose_variety_excess'))
                     {
@@ -726,6 +743,10 @@ class Stock_in_variety extends Root_Controller
                 if($result['purpose']==$this->config->item('system_purpose_variety_stock_in'))
                 {
                     $data['in_stock']=$current_stocks[$result['variety_id']][$result['pack_size_id']][$result['warehouse_id']]['in_stock']-$result['quantity'];
+                }
+                elseif($result['purpose']==$this->config->item('system_purpose_variety_in_delivery_short'))
+                {
+                    $data['in_delivery_short']=$current_stocks[$result['variety_id']][$result['pack_size_id']][$result['warehouse_id']]['in_delivery_short']-$result['quantity'];
                 }
                 elseif($result['purpose']==$this->config->item('system_purpose_variety_excess'))
                 {

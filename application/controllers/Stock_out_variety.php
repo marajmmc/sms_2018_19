@@ -456,6 +456,10 @@ class Stock_out_variety extends Root_Controller
                         {
                             $data['out_stock_sample']=($current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]['out_stock_sample']-$old_value+$item['quantity']);
                         }
+                        elseif($old_item['purpose']==$this->config->item('system_purpose_variety_delivery_excess'))
+                        {
+                            $data['out_stock_delivery_excess']=($current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]['out_stock_delivery_excess']-$old_value+$item['quantity']);
+                        }
                         $data['current_stock']=($current_stock-$item['quantity']+$old_value);
                     }else
                     {
@@ -474,6 +478,10 @@ class Stock_out_variety extends Root_Controller
                         elseif($old_item['purpose']==$this->config->item('system_purpose_variety_sample'))
                         {
                             $data['out_stock_sample']=($current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]['out_stock_sample']+$item['quantity']);
+                        }
+                        elseif($old_item['purpose']==$this->config->item('system_purpose_variety_delivery_excess'))
+                        {
+                            $data['out_stock_delivery_excess']=($current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]['out_stock_delivery_excess']-$item['quantity']);
                         }
                         $data['current_stock']=($current_stock-$item['quantity']);
                     }
@@ -531,6 +539,10 @@ class Stock_out_variety extends Root_Controller
                 elseif($item_head['purpose']==$this->config->item('system_purpose_variety_sample'))
                 {
                     $data['out_stock_sample']=($item['quantity']+$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]['out_stock_sample']);
+                }
+                elseif($item_head['purpose']==$this->config->item('system_purpose_variety_delivery_excess'))
+                {
+                    $data['out_stock_delivery_excess']=($item['quantity']+$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]['out_stock_delivery_excess']);
                 }
                 $current_stock=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]['current_stock'];
                 $data['current_stock']=($current_stock-$item['quantity']);
@@ -796,6 +808,10 @@ class Stock_out_variety extends Root_Controller
                 elseif($result['purpose']==$this->config->item('system_purpose_variety_sample'))
                 {
                     $data['out_stock_sample']=$current_stocks[$result['variety_id']][$result['pack_size_id']][$result['warehouse_id']]['out_stock_sample']-$result['quantity'];
+                }
+                elseif($result['purpose']==$this->config->item('system_purpose_variety_delivery_excess'))
+                {
+                    $data['out_stock_delivery_excess']=$current_stocks[$result['variety_id']][$result['pack_size_id']][$result['warehouse_id']]['out_stock_delivery_excess']-$result['quantity'];
                 }
                 Query_helper::update($this->config->item('table_sms_stock_summary_variety'),$data,array('variety_id='.$result['variety_id'],'pack_size_id='.$result['pack_size_id'],'warehouse_id='.$result['warehouse_id']));
             }

@@ -68,6 +68,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <option value=""><?php echo $this->lang->line('SELECT');?></option>
                         <option value="<?php echo $CI->config->item('system_purpose_variety_stock_in');?>" <?php if(isset($item['purpose'])){if($item['purpose']==$CI->config->item('system_purpose_variety_stock_in')){echo "selected";}}?>><?php echo $this->lang->line('LABEL_STOCK_IN');?></option>
                         <option value="<?php echo $CI->config->item('system_purpose_variety_excess');?>" <?php if(isset($item['purpose'])){if($item['purpose']==$CI->config->item('system_purpose_variety_excess')){echo "selected";}}?>><?php echo $this->lang->line('LABEL_EXCESS');?></option>
+                        <option value="<?php echo $CI->config->item('system_purpose_variety_in_delivery_short');?>" <?php if(isset($item['purpose'])){if($item['purpose']==$CI->config->item('system_purpose_variety_in_delivery_short')){echo "selected";}}?>><?php echo $this->lang->line('LABEL_STOCK_IN_DELIVERY_SHORT');?></option>
                     </select>
                 </div>
             <?php } ?>

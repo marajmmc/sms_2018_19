@@ -64,6 +64,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <option value="<?php echo $CI->config->item('system_purpose_variety_rnd');?>" <?php if(isset($item['purpose'])){if($item['purpose']==$CI->config->item('system_purpose_variety_rnd')){echo "selected";}}?>><?php echo $this->lang->line('LABEL_STOCK_OUT_RND');?></option>
                 <option value="<?php echo $CI->config->item('system_purpose_variety_sample');?>" <?php if(isset($item['purpose'])){if($item['purpose']==$CI->config->item('system_purpose_variety_sample')){echo "selected";}}?>><?php echo $this->lang->line('LABEL_STOCK_OUT_SAMPLE_PURPOSE');?></option>
                 <option value="<?php echo $CI->config->item('system_purpose_variety_demonstration');?>" <?php if(isset($item['purpose'])){if($item['purpose']==$CI->config->item('system_purpose_variety_demonstration')){echo "selected";}}?>><?php echo $this->lang->line('LABEL_STOCK_OUT_DEMONSTRATION');?></option>
+                <option value="<?php echo $CI->config->item('system_purpose_variety_delivery_excess');?>" <?php if(isset($item['purpose'])){if($item['purpose']==$CI->config->item('system_purpose_variety_delivery_excess')){echo "selected";}}?>><?php echo $this->lang->line('LABEL_STOCK_OUT_DELIVERY_EXCESS');?></option>
             </select>
         </div>
     <?php } ?>

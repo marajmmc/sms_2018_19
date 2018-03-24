@@ -340,6 +340,7 @@ $lang['LABEL_CHANGE_COWORKER'] = 'Change Coworker';
 $lang['LABEL_PURPOSE'] = 'Purpose';
 $lang['LABEL_EXCESS']='Excess';
 $lang['LABEL_STOCK_IN']='Stock In';
+$lang['LABEL_STOCK_IN_DELIVERY_SHORT']='Delivery Short';
 $lang['LABEL_STOCK_OUT']='Stock Out';
 $lang['LABEL_FORWARD']='Forwarded';
 $lang['LABEL_APPROVED']='Approved';
@@ -351,6 +352,7 @@ $lang['LABEL_STOCK_OUT_SHORT_INVENTORY']='Short Inventory';
 $lang['LABEL_STOCK_OUT_RND']='R&D Purpose';
 $lang['LABEL_STOCK_OUT_SAMPLE_PURPOSE']='Sample Purpose';
 $lang['LABEL_STOCK_OUT_DEMONSTRATION']='Demonstration';
+$lang['LABEL_STOCK_OUT_DELIVERY_EXCESS']='Delivery Excess';
 $lang['LABEL_RAW_STOCK_OUT_DAMAGE'] = 'Damage';
 
 //users
