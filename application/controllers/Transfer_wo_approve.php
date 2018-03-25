@@ -404,6 +404,7 @@ class Transfer_wo_approve extends Root_Controller
             {
                 $data=array();
                 $data['quantity_approve']=$item['quantity_approve'];
+                $data['quantity_receive']=$item['quantity_approve'];
                 $data['status']=$this->config->item('system_status_active');
                 Query_helper::update($this->config->item('table_sms_transfer_wo_details'),$data, array('transfer_wo_id='.$id, 'variety_id ='.$item['variety_id'], 'pack_size_id ='.$item['pack_size_id']), false);
             }
@@ -415,6 +416,7 @@ class Transfer_wo_approve extends Root_Controller
                 $data['pack_size_id']=$item['pack_size_id'];
                 $data['pack_size']=$pack_sizes[$item['pack_size_id']]['text'];
                 $data['quantity_approve']=$item['quantity_approve'];
+                $data['quantity_receive']=$item['quantity_approve'];
                 $data['status']=$this->config->item('system_status_active');
                 Query_helper::add($this->config->item('table_sms_transfer_wo_details'),$data, false);
             }
