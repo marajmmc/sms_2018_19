@@ -38,7 +38,7 @@ if($result)
             <div class="col-xs-6">
                 <div class="row show-grid">
                     <div class="col-xs-6">
-                        <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_ID');?>:</label>
+                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ID');?>:</label>
                     </div>
                     <div class="col-xs-6">
                         <?php echo Barcode_helper::get_barcode_convert_bulk_to_packet($item['id']);?>
@@ -46,7 +46,7 @@ if($result)
                 </div>
                 <div class="row show-grid">
                     <div class="col-xs-6 text-right">
-                        <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_BARCODE');?>:</label>
+                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_BARCODE');?>:</label>
                     </div>
                     <div class="col-xs-6">
                         <img src="<?php echo site_url('barcode/index/raw_master_purchase/'.$item['id']);  ?>">
@@ -56,7 +56,7 @@ if($result)
             <div class="col-xs-6">
                 <div class="row show-grid">
                     <div class="col-xs-6">
-                        <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_CONVERT');?>:</label>
+                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_CONVERT');?>:</label>
                     </div>
                     <div class="col-xs-6">
                         <?php echo System_helper::display_date($item['date_convert']);?>
@@ -71,7 +71,7 @@ if($result)
             <div class="col-xs-6">
                 <div class="row show-grid">
                     <div class="col-xs-6">
-                        <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_CROP_NAME');?>:</label>
+                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CROP_NAME');?>:</label>
                     </div>
                     <div class="col-xs-6">
                         <?php echo $item['crop_name']?>
@@ -81,7 +81,7 @@ if($result)
             <div class="col-xs-6">
                 <div class="row show-grid">
                     <div class="col-xs-6">
-                        <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_CROP_TYPE_NAME');?>:</label>
+                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME');?>:</label>
                     </div>
                     <div class="col-xs-6">
                         <?php echo $item['crop_type_name']?>

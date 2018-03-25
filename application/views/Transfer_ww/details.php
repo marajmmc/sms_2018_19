@@ -39,19 +39,19 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         <table class="table table-bordered table-responsive system_table_details_view">
             <thead>
             <tr>
-                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_ID');?></label></th>
+                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ID');?></label></th>
                 <th class=""><label class="control-label"><?php echo Barcode_helper::get_barcode_transfer_warehouse_to_warehouse($item['id']);?></label></th>
                 <th colspan="2">&nbsp;</th>
             </tr>
             <tr>
-                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_TRANSFER');?></label></th>
+                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_TRANSFER');?></label></th>
                 <th class=" header_value"><label class="control-label"><?php echo System_helper::display_date($item['date_transfer']);?></label></th>
                 <th colspan="2">&nbsp;</th>
             </tr>
             <tr>
-                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_CREATED_BY');?></label></th>
+                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CREATED_BY');?></label></th>
                 <th class=" header_value"><label class="control-label"><?php echo $item['created_by'];?></label></th>
-                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_CREATED_TIME');?></label></th>
+                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_CREATED_TIME');?></label></th>
                 <th class=""><label class="control-label"><?php echo System_helper::display_date_time($item['date_created']);?></label></th>
             </tr>
             <?php
@@ -59,9 +59,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             {
                 ?>
                 <tr>
-                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_UPDATED_BY');?></label></th>
+                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_UPDATED_BY');?></label></th>
                     <th class=" header_value"><label class="control-label"><?php echo $item['updated_by'];?></label></th>
-                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_UPDATED_TIME');?></label></th>
+                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_UPDATED_TIME');?></label></th>
                     <th class=""><label class="control-label"><?php echo System_helper::display_date_time($item['date_updated']);?></label></th>
                 </tr>
             <?php
@@ -72,7 +72,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             {
                 ?>
                 <tr>
-                    <th class="widget-header header_caption" style="vertical-align: top"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS');?></label></th>
+                    <th class="widget-header header_caption" style="vertical-align: top"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS');?></label></th>
                     <th class=" header_value" colspan="3"><label class="control-label"><?php echo nl2br($item['remarks']);?></label></th>
                 </tr>
             <?php
@@ -130,7 +130,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="7" class="text-right"><label class="control-label"><?php echo $this->lang->line('LABEL_TOTAL')?></label></td>
+                    <td colspan="7" class="text-right"><label class="control-label"><?php echo $CI->lang->line('LABEL_TOTAL')?></label></td>
                     <td class="text-right"><label class="control-label"><?php if($item['pack_size_id']==0){echo '-';}else{echo $item['quantity_transfer'];} ?></label></td>
                     <td class="text-right">
                         <label class="control-label">

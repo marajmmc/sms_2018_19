@@ -40,7 +40,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 <div class="row show-grid">
     <div class="row show-grid">
         <div class="col-xs-4">
-            <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_STOCK_OUT');?><span style="color:#FF0000">*</span></label>
+            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_STOCK_OUT');?><span style="color:#FF0000">*</span></label>
         </div>
         <div class="col-sm-4 col-xs-8">
             <input type="text" name="item[date_stock_out]" class="form-control datepicker" value="<?php echo System_helper::display_date($item['date_stock_out']);?>"/>
@@ -50,7 +50,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
 <div class="row show-grid">
     <div class="col-xs-4">
-        <label for="purpose" class="control-label pull-right"><?php echo $this->lang->line('LABEL_PURPOSE'); ?></label>
+        <label for="purpose" class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PURPOSE'); ?></label>
     </div>
     <?php if($item['purpose']){?>
         <div class="col-sm-4 col-xs-8">
@@ -59,12 +59,12 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
     <?php } else{?>
         <div class="col-sm-4 col-xs-8">
             <select id="purpose" name="item[purpose]" class="form-control">
-                <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                <option value="<?php echo $CI->config->item('system_purpose_variety_short_inventory');?>" <?php if(isset($item['purpose'])){if($item['purpose']==$CI->config->item('system_purpose_variety_short_inventory')){echo "selected";}}?>><?php echo $this->lang->line('LABEL_STOCK_OUT_SHORT_INVENTORY');?></option>
-                <option value="<?php echo $CI->config->item('system_purpose_variety_rnd');?>" <?php if(isset($item['purpose'])){if($item['purpose']==$CI->config->item('system_purpose_variety_rnd')){echo "selected";}}?>><?php echo $this->lang->line('LABEL_STOCK_OUT_RND');?></option>
-                <option value="<?php echo $CI->config->item('system_purpose_variety_sample');?>" <?php if(isset($item['purpose'])){if($item['purpose']==$CI->config->item('system_purpose_variety_sample')){echo "selected";}}?>><?php echo $this->lang->line('LABEL_STOCK_OUT_SAMPLE_PURPOSE');?></option>
-                <option value="<?php echo $CI->config->item('system_purpose_variety_demonstration');?>" <?php if(isset($item['purpose'])){if($item['purpose']==$CI->config->item('system_purpose_variety_demonstration')){echo "selected";}}?>><?php echo $this->lang->line('LABEL_STOCK_OUT_DEMONSTRATION');?></option>
-                <option value="<?php echo $CI->config->item('system_purpose_variety_delivery_excess');?>" <?php if(isset($item['purpose'])){if($item['purpose']==$CI->config->item('system_purpose_variety_delivery_excess')){echo "selected";}}?>><?php echo $this->lang->line('LABEL_STOCK_OUT_DELIVERY_EXCESS');?></option>
+                <option value=""><?php echo $CI->lang->line('SELECT');?></option>
+                <option value="<?php echo $CI->config->item('system_purpose_variety_short_inventory');?>" <?php if(isset($item['purpose'])){if($item['purpose']==$CI->config->item('system_purpose_variety_short_inventory')){echo "selected";}}?>><?php echo $CI->lang->line('LABEL_STOCK_OUT_SHORT_INVENTORY');?></option>
+                <option value="<?php echo $CI->config->item('system_purpose_variety_rnd');?>" <?php if(isset($item['purpose'])){if($item['purpose']==$CI->config->item('system_purpose_variety_rnd')){echo "selected";}}?>><?php echo $CI->lang->line('LABEL_STOCK_OUT_RND');?></option>
+                <option value="<?php echo $CI->config->item('system_purpose_variety_sample');?>" <?php if(isset($item['purpose'])){if($item['purpose']==$CI->config->item('system_purpose_variety_sample')){echo "selected";}}?>><?php echo $CI->lang->line('LABEL_STOCK_OUT_SAMPLE_PURPOSE');?></option>
+                <option value="<?php echo $CI->config->item('system_purpose_variety_demonstration');?>" <?php if(isset($item['purpose'])){if($item['purpose']==$CI->config->item('system_purpose_variety_demonstration')){echo "selected";}}?>><?php echo $CI->lang->line('LABEL_STOCK_OUT_DEMONSTRATION');?></option>
+                <option value="<?php echo $CI->config->item('system_purpose_variety_delivery_excess');?>" <?php if(isset($item['purpose'])){if($item['purpose']==$CI->config->item('system_purpose_variety_delivery_excess')){echo "selected";}}?>><?php echo $CI->lang->line('LABEL_STOCK_OUT_DELIVERY_EXCESS');?></option>
             </select>
         </div>
     <?php } ?>
@@ -76,7 +76,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
     </div>
     <div class="col-sm-4 col-xs-8">
         <select id="division_id" class="form-control">
-            <option value=""><?php echo $this->lang->line('SELECT');?></option>
+            <option value=""><?php echo $CI->lang->line('SELECT');?></option>
             <?php
             foreach($divisions as $division)
             {?>
@@ -93,7 +93,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
     </div>
     <div class="col-sm-4 col-xs-8">
         <select id="zone_id" class="form-control">
-            <option value=""><?php echo $this->lang->line('SELECT');?></option>
+            <option value=""><?php echo $CI->lang->line('SELECT');?></option>
             <?php
             foreach($zones as $zone)
             {?>
@@ -110,7 +110,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
     </div>
     <div class="col-sm-4 col-xs-8">
         <select id="territory_id" class="form-control">
-            <option value=""><?php echo $this->lang->line('SELECT');?></option>
+            <option value=""><?php echo $CI->lang->line('SELECT');?></option>
             <?php
             foreach($territories as $territory)
             {?>
@@ -127,7 +127,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
     </div>
     <div class="col-sm-4 col-xs-8">
         <select id="district_id" class="form-control">
-            <option value=""><?php echo $this->lang->line('SELECT');?></option>
+            <option value=""><?php echo $CI->lang->line('SELECT');?></option>
             <?php
             foreach($districts as $district)
             {?>
@@ -144,7 +144,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
     </div>
     <div class="col-sm-4 col-xs-8">
         <select id="customer_id" name="item[customer_id]" class="form-control">
-            <option value=""><?php echo $this->lang->line('SELECT');?></option>
+            <option value=""><?php echo $CI->lang->line('SELECT');?></option>
             <?php
             foreach($customers as $customer)
             {?>
@@ -157,7 +157,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 </div>
 <div class="row show-grid" style="<?php if(!($item['customer_name'])){echo 'display:none';} ?>" id="customer_name_container">
     <div class="col-xs-4">
-        <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_CUSTOMER_NAME');?><span style="color:#FF0000">*</span></label>
+        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CUSTOMER_NAME');?><span style="color:#FF0000">*</span></label>
     </div>
     <div class="col-sm-4 col-xs-8">
         <input type="text" name="item[customer_name]" id="customer_name" class="form-control" value="<?php echo $item['customer_name']?>"/>
@@ -248,7 +248,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         <tr>
             <td>
                 <select class="form-control crop_id">
-                    <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                    <option value=""><?php echo $CI->lang->line('SELECT');?></option>
                     <?php
                     foreach($crops as $crop)
                     {?>
@@ -261,21 +261,21 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             <td>
                 <div style="display: none;" class="crop_type_id_container">
                     <select class="form-control crop_type_id">
-                        <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                        <option value=""><?php echo $CI->lang->line('SELECT');?></option>
                     </select>
                 </div>
             </td>
             <td>
                 <div style="display: none;" class="variety_id_container">
                     <select class="form-control variety_id">
-                        <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                        <option value=""><?php echo $CI->lang->line('SELECT');?></option>
                     </select>
                 </div>
             </td>
             <td>
                 <div style="display: none;" class="pack_size_id_container">
                     <select class="form-control pack_size_id">
-                        <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                        <option value=""><?php echo $CI->lang->line('SELECT');?></option>
                         <option value="0">Bulk</option>
                         <?php
                         foreach($packs as $pack)
@@ -290,7 +290,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             <td>
                 <div style="display: none;" class="warehouse_id_container">
                     <select class="form-control warehouse_id">
-                        <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                        <option value=""><?php echo $CI->lang->line('SELECT');?></option>
                         <?php
                         foreach($warehouses as $warehouse)
                         {?>

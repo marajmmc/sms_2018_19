@@ -24,7 +24,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     </div>
                     <div class="col-xs-6">
                         <select id="crop_id" name="report[crop_id]" class="form-control">
-                            <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                            <option value=""><?php echo $CI->lang->line('SELECT');?></option>
                         </select>
                     </div>
                 </div>
@@ -34,7 +34,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     </div>
                     <div class="col-xs-6">
                         <select id="crop_type_id" name="report[crop_type_id]" class="form-control">
-                            <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                            <option value=""><?php echo $CI->lang->line('SELECT');?></option>
                         </select>
                     </div>
                 </div>
@@ -44,7 +44,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     </div>
                     <div class="col-xs-6">
                         <select id="variety_id" name="report[variety_id]" class="form-control">
-                            <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                            <option value=""><?php echo $CI->lang->line('SELECT');?></option>
                         </select>
                     </div>
                 </div>
@@ -54,7 +54,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     </div>
                     <div class="col-xs-6">
                         <select name="report[pack_size_id]" class="form-control">
-                            <option value="-1"><?php echo $this->lang->line('SELECT');?></option>
+                            <option value="-1"><?php echo $CI->lang->line('SELECT');?></option>
                             <option value="0">Bulk</option>
                             <?php
                             foreach($pack_sizes as $pack_size)
@@ -71,7 +71,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <div class="row show-grid">
                     <div class="col-xs-6">
                         <select id="fiscal_year_id" name="report[fiscal_year_id]" class="form-control">
-                            <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                            <option value=""><?php echo $CI->lang->line('SELECT');?></option>
                             <?php
                             foreach($fiscal_years as $year)
                             {?>
@@ -83,7 +83,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
                     </div>
                     <div class="col-xs-6">
-                        <label class="control-label"><?php echo $this->lang->line('LABEL_FISCAL_YEAR');?></label>
+                        <label class="control-label"><?php echo $CI->lang->line('LABEL_FISCAL_YEAR');?></label>
                     </div>
                 </div>
                 <div class="row show-grid">
@@ -91,7 +91,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <input type="text" id="date_start" name="report[date_start]" class="form-control date_large" value="<?php echo $date_start; ?>">
                     </div>
                     <div class="col-xs-6">
-                        <label class="control-label"><?php echo $this->lang->line('LABEL_DATE_START');?></label>
+                        <label class="control-label"><?php echo $CI->lang->line('LABEL_DATE_START');?></label>
                     </div>
                 </div>
                 <div class="row show-grid">
@@ -99,7 +99,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <input type="text" id="date_end" name="report[date_end]" class="form-control date_large" value="<?php echo $date_end; ?>">
                     </div>
                     <div class="col-xs-6">
-                        <label class="control-label"><?php echo $this->lang->line('LABEL_DATE_END');?></label>
+                        <label class="control-label"><?php echo $CI->lang->line('LABEL_DATE_END');?></label>
                     </div>
                 </div>
             </div>

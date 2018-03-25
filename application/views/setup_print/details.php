@@ -34,7 +34,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
     </div>
     <div class="row show-grid">
         <div class="col-xs-4">
-            <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_PURPOSE');?></label>
+            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PURPOSE');?></label>
         </div>
         <div class="col-sm-4 col-xs-8">
             <label class="control-label"><?php echo $item['purpose'];?></label>

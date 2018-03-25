@@ -40,7 +40,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         <div class="row show-grid">
             <div class="row show-grid">
                 <div class="col-xs-4">
-                    <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_STOCK_IN');?><span style="color:#FF0000">*</span></label>
+                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_STOCK_IN');?><span style="color:#FF0000">*</span></label>
                 </div>
                 <div class="col-sm-4 col-xs-8">
                     <input type="text" name="item[date_stock_in]" class="form-control datepicker" value="<?php echo System_helper::display_date($item['date_stock_in']);?>"/>
@@ -50,7 +50,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label for="purpose" class="control-label pull-right"><?php echo $this->lang->line('LABEL_PURPOSE'); ?></label>
+                <label for="purpose" class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PURPOSE'); ?></label>
 
             </div>
             <?php
@@ -65,9 +65,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 ?>
                 <div class="col-sm-4 col-xs-8">
                     <select id="purpose" name="item[purpose]" class="form-control">
-                        <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                        <option value="<?php echo $CI->config->item('system_purpose_variety_stock_in');?>" <?php if(isset($item['purpose'])){if($item['purpose']==$CI->config->item('system_purpose_variety_stock_in')){echo "selected";}}?>><?php echo $this->lang->line('LABEL_STOCK_IN');?></option>
-                        <option value="<?php echo $CI->config->item('system_purpose_variety_excess');?>" <?php if(isset($item['purpose'])){if($item['purpose']==$CI->config->item('system_purpose_variety_excess')){echo "selected";}}?>><?php echo $this->lang->line('LABEL_EXCESS');?></option>
+                        <option value=""><?php echo $CI->lang->line('SELECT');?></option>
+                        <option value="<?php echo $CI->config->item('system_purpose_variety_stock_in');?>" <?php if(isset($item['purpose'])){if($item['purpose']==$CI->config->item('system_purpose_variety_stock_in')){echo "selected";}}?>><?php echo $CI->lang->line('LABEL_STOCK_IN');?></option>
+                        <option value="<?php echo $CI->config->item('system_purpose_variety_excess');?>" <?php if(isset($item['purpose'])){if($item['purpose']==$CI->config->item('system_purpose_variety_excess')){echo "selected";}}?>><?php echo $CI->lang->line('LABEL_EXCESS');?></option>
                     </select>
                 </div>
             <?php } ?>
@@ -84,7 +84,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label for="quantity" class="control-label pull-right"><?php echo $this->lang->line('LABEL_QUANTITY_TOTAL_KG');?><span style="color:#FF0000">*</span></label>
+                <label for="quantity" class="control-label pull-right"><?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL_KG');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <input type="text" name="item[quantity]" class="form-control float_type_positive" value="<?php echo $item['quantity'];?>"/>

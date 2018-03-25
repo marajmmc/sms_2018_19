@@ -37,7 +37,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         </div>
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_REQUEST');?></label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_REQUEST');?></label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <label class="control-label"><?php echo System_helper::display_date($item['date_request']);?></label>
@@ -85,7 +85,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         </div>
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS_REQUEST');?> </label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS_REQUEST');?> </label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <?php echo nl2br($item['remarks_request']);?>
@@ -93,7 +93,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         </div>
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS_APPROVE');?> (Edit)</label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS_APPROVE');?> (Edit)</label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <textarea name="item[remarks_approve_edit]" id="remarks_approve_edit" class="form-control" ><?php echo $item['remarks_approve_edit'];?></textarea>
@@ -268,7 +268,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         <tr>
             <td>
                 <select class="form-control crop_id">
-                    <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                    <option value=""><?php echo $CI->lang->line('SELECT');?></option>
                     <?php
                     foreach($crops as $crop)
                     {?>
@@ -280,17 +280,17 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             </td>
             <td>
                 <select class="form-control crop_type_id" style="display: none;">
-                    <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                    <option value=""><?php echo $CI->lang->line('SELECT');?></option>
                 </select>
             </td>
             <td>
                 <select class="form-control variety_id" style="display: none;">
-                    <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                    <option value=""><?php echo $CI->lang->line('SELECT');?></option>
                 </select>
             </td>
             <td>
                 <select class="form-control pack_size_id" style="display: none;"  data-new-pack-size="0">
-                    <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                    <option value=""><?php echo $CI->lang->line('SELECT');?></option>
                 </select>
             </td>
             <td class="text-right">

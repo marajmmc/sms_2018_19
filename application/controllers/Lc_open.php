@@ -610,7 +610,6 @@ class Lc_open extends Root_Controller
             $this->db->where('lco.id',$item_id);
             $this->db->where('lco.status_open !=',$this->config->item('system_status_delete'));
             $data['item']=$this->db->get()->row_array();
-
             if(!$data['item'])
             {
                 System_helper::invalid_try('View Non Exists',$item_id);

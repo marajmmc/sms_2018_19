@@ -34,9 +34,9 @@ class Transfer_wo_delivery extends Root_Controller
         {
             $this->system_details($id);
         }
-        elseif($action=="details_print")
+        elseif($action=="challan_print")
         {
-            $this->system_details_print($id);
+            $this->system_challan_print($id);
         }
         elseif($action=="delivery")
         {
@@ -85,7 +85,7 @@ class Transfer_wo_delivery extends Root_Controller
     {
         $this->db->from($this->config->item('table_sms_transfer_wo').' transfer_wo');
         $this->db->select('transfer_wo.id, transfer_wo.date_request, transfer_wo.quantity_total_request_kg quantity_total_request, transfer_wo.quantity_total_approve_kg quantity_total_approve');
-        $this->db->join($this->config->item('table_login_csetup_cus_info').' outlet_info','outlet_info.customer_id=transfer_wo.outlet_id AND outlet_info.revision=1 AND outlet_info.type="'.$this->config->item('system_customer_type_outlet_id').'"','INNER');
+        $this->db->join($this->config->item('table_login_csetup_cus_info').' outlet_info','outlet_info.customer_id=transfer_wo.outlet_id AND outlet_info.type="'.$this->config->item('system_customer_type_outlet_id').'"','INNER');
         $this->db->select('outlet_info.name outlet_name, outlet_info.customer_code outlet_code');
         $this->db->join($this->config->item('table_login_setup_location_districts').' districts','districts.id = outlet_info.district_id','INNER');
         $this->db->select('districts.name district_name');
@@ -99,6 +99,7 @@ class Transfer_wo_delivery extends Root_Controller
         $this->db->where('transfer_wo.status_request',$this->config->item('system_status_forwarded'));
         $this->db->where('transfer_wo.status_approve',$this->config->item('system_status_approved'));
         $this->db->where('transfer_wo.status_delivery',$this->config->item('system_status_pending'));
+        $this->db->where('outlet_info.revision',1);
         $this->db->order_by('transfer_wo.id','DESC');
 
         $results=$this->db->get()->result_array();
@@ -601,7 +602,7 @@ class Transfer_wo_delivery extends Root_Controller
             $this->json_return($ajax);
         }
     }
-    private function system_details_print($id)
+    private function system_challan_print($id)
     {
         if(isset($this->permissions['action4'])&&($this->permissions['action4']==1))
         {
@@ -704,12 +705,12 @@ class Transfer_wo_delivery extends Root_Controller
 
             $data['title']="HQ to Outlet Print View Delivery :: ". Barcode_helper::get_barcode_transfer_warehouse_to_outlet($data['item']['id']);
             $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/details_print",$data,true));
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/challan_print",$data,true));
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
             }
-            $ajax['system_page_url']=site_url($this->controller_url.'/index/details_print/'.$item_id);
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/challan_print/'.$item_id);
             $this->json_return($ajax);
         }
         else

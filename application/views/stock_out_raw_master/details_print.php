@@ -45,7 +45,7 @@ $num_pages=ceil($total_records/$row_per_page);
                 <div class="col-xs-6">
                     <div class="row show-grid">
                         <div class="col-xs-6">
-                            <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_ID');?>:</label>
+                            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ID');?>:</label>
                         </div>
                         <div class="col-xs-6">
                             <?php echo Barcode_helper::get_barcode_raw_master_stock_out($item['id']);?>
@@ -53,7 +53,7 @@ $num_pages=ceil($total_records/$row_per_page);
                     </div>
                     <div class="row show-grid">
                         <div class="col-xs-6 text-right">
-                            <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_BARCODE');?>:</label>
+                            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_BARCODE');?>:</label>
                         </div>
                         <div class="col-xs-6">
                             <img src="<?php echo site_url('barcode/index/stock_out/'.$item['id']);  ?>">
@@ -63,7 +63,7 @@ $num_pages=ceil($total_records/$row_per_page);
                 <div class="col-xs-6">
                     <div class="row show-grid">
                         <div class="col-xs-6">
-                            <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_PURPOSE');?>:</label>
+                            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PURPOSE');?>:</label>
                         </div>
                         <div class="col-xs-6">
                             <?php echo $item['purpose']; ?>
@@ -71,7 +71,7 @@ $num_pages=ceil($total_records/$row_per_page);
                     </div>
                     <div class="row show-grid">
                         <div class="col-xs-6">
-                            <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE');?>:</label>
+                            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE');?>:</label>
                         </div>
                         <div class="col-xs-6">
                             <?php echo System_helper::display_date($item['date_stock_out']); ?>

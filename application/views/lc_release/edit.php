@@ -52,48 +52,48 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             <table class="table table-bordered table-responsive system_table_details_view">
                 <thead>
                 <tr>
-                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_FISCAL_YEAR');?></label></th>
+                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_FISCAL_YEAR');?></label></th>
                     <th class=" header_value"><label class="control-label"><?php echo $item['fiscal_year']?></label></th>
-                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_PRINCIPAL_NAME');?></label></th>
+                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PRINCIPAL_NAME');?></label></th>
                     <th class="bg-danger"><label class="control-label"><?php echo $item['principal_name'];?></label></th>
                 </tr>
                 <tr>
-                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_MONTH');?></label></th>
+                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_MONTH');?></label></th>
                     <th class=" header_value"><label class="control-label"><?php echo date("F", mktime(0, 0, 0,  $item['month_id'],1, 2000));?></label></th>
-                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_LC_NUMBER');?></label></th>
+                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_LC_NUMBER');?></label></th>
                     <th class="bg-danger"><label class="control-label"><?php echo $item['lc_number'];?></label></th>
                 </tr>
                 <tr>
-                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_OPENING');?></label></th>
+                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_OPENING');?></label></th>
                     <th class=" header_value"><label class="control-label"><?php echo System_helper::display_date($item['date_opening']);?></label></th>
-                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_CONSIGNMENT_NAME');?></label></th>
+                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CONSIGNMENT_NAME');?></label></th>
                     <th class=" header_value" colspan="3"><label class="control-label"><?php echo $item['consignment_name'];?></label></th>
                 </tr>
                 <tr>
-                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_EXPECTED');?></label></th>
+                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_EXPECTED');?></label></th>
                     <th class=" header_value"><label class="control-label"><?php echo System_helper::display_date($item['date_expected']);?></label></th>
-                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_BANK_ACCOUNT_NUMBER');?></label></th>
+                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_BANK_ACCOUNT_NUMBER');?></label></th>
                     <th class=" header_value"><label class="control-label"><?php echo $item['bank_account_number'];?></label></th>
                 </tr>
                 <tr>
                     <th colspan="2">&nbsp;</th>
-                    <th class="widget-header"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_CURRENCY_NAME');?></label></th>
+                    <th class="widget-header"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CURRENCY_NAME');?></label></th>
                     <th class="bg-danger"><label class="control-label"><?php echo $item['currency_name'];?></label></th>
                 </tr>
                 <tr>
                     <th colspan="2">&nbsp;</th>
-                    <th class="widget-header"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_PRICE_OPEN_OTHER_CURRENCY');?></label></th>
+                    <th class="widget-header"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PRICE_OPEN_OTHER_CURRENCY');?></label></th>
                     <th class="bg-danger"><label class="control-label"><?php echo number_format($item['price_open_other_currency'],2);?></label></th>
                 </tr>
                 <tr>
-                    <th class="widget-header header_caption" style="vertical-align: top;"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS_LC_OPEN');?></label></th>
+                    <th class="widget-header header_caption" style="vertical-align: top;"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS_LC_OPEN');?></label></th>
                     <th class=" header_value" colspan="3"><label class="control-label"><?php echo nl2br($item['remarks_open']);?></label></th>
                 </tr>
                 </thead>
             </table>
             <div class="row show-grid">
                 <div class="col-xs-4">
-                    <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS_LC_RELEASE');?> </label>
+                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS_LC_RELEASE');?> </label>
                 </div>
                 <div class="col-sm-4 col-xs-8">
                     <textarea name="item[remarks_release]" id="remarks_release" class="form-control" ><?php echo $item['remarks_release'];?></textarea>
@@ -198,7 +198,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         </tbody>
                         <tfoot>
                         <tr>
-                            <th colspan="3" class="text-right"><?php echo $this->lang->line('LABEL_TOTAL_KG')?> & <?php echo $this->lang->line('LABEL_PRICE_CURRENCY_TOTAL')?></th>
+                            <th colspan="3" class="text-right"><?php echo $CI->lang->line('LABEL_TOTAL_KG')?> & <?php echo $CI->lang->line('LABEL_PRICE_CURRENCY_TOTAL')?></th>
                             <th class="text-right"><label class="control-label"><?php echo $quantity_total_open;?></label></th>
                             <th class="text-right"><label class="control-label"><?php echo number_format($quantity_total_open_kg,3,'.','');?></label></th>
                             <th class="text-right"><label class="control-label"><?php echo number_format($item['price_open_variety_currency'],2);?></label></th>
@@ -220,7 +220,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                             </th>
                         </tr>
                         <tr>
-                            <th colspan="5" class="text-right"><?php echo $this->lang->line('LABEL_OTHER_COST_CURRENCY')?></th>
+                            <th colspan="5" class="text-right"><?php echo $CI->lang->line('LABEL_OTHER_COST_CURRENCY')?></th>
                             <th class="text-right"><label class="control-label"><?php echo number_format($item['price_open_other_currency'],2)?></label></th>
                             <th colspan="2">&nbsp;</th>
                             <th class="text-right">
@@ -238,7 +238,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                             </th>
                         </tr>
                         <tr>
-                            <th colspan="5" class="text-right"><?php echo $this->lang->line('LABEL_GRAND_TOTAL_CURRENCY')?></th>
+                            <th colspan="5" class="text-right"><?php echo $CI->lang->line('LABEL_GRAND_TOTAL_CURRENCY')?></th>
                             <th class="text-right">
                                 <label class="control-label"><?php echo number_format(($item['price_open_other_currency']+$item['price_open_variety_currency']),2);?></label>
                             </th>
@@ -259,7 +259,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                             </th>
                         </tr>
                         <tr>
-                            <th colspan="8" class="text-right"><?php echo $this->lang->line('LABEL_TOTAL_TAKA')?></th>
+                            <th colspan="8" class="text-right"><?php echo $CI->lang->line('LABEL_TOTAL_TAKA')?></th>
                             <th>
                                 <input type="text" name="item[price_release_other_variety_taka]" id="price_release_other_variety_taka" class="form-control float_type_positive" value="<?php echo $item['price_release_other_variety_taka'];?>" />
                             </th>

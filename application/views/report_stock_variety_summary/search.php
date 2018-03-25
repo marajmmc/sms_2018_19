@@ -24,7 +24,7 @@
                     </div>
                     <div class="col-xs-6">
                         <select id="crop_id" name="report[crop_id]" class="form-control">
-                            <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                            <option value=""><?php echo $CI->lang->line('SELECT');?></option>
                         </select>
                     </div>
                 </div>
@@ -34,7 +34,7 @@
                     </div>
                     <div class="col-xs-6">
                         <select id="crop_type_id" name="report[crop_type_id]" class="form-control">
-                            <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                            <option value=""><?php echo $CI->lang->line('SELECT');?></option>
                         </select>
                     </div>
                 </div>
@@ -44,7 +44,7 @@
                     </div>
                     <div class="col-xs-6">
                         <select id="variety_id" name="report[variety_id]" class="form-control">
-                            <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                            <option value=""><?php echo $CI->lang->line('SELECT');?></option>
                         </select>
                     </div>
                 </div>
@@ -54,7 +54,7 @@
                     </div>
                     <div class="col-xs-6">
                         <select id="pack_size_id" name="report[pack_size_id]" class="form-control">
-                            <option value="-1"><?php echo $this->lang->line('SELECT');?></option>
+                            <option value="-1"><?php echo $CI->lang->line('SELECT');?></option>
                             <option value="0">Bulk</option>
                             <?php
                             foreach($pack_sizes as $pack_size)

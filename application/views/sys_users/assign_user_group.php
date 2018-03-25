@@ -37,7 +37,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             </div>
             <div class="col-sm-4 col-xs-8">
                 <select id="user_group" name="user_group" class="form-control">
-                    <option value="0"><?php echo $this->lang->line('SELECT');?></option>
+                    <option value="0"><?php echo $CI->lang->line('SELECT');?></option>
                     <?php
                     foreach($user_groups as $user_group)
                     {?>

@@ -65,7 +65,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 {
                     ?>
                     <select name="crop_id" id="crop_id" class="form-control">
-                        <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                        <option value=""><?php echo $CI->lang->line('SELECT');?></option>
                         <?php
                         foreach($crops as $crop)
                         {
@@ -186,7 +186,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
         <div style="<?php if(!($item['id']>0)){echo 'display:none';} ?>" class="row show-grid" id="current_stock_container">
             <div class="col-xs-4">
-                <label for="current_stock_id" class="control-label pull-right"><?php echo $this->lang->line('LABEL_CURRENT_STOCK');?></label>
+                <label for="current_stock_id" class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CURRENT_STOCK');?></label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <label id="current_stock_id"><?php echo $item['current_stock'];?></label>
@@ -211,7 +211,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 ?>
                 <div class="col-sm-4 col-xs-8">
                     <select id="warehouse_id_destination" name="item[warehouse_id_destination]" class="form-control">
-                        <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                        <option value=""><?php echo $CI->lang->line('SELECT');?></option>
                         <?php
                         foreach($warehouse_destinations as $warehouse_destination)
                         {
@@ -230,7 +230,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         <div style="<?php if(!($item['id']>0)){echo 'display:none';} ?>" class="row show-grid" id="quantity_transfer_id_container">
             <div class="row show-grid">
                 <div class="col-xs-4">
-                    <label for="quantity_transfer" class="control-label pull-right">Transfer <?php echo $this->lang->line('LABEL_QUANTITY_KG_PACK');?><span style="color:#FF0000">*</span></label>
+                    <label for="quantity_transfer" class="control-label pull-right">Transfer <?php echo $CI->lang->line('LABEL_QUANTITY_KG_PACK');?><span style="color:#FF0000">*</span></label>
                 </div>
                 <div class="col-sm-4 col-xs-8">
                     <input type="text" name="item[quantity_transfer]" id="quantity_transfer_id" class="form-control float_type_positive" value="<?php echo $item['quantity_transfer'];?>"/>

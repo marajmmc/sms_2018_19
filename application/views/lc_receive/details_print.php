@@ -52,7 +52,7 @@ $num_pages=ceil($total_records/$row_per_page);
                 <div class="col-xs-4">
                     <div class="row show-grid">
                         <div class="col-xs-6">
-                            <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_ID');?>:</label>
+                            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ID');?>:</label>
                         </div>
                         <div class="col-xs-6">
                             <?php echo Barcode_helper::get_barcode_lc($item['id']);?>
@@ -60,7 +60,7 @@ $num_pages=ceil($total_records/$row_per_page);
                     </div>
                     <div class="row show-grid">
                         <div class="col-xs-6 text-right">
-                            <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_BARCODE');?>:</label>
+                            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_BARCODE');?>:</label>
                         </div>
                         <div class="col-xs-6">
                             <img src="<?php echo site_url('barcode/index/stock_in/'.$item['id']);  ?>">
@@ -68,7 +68,7 @@ $num_pages=ceil($total_records/$row_per_page);
                     </div>
                     <div class="row show-grid">
                         <div class="col-xs-6">
-                            <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_SUPPLIER_NAME');?>:</label>
+                            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_SUPPLIER_NAME');?>:</label>
                         </div>
                         <div class="col-xs-6">
                             <?php echo $item['principal_name'];?>
@@ -78,7 +78,7 @@ $num_pages=ceil($total_records/$row_per_page);
                 <div class="col-xs-4">
                     <div class="row show-grid">
                         <div class="col-xs-6">
-                            <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_LC_NUMBER');?>:</label>
+                            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_LC_NUMBER');?>:</label>
                         </div>
                         <div class="col-xs-6">
                             <?php echo $item['lc_number']; ?>
@@ -86,7 +86,7 @@ $num_pages=ceil($total_records/$row_per_page);
                     </div>
                     <div class="row show-grid">
                         <div class="col-xs-6">
-                            <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_NUMBER_PACKING_LIST');?>:</label>
+                            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_NUMBER_PACKING_LIST');?>:</label>
                         </div>
                         <div class="col-xs-6">
                             <?php echo $item['packing_list_number']; ?>
@@ -94,7 +94,7 @@ $num_pages=ceil($total_records/$row_per_page);
                     </div>
                     <div class="row show-grid">
                         <div class="col-xs-6">
-                            <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_NUMBER_LOT');?>:</label>
+                            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_NUMBER_LOT');?>:</label>
                         </div>
                         <div class="col-xs-6">
                             <?php echo $item['lot_number']; ?>
@@ -104,7 +104,7 @@ $num_pages=ceil($total_records/$row_per_page);
                 <div class="col-xs-4">
                     <div class="row show-grid">
                         <div class="col-xs-6">
-                            <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_RECEIVE');?>:</label>
+                            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_RECEIVE');?>:</label>
                         </div>
                         <div class="col-xs-6">
                             <?php echo System_helper::display_date($item['date_receive']);?>
@@ -112,7 +112,7 @@ $num_pages=ceil($total_records/$row_per_page);
                     </div>
                     <div class="row show-grid">
                         <div class="col-xs-6">
-                            <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_PACKING_LIST');?>:</label>
+                            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_PACKING_LIST');?>:</label>
                         </div>
                         <div class="col-xs-6">
                             <?php echo System_helper::display_date($item['date_packing_list']);?>
@@ -185,7 +185,7 @@ $num_pages=ceil($total_records/$row_per_page);
                     {
                         ?>
                         <tr>
-                            <td colspan="7" class="text-right"><label class="control-label"><?php echo $this->lang->line('LABEL_TOTAL')?></label></td>
+                            <td colspan="7" class="text-right"><label class="control-label"><?php echo $CI->lang->line('LABEL_TOTAL')?></label></td>
                             <td class="text-right"><label class="control-label"><?php echo $quantity_total_release;?></label></td>
                             <td class="text-right"><label class="control-label"><?php echo number_format($quantity_total_release_kg,3,'.','');?></label></td>
                             <td class="text-right"><label class="control-label"><?php echo $quantity_total_receive;?></label></td>

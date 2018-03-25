@@ -48,7 +48,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 </div>
                 <div class="col-sm-4 col-xs-8">
                     <select id="crop_id" class="form-control">
-                        <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                        <option value=""><?php echo $CI->lang->line('SELECT');?></option>
                         <?php
                         foreach($crops as $crop)
                         {
@@ -66,7 +66,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 </div>
                 <div class="col-sm-4 col-xs-8">
                     <select id="crop_type_id" class="form-control">
-                        <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                        <option value=""><?php echo $CI->lang->line('SELECT');?></option>
                     </select>
                 </div>
             </div>
@@ -76,7 +76,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 </div>
                 <div class="col-sm-4 col-xs-8">
                     <select id="variety_id" name="item[variety_id]" class="form-control">
-                        <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                        <option value=""><?php echo $CI->lang->line('SELECT');?></option>
                     </select>
                 </div>
             </div>
@@ -86,7 +86,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 </div>
                 <div class="col-sm-4 col-xs-8">
                     <select id="warehouse_id_source" name="item[warehouse_id_source]" class="form-control">
-                        <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                        <option value=""><?php echo $CI->lang->line('SELECT');?></option>
                     </select>
                 </div>
             </div>
@@ -112,7 +112,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 </div>
                 <div class="col-sm-4 col-xs-8">
                     <select id="warehouse_id_destination" name="item[warehouse_id_destination]" class="form-control">
-                        <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                        <option value=""><?php echo $CI->lang->line('SELECT');?></option>
                         <?php
                         foreach($destination_warehouses as $destination_warehouse)
                         {
@@ -130,7 +130,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 </div>
                 <div class="col-sm-4 col-xs-8">
                     <select id="pack_size_id" name="item[pack_size_id]" class="form-control">
-                        <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                        <option value=""><?php echo $CI->lang->line('SELECT');?></option>
                     </select>
                 </div>
             </div>

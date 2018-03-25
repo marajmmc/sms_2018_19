@@ -38,7 +38,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         </div>
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_FISCAL_YEAR');?><span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_FISCAL_YEAR');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <?php
@@ -52,7 +52,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 {
                     ?>
                     <select id="fiscal_year_id" class="form-control" name="item[fiscal_year_id]">
-                        <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                        <option value=""><?php echo $CI->lang->line('SELECT');?></option>
                         <?php
                         $time=time();
                         $selected='';
@@ -80,7 +80,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         </div>
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_MONTH');?><span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_MONTH');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <?php
@@ -94,7 +94,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 {
                     ?>
                     <select id="month_id" class="form-control" name="item[month_id]" >
-                        <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                        <option value=""><?php echo $CI->lang->line('SELECT');?></option>
                         <?php
                         for($i=1;$i<13;$i++)
                         {
@@ -111,7 +111,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         </div>
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_OPENING');?><span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_OPENING');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <input type="text" name="item[date_opening]" id="date_opening" class="form-control datepicker date_large" value="<?php echo System_helper::display_date($item['date_opening']);?>" />
@@ -119,7 +119,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         </div>
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_PRINCIPAL_NAME');?><span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PRINCIPAL_NAME');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <?php
@@ -133,7 +133,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 {
                     ?>
                     <select id="principal_id" name="item[principal_id]" class="form-control" >
-                        <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                        <option value=""><?php echo $CI->lang->line('SELECT');?></option>
                         <?php
                         foreach($principals as $principal)
                         {
@@ -150,7 +150,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         </div>
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_EXPECTED');?><span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_EXPECTED');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <input type="text" name="item[date_expected]" id="date_expected" class="form-control datepicker date_large" value="<?php echo System_helper::display_date($item['date_expected']);?>" />
@@ -158,7 +158,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         </div>
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_LC_NUMBER');?><span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_LC_NUMBER');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <input type="text" name="item[lc_number]" id="lc_number" class="form-control" value="<?php echo $item['lc_number'];?>"/>
@@ -166,11 +166,11 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         </div>
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_BANK_ACCOUNT_NUMBER');?><span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_BANK_ACCOUNT_NUMBER');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <select id="bank_account_id" name="item[bank_account_id]" class="form-control">
-                    <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                    <option value=""><?php echo $CI->lang->line('SELECT');?></option>
                     <?php
                     foreach($bank_accounts as $bank_account)
                     {?>
@@ -183,11 +183,11 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         </div>
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_CURRENCY_NAME');?><span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CURRENCY_NAME');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <select id="currency_id" name="item[currency_id]" class="form-control">
-                    <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                    <option value=""><?php echo $CI->lang->line('SELECT');?></option>
                     <?php
                     foreach($currencies as $currency)
                     {?>
@@ -200,7 +200,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         </div>
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_PRICE_OPEN_OTHER_CURRENCY');?><span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PRICE_OPEN_OTHER_CURRENCY');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <input type="text" name="item[price_open_other_currency]" id="price_open_other_currency" class="form-control float_type_positive price_open_other_currency" value="<?php echo $item['price_open_other_currency'];?>"/>
@@ -208,7 +208,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         </div>
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_CONSIGNMENT_NAME');?><span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CONSIGNMENT_NAME');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <textarea name="item[consignment_name]" id="consignment_name" class="form-control" ><?php echo $item['consignment_name'];?></textarea>
@@ -216,7 +216,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         </div>
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS_LC_OPEN');?> </label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS_LC_OPEN');?> </label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <textarea name="item[remarks_open]" id="remarks_open" class="form-control" ><?php echo $item['remarks_open'];?></textarea>
@@ -299,22 +299,22 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     </tbody>
                     <tfoot>
                     <tr>
-                        <th colspan="2" class="text-right"><?php echo $this->lang->line('LABEL_TOTAL_KG')?></th>
+                        <th colspan="2" class="text-right"><?php echo $CI->lang->line('LABEL_TOTAL_KG')?></th>
                         <th class="text-right"><label class="control-label" id="lbl_quantity_open_total"><?php echo $quantity_open_total;?></label></th>
                         <th class="text-right"><label class="control-label" id="lbl_quantity_open_total_kg"><?php echo number_format(($quantity_open_total_kg),3,'.','');?></label></th>
-                        <th class="text-right"><?php echo $this->lang->line('LABEL_PRICE_CURRENCY_TOTAL')?></th>
+                        <th class="text-right"><?php echo $CI->lang->line('LABEL_PRICE_CURRENCY_TOTAL')?></th>
                         <th class="text-right"><label class="control-label" id="lbl_price_variety_total_currency"><?php echo number_format($item['price_open_variety_currency'],2)?></label></th>
                         <th class="text-right"></th>
                     </tr>
                     <tr>
-                        <th colspan="5" class="text-right"><?php echo $this->lang->line('LABEL_PRICE_OPEN_OTHER_CURRENCY')?></th>
+                        <th colspan="5" class="text-right"><?php echo $CI->lang->line('LABEL_PRICE_OPEN_OTHER_CURRENCY')?></th>
                         <th class="text-right">
                             <label class="control-label" id="lbl_price_open_other_currency"> <?php echo $item['price_open_other_currency']?number_format(($item['price_open_other_currency']),2):'0.00';?></label>
                         </th>
                         <th>&nbsp;</th>
                     </tr>
                     <tr>
-                        <th colspan="5" class="text-right"><?php echo $this->lang->line('LABEL_GRAND_TOTAL_CURRENCY')?></th>
+                        <th colspan="5" class="text-right"><?php echo $CI->lang->line('LABEL_GRAND_TOTAL_CURRENCY')?></th>
                         <th class="text-right">
                             <label class="control-label" id="lbl_price_total_currency"> <?php echo number_format(($item['price_open_variety_currency']+$item['price_open_other_currency']),2);?></label>
                         </th>
@@ -362,7 +362,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             </td>
             <td>
                 <select style="display: none;" class="form-control pack_size_id" data-new-pack-size="0">
-                    <option value="-1"><?php echo $this->lang->line('SELECT'); ?></option>
+                    <option value="-1"><?php echo $CI->lang->line('SELECT'); ?></option>
                     <option value="0" data-pack-size-name="0">Bulk</option>
                     <?php
                     foreach($pack_sizes as $pack_size)

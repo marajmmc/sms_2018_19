@@ -49,7 +49,7 @@ $num_pages=ceil($total_records/$row_per_page);
                 <div class="col-xs-4">
                     <div class="row show-grid">
                         <div class="col-xs-6">
-                            <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_ID');?>:</label>
+                            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ID');?>:</label>
                         </div>
                         <div class="col-xs-6">
                             <?php echo Barcode_helper::get_barcode_raw_sticker_purchase($item['id']);?>
@@ -57,7 +57,7 @@ $num_pages=ceil($total_records/$row_per_page);
                     </div>
                     <div class="row show-grid">
                         <div class="col-xs-6 text-right">
-                            <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_BARCODE');?>:</label>
+                            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_BARCODE');?>:</label>
                         </div>
                         <div class="col-xs-6">
                             <img src="<?php echo site_url('barcode/index/raw_sticker_purchase/'.$item['id']);  ?>">
@@ -65,7 +65,7 @@ $num_pages=ceil($total_records/$row_per_page);
                     </div>
                     <div class="row show-grid">
                         <div class="col-xs-6 text-right"">
-                            <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_SUPPLIER_NAME');?>:</label>
+                            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_SUPPLIER_NAME');?>:</label>
                         </div>
                         <div class="col-xs-6">
                             <?php echo $item['supplier_name'];?>
@@ -75,7 +75,7 @@ $num_pages=ceil($total_records/$row_per_page);
                 <div class="col-xs-4">
                     <div class="row show-grid">
                         <div class="col-xs-6">
-                            <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_CHALLAN_NUMBER');?>:</label>
+                            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CHALLAN_NUMBER');?>:</label>
                         </div>
                         <div class="col-xs-6">
                             <?php echo $item['challan_number']; ?>
@@ -86,7 +86,7 @@ $num_pages=ceil($total_records/$row_per_page);
                 <div class="col-xs-4">
                     <div class="row show-grid">
                         <div class="col-xs-6">
-                            <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_CHALLAN');?>:</label>
+                            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_CHALLAN');?>:</label>
                         </div>
                         <div class="col-xs-6">
                             <?php echo System_helper::display_date($item['date_challan']);?>
@@ -94,7 +94,7 @@ $num_pages=ceil($total_records/$row_per_page);
                     </div>
                     <div class="row show-grid">
                         <div class="col-xs-6">
-                            <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_RECEIVE');?>:</label>
+                            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_RECEIVE');?>:</label>
                         </div>
                         <div class="col-xs-6">
                             <?php echo System_helper::display_date($item['date_receive']);?>

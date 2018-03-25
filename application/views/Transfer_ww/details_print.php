@@ -39,7 +39,7 @@ if($result)
             <div class="col-xs-6">
                 <div class="row show-grid">
                     <div class="col-xs-6">
-                        <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_ID');?>:</label>
+                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ID');?>:</label>
                     </div>
                     <div class="col-xs-6">
                         <?php echo Barcode_helper::get_barcode_transfer_warehouse_to_warehouse($item['id']);?>
@@ -47,7 +47,7 @@ if($result)
                 </div>
                 <div class="row show-grid">
                     <div class="col-xs-6 text-right">
-                        <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_BARCODE');?>:</label>
+                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_BARCODE');?>:</label>
                     </div>
                     <div class="col-xs-6">
                         <img src="<?php echo site_url('barcode/index/transfer_warehouse_to_warehouse/'.$item['id']);  ?>">
@@ -108,7 +108,7 @@ if($result)
                 </td>
             </tr>
             <tr>
-                <td colspan="7" class="text-right"><label class="control-label"><?php echo $this->lang->line('LABEL_TOTAL')?></label></td>
+                <td colspan="7" class="text-right"><label class="control-label"><?php echo $CI->lang->line('LABEL_TOTAL')?></label></td>
                 <td class="text-right"><label class="control-label"><?php if($item['pack_size_id']==0){echo '-';}else{echo $item['quantity_transfer'];} ?></label></td>
                 <td class="text-right">
                     <label class="control-label">

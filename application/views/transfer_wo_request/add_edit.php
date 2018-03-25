@@ -37,7 +37,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         </div>
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_REQUEST');?><span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_REQUEST');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <label class="control-label"><?php echo System_helper::display_date($item['date_request']);?></label>
@@ -67,7 +67,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     {
                         ?>
                         <select id="division_id" name="division_id" class="form-control">
-                            <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                            <option value=""><?php echo $CI->lang->line('SELECT');?></option>
                             <?php
                             foreach($divisions as $division)
                             {?>
@@ -108,7 +108,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     {
                         ?>
                         <select id="zone_id" name="zone_id" class="form-control">
-                            <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                            <option value=""><?php echo $CI->lang->line('SELECT');?></option>
                             <?php
                             foreach($zones as $zone)
                             {?>
@@ -147,7 +147,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     {
                         ?>
                         <select id="territory_id" name="territory_id" class="form-control">
-                            <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                            <option value=""><?php echo $CI->lang->line('SELECT');?></option>
                             <?php
                             foreach($territories as $territory)
                             {?>
@@ -186,7 +186,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     {
                         ?>
                         <select id="district_id" name="district_id" class="form-control">
-                            <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                            <option value=""><?php echo $CI->lang->line('SELECT');?></option>
                             <?php
                             foreach($districts as $district)
                             {?>
@@ -217,7 +217,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 {
                     ?>
                     <select id="outlet_id" name="item[outlet_id]" class="form-control">
-                        <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                        <option value=""><?php echo $CI->lang->line('SELECT');?></option>
                         <?php
                         foreach($outlets as $outlet)
                         {?>
@@ -234,7 +234,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         </div>
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS_REQUEST');?> </label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS_REQUEST');?> </label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <textarea name="item[remarks_request]" id="remarks" class="form-control" ><?php echo $item['remarks_request'];?></textarea>
@@ -392,7 +392,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         <tr>
             <td>
                 <select class="form-control crop_id">
-                    <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                    <option value=""><?php echo $CI->lang->line('SELECT');?></option>
                     <?php
                     foreach($crops as $crop)
                     {?>
@@ -404,17 +404,17 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             </td>
             <td>
                 <select class="form-control crop_type_id" style="display: none;">
-                    <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                    <option value=""><?php echo $CI->lang->line('SELECT');?></option>
                 </select>
             </td>
             <td>
                 <select class="form-control variety_id" style="display: none;">
-                    <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                    <option value=""><?php echo $CI->lang->line('SELECT');?></option>
                 </select>
             </td>
             <td>
                 <select class="form-control pack_size_id" style="display: none;"  data-new-pack-size="0">
-                    <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                    <option value=""><?php echo $CI->lang->line('SELECT');?></option>
                 </select>
             </td>
             <td class="text-right">
