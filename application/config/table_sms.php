@@ -27,6 +27,7 @@ $config['table_sms_transfer_wo'] = 'arm_sms_2018_19.sms_transfer_wo';
 $config['table_sms_transfer_wo_details'] = 'arm_sms_2018_19.sms_transfer_wo_details';
 $config['table_sms_transfer_wo_details_histories'] = 'arm_sms_2018_19.sms_transfer_wo_details_histories';
 $config['table_sms_transfer_wo_courier_details'] = 'arm_sms_2018_19.sms_transfer_wo_courier_details';
+$config['table_sms_transfer_wo_receive_solves'] = 'arm_sms_2018_19.sms_transfer_wo_receive_solves';
 
 //Raw Materials
 

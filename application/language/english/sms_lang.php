@@ -234,6 +234,7 @@ $lang['LABEL_REMARKS_APPROVE']='Remarks for Approve';
 $lang['LABEL_REMARKS_COURIER']='Remarks for Courier';
 $lang['LABEL_REMARKS_CHALLAN']='Remarks for Challan';
 $lang['LABEL_REMARKS_DELIVERY']='Remarks for Delivery';
+$lang['LABEL_REMARKS_RECEIVE']='Remarks for Receive';
 
 // Unit
 $lang['LABEL_PACK'] = 'Pkt';
