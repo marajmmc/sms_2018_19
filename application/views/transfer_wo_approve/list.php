@@ -109,6 +109,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 { name: 'quantity_total_approve', type: 'string'}
             ],
             id: 'id',
+            type: 'POST',
             url: url
         };
 

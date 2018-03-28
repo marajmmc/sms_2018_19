@@ -7,16 +7,6 @@ $action_buttons[]=array
     'label'=>$CI->lang->line("ACTION_BACK"),
     'href'=>site_url($CI->controller_url)
 );
-if((isset($CI->permissions['action7']) && ($CI->permissions['action7']==1)))
-{
-    $action_buttons[]=array
-    (
-        'type'=>'button',
-        'label'=>$CI->lang->line("ACTION_SAVE"),
-        'id'=>'button_action_save',
-        'data-form'=>'#save_form'
-    );
-}
 $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 ?>
 <form id="save_form" action="<?php echo site_url($CI->controller_url.'/index/save_forward');?>" method="post">
@@ -70,17 +60,17 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 </tr>
                 <tr>
                     <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CREATED_BY');?></label></th>
-                    <th class=" header_value"><label class="control-label"><?php echo $item['user_created_full_name'];?></label></th>
+                    <th class=" header_value"><label class="control-label"><?php echo $users[$item['user_created_request']]['name'];?></label></th>
                     <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_CREATED_TIME');?></label></th>
                     <th class=""><label class="control-label"><?php echo System_helper::display_date_time($item['date_created_request']);?></label></th>
                 </tr>
                 <?php
-                if($item['user_created_request'])
+                if($item['date_updated_request'])
                 {
                     ?>
                     <tr>
                         <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_UPDATED_BY');?></label></th>
-                        <th class=" header_value"><label class="control-label"><?php echo $item['user_updated_full_name'];?></label></th>
+                        <th class=" header_value"><label class="control-label"><?php echo $users[$item['user_updated_request']]['name'];?></label></th>
                         <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_UPDATED_TIME');?></label></th>
                         <th class=""><label class="control-label"><?php echo System_helper::display_date_time($item['date_updated_request']);?></label></th>
                     </tr>
@@ -240,3 +230,18 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
     </div>
 
 </form>
+<?php
+$action_buttons=array();
+if((isset($CI->permissions['action7']) && ($CI->permissions['action7']==1)))
+{
+    $action_buttons[]=array
+    (
+        'type'=>'button',
+        'data-message-confirm'=>'Are You Sure HQ to Outlet Forward TO?',
+        'label'=>'HQ to Outlet `TO` Forward',
+        'id'=>'button_action_save',
+        'data-form'=>'#save_form'
+    );
+}
+$CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
+?>

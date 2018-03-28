@@ -99,6 +99,7 @@ $lang['LABEL_DESCRIPTION'] = 'Description';
 $lang['LABEL_ITEM'] = 'Item';
 $lang['LABEL_CREATED_BY'] = 'Created By';
 $lang['LABEL_UPDATED_BY'] = 'Updated By';
+$lang['LABEL_FORWARDED_BY'] = 'Forwarded By';
 $lang['LABEL_APPROVED_BY'] = 'Approved By';
 $lang['LABEL_DELIVERED_BY'] = 'Delivered By';
 
@@ -188,6 +189,7 @@ $lang['LABEL_DATE_PURCHASE']='Purchase date';
 $lang['LABEL_DATE_CHALLAN']='Challan Date';
 $lang['LABEL_DATE_CREATED_TIME']='Created Time';
 $lang['LABEL_DATE_UPDATED_TIME']='Updated Time';
+$lang['LABEL_DATE_FORWARDED_TIME']='Forwarded Time';
 $lang['LABEL_DATE_APPROVED_TIME']='Approved Time';
 $lang['LABEL_DATE_DELIVERED_TIME']='Delivered Time';
 $lang['LABEL_DATE_CONVERT']='Convert Date';

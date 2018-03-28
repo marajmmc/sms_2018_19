@@ -64,19 +64,32 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             </tr>
             <tr>
                 <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CREATED_BY');?></label></th>
-                <th class=" header_value"><label class="control-label"><?php echo $item['user_created_full_name'];?></label></th>
+                <th class=" header_value"><label class="control-label"><?php echo $users[$item['user_created_request']]['name'];?></label></th>
                 <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_CREATED_TIME');?></label></th>
                 <th class=""><label class="control-label"><?php echo System_helper::display_date_time($item['date_created_request']);?></label></th>
             </tr>
             <?php
-            if($item['user_created_request'])
+            if($item['date_updated_request'])
             {
                 ?>
                 <tr>
                     <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_UPDATED_BY');?></label></th>
-                    <th class=" header_value"><label class="control-label"><?php echo $item['user_updated_full_name'];?></label></th>
+                    <th class=" header_value"><label class="control-label"><?php echo $users[$item['user_updated_request']]['name'];?></label></th>
                     <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_UPDATED_TIME');?></label></th>
                     <th class=""><label class="control-label"><?php echo System_helper::display_date_time($item['date_updated_request']);?></label></th>
+                </tr>
+            <?php
+            }
+            ?>
+            <?php
+            if($item['date_updated_forward'])
+            {
+                ?>
+                <tr>
+                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_FORWARDED_BY');?></label></th>
+                    <th class=" header_value"><label class="control-label"><?php echo $users[$item['user_updated_forward']]['name'];?></label></th>
+                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_FORWARDED_TIME');?></label></th>
+                    <th class=""><label class="control-label"><?php echo System_helper::display_date_time($item['date_updated_forward']);?></label></th>
                 </tr>
             <?php
             }
@@ -104,6 +117,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <th colspan="21" class="text-center text-danger danger">Order Items</th>
                 </tr>
                 <tr>
+                    <th rowspan="2" style="width: 10px;"><?php echo $CI->lang->line('LABEL_SL_NO'); ?></th>
                     <th rowspan="2" style="width: 200px;"><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></th>
                     <th rowspan="2" style="width: 150px;"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?></th>
                     <th rowspan="2" style="width: 150px;"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
@@ -138,6 +152,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     $quantity_total_request_kg+=$quantity_request_kg;
                     ?>
                     <tr>
+                        <td class="text-right"><?php echo $index+1;?></td>
                         <td>
                             <label><?php echo $value['crop_name']; ?></label>
                         </td>
@@ -206,7 +221,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <tfoot>
                 <tr>
                     <?php
-                    $quantity_total_colspan=8;
+                    $quantity_total_colspan=9;
                     if(!($CI->locations['territory_id']>0))
                     {
                         $quantity_total_colspan+=1;

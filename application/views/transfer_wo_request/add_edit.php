@@ -246,7 +246,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <table class="table table-bordered">
                     <thead>
                     <tr>
-                        <th colspan="21" class="text-center text-danger danger">Order Items (Maximum Order Quantity in kg <?php echo $quantity_to_maximum_kg;?>)</th>
+                        <th colspan="21" class="text-center text-danger danger">Order Items (Maximum Order Quantity in <?php echo $quantity_to_maximum_kg;?>kg)</th>
                     </tr>
                     <tr>
                         <th rowspan="2" style="width: 200px;"><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></th>
