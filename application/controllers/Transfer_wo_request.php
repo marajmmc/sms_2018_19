@@ -278,6 +278,7 @@ class Transfer_wo_request extends Root_Controller
                             $this->db->select('customer.id value, cus_info.name text');
                             $this->db->where('customer.status',$this->config->item('system_status_active'));
                             $this->db->where('cus_info.district_id',$this->locations['district_id']);
+                            $this->db->where('cus_info.type',$this->config->item('system_customer_type_outlet_id'));
                             $this->db->where('cus_info.revision',1);
                             $data['outlets']=$this->db->get()->result_array();
                         }
@@ -337,6 +338,22 @@ class Transfer_wo_request extends Root_Controller
             $this->db->where('outlet_info.revision',1);
             $this->db->order_by('transfer_wo.id','DESC');
             $data['item']=$this->db->get()->row_array();
+            if($this->locations['division_id']>0)
+            {
+                $this->db->where('divisions.id',$this->locations['division_id']);
+                if($this->locations['zone_id']>0)
+                {
+                    $this->db->where('zones.id',$this->locations['zone_id']);
+                    if($this->locations['territory_id']>0)
+                    {
+                        $this->db->where('territories.id',$this->locations['territory_id']);
+                        if($this->locations['district_id']>0)
+                        {
+                            $this->db->where('districts.id',$this->locations['district_id']);
+                        }
+                    }
+                }
+            }
             if(!$data['item'])
             {
                 System_helper::invalid_try('Edit Non Exists',$item_id);
@@ -438,6 +455,22 @@ class Transfer_wo_request extends Root_Controller
             $this->db->where('transfer_wo.id',$id);
             $this->db->where('outlet_info.revision',1);
             $this->db->order_by('transfer_wo.id','DESC');
+            if($this->locations['division_id']>0)
+            {
+                $this->db->where('divisions.id',$this->locations['division_id']);
+                if($this->locations['zone_id']>0)
+                {
+                    $this->db->where('zones.id',$this->locations['zone_id']);
+                    if($this->locations['territory_id']>0)
+                    {
+                        $this->db->where('territories.id',$this->locations['territory_id']);
+                        if($this->locations['district_id']>0)
+                        {
+                            $this->db->where('districts.id',$this->locations['district_id']);
+                        }
+                    }
+                }
+            }
             $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
             {
@@ -664,17 +697,33 @@ class Transfer_wo_request extends Root_Controller
             $this->db->where('transfer_wo.id',$item_id);
             $this->db->where('outlet_info.revision',1);
             $this->db->order_by('transfer_wo.id','DESC');
+            if($this->locations['division_id']>0)
+            {
+                $this->db->where('divisions.id',$this->locations['division_id']);
+                if($this->locations['zone_id']>0)
+                {
+                    $this->db->where('zones.id',$this->locations['zone_id']);
+                    if($this->locations['territory_id']>0)
+                    {
+                        $this->db->where('territories.id',$this->locations['territory_id']);
+                        if($this->locations['district_id']>0)
+                        {
+                            $this->db->where('districts.id',$this->locations['district_id']);
+                        }
+                    }
+                }
+            }
             $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
             {
-                System_helper::invalid_try('View Non Exists',$item_id);
+                System_helper::invalid_try('details',$item_id,'View Non Exists');
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid Try.';
                 $this->json_return($ajax);
             }
             if(!$this->check_my_editable($data['item']))
             {
-                System_helper::invalid_try('details',$item_id,'Location Not Assign.');
+                System_helper::invalid_try('details',$item_id,'User location Not Assign.');
                 $ajax['status']=false;
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->json_return($ajax);
@@ -755,6 +804,22 @@ class Transfer_wo_request extends Root_Controller
             $this->db->where('transfer_wo.id',$item_id);
             $this->db->where('outlet_info.revision',1);
             $this->db->order_by('transfer_wo.id','DESC');
+            if($this->locations['division_id']>0)
+            {
+                $this->db->where('divisions.id',$this->locations['division_id']);
+                if($this->locations['zone_id']>0)
+                {
+                    $this->db->where('zones.id',$this->locations['zone_id']);
+                    if($this->locations['territory_id']>0)
+                    {
+                        $this->db->where('territories.id',$this->locations['territory_id']);
+                        if($this->locations['district_id']>0)
+                        {
+                            $this->db->where('districts.id',$this->locations['district_id']);
+                        }
+                    }
+                }
+            }
             $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
             {
@@ -835,6 +900,22 @@ class Transfer_wo_request extends Root_Controller
             $this->db->where('transfer_wo.id',$item_id);
             $this->db->where('outlet_info.revision',1);
             $this->db->order_by('transfer_wo.id','DESC');
+            if($this->locations['division_id']>0)
+            {
+                $this->db->where('divisions.id',$this->locations['division_id']);
+                if($this->locations['zone_id']>0)
+                {
+                    $this->db->where('zones.id',$this->locations['zone_id']);
+                    if($this->locations['territory_id']>0)
+                    {
+                        $this->db->where('territories.id',$this->locations['territory_id']);
+                        if($this->locations['district_id']>0)
+                        {
+                            $this->db->where('districts.id',$this->locations['district_id']);
+                        }
+                    }
+                }
+            }
             $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
             {
@@ -935,6 +1016,22 @@ class Transfer_wo_request extends Root_Controller
             $this->db->where('transfer_wo.id',$id);
             $this->db->where('outlet_info.revision',1);
             $this->db->order_by('transfer_wo.id','DESC');
+            if($this->locations['division_id']>0)
+            {
+                $this->db->where('divisions.id',$this->locations['division_id']);
+                if($this->locations['zone_id']>0)
+                {
+                    $this->db->where('zones.id',$this->locations['zone_id']);
+                    if($this->locations['territory_id']>0)
+                    {
+                        $this->db->where('territories.id',$this->locations['territory_id']);
+                        if($this->locations['district_id']>0)
+                        {
+                            $this->db->where('districts.id',$this->locations['district_id']);
+                        }
+                    }
+                }
+            }
             $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
             {

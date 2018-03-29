@@ -146,12 +146,6 @@ class Transfer_wo_delivery extends Root_Controller
             $this->db->select('zones.id zone_id, zones.name zone_name');
             $this->db->join($this->config->item('table_login_setup_location_divisions').' divisions','divisions.id = zones.division_id','INNER');
             $this->db->select('divisions.id division_id, divisions.name division_name');
-            $this->db->join($this->config->item('table_login_setup_user_info').' ui_created','ui_created.user_id = transfer_wo.user_created_request','LEFT');
-            $this->db->select('ui_created.name user_created_full_name');
-            $this->db->join($this->config->item('table_login_setup_user_info').' ui_updated','ui_updated.user_id = transfer_wo.user_updated_request','LEFT');
-            $this->db->select('ui_updated.name user_updated_full_name');
-            $this->db->join($this->config->item('table_login_setup_user_info').' ui_updated_approve','ui_updated_approve.user_id = transfer_wo.user_updated_approve','LEFT');
-            $this->db->select('ui_updated_approve.name user_updated_approve_full_name');
             $this->db->where('transfer_wo.status !=',$this->config->item('system_status_delete'));
             $this->db->where('transfer_wo.id',$item_id);
             $this->db->where('outlet_info.revision',1);
@@ -167,27 +161,37 @@ class Transfer_wo_delivery extends Root_Controller
             if($data['item']['status_request']!=$this->config->item('system_status_forwarded'))
             {
                 $ajax['status']=false;
-                $ajax['system_message']='Invalid Try. TO request not forwarded.';
+                $ajax['system_message']='TO is not forwarded (request). Invalid Try.';
                 $this->json_return($ajax);
             }
             if($data['item']['status_approve']!=$this->config->item('system_status_approved'))
             {
                 $ajax['status']=false;
-                $ajax['system_message']='Invalid Try. TO not approve & forwarded.';
+                $ajax['system_message']='TO not approve & forwarded. Invalid Try.';
                 $this->json_return($ajax);
             }
             if($data['item']['status_approve']==$this->config->item('system_status_rejected'))
             {
                 $ajax['status']=false;
-                $ajax['system_message']='Invalid Try. TO already rejected.';
+                $ajax['system_message']='TO already rejected. Invalid Try.';
                 $this->json_return($ajax);
             }
             if($data['item']['status_delivery']==$this->config->item('system_status_delivered'))
             {
                 $ajax['status']=false;
-                $ajax['system_message']='TO already delivered.';
+                $ajax['system_message']='TO already delivered. Invalid Try.';
                 $this->json_return($ajax);
             }
+
+            $user_ids=array();
+            $user_ids[$data['item']['user_created_request']]=$data['item']['user_created_request'];
+            $user_ids[$data['item']['user_updated_request']]=$data['item']['user_updated_request'];
+            $user_ids[$data['item']['user_updated_forward']]=$data['item']['user_updated_forward'];
+            $user_ids[$data['item']['user_updated_approve']]=$data['item']['user_updated_approve'];
+            $user_ids[$data['item']['user_updated_approve_forward']]=$data['item']['user_updated_approve_forward'];
+            $user_ids[$data['item']['user_updated_delivery']]=$data['item']['user_updated_delivery'];
+            $user_ids[$data['item']['user_updated_delivery_forward']]=$data['item']['user_updated_delivery_forward'];
+            $data['users']=System_helper::get_users_info($user_ids);
 
             $this->db->from($this->config->item('table_sms_transfer_wo_details').' transfer_wo_details');
             $this->db->select('transfer_wo_details.*');
@@ -340,6 +344,15 @@ class Transfer_wo_delivery extends Root_Controller
             $ajax['system_message']='Delivery date should be is greater than approval date.';
             $this->json_return($ajax);
         }
+        if(strtotime($courier['date_challan']))
+        {
+            if(!(System_helper::get_time($courier['date_challan'])>=System_helper::get_time(System_helper::display_date($courier['date_delivery']))))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='Challan date should be is greater than delivery date.';
+                $this->json_return($ajax);
+            }
+        }
 
         $this->db->from($this->config->item('table_sms_transfer_wo_details').' transfer_wo_details');
         $this->db->select('transfer_wo_details.*');
@@ -408,9 +421,23 @@ class Transfer_wo_delivery extends Root_Controller
         $result=Query_helper::get_info($this->config->item('table_sms_transfer_wo_courier_details'),array('*'),array('transfer_wo_id='.$id));
         if($result)
         {
+            if(strtotime($courier['date_challan']))
+            {
+                $courier['date_challan']=System_helper::get_time($courier['date_challan']);
+            }
+            else
+            {
+                unset($courier['date_challan']);
+            }
+            if(strtotime($courier['date_booking']))
+            {
+                $courier['date_booking']=System_helper::get_time($courier['date_booking']);
+            }
+            else
+            {
+                unset($courier['date_booking']);
+            }
             $courier['date_delivery']=System_helper::get_time($courier['date_delivery']);
-            $courier['date_challan']=System_helper::get_time($courier['date_challan']);
-            $courier['date_booking']=System_helper::get_time($courier['date_booking']);
             $courier['date_updated']=$time;
             $courier['user_updated']=$user->user_id;
             $this->db->set('revision_count', 'revision_count+1', FALSE);
@@ -418,10 +445,24 @@ class Transfer_wo_delivery extends Root_Controller
         }
         else
         {
+            if(strtotime($courier['date_challan']))
+            {
+                $courier['date_challan']=System_helper::get_time($courier['date_challan']);
+            }
+            else
+            {
+                unset($courier['date_challan']);
+            }
+            if(strtotime($courier['date_booking']))
+            {
+                $courier['date_booking']=System_helper::get_time($courier['date_booking']);
+            }
+            else
+            {
+                unset($courier['date_booking']);
+            }
             $courier['transfer_wo_id']=$id;
             $courier['date_delivery']=System_helper::get_time($courier['date_delivery']);
-            $courier['date_challan']=System_helper::get_time($courier['date_challan']);
-            $courier['date_booking']=System_helper::get_time($courier['date_booking']);
             $courier['revision_count']=1;
             $courier['date_updated']=$time;
             $courier['user_updated']=$user->user_id;
@@ -518,12 +559,6 @@ class Transfer_wo_delivery extends Root_Controller
                                 ');
             $this->db->join($this->config->item('table_login_basic_setup_couriers').' courier','courier.id=wo_courier_details.courier_id','LEFT');
             $this->db->select('courier.name courier_name');
-            $this->db->join($this->config->item('table_login_setup_user_info').' ui_created','ui_created.user_id = transfer_wo.user_created_request','LEFT');
-            $this->db->select('ui_created.name user_created_full_name');
-            $this->db->join($this->config->item('table_login_setup_user_info').' ui_updated','ui_updated.user_id = transfer_wo.user_updated_request','LEFT');
-            $this->db->select('ui_updated.name user_updated_full_name');
-            $this->db->join($this->config->item('table_login_setup_user_info').' ui_updated_approve','ui_updated_approve.user_id = transfer_wo.user_updated_approve','LEFT');
-            $this->db->select('ui_updated_approve.name user_updated_approve_full_name');
             $this->db->where('transfer_wo.status !=',$this->config->item('system_status_delete'));
             $this->db->where('transfer_wo.id',$item_id);
             $this->db->where('outlet_info.revision',1);
@@ -560,6 +595,16 @@ class Transfer_wo_delivery extends Root_Controller
                 $ajax['system_message']='TO already delivered.';
                 $this->json_return($ajax);
             }
+
+            $user_ids=array();
+            $user_ids[$data['item']['user_created_request']]=$data['item']['user_created_request'];
+            $user_ids[$data['item']['user_updated_request']]=$data['item']['user_updated_request'];
+            $user_ids[$data['item']['user_updated_forward']]=$data['item']['user_updated_forward'];
+            $user_ids[$data['item']['user_updated_approve']]=$data['item']['user_updated_approve'];
+            $user_ids[$data['item']['user_updated_approve_forward']]=$data['item']['user_updated_approve_forward'];
+            $user_ids[$data['item']['user_updated_delivery']]=$data['item']['user_updated_delivery'];
+            $user_ids[$data['item']['user_updated_delivery_forward']]=$data['item']['user_updated_delivery_forward'];
+            $data['users']=System_helper::get_users_info($user_ids);
 
             $this->db->from($this->config->item('table_sms_transfer_wo_details').' transfer_wo_details');
             $this->db->select('transfer_wo_details.*');

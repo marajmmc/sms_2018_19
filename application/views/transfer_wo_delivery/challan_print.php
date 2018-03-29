@@ -72,23 +72,14 @@ $num_pages=ceil($total_records/$row_per_page);
                     </div>
                     <div class="row show-grid">
                         <div class="col-xs-6">
-                            <label class="control-label pull-right"><?php //echo $CI->lang->line('LABEL_OUTLET_NAME');?></label>
+                            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_OUTLET_NAME');?>: </label>
                         </div>
                         <div class="col-xs-6">
-                            <?php //echo $item['outlet_name']; ?>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xs-12">
-                    <div class="row show-grid">
-                        <div class="col-xs-3">
-                            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_OUTLET_NAME');?>:</label>
-                        </div>
-                        <div class="col-xs-9">
                             <?php echo $item['outlet_name']; ?>
                         </div>
                     </div>
                 </div>
+
                 <div class="col-xs-12">
                     <div class="row show-grid">
                         <div class="col-xs-3">
@@ -138,7 +129,7 @@ $num_pages=ceil($total_records/$row_per_page);
                         ?>
                         <tr>
                             <td  class="text-right" colspan="5"><label class="control-label"><?php echo $CI->lang->line('LABEL_TOTAL_KG');?></label></td>
-                            <td class="text-right"><label class="control-label"><?php echo number_format($quantity_approve_total,3,'.','');?></label></td>
+                            <td class="text-right"><label class="control-label"><?php echo $quantity_approve_total;?></label></td>
                             <td class="text-right"><label class="control-label"><?php echo number_format($quantity_approve_total_kg,3,'.','');?></label></td>
                         </tr>
                         <?php

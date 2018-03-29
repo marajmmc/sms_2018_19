@@ -63,7 +63,7 @@ class Transfer_wo_receive_approve extends Root_Controller
         if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
         {
             $data['system_preference_items']= $this->get_preference();
-            $data['title']="HQ to Outlet Receive Approve";
+            $data['title']="HQ to Outlet Receive Approve List";
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/list",$data,true));
             if($this->message)
@@ -82,7 +82,6 @@ class Transfer_wo_receive_approve extends Root_Controller
     }
     private function system_get_items()
     {
-        //$user=User_helper::get_user();
         $this->db->from($this->config->item('table_sms_transfer_wo').' transfer_wo');
         $this->db->select('transfer_wo.id, transfer_wo.date_request, transfer_wo.quantity_total_request_kg quantity_total_request, transfer_wo.quantity_total_approve_kg quantity_total_approve');
         $this->db->join($this->config->item('table_login_csetup_cus_info').' outlet_info','outlet_info.customer_id=transfer_wo.outlet_id AND outlet_info.type="'.$this->config->item('system_customer_type_outlet_id').'"','INNER');
