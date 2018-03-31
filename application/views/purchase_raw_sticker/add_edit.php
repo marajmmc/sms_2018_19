@@ -43,7 +43,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_RECEIVE');?><span style="color:#FF0000">*</span></label>
                 </div>
                 <div class="col-sm-4 col-xs-8">
-                    <input type="text" name="item[date_receive]" class="form-control datepicker" value="<?php echo System_helper::display_date($item['date_receive']);?>"/>
+                    <input type="text" name="item[date_receive]" class="form-control datepicker" value="<?php echo System_helper::display_date($item['date_receive']);?>" readonly/>
                 </div>
             </div>
         </div>
@@ -81,7 +81,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_CHALLAN');?><span style="color:#FF0000">*</span></label>
                 </div>
                 <div class="col-sm-4 col-xs-8">
-                    <input type="text" name="item[date_challan]" class="form-control datepicker" value="<?php echo System_helper::display_date($item['date_challan']);?>"/>
+                    <input type="text" name="item[date_challan]" class="form-control datepicker" value="<?php echo System_helper::display_date($item['date_challan']);?>" readonly/>
                 </div>
             </div>
         </div>

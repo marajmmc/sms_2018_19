@@ -45,7 +45,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_TRANSFER');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <input type="text" name="item[date_transfer]" class="form-control datepicker" value="<?php echo System_helper::display_date($item['date_transfer']);?>"/>
+                <input type="text" name="item[date_transfer]" class="form-control datepicker" value="<?php echo System_helper::display_date($item['date_transfer']);?>" readonly/>
             </div>
         </div>
 
