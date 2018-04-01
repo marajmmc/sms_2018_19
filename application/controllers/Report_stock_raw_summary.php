@@ -5,8 +5,6 @@ class Report_stock_raw_summary extends Root_Controller
     public $message;
     public $permissions;
     public $controller_url;
-    public $user_outlets;
-    public $user_outlet_ids;
     public function __construct()
     {
         parent::__construct();
@@ -76,7 +74,7 @@ class Report_stock_raw_summary extends Root_Controller
             }
             $data['options']=$reports;
             $data['system_preference_items']= $this->get_preference();
-            $data['title']="Outlet Current Stock Report";
+            $data['title']="Raw Current Stock Report";
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_report_container","html"=>$this->load->view($this->controller_url."/list",$data,true));
             if($this->message)
