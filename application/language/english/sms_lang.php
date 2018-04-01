@@ -271,6 +271,7 @@ $lang['LABEL_GRAND_TOTAL_KG']='Grand Total (Kg)';
 
 
 $lang['LABEL_CURRENT_STOCK'] = 'Current Stock (Pkt/Kg)';
+$lang['LABEL_CURRENT_STOCK_PCS_KG'] = 'Current Stock (Pcs/Kg)';
 $lang['LABEL_CURRENT_STOCK_KG']='Current Stock (KG)';
 $lang['LABEL_CURRENT_STOCK_PKT'] = 'Current Stock (pkt))';
 $lang['LABEL_STARTING_STOCK'] = 'Starting Stock';
