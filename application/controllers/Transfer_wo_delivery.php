@@ -219,7 +219,7 @@ class Transfer_wo_delivery extends Root_Controller
             {
                 $data['courier']['date_delivery']='';
                 $data['courier']['date_challan']='';
-                $data['courier']['challan_no']='';
+                $data['courier']['challan_no']=Barcode_helper::get_barcode_transfer_warehouse_to_outlet($data['item']['id']);
                 $data['courier']['courier_id']='';
                 $data['courier']['courier_tracing_no']='';
                 $data['courier']['place_booking_source']='';
@@ -662,7 +662,7 @@ class Transfer_wo_delivery extends Root_Controller
             $this->db->from($this->config->item('table_sms_transfer_wo').' transfer_wo');
             $this->db->select('transfer_wo.*');
             $this->db->join($this->config->item('table_login_csetup_cus_info').' outlet_info','outlet_info.customer_id=transfer_wo.outlet_id AND outlet_info.type="'.$this->config->item('system_customer_type_outlet_id').'"','INNER');
-            $this->db->select('outlet_info.customer_id outlet_id, outlet_info.name outlet_name, outlet_info.customer_code outlet_code');
+            $this->db->select('outlet_info.customer_id outlet_id, outlet_info.name outlet_name, outlet_info.customer_code outlet_code, outlet_info.address outlet_address, outlet_info.phone outlet_phone');
             $this->db->join($this->config->item('table_login_setup_location_districts').' districts','districts.id = outlet_info.district_id','INNER');
             $this->db->select('districts.id district_id, districts.name district_name');
             $this->db->join($this->config->item('table_login_setup_location_territories').' territories','territories.id = districts.territory_id','INNER');
@@ -803,12 +803,6 @@ class Transfer_wo_delivery extends Root_Controller
                                 ');
             $this->db->join($this->config->item('table_login_basic_setup_couriers').' courier','courier.id=wo_courier_details.courier_id','LEFT');
             $this->db->select('courier.name courier_name');
-            $this->db->join($this->config->item('table_login_setup_user_info').' ui_created','ui_created.user_id = transfer_wo.user_created_request','LEFT');
-            $this->db->select('ui_created.name user_created_full_name');
-            $this->db->join($this->config->item('table_login_setup_user_info').' ui_updated','ui_updated.user_id = transfer_wo.user_updated_request','LEFT');
-            $this->db->select('ui_updated.name user_updated_full_name');
-            $this->db->join($this->config->item('table_login_setup_user_info').' ui_updated_approve','ui_updated_approve.user_id = transfer_wo.user_updated_approve','LEFT');
-            $this->db->select('ui_updated_approve.name user_updated_approve_full_name');
             $this->db->where('transfer_wo.status !=',$this->config->item('system_status_delete'));
             $this->db->where('transfer_wo.id',$item_id);
             $this->db->where('outlet_info.revision',1);
@@ -845,6 +839,16 @@ class Transfer_wo_delivery extends Root_Controller
                 $ajax['system_message']='TO already delivered.';
                 $this->json_return($ajax);
             }
+
+            $user_ids=array();
+            $user_ids[$data['item']['user_created_request']]=$data['item']['user_created_request'];
+            $user_ids[$data['item']['user_updated_request']]=$data['item']['user_updated_request'];
+            $user_ids[$data['item']['user_updated_forward']]=$data['item']['user_updated_forward'];
+            $user_ids[$data['item']['user_updated_approve']]=$data['item']['user_updated_approve'];
+            $user_ids[$data['item']['user_updated_approve_forward']]=$data['item']['user_updated_approve_forward'];
+            $user_ids[$data['item']['user_updated_delivery']]=$data['item']['user_updated_delivery'];
+            $user_ids[$data['item']['user_updated_delivery_forward']]=$data['item']['user_updated_delivery_forward'];
+            $data['users']=System_helper::get_users_info($user_ids);
 
             $this->db->from($this->config->item('table_sms_transfer_wo_details').' transfer_wo_details');
             $this->db->select('transfer_wo_details.*');
@@ -904,11 +908,23 @@ class Transfer_wo_delivery extends Root_Controller
                 $ajax['system_message']='Delivery is required.';
                 $this->json_return($ajax);
             }
-            //$data['item']=Query_helper::get_info($this->config->item('table_sms_transfer_wo'),'*',array('id ='.$id, 'status != "'.$this->config->item('system_status_delete').'"'),1);
             $this->db->from($this->config->item('table_sms_transfer_wo').' transfer_wo');
-            $this->db->select('transfer_wo.id, transfer_wo.date_request, transfer_wo.quantity_total_request_kg, transfer_wo.status_request, transfer_wo.remarks_request, transfer_wo.status_approve, transfer_wo.status_delivery');
+            $this->db->select(
+                '
+                transfer_wo.id,
+                transfer_wo.date_request,
+                transfer_wo.quantity_total_request_kg,
+                transfer_wo.status_request,
+                transfer_wo.remarks_request,
+                transfer_wo.status_approve,
+                transfer_wo.status_delivery
+                ');
             $this->db->join($this->config->item('table_login_csetup_cus_info').' outlet_info','outlet_info.customer_id=transfer_wo.outlet_id AND outlet_info.type="'.$this->config->item('system_customer_type_outlet_id').'"','INNER');
-            $this->db->select('outlet_info.customer_id outlet_id, outlet_info.name outlet_name, outlet_info.customer_code outlet_code');
+            $this->db->select(
+                'outlet_info.customer_id outlet_id,
+                outlet_info.name outlet_name,
+                outlet_info.customer_code outlet_code
+                ');
             $this->db->join($this->config->item('table_login_setup_location_districts').' districts','districts.id = outlet_info.district_id','INNER');
             $this->db->select('districts.id district_id, districts.name district_name');
             $this->db->join($this->config->item('table_login_setup_location_territories').' territories','territories.id = districts.territory_id','INNER');
@@ -924,7 +940,7 @@ class Transfer_wo_delivery extends Root_Controller
             $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
             {
-                System_helper::invalid_try('Update Non Exists',$id);
+                System_helper::invalid_try('save_delivery',$id,'Update Non Exists');
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid Try.';
                 $this->json_return($ajax);
@@ -932,13 +948,13 @@ class Transfer_wo_delivery extends Root_Controller
             if($data['item']['status_request']!=$this->config->item('system_status_forwarded'))
             {
                 $ajax['status']=false;
-                $ajax['system_message']='TO is not request forwarded.';
+                $ajax['system_message']='TO is not forwarded (request).';
                 $this->json_return($ajax);
             }
             if($data['item']['status_approve']!=$this->config->item('system_status_approved'))
             {
                 $ajax['status']=false;
-                $ajax['system_message']='TO not approved & forwarded.';
+                $ajax['system_message']='TO is not approved & forwarded.';
                 $this->json_return($ajax);
             }
             if($data['item']['status_approve']==$this->config->item('system_status_rejected'))
@@ -961,18 +977,18 @@ class Transfer_wo_delivery extends Root_Controller
             $this->json_return($ajax);
         }
         /*date validation*/
-        if(!isset($courier['date_delivery']) || !strtotime($courier['date_delivery']))
+        /*if(!isset($courier['date_delivery']) || !strtotime($courier['date_delivery']))
         {
             $ajax['status']=false;
             $ajax['system_message']=$this->lang->line('LABEL_DATE_DELIVERY'). ' field is required.';
             $this->json_return($ajax);
-        }
-        if(!(System_helper::get_time($courier['date_delivery'])>=System_helper::get_time(System_helper::display_date($data['item']['date_approve']))))
+        }*/
+        /*if(!(System_helper::get_time($courier['date_delivery'])>=System_helper::get_time(System_helper::display_date($data['item']['date_approve']))))
         {
             $ajax['status']=false;
             $ajax['system_message']='Delivery date should be is greater than approval date.';
             $this->json_return($ajax);
-        }
+        }*/
         $this->db->from($this->config->item('table_sms_transfer_wo_details').' transfer_wo_details');
         $this->db->select('transfer_wo_details.*');
         $this->db->join($this->config->item('table_login_setup_classification_varieties').' v','v.id=transfer_wo_details.variety_id','INNER');
@@ -1021,7 +1037,7 @@ class Transfer_wo_delivery extends Root_Controller
             if($item['quantity_approve']>$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]['current_stock'])
             {
                 $ajax['status']=false;
-                $ajax['system_message']='Current Stock Exist :: ( Variety ID: '.$item['variety_id'].' - Pack Size ID: '.$item['pack_size_id'].' - Warehouse ID: '.$item['warehouse_id'].')';
+                $ajax['system_message']='Current Stock Exceed :: ( Variety ID: '.$item['variety_id'].' - Pack Size ID: '.$item['pack_size_id'].' - Warehouse ID: '.$item['warehouse_id'].')';
                 $this->json_return($ajax);
             }
         }
@@ -1032,7 +1048,7 @@ class Transfer_wo_delivery extends Root_Controller
         if($quantity_total_approve_kg>$quantity_to_maximum_kg)
         {
             $ajax['status']=false;
-            $ajax['system_message']='Transfer order maximum total quantity '.$quantity_to_maximum_kg.' kg. you have to already exist quantity ('.($quantity_total_approve_kg-$quantity_to_maximum_kg).' kg).';
+            $ajax['system_message']='You have to already exceed quantity is ('.($quantity_total_approve_kg-$quantity_to_maximum_kg).' kg). Transfer order maximum total quantity is '.$quantity_to_maximum_kg.' kg.';
             $this->json_return($ajax);
         }
 

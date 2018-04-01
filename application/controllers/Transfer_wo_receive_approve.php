@@ -151,6 +151,14 @@ class Transfer_wo_receive_approve extends Root_Controller
                 $item_id=$this->input->post('id');
             }
 
+
+            /// i think no need this query because system delivery receive always will to be equal to 'no'. So just left join
+            $result=Query_helper::get_info($this->config->item('table_sms_transfer_wo'),'*',array('id ='.$item_id,'status_system_delivery_receive ="'.$this->config->item('system_status_no').'"'),1);
+            if($result)
+            {
+                $this->db->join($this->config->item('table_pos_setup_user_info').' pos_setup_user_info','pos_setup_user_info.user_id=transfer_wo.user_updated_receive_forward','LEFT');
+                $this->db->select('pos_setup_user_info.name full_name_receive_forward');
+            }
             $this->db->from($this->config->item('table_sms_transfer_wo').' transfer_wo');
             $this->db->select('transfer_wo.*');
             $this->db->join($this->config->item('table_login_csetup_cus_info').' outlet_info','outlet_info.customer_id=transfer_wo.outlet_id AND outlet_info.type="'.$this->config->item('system_customer_type_outlet_id').'"','INNER');
@@ -176,15 +184,10 @@ class Transfer_wo_receive_approve extends Root_Controller
                                 ');
             $this->db->join($this->config->item('table_login_basic_setup_couriers').' courier','courier.id=wo_courier_details.courier_id','LEFT');
             $this->db->select('courier.name courier_name');
-            $this->db->join($this->config->item('table_login_setup_user_info').' ui_created','ui_created.user_id = transfer_wo.user_created_request','LEFT');
-            $this->db->select('ui_created.name user_created_full_name');
-            $this->db->join($this->config->item('table_login_setup_user_info').' ui_updated','ui_updated.user_id = transfer_wo.user_updated_request','LEFT');
-            $this->db->select('ui_updated.name user_updated_full_name');
-            $this->db->join($this->config->item('table_login_setup_user_info').' ui_updated_approve','ui_updated_approve.user_id = transfer_wo.user_updated_approve','LEFT');
-            $this->db->select('ui_updated_approve.name user_updated_approve_full_name');
             $this->db->where('transfer_wo.status !=',$this->config->item('system_status_delete'));
             $this->db->where('transfer_wo.id',$item_id);
             $this->db->where('outlet_info.revision',1);
+
             //$this->db->where('transfer_wo.outlet_id IN (select user_outlet.customer_id from '.$this->config->item('table_pos_setup_user_outlet').' user_outlet'.' where user_outlet.user_id='.$user->user_id.' AND revision=1)');
             $this->db->order_by('transfer_wo.id','DESC');
             if($this->locations['division_id']>0)
@@ -236,6 +239,16 @@ class Transfer_wo_receive_approve extends Root_Controller
                 $this->json_return($ajax);
             }
 
+            $user_ids=array();
+            $user_ids[$data['item']['user_created_request']]=$data['item']['user_created_request'];
+            $user_ids[$data['item']['user_updated_request']]=$data['item']['user_updated_request'];
+            $user_ids[$data['item']['user_updated_forward']]=$data['item']['user_updated_forward'];
+            $user_ids[$data['item']['user_updated_approve']]=$data['item']['user_updated_approve'];
+            $user_ids[$data['item']['user_updated_approve_forward']]=$data['item']['user_updated_approve_forward'];
+            $user_ids[$data['item']['user_updated_delivery']]=$data['item']['user_updated_delivery'];
+            $user_ids[$data['item']['user_updated_delivery_forward']]=$data['item']['user_updated_delivery_forward'];
+            $data['users']=System_helper::get_users_info($user_ids);
+
             $this->db->from($this->config->item('table_sms_transfer_wo_details').' transfer_wo_details');
             $this->db->select('transfer_wo_details.*');
             $this->db->join($this->config->item('table_login_setup_classification_varieties').' v','v.id=transfer_wo_details.variety_id','INNER');
@@ -278,7 +291,6 @@ class Transfer_wo_receive_approve extends Root_Controller
         $user = User_helper::get_user();
         $time=time();
         $item_head=$this->input->post('item');
-        //$items=$this->input->post('items');
         if($id>0)
         {
             if(!(isset($this->permissions['action2']) && ($this->permissions['action2']==1)))
@@ -321,7 +333,6 @@ class Transfer_wo_receive_approve extends Root_Controller
             $this->db->where('transfer_wo.status !=',$this->config->item('system_status_delete'));
             $this->db->where('transfer_wo.id',$id);
             $this->db->where('outlet_info.revision',1);
-            //$this->db->where('transfer_wo.outlet_id IN (select user_outlet.customer_id from '.$this->config->item('table_pos_setup_user_outlet').' user_outlet'.' where user_outlet.user_id='.$user->user_id.' AND revision=1)');
             $this->db->order_by('transfer_wo.id','DESC');
             if($this->locations['division_id']>0)
             {
@@ -390,8 +401,6 @@ class Transfer_wo_receive_approve extends Root_Controller
         $this->db->where('transfer_wo_details.transfer_wo_id',$id);
         $this->db->where('transfer_wo_details.status',$this->config->item('system_status_active'));
         $result['items']=$this->db->get()->result_array();
-
-        //$quantity_total_receive_kg=0;
         $old_items=array();
         $variety_ids=array();
         foreach($result['items'] as $item)
@@ -439,7 +448,7 @@ class Transfer_wo_receive_approve extends Root_Controller
 
         $data=array();
         $data['transfer_wo_id']=$id;
-        $data['solve']=$this->config->item('system_status_no');
+        $data['status_solve']=$this->config->item('system_status_no');
         $data['date_created'] = $time;
         $data['user_created'] = $user->user_id;
         Query_helper::add($this->config->item('table_sms_transfer_wo_receive_solves'),$data);

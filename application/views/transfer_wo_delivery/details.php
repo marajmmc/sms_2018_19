@@ -268,11 +268,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         </td>
                         <td>
                             <label><?php echo $value['variety_name']; ?></label>
-                            <input type="hidden" name="items[<?php echo $index+1;?>][variety_id]" id="variety_id_<?php echo $index+1;?>" value="<?php echo $value['variety_id']; ?>" data-current-id="<?php echo $index+1;?>" />
                         </td>
                         <td class="text-right">
                             <label><?php echo $value['pack_size']; ?></label>
-                            <input type="hidden" name="items[<?php echo $index+1;?>][pack_size_id]" id="pack_size_id_<?php echo $index+1;?>" value="<?php echo $value['pack_size_id']; ?>" class="pack_size_id" data-current-id="<?php echo $index+1;?>" data-pack-size-name="<?php echo $value['pack_size']; ?>">
                         </td>
                         <td>
                             <label><?php echo $value['warehouse_name']; ?></label>

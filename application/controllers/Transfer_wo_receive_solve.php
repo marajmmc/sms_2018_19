@@ -70,7 +70,7 @@ class Transfer_wo_receive_solve extends Root_Controller
         $this->db->from($this->config->item('table_sms_transfer_wo_receive_solves').' transfer_wo_receive_solves');
         $this->db->select('transfer_wo_receive_solves.*');
         $this->db->join($this->config->item('table_sms_transfer_wo').' transfer_wo','transfer_wo.id=transfer_wo_receive_solves.transfer_wo_id','INNER');
-        $this->db->select('transfer_wo.id, transfer_wo.date_request, transfer_wo.quantity_total_request_kg quantity_total_request, transfer_wo.quantity_total_approve_kg quantity_total_approve');
+        $this->db->select('transfer_wo.id transfer_wo_id, transfer_wo.date_request, transfer_wo.quantity_total_request_kg quantity_total_request, transfer_wo.quantity_total_approve_kg quantity_total_approve');
         $this->db->join($this->config->item('table_login_csetup_cus_info').' outlet_info','outlet_info.customer_id=transfer_wo.outlet_id AND outlet_info.type="'.$this->config->item('system_customer_type_outlet_id').'"','INNER');
         $this->db->select('outlet_info.name outlet_name, outlet_info.customer_code outlet_code');
         $this->db->join($this->config->item('table_login_setup_location_districts').' districts','districts.id = outlet_info.district_id','INNER');
@@ -91,7 +91,7 @@ class Transfer_wo_receive_solve extends Root_Controller
         {
             $item=array();
             $item['id']=$result['id'];
-            $item['barcode']=Barcode_helper::get_barcode_transfer_warehouse_to_outlet($result['id']);
+            $item['barcode']=Barcode_helper::get_barcode_transfer_warehouse_to_outlet($result['transfer_wo_id']);
             $item['outlet_name']=$result['outlet_name'];
             $item['date_request']=System_helper::display_date($result['date_request']);
             $item['outlet_code']=$result['outlet_code'];
@@ -120,7 +120,7 @@ class Transfer_wo_receive_solve extends Root_Controller
             $this->db->from($this->config->item('table_sms_transfer_wo_receive_solves').' transfer_wo_receive_solves');
             $this->db->select('transfer_wo_receive_solves.*');
             $this->db->join($this->config->item('table_sms_transfer_wo').' transfer_wo','transfer_wo.id=transfer_wo_receive_solves.transfer_wo_id','INNER');
-            $this->db->select('transfer_wo.*');
+            $this->db->select('transfer_wo.*, transfer_wo.id transfer_wo_id');
             $this->db->join($this->config->item('table_login_csetup_cus_info').' outlet_info','outlet_info.customer_id=transfer_wo.outlet_id AND outlet_info.type="'.$this->config->item('system_customer_type_outlet_id').'"','INNER');
             $this->db->select('outlet_info.customer_id outlet_id, outlet_info.name outlet_name, outlet_info.customer_code outlet_code');
             $this->db->join($this->config->item('table_login_setup_location_districts').' districts','districts.id = outlet_info.district_id','INNER');
@@ -145,7 +145,7 @@ class Transfer_wo_receive_solve extends Root_Controller
             $this->db->join($this->config->item('table_login_basic_setup_couriers').' courier','courier.id=wo_courier_details.courier_id','LEFT');
             $this->db->select('courier.name courier_name');
             $this->db->where('transfer_wo.status !=',$this->config->item('system_status_delete'));
-            $this->db->where('transfer_wo.id',$item_id);
+            $this->db->where('transfer_wo_receive_solves.id',$item_id);
             $this->db->where('outlet_info.revision',1);
             $this->db->order_by('transfer_wo.id','DESC');
             $data['item']=$this->db->get()->row_array();
@@ -176,16 +176,16 @@ class Transfer_wo_receive_solve extends Root_Controller
             $this->db->select('crop_type.id crop_type_id, crop_type.name crop_type_name');
             $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id=crop_type.crop_id','INNER');
             $this->db->select('crop.id crop_id, crop.name crop_name');
-            $this->db->where('transfer_wo_details.transfer_wo_id',$item_id);
+            $this->db->where('transfer_wo_details.transfer_wo_id',$data['item']['transfer_wo_id']);
             $this->db->where('transfer_wo_details.status',$this->config->item('system_status_active'));
             $data['items']=$this->db->get()->result_array();
 
-            $variety_ids=array();
+            /*$variety_ids=array();
             foreach($data['items'] as $row)
             {
                 $variety_ids[$row['variety_id']]=$row['variety_id'];
             }
-            $data['stocks']=Stock_helper::get_variety_stock($data['item']['outlet_id'],$variety_ids);
+            $data['stocks']=Stock_helper::get_variety_stock($data['item']['outlet_id'],$variety_ids);*/
 
             $data['title']="HQ to Outlet Receive Approve Solve:: ". Barcode_helper::get_barcode_transfer_warehouse_to_outlet($data['item']['id']);
             $ajax['status']=true;
@@ -194,7 +194,7 @@ class Transfer_wo_receive_solve extends Root_Controller
             {
                 $ajax['system_message']=$this->message;
             }
-            $ajax['system_page_url']=site_url($this->controller_url.'/index/edit/'.$item_id);
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/edit/'.$data['item']['transfer_wo_id']);
             $this->json_return($ajax);
         }
         else
