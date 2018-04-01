@@ -333,8 +333,15 @@ jQuery(document).ready(function()
         $("#warehouse_id_source").val('');
         if(crop_id>0)
         {
-            $('#crop_type_id_container').show();
-            $('#crop_type_id').html(get_dropdown_with_select(system_types[crop_id]));
+            if(system_types[crop_id]!==undefined)
+            {
+                $('#crop_type_id_container').show();
+                $('#crop_type_id').html(get_dropdown_with_select(system_types[crop_id]));
+            }
+            else
+            {
+                $('#crop_type_id_container').hide();
+            }
         }
     });
 
@@ -380,8 +387,15 @@ jQuery(document).ready(function()
         var crop_type_id=$('#crop_type_id').val();
         if(crop_type_id>0)
         {
-            $('#variety_id_container').show();
-            $('#variety_id').html(get_dropdown_with_select(system_varieties[crop_type_id]));
+            if(system_varieties[crop_type_id]!==undefined)
+            {
+                $('#variety_id_container').show();
+                $('#variety_id').html(get_dropdown_with_select(system_varieties[crop_type_id]));
+            }
+            else
+            {
+                $('#variety_id_container').hide();
+            }
         }
     });
 

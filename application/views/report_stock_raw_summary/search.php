@@ -124,9 +124,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             $('#variety_id_container').hide();
             if(crop_id>0)
             {
-                $('#crop_type_id_container').show();
                 if(system_types[crop_id]!==undefined)
                 {
+                    $('#crop_type_id_container').show();
                     $('#crop_type_id').html(get_dropdown_with_select(system_types[crop_id]));
                 }
                 else
@@ -143,10 +143,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             $('#variety_id_container').hide();
             if(crop_type_id>0)
             {
-                $('#variety_id_container').show();
                 if(system_varieties[crop_type_id]!==undefined)
                 {
-
+                    $('#variety_id_container').show();
                     $('#variety_id').html(get_dropdown_with_select(system_varieties[crop_type_id]));
                 }
                 else
