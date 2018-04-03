@@ -46,7 +46,7 @@ $num_pages=ceil($total_records/$row_per_page);
                 <div class="col-xs-6">
                     <div class="row show-grid">
                         <div class="col-xs-6">
-                            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ID');?>:</label>
+                            <label class="control-label pull-right">Challan No:</label>
                         </div>
                         <div class="col-xs-6">
                             <?php echo Barcode_helper::get_barcode_transfer_warehouse_to_outlet($item['id']);?>
@@ -72,19 +72,9 @@ $num_pages=ceil($total_records/$row_per_page);
                     </div>
                     <div class="row show-grid">
                         <div class="col-xs-6">
-                            <label class="control-label pull-right">Challan No: </label>
+                            <label class="control-label pull-right">Courier Name: </label>
                         </div>
                         <div class="col-xs-6">
-                            <?php echo Barcode_helper::get_barcode_transfer_warehouse_to_outlet($item['id']); ?>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xs-12">
-                    <div class="row show-grid">
-                        <div class="col-xs-3">
-                            <label class="control-label pull-right">Courier Name:</label>
-                        </div>
-                        <div class="col-xs-9">
                             <?php echo $item['courier_name']; ?>
                         </div>
                     </div>
@@ -97,9 +87,9 @@ $num_pages=ceil($total_records/$row_per_page);
                         <div class="col-xs-9">
                             <?php echo $item['outlet_name']; ?><br/>
                             <?php
-                            if($item['outlet_address'])
+                            if($item['place_destination'])
                             {
-                                echo $item['outlet_address'].'<br />';
+                                echo $item['place_destination'].'<br />';
                             }
                             ?>
                             <?php echo $item['outlet_phone']; ?>
@@ -118,8 +108,8 @@ $num_pages=ceil($total_records/$row_per_page);
                     <th colspan="2" class="text-center"><?php echo $CI->lang->line('LABEL_QUANTITY'); ?></th>
                 </tr>
                 <tr>
-                    <th class="text-right"><?php echo $CI->lang->line('LABEL_PACK');?></th>
-                    <th class="text-right"><?php echo $CI->lang->line('LABEL_KG');?></th>
+                    <th class="text-right" style="width: 80px;"><?php echo $CI->lang->line('LABEL_PACK');?></th>
+                    <th class="text-right" style="width: 80px;"><?php echo $CI->lang->line('LABEL_KG');?></th>
                 </tr>
                 </thead>
                 <tbody>

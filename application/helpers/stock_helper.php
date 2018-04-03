@@ -45,7 +45,7 @@ class Stock_helper
         $CI->db->select('SUM(stock_summary_variety.current_stock) current_stock, stock_summary_variety.variety_id, stock_summary_variety.pack_size_id');
         $CI->db->join($CI->config->item('table_login_setup_classification_pack_size').' pack','pack.id=stock_summary_variety.pack_size_id','LEFT');
         $CI->db->select('pack.name pack_size');
-        $CI->db->where('stock_summary_variety.current_stock > 0');
+        //$CI->db->where('stock_summary_variety.current_stock > 0');
         $CI->db->where('stock_summary_variety.pack_size_id > 0');
         $CI->db->group_by('stock_summary_variety.variety_id, stock_summary_variety.pack_size_id');
         $results=$CI->db->get()->result_array();
@@ -112,5 +112,22 @@ class Stock_helper
         return $two_variety_info;
     }
 
+    public static function get_variety_stock_outlet($outlet_id, $variety_ids=array())
+    {
+        $CI =& get_instance();
+        $CI->db->from($CI->config->item('table_pos_stock_summary_variety').' pos_stock_summary_variety');
+        $CI->db->where('pos_stock_summary_variety.outlet_id',$outlet_id);
+        if(sizeof($variety_ids)>0)
+        {
+            $CI->db->where_in('variety_id',$variety_ids);
+        }
+        $results=$CI->db->get()->result_array();
+        $stocks=array();
+        foreach($results as $result)
+        {
+            $stocks[$result['variety_id']][$result['pack_size_id']]=$result;
+        }
+        return $stocks;
+    }
 
 }

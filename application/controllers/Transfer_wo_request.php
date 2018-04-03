@@ -337,7 +337,6 @@ class Transfer_wo_request extends Root_Controller
             $this->db->where('transfer_wo.id',$item_id);
             $this->db->where('outlet_info.revision',1);
             $this->db->order_by('transfer_wo.id','DESC');
-            $data['item']=$this->db->get()->row_array();
             if($this->locations['division_id']>0)
             {
                 $this->db->where('divisions.id',$this->locations['division_id']);
@@ -354,6 +353,7 @@ class Transfer_wo_request extends Root_Controller
                     }
                 }
             }
+            $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
             {
                 System_helper::invalid_try('Edit Non Exists',$item_id);
@@ -592,6 +592,7 @@ class Transfer_wo_request extends Root_Controller
                     $data['pack_size']=$pack_sizes[$item['pack_size_id']]['text'];
                     $data['quantity_request']=$item['quantity_request'];
                     $data['quantity_approve']=$data['quantity_request'];
+                    $data['quantity_receive']=$data['quantity_request'];
                     $data['status']=$this->config->item('system_status_active');
                     Query_helper::update($this->config->item('table_sms_transfer_wo_details'),$data, array('transfer_wo_id='.$id, 'variety_id ='.$item['variety_id'], 'pack_size_id ='.$item['pack_size_id']), false);
                 }
@@ -604,6 +605,7 @@ class Transfer_wo_request extends Root_Controller
                     $data['pack_size']=$pack_sizes[$item['pack_size_id']]['text'];
                     $data['quantity_request']=$item['quantity_request'];
                     $data['quantity_approve']=$data['quantity_request'];
+                    $data['quantity_receive']=$data['quantity_request'];
                     $data['status']=$this->config->item('system_status_active');
                     Query_helper::add($this->config->item('table_sms_transfer_wo_details'),$data, false);
                 }

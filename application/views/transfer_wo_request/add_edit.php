@@ -246,7 +246,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <table class="table table-bordered">
                     <thead>
                     <tr>
-                        <th colspan="21" class="text-center text-danger danger">Order Items (Maximum Order Quantity in <?php echo $quantity_to_maximum_kg;?>kg)</th>
+                        <th colspan="21" class="text-center text-danger danger">Order Items (Maximum Order Quantity <?php echo $quantity_to_maximum_kg;?>kg)</th>
                     </tr>
                     <tr>
                         <th rowspan="2" style="width: 200px;"><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></th>
@@ -703,14 +703,11 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             $('#variety_id_'+current_id).hide();
             $('#pack_size_id_'+current_id).hide();
             $('#quantity_request_'+current_id).hide();
-            if(crop_id>0)
+
+            if(crop_id>0 && system_types[crop_id]!=undefined)
             {
                 $('#crop_type_id_'+current_id).show();
                 $('#crop_type_id_'+current_id).html(get_dropdown_with_select(system_types[crop_id]));
-            }
-            else
-            {
-                $('#crop_type_id_'+current_id).hide();
             }
             calculate_total();
         });
@@ -731,16 +728,13 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             $("#stock_available_"+current_id).html('');
 
             var crop_type_id=$('#crop_type_id_'+current_id).val();
+            $('#variety_id_'+current_id).hide();
             $('#pack_size_id_'+current_id).hide();
             $('#quantity_request_'+current_id).hide();
-            if(crop_type_id>0)
+            if(crop_type_id>0 && system_varieties[crop_type_id]!=undefined)
             {
                 $('#variety_id_'+current_id).show();
                 $('#variety_id_'+current_id).html(get_dropdown_with_select(system_varieties[crop_type_id]));
-            }
-            else
-            {
-                $('#variety_id_'+current_id).hide();
             }
             calculate_total();
         });

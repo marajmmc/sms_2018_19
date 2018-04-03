@@ -662,7 +662,13 @@ class Transfer_wo_delivery extends Root_Controller
             $this->db->from($this->config->item('table_sms_transfer_wo').' transfer_wo');
             $this->db->select('transfer_wo.*');
             $this->db->join($this->config->item('table_login_csetup_cus_info').' outlet_info','outlet_info.customer_id=transfer_wo.outlet_id AND outlet_info.type="'.$this->config->item('system_customer_type_outlet_id').'"','INNER');
-            $this->db->select('outlet_info.customer_id outlet_id, outlet_info.name outlet_name, outlet_info.customer_code outlet_code, outlet_info.address outlet_address, outlet_info.phone outlet_phone');
+            $this->db->select(
+                '
+                outlet_info.customer_id outlet_id,
+                outlet_info.name outlet_name, outlet_info.customer_code outlet_code,
+                outlet_info.address outlet_address,
+                outlet_info.phone outlet_phone
+                ');
             $this->db->join($this->config->item('table_login_setup_location_districts').' districts','districts.id = outlet_info.district_id','INNER');
             $this->db->select('districts.id district_id, districts.name district_name');
             $this->db->join($this->config->item('table_login_setup_location_territories').' territories','territories.id = districts.territory_id','INNER');
@@ -697,12 +703,12 @@ class Transfer_wo_delivery extends Root_Controller
             $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
             {
-                System_helper::invalid_try('Edit Non Exists',$item_id);
+                System_helper::invalid_try('challan_print',$item_id,'Print View Non Exists');
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid Try.';
                 $this->json_return($ajax);
             }
-            if($data['item']['status_request']!=$this->config->item('system_status_forwarded'))
+            /*if($data['item']['status_request']!=$this->config->item('system_status_forwarded'))
             {
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid Try. TO request not forwarded.';
@@ -719,7 +725,7 @@ class Transfer_wo_delivery extends Root_Controller
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid Try. TO already rejected.';
                 $this->json_return($ajax);
-            }
+            }*/
 
             $this->db->from($this->config->item('table_sms_transfer_wo_details').' transfer_wo_details');
             $this->db->select('transfer_wo_details.*');
@@ -810,7 +816,7 @@ class Transfer_wo_delivery extends Root_Controller
             $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
             {
-                System_helper::invalid_try('Edit Non Exists',$item_id);
+                System_helper::invalid_try('delivery',$item_id,'Edit Delivery Non Exists');
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid Try.';
                 $this->json_return($ajax);

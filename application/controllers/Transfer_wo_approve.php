@@ -391,6 +391,13 @@ class Transfer_wo_approve extends Root_Controller
             $pack_sizes[$result['value']]['text']=$result['text'];
         }
 
+        $results=Query_helper::get_info($this->config->item('table_sms_transfer_wo_details'),array('*'),array('transfer_wo_id ='.$id));
+        $old_items=array();
+        foreach($results as $result)
+        {
+            $old_items[$result['variety_id']][$result['pack_size_id']]=$result;
+        }
+
         $quantity_total_approve_kg=0;
         foreach($items as $item)
         {
@@ -413,7 +420,7 @@ class Transfer_wo_approve extends Root_Controller
             {
                 $stock_available_excess=($quantity_approve_kg-$two_variety_info[$item['variety_id']][$item['pack_size_id']]['stock_available']);
                 $ajax['status']=false;
-                $ajax['system_message']='Available quantity already exceed. ( Exceed quantity is: '.$stock_available_excess.' kg.)';
+                $ajax['system_message']='Available quantity already exceed. ( Exceed quantity is: '.number_format($stock_available_excess,3,'.','').' kg.)';
                 $this->json_return($ajax);
             }
         }
@@ -428,12 +435,7 @@ class Transfer_wo_approve extends Root_Controller
             $this->json_return($ajax);
         }
 
-        $results=Query_helper::get_info($this->config->item('table_sms_transfer_wo_details'),array('*'),array('transfer_wo_id ='.$id));
-        $old_items=array();
-        foreach($results as $result)
-        {
-            $old_items[$result['variety_id']][$result['pack_size_id']]=$result;
-        }
+
 
         $this->db->trans_start();  //DB Transaction Handle START
 
@@ -765,7 +767,15 @@ class Transfer_wo_approve extends Root_Controller
             }
 
             $this->db->from($this->config->item('table_sms_transfer_wo').' transfer_wo');
-            $this->db->select('transfer_wo.id, transfer_wo.date_request, transfer_wo.quantity_total_request_kg, transfer_wo.status_request, transfer_wo.remarks_request, transfer_wo.status_approve');
+            $this->db->select(
+                '
+                transfer_wo.id,
+                transfer_wo.date_request,
+                transfer_wo.quantity_total_request_kg,
+                transfer_wo.status_request,
+                transfer_wo.remarks_request,
+                transfer_wo.status_approve
+                ');
             $this->db->join($this->config->item('table_login_csetup_cus_info').' outlet_info','outlet_info.customer_id=transfer_wo.outlet_id AND outlet_info.type="'.$this->config->item('system_customer_type_outlet_id').'"','INNER');
             $this->db->select('outlet_info.customer_id outlet_id, outlet_info.name outlet_name, outlet_info.customer_code outlet_code');
             $this->db->join($this->config->item('table_login_setup_location_districts').' districts','districts.id = outlet_info.district_id','INNER');
@@ -836,14 +846,6 @@ class Transfer_wo_approve extends Root_Controller
             $ajax['status']=false;
             $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
             $this->json_return($ajax);
-        }
-
-        $results=Query_helper::get_info($this->config->item('table_login_setup_classification_pack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('id ASC'));
-        $pack_sizes=array();
-        foreach($results as $result)
-        {
-            $pack_sizes[$result['value']]['value']=$result['value'];
-            $pack_sizes[$result['value']]['text']=$result['text'];
         }
 
         $this->db->from($this->config->item('table_sms_transfer_wo_details').' transfer_wo_details');

@@ -259,6 +259,7 @@ $lang['LABEL_QUANTITY_APPROVE'] = 'Approve Quantity';
 $lang['LABEL_QUANTITY_TOTAL_REQUEST'] = 'Total Request Quantity (Kg)';
 $lang['LABEL_QUANTITY_TOTAL_RECEIVE'] = 'Total Receive Quantity (Kg)';
 $lang['LABEL_QUANTITY_TOTAL_APPROVE'] = 'Total Approve Quantity (Kg)';
+$lang['LABEL_QUANTITY_TOTAL_DIFFERENCE'] = 'Total Difference Quantity (Kg)';
 
 $lang['LABEL_QUANTITY_MIN'] = 'Min Qty';
 $lang['LABEL_QUANTITY_MAX'] = 'Max Qty';
@@ -419,3 +420,4 @@ $lang['LABEL_QUANTITY_PACKET_ACTUAL']='Converted Packets';
 // Transfer HQ to TO
 $lang['LABEL_QUANTITY_TRANSFER_MAXIMUM']='Max Transferable';
 $lang['LABEL_TO_FORWARD']='Forward TO';
+$lang['LABEL_ORDER_ITEMS']='Order Items (Variety Information)';

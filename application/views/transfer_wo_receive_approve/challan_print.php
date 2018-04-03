@@ -20,7 +20,7 @@ $height=11.69*100/2;
 $row_per_page=20;
 $header_image=base_url('images/print/header.jpg');
 $footer_image=base_url('images/print/footer.jpg');
-$result=Query_helper::get_info($CI->config->item('table_system_setup_print'),'*',array('controller ="' .$this->controller_url.'"','method ="details_print"'),1);
+$result=Query_helper::get_info($CI->config->item('table_system_setup_print'),'*',array('controller ="' .$this->controller_url.'"','method ="challan_print"'),1);
 if($result)
 {
     $width=$result['width']*100;
@@ -46,7 +46,7 @@ $num_pages=ceil($total_records/$row_per_page);
                 <div class="col-xs-6">
                     <div class="row show-grid">
                         <div class="col-xs-6">
-                            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ID');?>:</label>
+                            <label class="control-label pull-right">Challan No:</label>
                         </div>
                         <div class="col-xs-6">
                             <?php echo Barcode_helper::get_barcode_transfer_warehouse_to_outlet($item['id']);?>
@@ -64,7 +64,7 @@ $num_pages=ceil($total_records/$row_per_page);
                 <div class="col-xs-6">
                     <div class="row show-grid">
                         <div class="col-xs-6">
-                            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_CHALLAN');?>:</label>
+                            <label class="control-label pull-right">Challan Date:</label>
                         </div>
                         <div class="col-xs-6">
                             <?php echo System_helper::display_date($item['date_challan']); ?>
@@ -72,30 +72,27 @@ $num_pages=ceil($total_records/$row_per_page);
                     </div>
                     <div class="row show-grid">
                         <div class="col-xs-6">
-                            <label class="control-label pull-right"><?php //echo $CI->lang->line('LABEL_OUTLET_NAME');?></label>
+                            <label class="control-label pull-right">Courier Name: </label>
                         </div>
                         <div class="col-xs-6">
-                            <?php //echo $item['outlet_name']; ?>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xs-12">
-                    <div class="row show-grid">
-                        <div class="col-xs-3">
-                            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_OUTLET_NAME');?>:</label>
-                        </div>
-                        <div class="col-xs-9">
-                            <?php echo $item['outlet_name']; ?>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xs-12">
-                    <div class="row show-grid">
-                        <div class="col-xs-3">
-                            <label class="control-label pull-right">Courier:</label>
-                        </div>
-                        <div class="col-xs-9">
                             <?php echo $item['courier_name']; ?>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-12">
+                    <div class="row show-grid">
+                        <div class="col-xs-3">
+                            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_OUTLET_NAME');?> Name: </label>
+                        </div>
+                        <div class="col-xs-9">
+                            <?php echo $item['outlet_name']; ?><br/>
+                            <?php
+                            if($item['place_destination'])
+                            {
+                                echo $item['place_destination'].'<br />';
+                            }
+                            ?>
+                            <?php echo $item['outlet_phone']; ?>
                         </div>
                     </div>
                 </div>
@@ -104,15 +101,15 @@ $num_pages=ceil($total_records/$row_per_page);
                 <thead>
                 <tr>
                     <th rowspan="2" class="text-right" style="width: 30px;"><?php echo $CI->lang->line('LABEL_SL_NO'); ?></th>
-                    <th rowspan="2"><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></th>
-                    <th rowspan="2"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?></th>
-                    <th rowspan="2"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
-                    <th rowspan="2" class="text-right"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
+                    <th rowspan="2" style="width: 100px;"><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></th>
+                    <th rowspan="2" style="width: 100px;"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?></th>
+                    <th rowspan="2" style="width: 150px;"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
+                    <th rowspan="2" class="text-right" style="width: 30px;"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
                     <th colspan="2" class="text-center"><?php echo $CI->lang->line('LABEL_QUANTITY'); ?></th>
                 </tr>
                 <tr>
-                    <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_PACK');?></th>
-                    <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_KG');?></th>
+                    <th class="text-right" style="width: 80px;"><?php echo $CI->lang->line('LABEL_PACK');?></th>
+                    <th class="text-right" style="width: 80px;"><?php echo $CI->lang->line('LABEL_KG');?></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -129,7 +126,7 @@ $num_pages=ceil($total_records/$row_per_page);
                         <td><?php echo $data['crop_type_name'];?></td>
                         <td><?php echo $data['variety_name'];?></td>
                         <td class="text-right"><?php echo $data['pack_size'];?></td>
-                        <td class="text-right"><?php echo number_format($data['quantity_approve'],3,'.','');?></td>
+                        <td class="text-right"><?php echo $data['quantity_approve'];?></td>
                         <td class="text-right"><?php echo number_format((($data['quantity_approve']*$data['pack_size'])/1000),3,'.','');?></td>
                     </tr>
                     <?php
@@ -137,8 +134,8 @@ $num_pages=ceil($total_records/$row_per_page);
                     {
                         ?>
                         <tr>
-                            <td  class="text-right" colspan="5"><label class="control-label"><?php echo $CI->lang->line('LABEL_TOTAL_KG');?></label></td>
-                            <td class="text-right"><label class="control-label"><?php echo number_format($quantity_approve_total,3,'.','');?></label></td>
+                            <td  class="text-right" colspan="5"><label class="control-label"><?php echo $CI->lang->line('LABEL_TOTAL');?></label></td>
+                            <td class="text-right"><label class="control-label"><?php echo $quantity_approve_total;?></label></td>
                             <td class="text-right"><label class="control-label"><?php echo number_format($quantity_approve_total_kg,3,'.','');?></label></td>
                         </tr>
                         <?php
