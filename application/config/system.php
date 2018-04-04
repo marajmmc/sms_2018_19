@@ -42,8 +42,8 @@ $config['system_customer_type_customer_id']=2;
 
 /*Bank & Account Config*/
 // purpose
-$config['system_bank_account_purpose']['lc']='Lc';
-$config['system_bank_account_purpose']['sale_receive']='Sale Receive';
+$config['system_bank_account_purpose_lc']='Lc';
+$config['system_bank_account_purpose_sale_receive']='Sale Receive';
 
 /// Added by saiful. Need to review.
 $config['system_master_foil']='Master';
@@ -53,6 +53,7 @@ $config['system_sticker']='Sticker';
 //Stock out purpose
 $config['system_purpose_raw_stock_damage']='Damage';
 //System Configuration
-$config['system_purpose_config']['sms_date_expire']='sms_date_expire';
-$config['system_purpose_config']['sms_quantity_order_max']='sms_quantity_order_max';
+$config['system_purpose_sms_date_expire']='sms_date_expire';
+$config['system_purpose_sms_quantity_order_max']='sms_quantity_order_max';
+$config['system_purpose_pos_barcode_expire_date']='pos_barcode_expire_date';
 

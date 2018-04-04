@@ -49,4 +49,13 @@ class Test extends CI_Controller {
         }
 
 	}
+    public function sqlProcedure()
+    {
+        $query = $this->db->query("call TransferOrder(1, 1522727377,5,1522727377,6,1522727377,1522727377,5.5)");
+        $result = $query->result();
+        echo "<pre>";
+        print_r($result);
+        echo "</pre>";
+
+    }
 }

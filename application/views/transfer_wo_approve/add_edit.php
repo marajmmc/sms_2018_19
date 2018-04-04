@@ -216,7 +216,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                                     </label>
                                 </td>
                                 <td class="text-right">
-                                    <label class="control-label stock_available <?php echo $class_quantity_exist_warning;?>" id="stock_available_id_<?php echo $index+1;?>">
+                                    <label class="control-label stock_available <?php echo $class_quantity_exist_warning;?>" id="stock_available_kg_<?php echo $index+1;?>">
                                         <?php
                                         echo isset($two_variety_info[$value['variety_id']][$value['pack_size_id']])?number_format($two_variety_info[$value['variety_id']][$value['pack_size_id']]['stock_available'],3,'.',''):'0.000';
                                         ?>
@@ -710,6 +710,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             var current_id=$(this).attr('data-current-id');
             var quantity_approve=parseFloat($(this).val());
             var quantity_approve_kg=0;
+            var stock_available_kg=parseFloat($("#stock_available_kg_"+current_id).html().replace(/,/g,''));
 
             var pack_size=parseFloat($("#pack_size_id_"+current_id).attr('data-pack-size-name'));
             if($("#pack_size_id_"+current_id).attr('data-new-pack-size')==0)
@@ -737,6 +738,11 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 $(this).addClass('quantity_exist_warning');
                 $("#quantity_approve_kg_"+current_id).addClass('quantity_exist_warning');
                 $("#quantity_max_transferable_"+current_id).addClass('quantity_exist_warning');
+            }
+            $("#stock_available_kg_"+current_id).removeClass('quantity_exist_warning');
+            if(quantity_approve_kg>stock_available_kg)
+            {
+                $("#stock_available_kg_"+current_id).addClass('quantity_exist_warning');
             }
 
             $("#quantity_approve_kg_"+current_id).html(number_format(quantity_approve_kg,3,'.',''));
