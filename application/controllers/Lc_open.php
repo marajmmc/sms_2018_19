@@ -243,7 +243,7 @@ class Lc_open extends Root_Controller
             $this->db->join($this->config->item('table_login_setup_bank').' bank','bank.id=ba.bank_id AND bank.status='.'"'.$this->config->item('system_status_active').'"','INNER');
             $this->db->join($this->config->item('table_login_setup_bank_account_purpose').' bap','bap.bank_account_id=ba.id AND bap.revision=1 AND bap.purpose ="'.$this->config->item('system_bank_account_purpose_lc').'" AND bap.status='.'"'.$this->config->item('system_status_active').'"','INNER');
             $this->db->where('ba.status',$this->config->item('system_status_active'));
-            $this->db->where('ba.account_type_receive = 1');
+            $this->db->where('ba.account_type_expense',1);
             $data['bank_accounts']=$this->db->get()->result_array();
 
             $ajax['status']=true;
@@ -318,7 +318,7 @@ class Lc_open extends Root_Controller
             $this->db->join($this->config->item('table_login_setup_bank').' bank','bank.id=ba.bank_id','INNER');
             $this->db->join($this->config->item('table_login_setup_bank_account_purpose').' bap','bap.bank_account_id=ba.id AND bap.revision=1 AND bap.purpose ="'.$this->config->item('system_bank_account_purpose_lc').'"','INNER');
             $this->db->where('ba.status !=',$this->config->item('system_status_delete'));
-            $this->db->where('ba.account_type_receive = 1');
+            $this->db->where('ba.account_type_expense',1);
             $data['bank_accounts']=$this->db->get()->result_array();
 
             // get drop down info

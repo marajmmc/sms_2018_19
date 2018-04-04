@@ -42,8 +42,8 @@ $config['system_customer_type_customer_id']=2;
 
 /*Bank & Account Config*/
 // purpose
-$config['system_bank_account_purpose_lc']='Lc';
-$config['system_bank_account_purpose_sale_receive']='Sale Receive';
+$config['system_bank_account_purpose_lc']='lc';
+$config['system_bank_account_purpose_sale_receive']='sale_receive';
 
 /// Added by saiful. Need to review.
 $config['system_master_foil']='Master';
