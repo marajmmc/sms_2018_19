@@ -541,7 +541,7 @@ class Transfer_wo_request extends Root_Controller
             }
         }
 
-        $result=Query_helper::get_info($this->config->item('table_login_setup_system_configures'),array('*'),array('purpose="'.$this->config->item('system_purpose_sms_quantity_order_max')['sms_quantity_order_max'].'"', 'status ="'.$this->config->item('system_status_active').'"'),1);
+        $result=Query_helper::get_info($this->config->item('table_login_setup_system_configures'),array('*'),array('purpose="'.$this->config->item('system_purpose_sms_quantity_order_max').'"', 'status ="'.$this->config->item('system_status_active').'"'),1);
         $quantity_to_maximum_kg=$result['config_value'];
         if($quantity_total_request_kg>$quantity_to_maximum_kg)
         {
