@@ -344,7 +344,7 @@ class Transfer_wo_delivery extends Root_Controller
             $ajax['system_message']='Delivery date should be is greater than approval date.';
             $this->json_return($ajax);
         }
-        if(strtotime($courier['date_challan']))
+        /*if(strtotime($courier['date_challan']))
         {
             if(!(System_helper::get_time($courier['date_challan'])>=System_helper::get_time(System_helper::display_date($courier['date_delivery']))))
             {
@@ -352,7 +352,7 @@ class Transfer_wo_delivery extends Root_Controller
                 $ajax['system_message']='Challan date should be is greater than delivery date.';
                 $this->json_return($ajax);
             }
-        }
+        }*/
 
         $this->db->from($this->config->item('table_sms_transfer_wo_details').' transfer_wo_details');
         $this->db->select('transfer_wo_details.*');
@@ -1072,7 +1072,7 @@ class Transfer_wo_delivery extends Root_Controller
             $current_stock=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]['current_stock'];
             $data=array();
             $data['current_stock']=($current_stock-$item['quantity_approve']);
-            $data['out_sales']=($current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]['out_sales']+$item['quantity_approve']);
+            $data['out_transfer_wo']=($current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]['out_transfer_wo']+$item['quantity_approve']);
             $data['date_updated'] = $time;
             $data['user_updated'] = $user->user_id;
             Query_helper::update($this->config->item('table_sms_stock_summary_variety'),$data,array('variety_id='.$item['variety_id'],'pack_size_id='.$item['pack_size_id'],'warehouse_id='.$item['warehouse_id']));

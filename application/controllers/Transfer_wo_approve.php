@@ -451,6 +451,7 @@ class Transfer_wo_approve extends Root_Controller
         $this->db->update($this->config->item('table_sms_transfer_wo_details_histories'));
 
         $item_head['quantity_total_approve_kg']=$quantity_total_approve_kg;
+        $item_head['quantity_total_receive_kg']=$quantity_total_approve_kg;
         $item_head['date_updated_approve']=$time;
         $item_head['user_updated_approve']=$user->user_id;
         $this->db->set('revision_count_approve', 'revision_count_approve+1', FALSE);

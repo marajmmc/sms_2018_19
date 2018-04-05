@@ -575,7 +575,8 @@ class Transfer_wo_request extends Root_Controller
 
             $item_head['date_request']=$time;
             $item_head['quantity_total_request_kg']=$quantity_total_request_kg;
-            $item_head['quantity_total_approve_kg']=$item_head['quantity_total_request_kg'];
+            $item_head['quantity_total_approve_kg']=$quantity_total_request_kg;
+            $item_head['quantity_total_receive_kg']=$quantity_total_request_kg;
             $item_head['date_updated_request']=$time;
             $item_head['user_updated_request']=$user->user_id;
             $this->db->set('revision_count_request', 'revision_count_request+1', FALSE);
@@ -639,6 +640,7 @@ class Transfer_wo_request extends Root_Controller
                 $data['pack_size']=$pack_sizes[$item['pack_size_id']]['text'];
                 $data['quantity_request']=$item['quantity_request'];
                 $data['quantity_approve']=$data['quantity_request'];
+                $data['quantity_receive']=$data['quantity_request'];
                 $data['status']=$this->config->item('system_status_active');
                 Query_helper::add($this->config->item('table_sms_transfer_wo_details'),$data, false);
 

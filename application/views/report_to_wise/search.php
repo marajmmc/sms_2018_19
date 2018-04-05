@@ -56,7 +56,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <div class="col-xs-6">
                         <select name="report[pack_size_id]" class="form-control">
                             <option value="-1"><?php echo $CI->lang->line('SELECT');?></option>
-                            <option value="0">Bulk</option>
                             <?php
                             foreach($pack_sizes as $pack_size)
                             {?>
@@ -116,7 +115,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         else
                         {
                             ?>
-                            <select id="division_id" name="division_id" class="form-control">
+                            <select id="division_id" name="report[division_id]" class="form-control">
                                 <option value=""><?php echo $CI->lang->line('SELECT');?></option>
                                 <?php
                                 foreach($divisions as $division)
@@ -146,7 +145,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         else
                         {
                             ?>
-                            <select id="zone_id" name="zone_id" class="form-control">
+                            <select id="zone_id" name="report[zone_id]" class="form-control">
                                 <option value=""><?php echo $CI->lang->line('SELECT');?></option>
                                 <?php
                                 foreach($zones as $zone)
@@ -176,7 +175,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         else
                         {
                             ?>
-                            <select id="territory_id" name="territory_id" class="form-control">
+                            <select id="territory_id" name="report[territory_id]" class="form-control">
                                 <option value=""><?php echo $CI->lang->line('SELECT');?></option>
                                 <?php
                                 foreach($territories as $territory)
@@ -206,7 +205,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         else
                         {
                             ?>
-                            <select id="district_id" name="district_id" class="form-control">
+                            <select id="district_id" name="report[district_id]" class="form-control">
                                 <option value=""><?php echo $CI->lang->line('SELECT');?></option>
                                 <?php
                                 foreach($districts as $district)
@@ -226,7 +225,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 </div>
                 <div style="<?php if(!(sizeof($outlets)>0)){echo 'display:none';} ?>" class="row show-grid" id="outlet_id_container">
                     <div class="col-xs-6">
-                        <select id="outlet_id" name="item[outlet_id]" class="form-control">
+                        <select id="outlet_id" name="report[outlet_id]" class="form-control">
                             <option value=""><?php echo $CI->lang->line('SELECT');?></option>
                             <?php
                             foreach($outlets as $outlet)

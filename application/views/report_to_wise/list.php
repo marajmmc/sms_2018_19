@@ -59,19 +59,11 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         {
             dataType: "json",
             dataFields: [
-                { name: 'pack_size', type: 'string' },
-                { name: 'type', type: 'string' },
-                <?php
-                foreach($warehouses as $warehouse)
-                {
-                ?>
-                { name: 'warehouse_<?php echo $warehouse['value'];?>_pkt', type: 'string' },
-                { name: 'warehouse_<?php echo $warehouse['value'];?>_kg', type: 'string' },
-                <?php
-                    }
-                    ?>
-                { name: 'total_pkt', type: 'string' },
-                { name: 'total_kg', type: 'string' }
+                { name: 'division_name', type: 'string' },
+                { name: 'zone_name', type: 'string' },
+                { name: 'territory_name', type: 'string' },
+                { name: 'district_name', type: 'string' },
+                { name: 'outlet_name', type: 'string' }
             ],
             id: 'id',
             type: 'POST',
@@ -138,19 +130,11 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 rowsheight: 35,
                 columns:
                     [
-                        { text: '<?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?>', dataField: 'pack_size',pinned:true,width:'100',cellsalign: 'right',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['pack_size']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
-                        { text: '<?php echo $CI->lang->line('LABEL_TYPE'); ?>', dataField: 'type',pinned:true,width:'200',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['type']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
-                        <?php
-                    foreach($warehouses as $warehouse)
-                    {
-                    ?>
-                        { text: '<?php echo $CI->lang->line('LABEL_'.'WAREHOUSE_'.$warehouse['value'].'_PKT'); ?>', dataField: 'warehouse_<?php echo $warehouse['value']?>_pkt',width:'100',cellsalign: 'right',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['warehouse_'.$warehouse['value'].'_pkt']?0:1;?>, width:'100',aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
-                        { text: '<?php echo $CI->lang->line('LABEL_'.'WAREHOUSE_'.$warehouse['value'].'_KG'); ?>', dataField: 'warehouse_<?php echo $warehouse['value']?>_kg',width:'100',cellsalign: 'right',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['warehouse_'.$warehouse['value'].'_kg']?0:1;?>, width:'100',aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
-                        <?php
-                            }
-                            ?>
-                        { text: '<?php echo $CI->lang->line('LABEL_TOTAL_PKT'); ?>', dataField: 'total_pkt',width:'100',cellsalign: 'right',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['total_pkt']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
-                        { text: '<?php echo $CI->lang->line('LABEL_TOTAL_KG'); ?>', dataField: 'total_kg',width:'100',cellsalign: 'right',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['total_kg']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer}
+                        { text: '<?php echo $CI->lang->line('LABEL_DIVISION_NAME'); ?>', dataField: 'division_name',pinned:true,width:'100',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['division_name']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                        { text: '<?php echo $CI->lang->line('LABEL_ZONE_NAME'); ?>', dataField: 'zone_name',pinned:true,width:'200',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['zone_name']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                        { text: '<?php echo $CI->lang->line('LABEL_TERRITORY_NAME'); ?>', dataField: 'territory_name',width:'100',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['territory_name']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                        { text: '<?php echo $CI->lang->line('LABEL_DISTRICT_NAME'); ?>', dataField: 'district_name',width:'100',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['district_name']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                        { text: '<?php echo $CI->lang->line('LABEL_OUTLET_NAME'); ?>', dataField: 'outlet_name',width:'100',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['outlet_name']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer}
                     ]
             });
     });
