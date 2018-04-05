@@ -53,7 +53,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
     $(document).ready(function ()
     {
         var url = "<?php echo site_url($CI->controller_url.'/index/get_items');?>";
-
         // prepare the data
         var source =
         {
@@ -63,55 +62,32 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 { name: 'zone_name', type: 'string' },
                 { name: 'territory_name', type: 'string' },
                 { name: 'district_name', type: 'string' },
-                { name: 'outlet_name', type: 'string' }
+                { name: 'outlet_name', type: 'string' },
+                { name: 'transfer_wo_id', type: 'string' },
+                { name: 'date_request', type: 'string' },
+                { name: 'quantity_total_request', type: 'string' },
+                { name: 'status_request', type: 'string' },
+                { name: 'date_approve', type: 'string' },
+                { name: 'quantity_total_approve', type: 'string' },
+                { name: 'status_approve', type: 'string' },
+                { name: 'date_delivery', type: 'string' },
+                { name: 'status_delivery', type: 'string' },
+                { name: 'date_receive', type: 'string' },
+                { name: 'quantity_total_receive', type: 'string' },
+                { name: 'status_receive', type: 'string' },
+                { name: 'status_receive_forward', type: 'string' },
+                { name: 'status_receive_approve', type: 'string' },
+                { name: 'status_system_delivery_receive', type: 'string' },
+                { name: 'status', type: 'string' }
             ],
             id: 'id',
             type: 'POST',
             url: url,
             data:JSON.parse('<?php echo json_encode($options);?>')
         };
-        var cellsrenderer = function(row, column, value, defaultHtml, columnSettings, record)
-        {
-            var element = $(defaultHtml);
-            if (record.type=="End Stock")
-            {
-                if(column!='pack_size')
-                {
-                    element.css({ 'background-color': system_report_color_crop,'margin': '0px','width': '100%', 'height': '100%',padding:'5px','line-height':'25px'});
-                }
-            }
-            else if (record.pack_size=="Total End Stock")
-            {
-
-                element.css({ 'background-color': system_report_color_grand,'margin': '0px','width': '100%', 'height': '100%',padding:'5px','line-height':'25px'});
-
-            }
-            else
-            {
-                element.css({'margin': '0px','width': '100%', 'height': '100%',padding:'5px','line-height':'25px'});
-            }
-
-            return element[0].outerHTML;
-
-        };
+        
         var tooltiprenderer = function (element) {
             $(element).jqxTooltip({position: 'mouse', content: $(element).text() });
-        };
-        var aggregates=function (total, column, element, record)
-        {
-            if(record.pack_size=="Total End Stock")
-            {
-                //console.log(element);
-                return record[element];
-
-            }
-            return total;
-            //return grand_starting_stock;
-        };
-        var aggregatesrenderer=function (aggregates)
-        {
-            return '<div style="position: relative; margin: 0px;padding: 5px;width: 100%;height: 100%; overflow: hidden;background-color:'+system_report_color_grand+';">' +aggregates['total']+'</div>';
-
         };
 
         var dataAdapter = new $.jqx.dataAdapter(source);
@@ -125,16 +101,30 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 columnsreorder: true,
                 altrows: true,
                 enabletooltips: true,
-                showaggregates: true,
-                showstatusbar: true,
                 rowsheight: 35,
                 columns:
                     [
-                        { text: '<?php echo $CI->lang->line('LABEL_DIVISION_NAME'); ?>', dataField: 'division_name',pinned:true,width:'100',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['division_name']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
-                        { text: '<?php echo $CI->lang->line('LABEL_ZONE_NAME'); ?>', dataField: 'zone_name',pinned:true,width:'200',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['zone_name']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
-                        { text: '<?php echo $CI->lang->line('LABEL_TERRITORY_NAME'); ?>', dataField: 'territory_name',width:'100',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['territory_name']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
-                        { text: '<?php echo $CI->lang->line('LABEL_DISTRICT_NAME'); ?>', dataField: 'district_name',width:'100',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['district_name']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
-                        { text: '<?php echo $CI->lang->line('LABEL_OUTLET_NAME'); ?>', dataField: 'outlet_name',width:'100',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['outlet_name']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer}
+                        { text: '<?php echo $CI->lang->line('LABEL_DIVISION_NAME'); ?>', dataField: 'division_name',pinned:true,width:'100',hidden: <?php echo $system_preference_items['division_name']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_ZONE_NAME'); ?>', dataField: 'zone_name',pinned:true,width:'100',hidden: <?php echo $system_preference_items['zone_name']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_TERRITORY_NAME'); ?>', dataField: 'territory_name',pinned:true,width:'100',hidden: <?php echo $system_preference_items['territory_name']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_DISTRICT_NAME'); ?>', dataField: 'district_name',pinned:true,width:'100',hidden: <?php echo $system_preference_items['district_name']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_OUTLET_NAME'); ?>', dataField: 'outlet_name',pinned:true,width:'200',hidden: <?php echo $system_preference_items['outlet_name']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_BARCODE'); ?>', dataField: 'barcode',width:'100',hidden: <?php echo $system_preference_items['barcode']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_DATE_REQUEST'); ?>', dataField: 'date_request',width:'100',hidden: <?php echo $system_preference_items['date_request']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL_REQUEST'); ?>', dataField: 'quantity_total_request',width:'80',cellsAlign: 'right',hidden: <?php echo $system_preference_items['quantity_total_request']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_STATUS_REQUEST'); ?>', dataField: 'status_request',width:'100',hidden: <?php echo $system_preference_items['status_request']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_DATE_APPROVE'); ?>', dataField: 'date_approve',width:'100',hidden: <?php echo $system_preference_items['date_approve']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL_APPROVE'); ?>', dataField: 'quantity_total_approve',width:'80',cellsAlign: 'right',hidden: <?php echo $system_preference_items['quantity_total_approve']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_STATUS_APPROVE'); ?>', dataField: 'status_approve',width:'100',hidden: <?php echo $system_preference_items['status_approve']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_DATE_DELIVERY'); ?>', dataField: 'date_delivery',width:'100',hidden: <?php echo $system_preference_items['date_delivery']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_STATUS_DELIVERY'); ?>', dataField: 'status_delivery',width:'100',hidden: <?php echo $system_preference_items['status_delivery']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_DATE_RECEIVE'); ?>', dataField: 'date_receive',width:'100',hidden: <?php echo $system_preference_items['date_receive']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL_RECEIVE_KG'); ?>', dataField: 'quantity_total_receive',width:'80',cellsAlign: 'right',hidden: <?php echo $system_preference_items['quantity_total_receive']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_STATUS_RECEIVE'); ?>', dataField: 'status_receive',width:'100',hidden: <?php echo $system_preference_items['status_receive']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_STATUS_RECEIVE_FORWARD'); ?>', dataField: 'status_receive_forward',width:'100',hidden: <?php echo $system_preference_items['status_receive_forward']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_STATUS_RECEIVE_APPROVE'); ?>', dataField: 'status_receive_approve',width:'100',hidden: <?php echo $system_preference_items['status_receive_approve']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_STATUS_SYSTEM_DELIVERY_RECEIVE'); ?>', dataField: 'status_system_delivery_receive',width:'100',hidden: <?php echo $system_preference_items['status_system_delivery_receive']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_STATUS'); ?>', dataField: 'status',width:'100',hidden: <?php echo $system_preference_items['status']?0:1;?>}
                     ]
             });
     });

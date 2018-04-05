@@ -143,9 +143,19 @@ class Report_to_wise extends Root_Controller
         $crop_type_id=$this->input->post('crop_type_id');
         $variety_id=$this->input->post('variety_id');
         $pack_size_id=$this->input->post('pack_size_id');
+        $date_start=System_helper::get_time($this->input->post('date_start'));
+        $date_end=System_helper::get_time($this->input->post('date_end'));
+
+        $division_id=$this->input->post('division_id');
+        $zone_id=$this->input->post('zone_id');
+        $territory_id=$this->input->post('territory_id');
+        $district_id=$this->input->post('district_id');
+        $outlet_id=$this->input->post('outlet_id');
+
         $items=array();
+
         $this->db->from($this->config->item('table_login_csetup_cus_info').' outlet_info');
-        $this->db->select('outlet_info.name outlet_name, outlet_info.customer_code outlet_code');
+        $this->db->select('outlet_info.customer_id outlet_id, outlet_info.name outlet_name, outlet_info.customer_code outlet_code');
         $this->db->join($this->config->item('table_login_setup_location_districts').' districts','districts.id = outlet_info.district_id','INNER');
         $this->db->select('districts.name district_name');
         $this->db->join($this->config->item('table_login_setup_location_territories').' territories','territories.id = districts.territory_id','INNER');
@@ -154,8 +164,10 @@ class Report_to_wise extends Root_Controller
         $this->db->select('zones.name zone_name');
         $this->db->join($this->config->item('table_login_setup_location_divisions').' divisions','divisions.id = zones.division_id','INNER');
         $this->db->select('divisions.id division_id, divisions.name division_name');
-        $this->db->order_by('divisions.id, zones.id, territories.id, districts.id');
-        /*if($this->locations['division_id']>0)
+        $this->db->order_by('divisions.id, zones.id, territories.id, districts.id, outlet_info.customer_id');
+        $this->db->where('outlet_info.revision',1);
+
+        if($this->locations['division_id']>0)
         {
             $this->db->where('divisions.id',$this->locations['division_id']);
             if($this->locations['zone_id']>0)
@@ -170,14 +182,81 @@ class Report_to_wise extends Root_Controller
                     }
                 }
             }
-        }*/
-        $results=$this->db->get()->result_array();
+        }
+        if($division_id)
+        {
+            $this->db->where('divisions.id',$division_id);
+        }
+        if($zone_id)
+        {
+            $this->db->where('zones.id',$zone_id);
+        }
+        if($territory_id)
+        {
+            $this->db->where('territories.id',$territory_id);
+        }
+        if($district_id)
+        {
+            $this->db->where('districts.id',$district_id);
+        }
+        if($outlet_id)
+        {
+            $this->db->where('outlet_info.customer_id',$outlet_id);
+        }
+        $data['location']=$this->db->get()->result_array();
+
+        $outlet_ids=array();
+        foreach($data['location'] as $result)
+        {
+            $outlet_ids[]=$result['outlet_id'];
+        }
+
+        $this->db->from($this->config->item('table_sms_transfer_wo').' transfer_wo');
+        $this->db->select('transfer_wo.*');
+        $this->db->join($this->config->item('table_sms_transfer_wo_details').' transfer_wo_details','transfer_wo_details.transfer_wo_id=transfer_wo.id','INNER');
+        $this->db->select('transfer_wo_details.*');
+        $this->db->where('transfer_wo_details.status',$this->config->item('system_status_active'));
+        //$this->db->where('transfer_wo.date_request>='.$date_start.' and transfer_wo.date_request<='.$date_end);
+        $this->db->order_by('transfer_wo.id');
+        $this->db->group_by('transfer_wo.id');
+        if($crop_id)
+        {
+            $this->db->where('transfer_wo_details.crop_id',$crop_id);
+            if($crop_type_id)
+            {
+                $this->db->where('transfer_wo_details.crop_type_id',$crop_type_id);
+                if($variety_id)
+                {
+                    $this->db->where('transfer_wo_details.variety_id',$variety_id);
+                }
+            }
+        }
+        if($pack_size_id)
+        {
+            $this->db->where('transfer_wo_details.pack_size_id',$pack_size_id);
+        }
+        if(sizeof($outlet_ids)>0)
+        {
+            $this->db->where_in('transfer_wo.outlet_id',$outlet_ids);
+        }
+        if($outlet_id)
+        {
+            $this->db->where('transfer_wo.outlet_id',$outlet_id);
+        }
+        $data['items']=$this->db->get()->result_array();
+        $all_to=array();
+        foreach($data['items'] as $item)
+        {
+            $all_to[$item['outlet_id']][$item['id']]=$item;
+        }
+
+
         $first_row=true;
         $prev_division_name='';
         $prev_zone_name='';
         $prev_territory_name='';
         $prev_district_name='';
-        foreach($results as $result)
+        foreach($data['location'] as $result)
         {
             if(!$first_row)
             {
@@ -185,17 +264,22 @@ class Report_to_wise extends Root_Controller
                 {
                     $prev_division_name=$result['division_name'];
                     $prev_zone_name=$result['zone_name'];
+                    $prev_territory_name=$result['territory_name'];
+                    $prev_district_name=$result['district_name'];
                 }
                 elseif($prev_zone_name!=$result['zone_name'])
                 {
                     $result['division_name']='';
                     $prev_zone_name=$result['zone_name'];
+                    $prev_territory_name=$result['territory_name'];
+                    $prev_district_name=$result['district_name'];
                 }
                 elseif($prev_territory_name!=$result['territory_name'])
                 {
                     $result['division_name']='';
                     $result['zone_name']='';
                     $prev_territory_name=$result['territory_name'];
+                    $prev_district_name=$result['district_name'];
                 }
                 elseif($prev_district_name!=$result['district_name'])
                 {
@@ -221,6 +305,32 @@ class Report_to_wise extends Root_Controller
                 $first_row=false;
             }
             $items[]=$this->get_row($result);
+            if(isset($all_to[$result['outlet_id']]))
+            {
+                if(sizeof($all_to[$result['outlet_id']])>0)
+                {
+                    foreach($all_to[$result['outlet_id']] as $id=>$two)
+                    {
+                        $row['barcode']=Barcode_helper::get_barcode_transfer_warehouse_to_outlet($id);
+                        $row['date_request']=System_helper::display_date($two['date_request']);
+                        $row['quantity_total_request']=number_format($two['quantity_total_request_kg'],3,'.','');
+                        $row['status_request']=$two['status_request'];
+                        $row['date_approve']=System_helper::display_date($two['date_approve']);
+                        $row['quantity_total_approve']=number_format($two['quantity_total_approve_kg'],3,'.','');
+                        $row['status_approve']=$two['status_approve'];
+                        $row['date_delivery']=System_helper::display_date($two['date_delivery']);
+                        $row['status_delivery']=$two['status_delivery'];
+                        $row['date_receive']=System_helper::display_date($two['date_receive']);
+                        $row['quantity_total_receive']=number_format($two['quantity_total_receive_kg'],3,'.','');
+                        $row['status_receive']=$two['status_receive'];
+                        $row['status_receive_forward']=$two['status_receive_forward'];
+                        $row['status_receive_approve']=$two['status_receive_approve'];
+                        $row['status_system_delivery_receive']=$two['status_system_delivery_receive'];
+                        $row['status']=$two['status'];
+                        $items[]=$row;
+                    }
+                }
+            }
         }
 
         $this->json_return($items);
@@ -258,16 +368,28 @@ class Report_to_wise extends Root_Controller
     {
         $user = User_helper::get_user();
         $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="search"'),1);
-        /*$data['crop_name']= 1;
-        $data['crop_type_name']= 1;
-        $data['variety_name']= 1;
-        $data['pack_size']= 1;*/
 
         $data['division_name']= 1;
         $data['zone_name']= 1;
         $data['territory_name']= 1;
         $data['district_name']= 1;
         $data['outlet_name']= 1;
+        $data['barcode']= 1;
+        $data['date_request']= 1;
+        $data['quantity_total_request']= 1;
+        $data['status_request']= 1;
+        $data['date_approve']= 1;
+        $data['quantity_total_approve']= 1;
+        $data['status_approve']= 1;
+        $data['date_delivery']= 1;
+        $data['status_delivery']= 1;
+        $data['date_receive']= 1;
+        $data['quantity_total_receive']= 1;
+        $data['status_receive']= 1;
+        $data['status_receive_forward']= 1;
+        $data['status_receive_approve']= 1;
+        $data['status_system_delivery_receive']= 1;
+        $data['status']= 1;
 
         /*$data['current_stock_pkt']= 1;
         $data['current_stock_kg']= 1;*/
