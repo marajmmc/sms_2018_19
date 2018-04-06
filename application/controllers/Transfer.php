@@ -182,7 +182,7 @@ class Transfer extends CI_Controller
                 $data['pack_size_id']=$pack_size_id;
                 $data['warehouse_id']=$crop_warehouse[$stock['crop_id']];
                 $data['in_stock']=$stock['stock_in']+$stock['excess']-$stock['stock_out']-$stock['sales']+$stock['outlet_in'];
-                $data['out_sales']=$stock['outlet_in'];
+                $data['out_transfer_wo']=$stock['outlet_in'];
                 $data['current_stock']=$stock['stock_in']+$stock['excess']-$stock['stock_out']-$stock['sales'];
                 Query_helper::add($destination_tables['table_sms_stock_summary_variety'],$data,false);
             }
