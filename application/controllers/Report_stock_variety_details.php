@@ -132,13 +132,14 @@ class Report_stock_variety_details extends Root_Controller
         //new pack size can be stock in,lc and convert
 
         //stock in calculation
-        //purpose == in stock and in excess
+        //purpose == in stock,in excess,in delivery_short
         $this->db->from($this->config->item('table_sms_stock_in_variety_details').' details');
         $this->db->select('details.variety_id,details.pack_size_id,details.warehouse_id');
         $this->db->select('SUM(CASE WHEN stock_in.date_stock_in<'.$date_start.' then details.quantity ELSE 0 END) in_opening',false);
 
         $this->db->select('SUM(CASE WHEN stock_in.date_stock_in>='.$date_start.' and stock_in.date_stock_in<='.$date_end.' and purpose="'.$this->config->item('system_purpose_variety_stock_in').'" then details.quantity ELSE 0 END) in_stock',false);
         $this->db->select('SUM(CASE WHEN stock_in.date_stock_in>='.$date_start.' and stock_in.date_stock_in<='.$date_end.' and purpose="'.$this->config->item('system_purpose_variety_excess').'" then details.quantity ELSE 0 END) in_excess',false);
+        $this->db->select('SUM(CASE WHEN stock_in.date_stock_in>='.$date_start.' and stock_in.date_stock_in<='.$date_end.' and purpose="'.$this->config->item('system_purpose_variety_in_delivery_short').'" then details.quantity ELSE 0 END) in_delivery_short',false);
 
 
         $this->db->join($this->config->item('table_sms_stock_in_variety').' stock_in','stock_in.id=details.stock_in_id','INNER');
@@ -164,7 +165,8 @@ class Report_stock_variety_details extends Root_Controller
             $packs[$result['pack_size_id']]['stock_opening'][$result['warehouse_id']]=$result['in_opening'];
             $packs[$result['pack_size_id']]['in_stock'][$result['warehouse_id']]=$result['in_stock'];
             $packs[$result['pack_size_id']]['in_excess'][$result['warehouse_id']]=$result['in_excess'];
-            $packs[$result['pack_size_id']]['stock_current'][$result['warehouse_id']]=$result['in_opening']+$result['in_stock']+$result['in_excess'];
+            $packs[$result['pack_size_id']]['in_delivery_short'][$result['warehouse_id']]=$result['in_delivery_short'];
+            $packs[$result['pack_size_id']]['stock_current'][$result['warehouse_id']]=$result['in_opening']+$result['in_stock']+$result['in_excess']+$result['in_delivery_short'];
         }
 
         //convert bulk to pack in out
@@ -267,8 +269,36 @@ class Report_stock_variety_details extends Root_Controller
             $packs[$result['pack_size_id']]['stock_current'][$result['receive_warehouse_id']]+=($result['in_opening']+$result['in_lc']);
         }
 
-        //in sales return
+        //in transfer from outlet pending
+        //out transfer to outlet
+        $this->db->from($this->config->item('table_sms_transfer_wo_details').' details');
+        $this->db->select('details.variety_id,details.pack_size_id,details.warehouse_id');
 
+        $this->db->select('SUM(CASE WHEN wo.date_updated_delivery_forward<'.$date_start.' then details.quantity_approve ELSE 0 END) out_opening',false);
+
+        $this->db->select('SUM(CASE WHEN wo.date_updated_delivery_forward>='.$date_start.' and wo.date_updated_delivery_forward<='.$date_end.' then details.quantity_approve ELSE 0 END) out_transfer_wo',false);
+
+
+
+        $this->db->join($this->config->item('table_sms_transfer_wo').' wo','wo.id=details.transfer_wo_id','INNER');
+        $this->db->where('wo.status !=',$this->config->item('system_status_delete'));
+        $this->db->where('wo.status_delivery',$this->config->item('system_status_delivered'));
+        $this->db->where('details.variety_id',$variety_id);
+        if($pack_size_id>-1)
+        {
+            $this->db->where('details.pack_size_id',$pack_size_id);
+        }
+        $this->db->group_by('details.variety_id');
+        $this->db->group_by('details.pack_size_id');
+        $this->db->group_by('details.warehouse_id');
+        $results=$this->db->get()->result_array();
+
+        foreach($results as $result)
+        {
+            $packs[$result['pack_size_id']]['stock_opening'][$result['warehouse_id']]-=$result['out_opening'];
+            $packs[$result['pack_size_id']]['out_transfer_wo'][$result['warehouse_id']]+=$result['out_transfer_wo'];
+            $packs[$result['pack_size_id']]['stock_current'][$result['warehouse_id']]-=($result['out_opening']+$result['out_transfer_wo']);
+        }
         //out stock sample,rnd,demonstration, short
 
         $this->db->from($this->config->item('table_sms_stock_out_variety_details').' details');
@@ -279,6 +309,7 @@ class Report_stock_variety_details extends Root_Controller
         $this->db->select('SUM(CASE WHEN stock_out.date_stock_out>='.$date_start.' and stock_out.date_stock_out<='.$date_end.' and stock_out.purpose="'.$this->config->item('system_purpose_variety_rnd').'" then details.quantity ELSE 0 END) out_stock_rnd',false);
         $this->db->select('SUM(CASE WHEN stock_out.date_stock_out>='.$date_start.' and stock_out.date_stock_out<='.$date_end.' and stock_out.purpose="'.$this->config->item('system_purpose_variety_demonstration').'" then details.quantity ELSE 0 END) out_stock_demonstration',false);
         $this->db->select('SUM(CASE WHEN stock_out.date_stock_out>='.$date_start.' and stock_out.date_stock_out<='.$date_end.' and stock_out.purpose="'.$this->config->item('system_purpose_variety_short_inventory').'" then details.quantity ELSE 0 END) out_stock_short_inventory',false);
+        $this->db->select('SUM(CASE WHEN stock_out.date_stock_out>='.$date_start.' and stock_out.date_stock_out<='.$date_end.' and stock_out.purpose="'.$this->config->item('system_purpose_variety_delivery_excess').'" then details.quantity ELSE 0 END) out_stock_delivery_excess',false);
 
 
         $this->db->join($this->config->item('table_sms_stock_out_variety').' stock_out','stock_out.id=details.stock_out_id','INNER');
@@ -301,8 +332,9 @@ class Report_stock_variety_details extends Root_Controller
             $packs[$result['pack_size_id']]['out_stock_rnd'][$result['warehouse_id']]+=$result['out_stock_rnd'];
             $packs[$result['pack_size_id']]['out_stock_demonstration'][$result['warehouse_id']]+=$result['out_stock_demonstration'];
             $packs[$result['pack_size_id']]['out_stock_short_inventory'][$result['warehouse_id']]+=$result['out_stock_short_inventory'];
+            $packs[$result['pack_size_id']]['out_stock_delivery_excess'][$result['warehouse_id']]+=$result['out_stock_delivery_excess'];
 
-            $packs[$result['pack_size_id']]['stock_current'][$result['warehouse_id']]-=($result['out_opening']+$result['out_stock_sample']+$result['out_stock_rnd']+$result['out_stock_demonstration']+$result['out_stock_short_inventory']);
+            $packs[$result['pack_size_id']]['stock_current'][$result['warehouse_id']]-=($result['out_opening']+$result['out_stock_sample']+$result['out_stock_rnd']+$result['out_stock_demonstration']+$result['out_stock_short_inventory']+$result['out_stock_delivery_excess']);
         }
 
 
@@ -451,16 +483,19 @@ class Report_stock_variety_details extends Root_Controller
             $data['stock_opening'][$warehouse['value']]=0;
             $data['in_stock'][$warehouse['value']]=0;
             $data['in_excess'][$warehouse['value']]=0;
+            $data['in_delivery_short'][$warehouse['value']]=0;
             $data['in_transfer_warehouse'][$warehouse['value']]=0;
             $data['out_transfer_warehouse'][$warehouse['value']]=0;
             $data['out_convert_bulk_pack'][$warehouse['value']]=0;
             $data['in_convert_bulk_pack'][$warehouse['value']]=0;
             $data['in_lc'][$warehouse['value']]=0;
+            $data['out_transfer_wo'][$warehouse['value']]=0;
             //$data['in_sales_return'][$warehouse['value']]=0;
             $data['out_stock_sample'][$warehouse['value']]=0;
             $data['out_stock_rnd'][$warehouse['value']]=0;
             $data['out_stock_demonstration'][$warehouse['value']]=0;
             $data['out_stock_short_inventory'][$warehouse['value']]=0;
+            $data['out_stock_delivery_excess'][$warehouse['value']]=0;
 
 
             $data['stock_current'][$warehouse['value']]=0;
