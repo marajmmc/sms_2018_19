@@ -18,8 +18,9 @@ class Report_to_wise extends Root_Controller
             $ajax['system_message']=$this->lang->line('MSG_LOCATION_NOT_ASSIGNED_OR_INVALID');
             $this->json_return($ajax);
         }
+        $this->lang->load('report_to');
     }
-    public function index($action="search")
+    public function index($action="search",$id=0)
     {
         if($action=="search")
         {
@@ -32,6 +33,10 @@ class Report_to_wise extends Root_Controller
         elseif($action=="get_items")
         {
             $this->system_get_items();
+        }
+        elseif($action=="details")
+        {
+            $this->system_details($id);
         }
         elseif($action=="set_preference")
         {
@@ -250,7 +255,6 @@ class Report_to_wise extends Root_Controller
             $all_to[$item['outlet_id']][$item['id']]=$item;
         }
 
-
         $first_row=true;
         $prev_division_name='';
         $prev_zone_name='';
@@ -345,6 +349,18 @@ class Report_to_wise extends Root_Controller
         $row['district_name']=$info['district_name'];
         $row['outlet_name']=$info['outlet_name'];
         return $row;
+    }
+    private function system_details($id)
+    {
+        $data['title']="TO Wise Report Details View";
+        $ajax['status']=true;
+        $ajax['system_content'][]=array("id"=>"#popup_content","html"=>$this->load->view($this->controller_url."/details",$data,true));
+        if($this->message)
+        {
+            $ajax['system_message']=$this->message;
+        }
+        $ajax['system_page_url']=site_url($this->controller_url.'/index/details/'.$id);
+        $this->json_return($ajax);
     }
     private function system_set_preference()
     {

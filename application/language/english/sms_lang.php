@@ -116,6 +116,7 @@ $lang['LABEL_STATUS_OPEN']='LC Status';
 $lang['LABEL_STATUS_REQUEST']='Request Status';
 $lang['LABEL_STATUS_APPROVE']='Approve Status';
 $lang['LABEL_STATUS_DELIVERY']='Delivery Status';
+$lang['LABEL_STATUS_RECEIVE']='Received Status';
 
 // Common information related
 // ID or Code
@@ -351,6 +352,8 @@ $lang['LABEL_FORWARD']='Forwarded';
 $lang['LABEL_APPROVED']='Approved';
 $lang['LABEL_REJECTED']='Rejected';
 $lang['LABEL_DELIVERED']='Delivered';
+$lang['LABEL_RECEIVED']='Received';
+
 
 /* Stock out purpose */
 $lang['LABEL_STOCK_OUT_SHORT_INVENTORY']='Short Inventory';

@@ -355,7 +355,7 @@ class Transfer_wo_request extends Root_Controller
             $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
             {
-                System_helper::invalid_try('Edit Non Exists',$item_id);
+                System_helper::invalid_try('edit',$item_id,'Edit Non Exists');
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid Try.';
                 $this->json_return($ajax);
@@ -368,7 +368,7 @@ class Transfer_wo_request extends Root_Controller
             }
             if(!$this->check_my_editable($data['item']))
             {
-                System_helper::invalid_try('Edit Permission Non Exists',$item_id);
+                System_helper::invalid_try('edit',$item_id,'User Location Not Assign.');
                 $ajax['status']=false;
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->json_return($ajax);
@@ -472,7 +472,7 @@ class Transfer_wo_request extends Root_Controller
             $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
             {
-                System_helper::invalid_try('Update Non Exists',$id);
+                System_helper::invalid_try('save',$id,'Update Non Exists');
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid Try.';
                 $this->json_return($ajax);
@@ -485,7 +485,7 @@ class Transfer_wo_request extends Root_Controller
             }
             if(!$this->check_my_editable($data['item']))
             {
-                System_helper::invalid_try('Edit Permission Non Exists',$id);
+                System_helper::invalid_try('save',$id,'User location not assign.');
                 $ajax['status']=false;
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->json_return($ajax);
@@ -535,7 +535,7 @@ class Transfer_wo_request extends Root_Controller
                 {
                     $quantity_max_transferable_excess=($quantity_total_request-$two_variety_info[$item['variety_id']][$item['pack_size_id']]['quantity_max_transferable']);
                     $ajax['status']=false;
-                    $ajax['system_message']='Outlet maximum transferable quantity already exist. ( Excess order quantity: '.$quantity_max_transferable_excess.' kg.)';
+                    $ajax['system_message']='Outlet maximum transferable quantity already exceed. ( Exceed order quantity: '.$quantity_max_transferable_excess.' kg.)';
                     $this->json_return($ajax);
                 }
             }
@@ -546,7 +546,7 @@ class Transfer_wo_request extends Root_Controller
         if($quantity_total_request_kg>$quantity_to_maximum_kg)
         {
             $ajax['status']=false;
-            $ajax['system_message']='Transfer order maximum quantity '.$quantity_to_maximum_kg.' kg. you have to already exist quantity ('.($quantity_total_request_kg-$quantity_to_maximum_kg).' kg).';
+            $ajax['system_message']='Transfer order maximum quantity '.$quantity_to_maximum_kg.' kg. you have to already exceed quantity ('.($quantity_total_request_kg-$quantity_to_maximum_kg).' kg).';
             $this->json_return($ajax);
         }
 
@@ -682,6 +682,15 @@ class Transfer_wo_request extends Root_Controller
             {
                 $item_id=$this->input->post('id');
             }
+
+            /// i think no need this query because system delivery receive always will to be equal to 'no'. So just left join
+            $result=Query_helper::get_info($this->config->item('table_sms_transfer_wo'),'*',array('id ='.$item_id,'status_system_delivery_receive ="'.$this->config->item('system_status_no').'"'),1);
+            if($result)
+            {
+                $this->db->join($this->config->item('table_pos_setup_user_info').' pos_setup_user_info','pos_setup_user_info.user_id=transfer_wo.user_updated_receive_forward','LEFT');
+                $this->db->select('pos_setup_user_info.name full_name_receive_forward');
+            }
+
             $this->db->from($this->config->item('table_sms_transfer_wo').' transfer_wo');
             $this->db->select('transfer_wo.*');
             $this->db->join($this->config->item('table_login_csetup_cus_info').' outlet_info','outlet_info.customer_id=transfer_wo.outlet_id AND outlet_info.type="'.$this->config->item('system_customer_type_outlet_id').'"','INNER');
@@ -734,6 +743,10 @@ class Transfer_wo_request extends Root_Controller
             $user_ids[$data['item']['user_created_request']]=$data['item']['user_created_request'];
             $user_ids[$data['item']['user_updated_request']]=$data['item']['user_updated_request'];
             $user_ids[$data['item']['user_updated_forward']]=$data['item']['user_updated_forward'];
+            $user_ids[$data['item']['user_updated_approve']]=$data['item']['user_updated_approve'];
+            $user_ids[$data['item']['user_updated_approve_forward']]=$data['item']['user_updated_approve_forward'];
+            $user_ids[$data['item']['user_updated_delivery']]=$data['item']['user_updated_delivery'];
+            $user_ids[$data['item']['user_updated_delivery_forward']]=$data['item']['user_updated_delivery_forward'];
             $data['users']=System_helper::get_users_info($user_ids);
 
             $this->db->from($this->config->item('table_sms_transfer_wo_details').' transfer_wo_details');
