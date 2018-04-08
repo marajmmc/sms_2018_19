@@ -56,4 +56,6 @@ $config['system_purpose_raw_stock_damage']='Damage';
 $config['system_purpose_sms_date_expire']='sms_date_expire';
 $config['system_purpose_sms_quantity_order_max']='sms_quantity_order_max';
 $config['system_purpose_pos_barcode_expire_date']='pos_barcode_expire_date';
+$config['system_purpose_sms_menu_odd_color']='sms_menu_odd_color';
+$config['system_purpose_sms_menu_even_color']='sms_menu_even_color';
 
