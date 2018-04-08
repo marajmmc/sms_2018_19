@@ -391,18 +391,10 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <td class="text-right">
                             <label><?php echo number_format($stock_current_kg,3,'.',''); ?></label>
                         </td>
-                        <td class="text-right">
-                            <label><?php echo $quantity_approve; ?></label>
-                        </td>
-                        <td class="text-right">
-                            <label> <?php echo number_format($quantity_approve_kg,3,'.','');?> </label>
-                        </td>
-                        <td class="text-right">
-                            <label><?php echo $quantity_receive; ?></label>
-                        </td>
-                        <td class="text-right">
-                            <label> <?php echo number_format($quantity_receive_kg,3,'.','');?> </label>
-                        </td>
+                        <td class="text-right"><label><?php echo $quantity_approve; ?></label></td>
+                        <td class="text-right"><label> <?php echo number_format($quantity_approve_kg,3,'.','');?> </label></td>
+                        <td class="text-right"><label><?php echo $quantity_receive; ?></label></td>
+                        <td class="text-right"><label> <?php echo number_format($quantity_receive_kg,3,'.','');?> </label></td>
                         <td class="text-right">
                             <label class="control-label stock_quantity_new " id="stock_quantity_new_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>">
                                 <?php

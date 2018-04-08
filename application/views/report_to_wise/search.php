@@ -411,18 +411,24 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         $(document).off("click", ".pop_up");
         $(document).on("click", ".pop_up", function(event)
         {
+            $('#popup_content').html('');
             var left=((($(window).width() - 550) / 2) +$(window).scrollLeft());
             var top=((($(window).height() - 550) / 2) +$(window).scrollTop());
-
-            //$("#popup_window").jqxWindow({width: 630,height:550,position: { x: 60, y: 60  }});to change position always
             $("#popup_window").jqxWindow({position: { x: left, y: top  }});
-            var row=$(this).attr('data-item-no');
-            var key=$(this).attr('data-key');
-            var row_info = $("#system_jqx_container").jqxGrid('getrowdata', row);
-            $('#popup_content').html(row_info.details[key]);
+            $.ajax(
+                {
+                    url: $(this).attr('data-action-link'),
+                    type: 'POST',
+                    datatype: "JSON",
+                    success: function (data, status)
+                    {
+                    },
+                    error: function (xhr, desc, err)
+                    {
+                        console.log("error");
+                    }
+                });
             $("#popup_window").jqxWindow('open');
-
-
         });
 
     });

@@ -52,36 +52,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 <script type="text/javascript">
     $(document).ready(function ()
     {
-        $(document).off("click", ".pop_up");
-        $(document).on("click", ".pop_up", function(event)
-        {
-            var left=((($(window).width()-550)/2)+$(window).scrollLeft());
-            var top=((($(window).height()-550)/2)+$(window).scrollTop());
-            $("#popup_window").jqxWindow({width: 1200,height:550,position:{x:left,y:top}}); //to change position always
-            //$("#popup_window").jqxWindow({position:{x:left,y:top}});
-            var row=$(this).attr('data-item-no');
-            var id=$("#system_jqx_container").jqxGrid('getrowdata',row).id;
-            $.ajax(
-                {
-                    url: "<?php echo site_url($CI->controller_url.'/index/details') ?>",
-                    type: 'POST',
-                    datatype: "JSON",
-                    data:
-                    {
-                        html_container_id:'#popup_content',
-                        id:id
-                    },
-                    success: function (data, status)
-                    {
-
-                    },
-                    error: function (xhr, desc, err)
-                    {
-                        console.log("error");
-                    }
-                });
-            $("#popup_window").jqxWindow('open');
-        });
 
         var url = "<?php echo site_url($CI->controller_url.'/index/get_items');?>";
         // prepare the data
@@ -120,9 +90,17 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         {
             var element = $(defaultHtml);
             element.css({'margin': '0px','width': '100%', 'height': '100%',padding:'5px'});
+            console.log(record.transfer_wo_id);
             if(column=='details_button')
             {
-                element.html('<div><button class="btn btn-primary pop_up external" data-item-no="'+row+'">Details</button></div>');
+                if(record.transfer_wo_id)
+                {
+                    element.html('<div><button class="btn btn-primary pop_up" data-action-link="<?php echo site_url($CI->controller_url.'/index/details'); ?>/'+record.transfer_wo_id+'">View Details</button></div>');
+                }
+                else
+                {
+                    element.html('');
+                }
             }
 
             return element[0].outerHTML;

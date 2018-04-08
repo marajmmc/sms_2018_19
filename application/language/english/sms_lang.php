@@ -102,6 +102,7 @@ $lang['LABEL_UPDATED_BY'] = 'Updated By';
 $lang['LABEL_FORWARDED_BY'] = 'Forwarded By';
 $lang['LABEL_APPROVED_BY'] = 'Approved By';
 $lang['LABEL_DELIVERED_BY'] = 'Delivered By';
+$lang['LABEL_RECEIVED_BY'] = 'Received By';
 
 /* Status */
 $lang['LABEL_STATUS']='Status';
@@ -193,6 +194,7 @@ $lang['LABEL_DATE_UPDATED_TIME']='Updated Time';
 $lang['LABEL_DATE_FORWARDED_TIME']='Forwarded Time';
 $lang['LABEL_DATE_APPROVED_TIME']='Approved Time';
 $lang['LABEL_DATE_DELIVERED_TIME']='Delivered Time';
+$lang['LABEL_DATE_RECEIVED_TIME']='Received Time';
 $lang['LABEL_DATE_CONVERT']='Convert Date';
 $lang['LABEL_DATE_REQUEST']='Date for Request';
 $lang['LABEL_DATE_APPROVE']='Date for Approve';
