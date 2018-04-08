@@ -1072,7 +1072,7 @@ class Transfer_wo_delivery extends Root_Controller
             $current_stock=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]['current_stock'];
             $data=array();
             $data['current_stock']=($current_stock-$item['quantity_approve']);
-            $data['out_transfer_wo']=($current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]['out_transfer_wo']+$item['quantity_approve']);
+            $data['out_wo']=($current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]['out_wo']+$item['quantity_approve']);
             $data['date_updated'] = $time;
             $data['user_updated'] = $user->user_id;
             Query_helper::update($this->config->item('table_sms_stock_summary_variety'),$data,array('variety_id='.$item['variety_id'],'pack_size_id='.$item['pack_size_id'],'warehouse_id='.$item['warehouse_id']));

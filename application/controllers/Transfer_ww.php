@@ -498,14 +498,14 @@ class Transfer_ww extends Root_Controller
             Query_helper::update($this->config->item('table_sms_transfer_ww'),$data,array('id='.$id));
 
             $data=array(); //Summary Data(for source warehouse)
-            $data['out_transfer_warehouse']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id_source']]['out_transfer_warehouse']-$old_value+$item['quantity_transfer'];
+            $data['out_ww']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id_source']]['out_ww']-$old_value+$item['quantity_transfer'];
             $data['current_stock']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id_source']]['current_stock']+$old_value-$item['quantity_transfer'];
             $data['date_updated'] = $time;
             $data['user_updated'] = $user->user_id;
             Query_helper::update($this->config->item('table_sms_stock_summary_variety'),$data,array('variety_id='.$item['variety_id'],'pack_size_id='.$item['pack_size_id'],'warehouse_id='.$item['warehouse_id_source']));
 
             $data=array(); //Summary Data(for destination warehouse)
-            $data['in_transfer_warehouse']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id_destination']]['in_transfer_warehouse']-$old_value+$item['quantity_transfer'];
+            $data['in_ww']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id_destination']]['in_ww']-$old_value+$item['quantity_transfer'];
             $data['current_stock']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id_destination']]['current_stock']-$old_value+$item['quantity_transfer'];
             $data['date_updated'] = $time;
             $data['user_updated'] = $user->user_id;
@@ -528,7 +528,7 @@ class Transfer_ww extends Root_Controller
             Query_helper::add($this->config->item('table_sms_transfer_ww'),$data);
 
             $data=array(); //Summary Data(for source warehouse)
-            $data['out_transfer_warehouse']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id_source']]['out_transfer_warehouse']+$item['quantity_transfer'];
+            $data['out_ww']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id_source']]['out_ww']+$item['quantity_transfer'];
             $data['current_stock']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id_source']]['current_stock']-$item['quantity_transfer'];
             $data['date_updated'] = $time;
             $data['user_updated'] = $user->user_id;
@@ -537,7 +537,7 @@ class Transfer_ww extends Root_Controller
             $data=array(); //Summary Data(for destination warehouse)
             if(isset($current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id_destination']]))
             {
-                $data['in_transfer_warehouse']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id_destination']]['in_transfer_warehouse']+$item['quantity_transfer'];
+                $data['in_ww']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id_destination']]['in_ww']+$item['quantity_transfer'];
                 $data['current_stock']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id_destination']]['current_stock']+$item['quantity_transfer'];
                 $data['date_updated'] = $time;
                 $data['user_updated'] = $user->user_id;
@@ -548,7 +548,7 @@ class Transfer_ww extends Root_Controller
                 $data['variety_id'] = $item['variety_id'];
                 $data['pack_size_id'] = $item['pack_size_id'];
                 $data['warehouse_id'] = $item['warehouse_id_destination'];
-                $data['in_transfer_warehouse']=$item['quantity_transfer'];
+                $data['in_ww']=$item['quantity_transfer'];
                 $data['current_stock']=$item['quantity_transfer'];
                 $data['date_updated'] = $time;
                 $data['user_updated'] = $user->user_id;
@@ -680,14 +680,14 @@ class Transfer_ww extends Root_Controller
             Query_helper::update($this->config->item('table_sms_transfer_ww'),$data,array('id='.$item_id));
 
             $data=array(); //Summary data for source warehouse
-            $data['out_transfer_warehouse']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id_source']]['out_transfer_warehouse']-$item['quantity_transfer'];
+            $data['out_ww']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id_source']]['out_ww']-$item['quantity_transfer'];
             $data['current_stock']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id_source']]['current_stock']+$item['quantity_transfer'];
             $data['date_updated'] = $time;
             $data['user_updated'] = $user->user_id;
             Query_helper::update($this->config->item('table_sms_stock_summary_variety'),$data,array('variety_id='.$item['variety_id'],'pack_size_id='.$item['pack_size_id'],'warehouse_id='.$item['warehouse_id_source']));
 
             $data=array(); //Summary data for destination warehouse
-            $data['in_transfer_warehouse']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id_destination']]['in_transfer_warehouse']-$item['quantity_transfer'];
+            $data['in_ww']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id_destination']]['in_ww']-$item['quantity_transfer'];
             $data['current_stock']=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id_destination']]['current_stock']-$item['quantity_transfer'];
             $data['date_updated'] = $time;
             $data['user_updated'] = $user->user_id;
