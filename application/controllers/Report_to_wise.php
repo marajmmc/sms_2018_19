@@ -221,7 +221,7 @@ class Report_to_wise extends Root_Controller
         $this->db->join($this->config->item('table_sms_transfer_wo_details').' transfer_wo_details','transfer_wo_details.transfer_wo_id=transfer_wo.id','INNER');
         $this->db->select('transfer_wo_details.*');
         $this->db->where('transfer_wo_details.status',$this->config->item('system_status_active'));
-        //$this->db->where('transfer_wo.date_request>='.$date_start.' and transfer_wo.date_request<='.$date_end);
+        $this->db->where('transfer_wo.date_request>='.$date_start.' and transfer_wo.date_request<='.$date_end);
         $this->db->order_by('transfer_wo.id');
         $this->db->group_by('transfer_wo.id');
         if($crop_id)

@@ -543,7 +543,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             $(content_id+' .quantity_max_transferable').attr('id','quantity_max_transferable_'+current_id);
             $(content_id+' .quantity_max_transferable').attr('data-current-id',current_id);
 
-            $(content_id+' .stock_available').attr('id','stock_available_'+current_id);
+            $(content_id+' .stock_available').attr('id','stock_available_kg_'+current_id);
             $(content_id+' .stock_available').attr('data-current-id',current_id);
 
             $(content_id+' .quantity_request').attr('id','quantity_request_'+current_id);

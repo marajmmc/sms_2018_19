@@ -114,9 +114,10 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 ?>
                 <!-- Approval Information-->
                 <?php
-                if($item['status_approve']==$this->config->item('system_status_pending') || $item['status_approve']==$this->config->item('system_status_approved'))
+                if($item['status_approve']==$this->config->item('system_status_approved'))
                 {
                     ?>
+                    <tr><th colspan="21" class="bg-info">Approval Information</th></tr>
                     <tr>
                         <th class="widget-header header_caption"><label class="control-label pull-right">Approve Status</label></th>
                         <th class="warning header_value"><label class="control-label"><?php echo $item['status_approve'];?></label></th>
@@ -188,9 +189,10 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 ?>
                 <!-- Deliver Information-->
                 <?php
-                if($item['status_delivery']==$this->config->item('system_status_pending') || $item['status_delivery']==$this->config->item('system_status_delivered'))
+                if($item['status_delivery']==$this->config->item('system_status_delivered'))
                 {
                 ?>
+                    <tr><th colspan="21" class="bg-info">Delivery & Courier Information</th></tr>
                     <tr>
                         <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_STATUS_DELIVERY');?></label></th>
                         <th class="warning header_value"><label class="control-label"><?php echo $item['status_delivery'];?></label></th>
@@ -257,106 +259,10 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <?php
                     }
                     ?>
-                <?php
-                }
-                ?>
-                <!-- Receive Information-->
-                <?php
-                if($item['status_receive']==$this->config->item('system_status_pending') || $item['status_receive']==$this->config->item('system_status_received'))
-                {
-                ?>
                     <tr>
-                        <th class="widget-header header_caption"><label class="control-label pull-right">Manually Product Receive</label></th>
-                        <th class="warning header_value"><label class="control-label"><?php echo $item['status_system_delivery_receive'];?></label></th>
-                        <th colspan="2">&nbsp;</th>
-                    </tr>
-                    <?php
-                    if($item['status_system_delivery_receive']==$this->config->item('system_status_yes'))
-                    {
-                        ?>
-                        <tr>
-                            <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_STATUS_RECEIVE');?></label></th>
-                            <th class="warning header_value"><label class="control-label"><?php echo $item['status_receive'];?></label></th>
-                            <th colspan="21">&nbsp;</th>
-                        </tr>
-                        <?php
-                        if($item['user_updated_receive_forward'])
-                        {
-                            ?>
-                            <tr>
-                                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_RECEIVED_BY');?></label></th>
-                                <th class=" header_value"><label class="control-label"><?php echo $item['full_name_receive_forward'];?></label></th>
-                                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_RECEIVED_TIME');?></label></th>
-                                <th class=""><label class="control-label"><?php echo System_helper::display_date_time($item['date_updated_receive_forward']);?></label></th>
-                            </tr>
-                        <?php
-                        }
-                        ?>
-                    <?php
-                    }
-                    else
-                    {
-                        ?>
-                        <?php
-                        if($item['user_updated_receive_forward'])
-                        {
-                            ?>
-                            <tr>
-                                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_FORWARDED_BY');?> (Receive)</label></th>
-                                <th class=" header_value"><label class="control-label"><?php echo $item['full_name_receive_forward'];?></label></th>
-                                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_FORWARDED_TIME');?> (Receive)</label></th>
-                                <th class=""><label class="control-label"><?php echo System_helper::display_date_time($item['date_updated_receive_forward']);?></label></th>
-                            </tr>
-                        <?php
-                        }
-                        ?>
-                        <?php
-                        if($item['user_updated_receive_approve'])
-                        {
-                            ?>
-                            <tr>
-                                <th class="widget-header header_caption"><label class="control-label pull-right">Forward Approved By (Receive)</label></th>
-                                <th class=" header_value"><label class="control-label"><?php echo $users[$item['user_updated_receive_approve']]['name'];?></label></th>
-                                <th class="widget-header header_caption"><label class="control-label pull-right">Forward Approved Time (Receive)</label></th>
-                                <th class=""><label class="control-label"><?php echo System_helper::display_date_time($item['date_updated_receive_approve']);?></label></th>
-                            </tr>
-                        <?php
-                        }
-                        ?>
-
-                    <?php
-                    }
-                        ?>
-                    <?php
-                    if($item['remarks_receive_approve'])
-                    {
-                        ?>
-                        <tr>
-                            <th class="widget-header header_caption" style="vertical-align: top"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS_APPROVE');?></label></th>
-                            <th class=" header_value" colspan="3"><label class="control-label"><?php echo nl2br($item['remarks_receive_approve']);?></label></th>
-                        </tr>
-                    <?php
-                    }
-                    ?>
-                <?php
-                }
-                ?>
-                </thead>
-            </table>
-            <!-- Deliver Information-->
-            <?php
-            if($item['status_delivery']==$this->config->item('system_status_delivered'))
-            {
-            ?>
-                <div class="clearfix"></div>
-                <table class="table table-bordered table-responsive system_table_details_view">
-                    <thead>
-                    <tr><th colspan="21" class="bg-info">Delivery & Courier Information</th></tr>
-                    <tr>
-                        <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_DELIVERY');?></label></th>
-                        <th class="alert-warning header_value"><label class="control-label"><?php echo System_helper::display_date($item['courier_date_delivery']);?></label></th>
                         <th class="widget-header header_caption"><label class="control-label pull-right">Challan No</label></th>
                         <th class=""><label class="control-label"><?php echo $item['challan_no'];?></label></th>
+                        <th colspan="21">&nbsp;</th>
                     </tr>
                     <tr>
                         <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_CHALLAN');?></label></th>
@@ -382,11 +288,117 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <th class="widget-header header_caption" style="vertical-align: top"><label class="control-label pull-right">Remarks for Courier</label></th>
                         <th class=" header_value" colspan="3"><label class="control-label"><?php echo nl2br($item['remarks_couriers']);?></label></th>
                     </tr>
-                    </thead>
-                </table>
-            <?php
-            }
-            ?>
+                <?php
+                }
+                ?>
+                <!-- Receive Information-->
+                <?php
+                if($item['status_receive']==$this->config->item('system_status_received') && $item['status_system_delivery_receive']==$this->config->item('system_status_yes'))
+                {
+                ?>
+                    <tr><th colspan="21" class="bg-info">Receive Information</th></tr>
+                    <tr>
+                        <th class="widget-header header_caption"><label class="control-label pull-right">Manually Product Receive</label></th>
+                        <th class="warning header_value"><label class="control-label"><?php echo $item['status_system_delivery_receive'];?></label></th>
+                        <th colspan="2">&nbsp;</th>
+                    </tr>
+                    <tr>
+                        <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_STATUS_RECEIVE');?></label></th>
+                        <th class="warning header_value"><label class="control-label"><?php echo $item['status_receive'];?></label></th>
+                        <th colspan="21">&nbsp;</th>
+                    </tr>
+                    <?php
+                    if($item['user_updated_receive_forward'])
+                    {
+                        ?>
+                        <tr>
+                            <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_RECEIVED_BY');?></label></th>
+                            <th class=" header_value"><label class="control-label"><?php echo $item['full_name_receive_forward'];?></label></th>
+                            <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_RECEIVED_TIME');?></label></th>
+                            <th class=""><label class="control-label"><?php echo System_helper::display_date_time($item['date_updated_receive_forward']);?></label></th>
+                        </tr>
+                    <?php
+                    }
+                    ?>
+                    <?php
+                    if($item['remarks_receive_approve'])
+                    {
+                        ?>
+                        <tr>
+                            <th class="widget-header header_caption" style="vertical-align: top"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS_APPROVE');?></label></th>
+                            <th class=" header_value" colspan="3"><label class="control-label"><?php echo nl2br($item['remarks_receive_approve']);?></label></th>
+                        </tr>
+                    <?php
+                    }
+                    ?>
+                <?php
+                }
+                ?>
+                <?php
+                if($item['status_system_delivery_receive']==$this->config->item('system_status_no'))
+                {
+                ?>
+                    <tr><th colspan="21" class="bg-info">Receive Information</th></tr>
+                    <tr>
+                        <th class="widget-header header_caption"><label class="control-label pull-right">Manually Product Receive</label></th>
+                        <th class="warning header_value"><label class="control-label"><?php echo $item['status_system_delivery_receive'];?></label></th>
+                        <th colspan="2">&nbsp;</th>
+                    </tr>
+                    <?php
+                    if($item['user_updated_receive_forward'])
+                    {
+                        ?>
+                        <tr>
+                            <th class="widget-header header_caption"><label class="control-label pull-right">Edit <?php echo $CI->lang->line('LABEL_RECEIVED_BY');?></label></th>
+                            <th class=" header_value"><label class="control-label"><?php echo $item['full_name_receive_forward'];?></label></th>
+                            <th class="widget-header header_caption"><label class="control-label pull-right">Edit <?php echo $CI->lang->line('LABEL_DATE_RECEIVED_TIME');?></label></th>
+                            <th class=""><label class="control-label"><?php echo System_helper::display_date_time($item['date_updated_receive_forward']);?></label></th>
+                        </tr>
+                    <?php
+                    }
+                    ?>
+                    <?php
+                    if($item['user_updated_receive_forward'])
+                    {
+                        ?>
+                        <tr>
+                            <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_FORWARDED_BY');?> (Receive)</label></th>
+                            <th class=" header_value"><label class="control-label"><?php echo $item['full_name_receive_forward'];?></label></th>
+                            <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_FORWARDED_TIME');?> (Receive)</label></th>
+                            <th class=""><label class="control-label"><?php echo System_helper::display_date_time($item['date_updated_receive_forward']);?></label></th>
+                        </tr>
+                    <?php
+                    }
+                    ?>
+                    <?php
+                    if($item['user_updated_receive_approve'])
+                    {
+                        ?>
+                        <tr>
+                            <th class="widget-header header_caption"><label class="control-label pull-right">Forward Approved By (Receive)</label></th>
+                            <th class=" header_value"><label class="control-label"><?php echo $users[$item['user_updated_receive_approve']]['name'];?></label></th>
+                            <th class="widget-header header_caption"><label class="control-label pull-right">Forward Approved Time (Receive)</label></th>
+                            <th class=""><label class="control-label"><?php echo System_helper::display_date_time($item['date_updated_receive_approve']);?></label></th>
+                        </tr>
+                    <?php
+                    }
+                    ?>
+                    <?php
+                    if($item['remarks_receive_approve'])
+                    {
+                        ?>
+                        <tr>
+                            <th class="widget-header header_caption" style="vertical-align: top"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS_APPROVE');?></label></th>
+                            <th class=" header_value" colspan="3"><label class="control-label"><?php echo nl2br($item['remarks_receive_approve']);?></label></th>
+                        </tr>
+                    <?php
+                    }
+                    ?>
+                <?php
+                }
+                ?>
+                </thead>
+            </table>
         </div>
     </div>
     <div class="col-md-12">
@@ -406,15 +418,11 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <th rowspan="2" style="width: 150px;"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?></th>
                     <th rowspan="2" style="width: 150px;"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
                     <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
-                    <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY_MIN'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
-                    <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY_MAX'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
-                    <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_STOCK_OUTLET'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
-                    <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY_TRANSFER_MAXIMUM'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
                     <?php
-                    if(!($CI->locations['territory_id']>0))
+                    if($item['status_delivery']==$this->config->item('system_status_delivered'))
                     {
                         ?>
-                        <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_STOCK_AVAILABLE'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
+                        <th rowspan="2" style="width: 150px;"><?php echo $CI->lang->line('LABEL_WAREHOUSE_NAME'); ?></th>
                     <?php
                     }
                     ?>
@@ -428,10 +436,18 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     }
                     ?>
                     <?php
-                    if($item['status_receive']==$this->config->item('system_status_received'))
+                    if(($item['status_receive']==$this->config->item('system_status_received') && $item['status_system_delivery_receive']==$this->config->item('system_status_yes')) || $item['status_system_delivery_receive']==$this->config->item('system_status_no'))
                     {
                         ?>
                         <th colspan="2" class="text-center bg-success" style="width: 300px;"><?php echo $CI->lang->line('LABEL_QUANTITY_RECEIVE'); ?></th>
+                    <?php
+                    }
+                    ?>
+                    <?php
+                    if($item['status_system_delivery_receive']==$this->config->item('system_status_no'))
+                    {
+                        ?>
+                        <th colspan="2" class="text-center bg-danger" style="width: 300px;"><?php echo $CI->lang->line('LABEL_QUANTITY_DIFFERENCE'); ?></th>
                     <?php
                     }
                     ?>
@@ -449,11 +465,20 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     }
                     ?>
                     <?php
-                    if($item['status_receive']==$this->config->item('system_status_received'))
+                    if(($item['status_receive']==$this->config->item('system_status_received') && $item['status_system_delivery_receive']==$this->config->item('system_status_yes')) || $item['status_system_delivery_receive']==$this->config->item('system_status_no'))
                     {
                     ?>
                         <th style="width: 150px;" class="text-right bg-success"><?php echo $CI->lang->line('LABEL_PACK');?></th>
                         <th style="width: 150px;" class="text-right bg-success"><?php echo $CI->lang->line('LABEL_KG');?></th>
+                    <?php
+                    }
+                    ?>
+                    <?php
+                    if($item['status_system_delivery_receive']==$this->config->item('system_status_no'))
+                    {
+                        ?>
+                        <th style="width: 150px;" class="text-right bg-danger"><?php echo $CI->lang->line('LABEL_PACK');?></th>
+                        <th style="width: 150px;" class="text-right bg-danger"><?php echo $CI->lang->line('LABEL_KG');?></th>
                     <?php
                     }
                     ?>
@@ -473,6 +498,11 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 $quantity_total_receive=0;
                 $quantity_total_receive_kg=0;
 
+                $quantity_difference=0;
+                $quantity_difference_kg=0;
+                $quantity_total_difference=0;
+                $quantity_total_difference_kg=0;
+
                 foreach($items as $index=>$value)
                 {
                     $quantity_request_kg=(($value['quantity_request']*$value['pack_size'])/1000);
@@ -489,6 +519,11 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     $quantity_total_receive+=$quantity_receive;
                     $quantity_total_receive_kg+=$quantity_receive_kg;
 
+                    $quantity_difference=($quantity_receive-$quantity_approve);
+                    $quantity_difference_kg=($quantity_receive_kg-$quantity_approve_kg);
+                    $quantity_total_difference+=$quantity_difference;
+                    $quantity_total_difference_kg+=$quantity_difference_kg;
+
                     ?>
                     <tr>
                         <td class="text-right"><?php echo $index+1;?></td>
@@ -504,44 +539,12 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <td class="text-right">
                             <label><?php echo $value['pack_size']; ?></label>
                         </td>
-                        <td class="text-right">
-                            <label id="quantity_min_<?php echo $index+1;?>">
-                                <?php
-                                echo isset($two_variety_info[$value['variety_id']][$value['pack_size_id']])?number_format($two_variety_info[$value['variety_id']][$value['pack_size_id']]['quantity_min'],3,'.',''):'0.000';
-                                ?>
-                            </label>
-                        </td>
-                        <td class="text-right">
-                            <label id="quantity_max_<?php echo $index+1;?>">
-                                <?php
-                                echo isset($two_variety_info[$value['variety_id']][$value['pack_size_id']])?number_format($two_variety_info[$value['variety_id']][$value['pack_size_id']]['quantity_max'],3,'.',''):'0.000';
-                                ?>
-                            </label>
-                        </td>
-                        <td class="text-right">
-                            <label class="control-label stock_outlet" id="stock_outlet_<?php echo $index+1;?>">
-                                <?php
-                                echo isset($two_variety_info[$value['variety_id']][$value['pack_size_id']])?number_format($two_variety_info[$value['variety_id']][$value['pack_size_id']]['stock_outlet'],3,'.',''):'0.000';
-                                ?>
-                            </label>
-                        </td>
-                        <td class="text-right">
-                            <label class="control-label quantity_max_transferable" id="quantity_max_transferable_<?php echo $index+1;?>">
-                                <?php
-                                echo isset($two_variety_info[$value['variety_id']][$value['pack_size_id']])?number_format($two_variety_info[$value['variety_id']][$value['pack_size_id']]['quantity_max_transferable'],3,'.',''):'0.000';
-                                ?>
-                            </label>
-                        </td>
                         <?php
-                        if(!($CI->locations['territory_id']>0))
+                        if($item['status_delivery']==$this->config->item('system_status_delivered'))
                         {
                             ?>
-                            <td class="text-right">
-                                <label class="control-label stock_available" id="stock_available_id_<?php echo $index+1;?>">
-                                    <?php
-                                    echo isset($two_variety_info[$value['variety_id']][$value['pack_size_id']])?number_format($two_variety_info[$value['variety_id']][$value['pack_size_id']]['stock_available'],3,'.',''):'0.000';
-                                    ?>
-                                </label>
+                            <td>
+                                <label><?php echo $value['warehouse_name']; ?></label>
                             </td>
                         <?php
                         }
@@ -562,11 +565,20 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         }
                         ?>
                         <?php
-                        if($item['status_receive']==$this->config->item('system_status_received'))
+                        if(($item['status_receive']==$this->config->item('system_status_received') && $item['status_system_delivery_receive']==$this->config->item('system_status_yes')) || $item['status_system_delivery_receive']==$this->config->item('system_status_no'))
                         {
                             ?>
                             <td class="text-right"><label><?php echo $quantity_receive; ?></label></td>
                             <td class="text-right"><label> <?php echo number_format($quantity_receive_kg,3,'.','');?> </label></td>
+                        <?php
+                        }
+                        ?>
+                        <?php
+                        if($item['status_system_delivery_receive']==$this->config->item('system_status_no'))
+                        {
+                            ?>
+                            <td class="text-right"><label><?php echo $quantity_difference; ?></label></td>
+                            <td class="text-right"><label> <?php echo number_format($quantity_difference_kg,3,'.','');?> </label></td>
                         <?php
                         }
                         ?>
@@ -577,14 +589,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 </tbody>
                 <tfoot>
                 <tr>
-                    <?php
-                    $quantity_total_colspan=9;
-                    if(!($CI->locations['territory_id']>0))
-                    {
-                        $quantity_total_colspan+=1;
-                    }
-                    ?>
-                    <th colspan="<?php echo $quantity_total_colspan?>" class="text-right"><?php echo $CI->lang->line('LABEL_TOTAL');?></th>
+                    <th colspan="6" class="text-right"><?php echo $CI->lang->line('LABEL_TOTAL');?></th>
                     <th class="text-right"><label class="control-label" id="quantity_total_request"> <?php echo $quantity_total_request;?></label></th>
                     <th class="text-right"><label class="control-label" id="quantity_total_request_kg"> <?php echo number_format($quantity_total_request_kg,3,'.','');?></label></th>
                     <?php
@@ -597,11 +602,20 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     }
                     ?>
                     <?php
-                    if($item['status_receive']==$this->config->item('system_status_received'))
+                    if(($item['status_receive']==$this->config->item('system_status_received') && $item['status_system_delivery_receive']==$this->config->item('system_status_yes')) || $item['status_system_delivery_receive']==$this->config->item('system_status_no'))
                     {
                         ?>
                         <th class="text-right"><label class="control-label" id="quantity_total_request"> <?php echo $quantity_total_receive;?></label></th>
                         <th class="text-right"><label class="control-label" id="quantity_total_request_kg"> <?php echo number_format($quantity_total_receive_kg,3,'.','');?></label></th>
+                    <?php
+                    }
+                    ?>
+                    <?php
+                    if($item['status_system_delivery_receive']==$this->config->item('system_status_no'))
+                    {
+                        ?>
+                        <th class="text-right"><label class="control-label" id="quantity_total_request"> <?php echo $quantity_total_difference;?></label></th>
+                        <th class="text-right"><label class="control-label" id="quantity_total_request_kg"> <?php echo number_format($quantity_total_difference_kg,3,'.','');?></label></th>
                     <?php
                     }
                     ?>

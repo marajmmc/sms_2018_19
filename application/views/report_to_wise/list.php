@@ -64,7 +64,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 { name: 'territory_name', type: 'string' },
                 { name: 'district_name', type: 'string' },
                 { name: 'outlet_name', type: 'string' },
-                { name: 'transfer_wo_id', type: 'string' },
+                { name: 'barcode', type: 'string' },
                 { name: 'date_request', type: 'string' },
                 { name: 'quantity_total_request', type: 'string' },
                 { name: 'status_request', type: 'string' },

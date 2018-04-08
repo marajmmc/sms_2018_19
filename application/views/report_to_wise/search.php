@@ -240,6 +240,25 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <label class="control-label"><?php echo $CI->lang->line('LABEL_OUTLET_NAME');?><span style="color:#FF0000">*</span></label>
                     </div>
                 </div>
+                <!--<div class="row show-grid">
+                    <div class="col-xs-6">
+                        <select id="status_type" name="report[status_type]" class="form-control">
+                            <option value="">All Status Type</option>
+                            <option value=""><?php /*echo $CI->lang->line('LABEL_STATUS_PENDING');*/?></option>
+                            <option value=""><?php /*echo $CI->lang->line('LABEL_STATUS_REQUEST');*/?></option>
+                            <option value=""><?php /*echo $CI->lang->line('LABEL_STATUS_APPROVE');*/?></option>
+                            <option value=""><?php /*echo $CI->lang->line('LABEL_STATUS_DELIVERY');*/?></option>
+                            <option value=""><?php /*echo $CI->lang->line('LABEL_STATUS_RECEIVE');*/?></option>
+                            <option value=""><?php /*echo $CI->lang->line('LABEL_STATUS_RECEIVE_FORWARD');*/?></option>
+                            <option value=""><?php /*echo $CI->lang->line('LABEL_STATUS_RECEIVE_APPROVE');*/?></option>
+                            <option value=""><?php /*echo $CI->lang->line('LABEL_STATUS_SYSTEM_DELIVERY_RECEIVE');*/?></option>
+                            <option value=""><?php /*echo $CI->lang->line('LABEL_STATUS');*/?></option>
+                        </select>
+                    </div>
+                    <div class="col-xs-6">
+                        <label class="control-label">Status Type</label>
+                    </div>
+                </div>-->
             </div>
         </div>
         <div class="row show-grid">
