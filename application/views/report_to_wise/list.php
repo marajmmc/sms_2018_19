@@ -59,6 +59,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         {
             dataType: "json",
             dataFields: [
+                { name: 'transfer_wo_id', type: 'string' },
                 { name: 'division_name', type: 'string' },
                 { name: 'zone_name', type: 'string' },
                 { name: 'territory_name', type: 'string' },
@@ -124,6 +125,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 columnsreorder: true,
                 altrows: true,
                 enabletooltips: true,
+                enablebrowserselection: true,
                 rowsheight: 45,
                 columns:
                     [

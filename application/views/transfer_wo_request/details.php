@@ -114,14 +114,21 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 ?>
                 <!-- Approval Information-->
                 <?php
-                if($item['status_approve']==$this->config->item('system_status_approved'))
+                if($item['status_approve']==$this->config->item('system_status_approved') || $item['status_approve']==$this->config->item('system_status_rejected'))
                 {
+                    $label_approve_reject='Approval ';
+                    $status_approve_reject_color='warning';
+                    if($item['status_approve']==$this->config->item('system_status_rejected'))
+                    {
+                        $label_approve_reject='Reject ';
+                        $status_approve_reject_color='danger';
+                    }
                     ?>
-                    <tr><th colspan="21" class="bg-info">Approval Information</th></tr>
+                    <tr><th colspan="21" class="bg-info"><?php echo $label_approve_reject?> Information</th></tr>
                     <tr>
-                        <th class="widget-header header_caption"><label class="control-label pull-right">Approve Status</label></th>
-                        <th class="warning header_value"><label class="control-label"><?php echo $item['status_approve'];?></label></th>
-                        <th class="widget-header header_caption"><label class="control-label pull-right">`TO` (Approve) Number of Edit</label></th>
+                        <th class="widget-header header_caption"><label class="control-label pull-right">Approval Status</label></th>
+                        <th class="<?php echo $status_approve_reject_color?> header_value"><label class="control-label"><?php echo $item['status_approve'];?></label></th>
+                        <th class="widget-header header_caption"><label class="control-label pull-right">`TO` (<?php echo $label_approve_reject?>) Number of Edit</label></th>
                         <th class="warning"><label class="control-label"><?php echo $item['revision_count_approve'];?></label></th>
                     </tr>
                     <?php
@@ -129,7 +136,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     {
                         ?>
                         <tr>
-                            <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_APPROVE');?></label></th>
+                            <th class="widget-header header_caption"><label class="control-label pull-right">Date of <?php echo $label_approve_reject?></label></th>
                             <th class=" header_value"><label class="control-label"><?php echo System_helper::display_date($item['date_approve']);?></label></th>
                             <th colspan="2">&nbsp;</th>
                         </tr>
@@ -141,7 +148,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     {
                         ?>
                         <tr>
-                            <th class="widget-header header_caption" style="vertical-align: top"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS_APPROVE');?> (Edit)</label></th>
+                            <th class="widget-header header_caption" style="vertical-align: top"><label class="control-label pull-right">Remarks for <?php echo $label_approve_reject?> (Edit)</label></th>
                             <th class=" header_value" colspan="3"><label class="control-label"><?php echo nl2br($item['remarks_approve_edit']);?></label></th>
                         </tr>
                     <?php
@@ -152,9 +159,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     {
                         ?>
                         <tr>
-                            <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_UPDATED_BY');?> (Approve Edit)</label></th>
+                            <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_UPDATED_BY');?> (<?php echo $label_approve_reject?> Edit)</label></th>
                             <th class=" header_value"><label class="control-label"><?php echo $users[$item['user_updated_approve']]['name'];?></label></th>
-                            <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_UPDATED_TIME');?> (Approve Edit)</label></th>
+                            <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_UPDATED_TIME');?> (<?php echo $label_approve_reject?> Edit)</label></th>
                             <th class=""><label class="control-label"><?php echo System_helper::display_date_time($item['date_updated_approve']);?></label></th>
                         </tr>
                     <?php
@@ -165,9 +172,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     {
                         ?>
                         <tr>
-                            <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_FORWARDED_BY');?> (Approve)</label></th>
+                            <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $label_approve_reject?> By</label></th>
                             <th class=" header_value"><label class="control-label"><?php echo $users[$item['user_updated_approve_forward']]['name'];?></label></th>
-                            <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_FORWARDED_TIME');?> (Approve)</label></th>
+                            <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $label_approve_reject?> Time</label></th>
                             <th class=""><label class="control-label"><?php echo System_helper::display_date_time($item['date_updated_approve_forward']);?></label></th>
                         </tr>
                     <?php
@@ -178,7 +185,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     {
                         ?>
                         <tr>
-                            <th class="widget-header header_caption" style="vertical-align: top"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS_APPROVE');?></label></th>
+                            <th class="widget-header header_caption" style="vertical-align: top"><label class="control-label pull-right">Remarks for <?php echo $label_approve_reject?></label></th>
                             <th class=" header_value" colspan="3"><label class="control-label"><?php echo nl2br($item['remarks_approve']);?></label></th>
                         </tr>
                     <?php
@@ -589,7 +596,14 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 </tbody>
                 <tfoot>
                 <tr>
-                    <th colspan="6" class="text-right"><?php echo $CI->lang->line('LABEL_TOTAL');?></th>
+                    <?php
+                    $footer_colspan=5;
+                    if($item['status_delivery']==$this->config->item('system_status_delivered'))
+                    {
+                        $footer_colspan+=1;
+                    }
+                    ?>
+                    <th colspan="<?php echo $footer_colspan;?>" class="text-right"><?php echo $CI->lang->line('LABEL_TOTAL');?></th>
                     <th class="text-right"><label class="control-label" id="quantity_total_request"> <?php echo $quantity_total_request;?></label></th>
                     <th class="text-right"><label class="control-label" id="quantity_total_request_kg"> <?php echo number_format($quantity_total_request_kg,3,'.','');?></label></th>
                     <?php

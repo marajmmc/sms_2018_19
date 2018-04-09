@@ -768,6 +768,7 @@ class Transfer_wo_request extends Root_Controller
             $this->db->select('warehouse.name warehouse_name');
             $this->db->where('transfer_wo_details.transfer_wo_id',$item_id);
             $this->db->where('transfer_wo_details.status',$this->config->item('system_status_active'));
+            $this->db->order_by('transfer_wo_details.id');
             $data['items']=$this->db->get()->result_array();
 
             /*$result=Query_helper::get_info($this->config->item('table_login_setup_system_configures'),array('*'),array('purpose="'.$this->config->item('system_purpose_sms_quantity_order_max').'"', 'status ="'.$this->config->item('system_status_active').'"'),1);

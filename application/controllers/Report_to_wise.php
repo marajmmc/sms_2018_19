@@ -123,7 +123,12 @@ class Report_to_wise extends Root_Controller
         {
             $reports=$this->input->post('report');
             $data['options']=$reports;
-
+            if(!System_helper::get_time($reports['date_start']) || !System_helper::get_time($reports['date_end']))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='Starting date and end date is required.';
+                $this->json_return($ajax);
+            }
             $data['system_preference_items']= $this->get_preference();
             $data['title']="TO Wise Report";
             $ajax['status']=true;
@@ -150,6 +155,7 @@ class Report_to_wise extends Root_Controller
         $pack_size_id=$this->input->post('pack_size_id');
         $date_start=System_helper::get_time($this->input->post('date_start'));
         $date_end=System_helper::get_time($this->input->post('date_end'));
+
 
         $division_id=$this->input->post('division_id');
         $zone_id=$this->input->post('zone_id');
@@ -252,7 +258,7 @@ class Report_to_wise extends Root_Controller
         $all_to=array();
         foreach($data['items'] as $item)
         {
-            $all_to[$item['outlet_id']][$item['id']]=$item;
+            $all_to[$item['outlet_id']][$item['transfer_wo_id']]=$item;
         }
 
         $first_row=true;
@@ -315,7 +321,7 @@ class Report_to_wise extends Root_Controller
                 {
                     foreach($all_to[$result['outlet_id']] as $id=>$two)
                     {
-                        $row['transfer_wo_id']=$two['transfer_wo_id'];
+                        $row['transfer_wo_id']=$id;
                         $row['barcode']=Barcode_helper::get_barcode_transfer_warehouse_to_outlet($id);
                         $row['date_request']=System_helper::display_date($two['date_request']);
                         $row['quantity_total_request']=number_format($two['quantity_total_request_kg'],3,'.','');
@@ -394,7 +400,30 @@ class Report_to_wise extends Root_Controller
             $this->db->where('transfer_wo.id',$item_id);
             $this->db->where('outlet_info.revision',1);
             $this->db->order_by('transfer_wo.id','DESC');
+            /*if($this->locations['division_id']>0)
+            {
+                $this->db->where('divisions.id',$this->locations['division_id']);
+                if($this->locations['zone_id']>0)
+                {
+                    $this->db->where('zones.id',$this->locations['zone_id']);
+                    if($this->locations['territory_id']>0)
+                    {
+                        $this->db->where('territories.id',$this->locations['territory_id']);
+                        if($this->locations['district_id']>0)
+                        {
+                            $this->db->where('districts.id',$this->locations['district_id']);
+                        }
+                    }
+                }
+            }*/
             $data['item']=$this->db->get()->row_array();
+            if(!$data['item'])
+            {
+                System_helper::invalid_try('details',$item_id,'View Non Exists');
+                $ajax['status']=false;
+                $ajax['system_message']='Invalid Try.';
+                $this->json_return($ajax);
+            }
 
             $user_ids=array();
             $user_ids[$data['item']['user_created_request']]=$data['item']['user_created_request'];
@@ -415,23 +444,26 @@ class Report_to_wise extends Root_Controller
             $this->db->select('crop_type.id crop_type_id, crop_type.name crop_type_name');
             $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id=crop_type.crop_id','INNER');
             $this->db->select('crop.id crop_id, crop.name crop_name');
+            $this->db->join($this->config->item('table_login_basic_setup_warehouse').' warehouse','warehouse.id=transfer_wo_details.warehouse_id','LEFT');
+            $this->db->select('warehouse.name warehouse_name');
             $this->db->where('transfer_wo_details.transfer_wo_id',$item_id);
             $this->db->where('transfer_wo_details.status',$this->config->item('system_status_active'));
+            $this->db->order_by('transfer_wo_details.id');
             $data['items']=$this->db->get()->result_array();
 
-            $result=Query_helper::get_info($this->config->item('table_login_setup_system_configures'),array('*'),array('purpose="'.$this->config->item('system_purpose_sms_quantity_order_max').'"', 'status ="'.$this->config->item('system_status_active').'"'),1);
+            /*$result=Query_helper::get_info($this->config->item('table_login_setup_system_configures'),array('*'),array('purpose="'.$this->config->item('system_purpose_sms_quantity_order_max').'"', 'status ="'.$this->config->item('system_status_active').'"'),1);
             $data['quantity_to_maximum_kg']=$result['config_value'];
             $data['crops']=Query_helper::get_info($this->config->item('table_login_setup_classification_crops'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
-            $data['two_variety_info']=Stock_helper::transfer_wo_variety_stock_info($data['item']['outlet_id']);
+            $data['two_variety_info']=Stock_helper::transfer_wo_variety_stock_info($data['item']['outlet_id']);*/
 
-            $data['title']="TO Wise Report Details View";
+            $data['title']="HQ to Outlet Details Transfer Request :: ". Barcode_helper::get_barcode_transfer_warehouse_to_outlet($data['item']['id']);
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#popup_content","html"=>$this->load->view($this->controller_url."/details",$data,true));
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
             }
-            $ajax['system_page_url']=site_url($this->controller_url.'/index/details/'.$id);
+            $ajax['system_page_url']=site_url($this->controller_url);
             $this->json_return($ajax);
         }
         else

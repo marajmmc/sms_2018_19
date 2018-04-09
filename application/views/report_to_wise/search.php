@@ -21,7 +21,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             <div class="col-xs-6">
                 <div style="" class="row show-grid" id="crop_id_container">
                     <div class="col-xs-6">
-                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CROP_NAME');?><span style="color:#FF0000">*</span></label>
+                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CROP_NAME');?> <span style="color:#FF0000">*</span></label>
                     </div>
                     <div class="col-xs-6">
                         <select id="crop_id" name="report[crop_id]" class="form-control">
@@ -86,7 +86,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 </div>
                 <div class="row show-grid">
                     <div class="col-xs-6">
-                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_START');?></label>
+                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_START');?> <span style="color:#FF0000">*</span></label>
                     </div>
                     <div class="col-xs-6">
                         <input type="text" id="date_start" name="report[date_start]" class="form-control date_large" value="<?php echo $date_start; ?>">
@@ -94,7 +94,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 </div>
                 <div class="row show-grid">
                     <div class="col-xs-6">
-                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_END');?></label>
+                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_END');?> <span style="color:#FF0000">*</span></label>
                     </div>
                     <div class="col-xs-6">
                         <input type="text" id="date_end" name="report[date_end]" class="form-control date_large" value="<?php echo $date_end; ?>">
