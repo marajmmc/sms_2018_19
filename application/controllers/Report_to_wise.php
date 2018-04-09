@@ -18,7 +18,6 @@ class Report_to_wise extends Root_Controller
             $ajax['system_message']=$this->lang->line('MSG_LOCATION_NOT_ASSIGNED_OR_INVALID');
             $this->json_return($ajax);
         }
-        $this->lang->load('report_to');
     }
     public function index($action="search",$id=0)
     {
