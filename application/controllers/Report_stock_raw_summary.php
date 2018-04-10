@@ -201,12 +201,9 @@ class Report_stock_raw_summary extends Root_Controller
                     $items[]=$this->get_row($pack);
                 }
             }
-            if($results)
-            {
-                $items[]=$this->get_row($type_total);
-                $items[]=$this->get_row($crop_total);
-                $items[]=$this->get_row($grand_total);
-            }
+            $items[]=$this->get_row($type_total);
+            $items[]=$this->get_row($crop_total);
+            $items[]=$this->get_row($grand_total);
         }
         else
         {
@@ -215,11 +212,18 @@ class Report_stock_raw_summary extends Root_Controller
             $grand_total['variety_name']='';
             $grand_total['pack_size']='';
             $grand_total['current_stock_pcs_kg']=0;
-            foreach($results as $result)
+            if($results)
             {
-                $result['current_stock_pcs_kg']=number_format($result['current_stock'],3,'.','');
-                $items[]=$result;
-                $grand_total['current_stock_pcs_kg']=number_format($result['current_stock'],3,'.','');
+                foreach($results as $result)
+                {
+                    $result['current_stock_pcs_kg']=number_format($result['current_stock'],3,'.','');
+                    $items[]=$result;
+                    $grand_total['current_stock_pcs_kg']=number_format($result['current_stock'],3,'.','');
+                    $items[]=$grand_total;
+                }
+            }
+            else
+            {
                 $items[]=$grand_total;
             }
         }
