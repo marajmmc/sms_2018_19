@@ -130,4 +130,37 @@ class Stock_helper
         return $stocks;
     }
 
+    public static function transfer_ow_variety_stock_info($outlet_id=0)
+    {
+        $CI =& get_instance();
+        $tow_variety_info=array();
+        $CI->db->from($CI->config->item('table_pos_stock_summary_variety').' pos_stock_summary_variety');
+        $CI->db->select('SUM(pos_stock_summary_variety.current_stock) current_stock, pos_stock_summary_variety.variety_id, pos_stock_summary_variety.pack_size_id');
+        $CI->db->join($CI->config->item('table_login_setup_classification_pack_size').' pack','pack.id=pos_stock_summary_variety.pack_size_id','LEFT');
+        $CI->db->select('pack.name pack_size');
+        $CI->db->where('pos_stock_summary_variety.outlet_id',$outlet_id);
+        $CI->db->group_by('pos_stock_summary_variety.variety_id, pos_stock_summary_variety.pack_size_id');
+        $results=$CI->db->get()->result_array();
+        foreach($results as $result)
+        {
+            $tow_variety_info[$result['variety_id']][$result['pack_size_id']]['pack_size']=$result['pack_size'];
+            $tow_variety_info[$result['variety_id']][$result['pack_size_id']]['stock_available']=(($result['current_stock']*$result['pack_size'])/1000);
+        }
+
+        /* calculate available stock */
+        $CI->db->from($CI->config->item('table_sms_transfer_ow').' transfer_ow');
+        $CI->db->join($CI->config->item('table_sms_transfer_ow_details').' transfer_ow_details','transfer_ow_details.transfer_ow_id=transfer_ow.id AND transfer_ow_details.status="'.$CI->config->item('system_status_active').'"','INNER');
+        $CI->db->select('SUM(transfer_ow_details.quantity_approve) quantity_approve, transfer_ow_details.variety_id, transfer_ow_details.pack_size_id');
+        $CI->db->where('transfer_ow.outlet_id',$outlet_id);
+        $CI->db->where('transfer_ow.status',$CI->config->item('system_status_active'));
+        $CI->db->where('transfer_ow.status_approve',$CI->config->item('system_status_approved'));
+        $CI->db->where('transfer_ow.status_delivery',$CI->config->item('system_status_pending'));
+        $CI->db->group_by('transfer_ow_details.variety_id, transfer_ow_details.pack_size_id');
+        $results=$CI->db->get()->result_array();
+        foreach($results as $result)
+        {
+            $tow_variety_info[$result['variety_id']][$result['pack_size_id']]['stock_available']=($tow_variety_info[$result['variety_id']][$result['pack_size_id']]['stock_available']-(($result['quantity_approve']*$tow_variety_info[$result['variety_id']][$result['pack_size_id']]['pack_size'])/1000));
+        }
+        return $tow_variety_info;
+    }
 }

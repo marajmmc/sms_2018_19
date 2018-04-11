@@ -684,8 +684,6 @@ class Transfer_wo_receive_approve extends Root_Controller
             $this->db->select('crop_type.id crop_type_id, crop_type.name crop_type_name');
             $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id=crop_type.crop_id','INNER');
             $this->db->select('crop.id crop_id, crop.name crop_name');
-            $this->db->join($this->config->item('table_login_basic_setup_warehouse').' warehouse','warehouse.id=transfer_wo_details.warehouse_id','LEFT');
-            $this->db->select('warehouse.name warehouse_name');
             $this->db->where('transfer_wo_details.transfer_wo_id',$item_id);
             $this->db->where('transfer_wo_details.status',$this->config->item('system_status_active'));
             $this->db->order_by('transfer_wo_details.id');

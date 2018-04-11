@@ -426,6 +426,7 @@ $lang['LABEL_QUANTITY_PACKET_ACTUAL']='Converted Packets';
 $lang['LABEL_QUANTITY_TRANSFER_MAXIMUM']='Max Transferable';
 $lang['LABEL_TO_FORWARD']='Forward TO';
 $lang['LABEL_ORDER_ITEMS']='Order Items (Variety Information)';
+$lang['LABEL_RETURN_ITEMS']='Return Items (Variety Information)';
 
 $lang['LABEL_STATUS_RECEIVE_FORWARD']='Receive Forward Status';
 $lang['LABEL_STATUS_RECEIVE_APPROVE']='Receive Approve Status';

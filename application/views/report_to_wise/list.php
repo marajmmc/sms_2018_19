@@ -150,7 +150,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         { text: '<?php echo $CI->lang->line('LABEL_STATUS_RECEIVE_APPROVE'); ?>', dataField: 'status_receive_approve',width:'100',filtertype: 'list',hidden: <?php echo $system_preference_items['status_receive_approve']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_STATUS_SYSTEM_DELIVERY_RECEIVE'); ?>', dataField: 'status_system_delivery_receive',width:'100',filtertype: 'list',hidden: <?php echo $system_preference_items['status_system_delivery_receive']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_STATUS'); ?>', dataField: 'status',width:'100',filtertype: 'list',hidden: <?php echo $system_preference_items['status']?0:1;?>},
-                        { text: 'Details', dataField: 'details_button',width: '85',cellsrenderer: cellsrenderer}
+                        { text: 'Details', dataField: 'details_button',width: '120',cellsrenderer: cellsrenderer}
                     ]
             });
     });
