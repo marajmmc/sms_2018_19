@@ -30,38 +30,30 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <thead>
                     <tr>
                         <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ID');?></label></th>
-                        <th class=""><label class="control-label"><?php echo Barcode_helper::get_barcode_transfer_warehouse_to_outlet($item['id']);?></label></th>
-                        <th colspan="2">&nbsp;</th>
+                        <th class=""><label class="control-label"><?php echo Barcode_helper::get_barcode_transfer_outlet_to_warehouse($item['id']);?></label></th>
+                        <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DIVISION_NAME');?></label></th>
+                        <th class=" header_value"><label class="control-label"><?php echo $item['division_name'];?></label></th>
                     </tr>
                     <tr>
                         <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_REQUEST');?></label></th>
                         <th class=" header_value"><label class="control-label"><?php echo System_helper::display_date($item['date_request']);?></label></th>
-                        <th colspan="2">&nbsp;</th>
-                    </tr>
-                    <tr>
-                        <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DIVISION_NAME');?></label></th>
-                        <th class=" header_value"><label class="control-label"><?php echo $item['division_name'];?></label></th>
-                        <th colspan="2">&nbsp;</th>
-                    </tr>
-                    <tr>
                         <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ZONE_NAME');?></label></th>
                         <th class=" header_value"><label class="control-label"><?php echo $item['zone_name'];?></label></th>
-                        <th colspan="2">&nbsp;</th>
                     </tr>
                     <tr>
+                        <th colspan="2">&nbsp;</th>
                         <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TERRITORY_NAME');?></label></th>
                         <th class=" header_value"><label class="control-label"><?php echo $item['territory_name'];?></label></th>
-                        <th colspan="2">&nbsp;</th>
                     </tr>
                     <tr>
+                        <th colspan="2">&nbsp;</th>
                         <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DISTRICT_NAME');?></label></th>
                         <th class=" header_value"><label class="control-label"><?php echo $item['district_name'];?></label></th>
-                        <th colspan="2">&nbsp;</th>
                     </tr>
                     <tr>
+                        <th colspan="2">&nbsp;</th>
                         <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_OUTLET_NAME');?></label></th>
                         <th class=" header_value"><label class="control-label"><?php echo $item['outlet_name'];?></label></th>
-                        <th colspan="2">&nbsp;</th>
                     </tr>
                     <tr>
                         <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CREATED_BY');?></label></th>
@@ -110,10 +102,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <th rowspan="2" style="width: 150px;"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?></th>
                         <th rowspan="2" style="width: 150px;"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
                         <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
-                        <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY_MIN'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
-                        <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY_MAX'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
-                        <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_STOCK_OUTLET'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
-                        <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY_TRANSFER_MAXIMUM'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
                         <?php
                         if(!($CI->locations['territory_id']>0))
                         {
@@ -152,34 +140,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                             <td class="text-right">
                                 <label><?php echo $value['pack_size']; ?></label>
                             </td>
-                            <td class="text-right">
-                                <label id="quantity_min_<?php echo $index+1;?>">
-                                    <?php
-                                    echo isset($two_variety_info[$value['variety_id']][$value['pack_size_id']])?number_format($two_variety_info[$value['variety_id']][$value['pack_size_id']]['quantity_min'],3,'.',''):'0.000';
-                                    ?>
-                                </label>
-                            </td>
-                            <td class="text-right">
-                                <label id="quantity_max_<?php echo $index+1;?>">
-                                    <?php
-                                    echo isset($two_variety_info[$value['variety_id']][$value['pack_size_id']])?number_format($two_variety_info[$value['variety_id']][$value['pack_size_id']]['quantity_max'],3,'.',''):'0.000';
-                                    ?>
-                                </label>
-                            </td>
-                            <td class="text-right">
-                                <label class="control-label stock_outlet" id="stock_outlet_<?php echo $index+1;?>">
-                                    <?php
-                                    echo isset($two_variety_info[$value['variety_id']][$value['pack_size_id']])?number_format($two_variety_info[$value['variety_id']][$value['pack_size_id']]['stock_outlet'],3,'.',''):'0.000';
-                                    ?>
-                                </label>
-                            </td>
-                            <td class="text-right">
-                                <label class="control-label quantity_max_transferable" id="quantity_max_transferable_<?php echo $index+1;?>">
-                                    <?php
-                                    echo isset($two_variety_info[$value['variety_id']][$value['pack_size_id']])?number_format($two_variety_info[$value['variety_id']][$value['pack_size_id']]['quantity_max_transferable'],3,'.',''):'0.000';
-                                    ?>
-                                </label>
-                            </td>
                             <?php
                             if(!($CI->locations['territory_id']>0))
                             {
@@ -187,7 +147,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                                 <td class="text-right">
                                     <label class="control-label stock_available" id="stock_available_id_<?php echo $index+1;?>">
                                         <?php
-                                        echo isset($two_variety_info[$value['variety_id']][$value['pack_size_id']])?number_format($two_variety_info[$value['variety_id']][$value['pack_size_id']]['stock_available'],3,'.',''):'0.000';
+                                        echo isset($tow_variety_info[$value['variety_id']][$value['pack_size_id']])?number_format($tow_variety_info[$value['variety_id']][$value['pack_size_id']]['stock_available'],3,'.',''):'0.000';
                                         ?>
                                     </label>
                                 </td>
@@ -208,7 +168,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <tfoot>
                     <tr>
                         <?php
-                        $quantity_total_colspan=8;
+                        $quantity_total_colspan=4;
                         if(!($CI->locations['territory_id']>0))
                         {
                             $quantity_total_colspan+=1;
@@ -239,7 +199,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             </div>
             <div class="col-sm-4 col-xs-4">
                 <div class="action_button">
-                    <button id="button_action_save" type="button" class="btn" data-form="#save_form" data-message-confirm="Are You Sure HQ to Outlet Forward TO?">HQ to Outlet `TO` Forward</button>
+                    <button id="button_action_save" type="button" class="btn" data-form="#save_form" data-message-confirm="Are You Sure Outlet to HQ Forward TO?">Outlet to HQ `TO` Forward</button>
                 </div>
             </div>
             <div class="col-sm-4 col-xs-4">

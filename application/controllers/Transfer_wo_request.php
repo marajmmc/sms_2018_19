@@ -364,22 +364,7 @@ class Transfer_wo_request extends Root_Controller
             $this->db->where('transfer_wo.id',$item_id);
             $this->db->where('outlet_info.revision',1);
             $this->db->order_by('transfer_wo.id','DESC');
-            if($this->locations['division_id']>0)
-            {
-                $this->db->where('divisions.id',$this->locations['division_id']);
-                if($this->locations['zone_id']>0)
-                {
-                    $this->db->where('zones.id',$this->locations['zone_id']);
-                    if($this->locations['territory_id']>0)
-                    {
-                        $this->db->where('territories.id',$this->locations['territory_id']);
-                        if($this->locations['district_id']>0)
-                        {
-                            $this->db->where('districts.id',$this->locations['district_id']);
-                        }
-                    }
-                }
-            }
+
             $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
             {
@@ -401,8 +386,11 @@ class Transfer_wo_request extends Root_Controller
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->json_return($ajax);
             }
-
-            $data['divisions']=Query_helper::get_info($this->config->item('table_login_setup_location_divisions'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
+            $data['zones']=true;
+            $data['territories']=true;
+            $data['districts']=true;
+            $data['outlets']=true;
+            /*$data['divisions']=Query_helper::get_info($this->config->item('table_login_setup_location_divisions'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $data['zones']=Query_helper::get_info($this->config->item('table_login_setup_location_zones'),array('id value','name text'),array('division_id ='.$data['item']['division_id'],'status ="'.$this->config->item('system_status_active').'"'));
             $data['territories']=Query_helper::get_info($this->config->item('table_login_setup_location_territories'),array('id value','name text'),array('zone_id ='.$data['item']['zone_id'],'status ="'.$this->config->item('system_status_active').'"'));
             $data['districts']=Query_helper::get_info($this->config->item('table_login_setup_location_districts'),array('id value','name text'),array('territory_id ='.$data['item']['territory_id'],'status ="'.$this->config->item('system_status_active').'"'));
@@ -412,7 +400,7 @@ class Transfer_wo_request extends Root_Controller
             $this->db->where('customer.status',$this->config->item('system_status_active'));
             $this->db->where('cus_info.district_id',$data['item']['district_id']);
             $this->db->where('cus_info.revision',1);
-            $data['outlets']=$this->db->get()->result_array();
+            $data['outlets']=$this->db->get()->result_array();*/
 
             $this->db->from($this->config->item('table_sms_transfer_wo_details').' transfer_wo_details');
             $this->db->select('transfer_wo_details.*');
@@ -481,22 +469,7 @@ class Transfer_wo_request extends Root_Controller
             $this->db->where('transfer_wo.id',$id);
             $this->db->where('outlet_info.revision',1);
             $this->db->order_by('transfer_wo.id','DESC');
-            if($this->locations['division_id']>0)
-            {
-                $this->db->where('divisions.id',$this->locations['division_id']);
-                if($this->locations['zone_id']>0)
-                {
-                    $this->db->where('zones.id',$this->locations['zone_id']);
-                    if($this->locations['territory_id']>0)
-                    {
-                        $this->db->where('territories.id',$this->locations['territory_id']);
-                        if($this->locations['district_id']>0)
-                        {
-                            $this->db->where('districts.id',$this->locations['district_id']);
-                        }
-                    }
-                }
-            }
+
             $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
             {
@@ -742,22 +715,6 @@ class Transfer_wo_request extends Root_Controller
             $this->db->where('transfer_wo.id',$item_id);
             $this->db->where('outlet_info.revision',1);
             $this->db->order_by('transfer_wo.id','DESC');
-            /*if($this->locations['division_id']>0)
-            {
-                $this->db->where('divisions.id',$this->locations['division_id']);
-                if($this->locations['zone_id']>0)
-                {
-                    $this->db->where('zones.id',$this->locations['zone_id']);
-                    if($this->locations['territory_id']>0)
-                    {
-                        $this->db->where('territories.id',$this->locations['territory_id']);
-                        if($this->locations['district_id']>0)
-                        {
-                            $this->db->where('districts.id',$this->locations['district_id']);
-                        }
-                    }
-                }
-            }*/
             $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
             {
@@ -849,22 +806,7 @@ class Transfer_wo_request extends Root_Controller
             $this->db->where('transfer_wo.id',$item_id);
             $this->db->where('outlet_info.revision',1);
             $this->db->order_by('transfer_wo.id','DESC');
-            if($this->locations['division_id']>0)
-            {
-                $this->db->where('divisions.id',$this->locations['division_id']);
-                if($this->locations['zone_id']>0)
-                {
-                    $this->db->where('zones.id',$this->locations['zone_id']);
-                    if($this->locations['territory_id']>0)
-                    {
-                        $this->db->where('territories.id',$this->locations['territory_id']);
-                        if($this->locations['district_id']>0)
-                        {
-                            $this->db->where('districts.id',$this->locations['district_id']);
-                        }
-                    }
-                }
-            }
+
             $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
             {
@@ -964,26 +906,10 @@ class Transfer_wo_request extends Root_Controller
             $this->db->where('transfer_wo.id',$id);
             $this->db->where('outlet_info.revision',1);
             $this->db->order_by('transfer_wo.id','DESC');
-            if($this->locations['division_id']>0)
-            {
-                $this->db->where('divisions.id',$this->locations['division_id']);
-                if($this->locations['zone_id']>0)
-                {
-                    $this->db->where('zones.id',$this->locations['zone_id']);
-                    if($this->locations['territory_id']>0)
-                    {
-                        $this->db->where('territories.id',$this->locations['territory_id']);
-                        if($this->locations['district_id']>0)
-                        {
-                            $this->db->where('districts.id',$this->locations['district_id']);
-                        }
-                    }
-                }
-            }
             $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
             {
-                System_helper::invalid_try('Update Forwarded Non Exists',$id);
+                System_helper::invalid_try('save_forward',$id,'Update Forwarded Non Exists');
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid Try.';
                 $this->json_return($ajax);
@@ -996,7 +922,7 @@ class Transfer_wo_request extends Root_Controller
             }
             if(!$this->check_my_editable($data['item']))
             {
-                System_helper::invalid_try('Edit Forward Permission Non Exists',$id);
+                System_helper::invalid_try('save_forward',$id,'User location not assign.');
                 $ajax['status']=false;
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->json_return($ajax);
