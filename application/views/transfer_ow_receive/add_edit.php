@@ -46,7 +46,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <thead>
                     <tr>
                         <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ID');?></label></th>
-                        <th class=""><label class="control-label"><?php echo Barcode_helper::get_barcode_transfer_warehouse_to_outlet($item['id']);?></label></th>
+                        <th class=""><label class="control-label"><?php echo Barcode_helper::get_barcode_transfer_outlet_to_warehouse($item['id']);?></label></th>
                         <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DIVISION_NAME');?></label></th>
                         <th class=" header_value"><label class="control-label"><?php echo $item['division_name'];?></label></th>
                     </tr>
@@ -116,6 +116,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     ?>
                     <!-- Approval Information-->
                     <tr>
+                        <th colspan="21" class="bg-info"> Approval Information</th>
+                    </tr>
+                    <tr>
                         <th class="widget-header header_caption"><label class="control-label pull-right">Approve Status</label></th>
                         <th class="warning header_value"><label class="control-label"><?php echo $item['status_approve'];?></label></th>
                         <th colspan="2">&nbsp;</th>
@@ -175,6 +178,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     ?>
                     <!-- Delivery Information-->
                     <tr>
+                        <th colspan="21" class="bg-info"> Delivery Information</th>
+                    </tr>
+                    <tr>
                         <th class="widget-header header_caption"><label class="control-label pull-right">Delivery Status</label></th>
                         <th class="warning header_value"><label class="control-label"><?php echo $item['status_delivery'];?></label></th>
                         <th colspan="2">&nbsp;</th>
@@ -228,8 +234,52 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <?php
                     }
                     ?>
+                    <?php
+                    if($item['remarks_challan'])
+                    {
+                        ?>
+                        <tr>
+                            <th class="widget-header header_caption" style="vertical-align: top"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS_CHALLAN');?></label></th>
+                            <th class=" header_value" colspan="3"><label class="control-label"><?php echo nl2br($item['remarks_challan']);?></label></th>
+                        </tr>
+                    <?php
+                    }
+                    ?>
+                    <tr>
+                        <th colspan="21" class="bg-info"> Courier Information</th>
+                    </tr>
+                    <tr>
+                        <th class="widget-header header_caption"><label class="control-label pull-right">Challan No</label></th>
+                        <th class=""><label class="control-label"><?php echo $item['challan_no'];?></label></th>
+                        <th colspan="21">&nbsp;</th>
+                    </tr>
+                    <tr>
+                        <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_CHALLAN');?></label></th>
+                        <th class=" header_value"><label class="control-label"><?php echo System_helper::display_date($item['date_challan']);?></label></th>
+                        <th class="widget-header header_caption"><label class="control-label pull-right">Courier Name</label></th>
+                        <th class="alert-warning"><label class="control-label"><?php echo $item['courier_name'];?></label></th>
+                    </tr>
+                    <tr>
+                        <th class="widget-header header_caption"><label class="control-label pull-right">Booking Date</label></th>
+                        <th class=" header_value"><label class="control-label"><?php echo System_helper::display_date($item['date_booking']);?></label></th>
+                        <th class="widget-header header_caption"><label class="control-label pull-right">Courier Tracing No</label></th>
+                        <th class=""><label class="control-label"><?php echo $item['courier_tracing_no'];?></label></th>
+                    </tr>
+                    <tr>
+                        <th class="widget-header header_caption" style="vertical-align: top"><label class="control-label pull-right">Booking Branch (Place)</label></th>
+                        <th class=" header_value" colspan="3"><label class="control-label"><?php echo nl2br($item['place_booking_source']);?></label></th>
+                    </tr>
+                    <tr>
+                        <th class="widget-header header_caption" style="vertical-align: top"><label class="control-label pull-right">Receive Branch (Place)</label></th>
+                        <th class=" header_value" colspan="3"><label class="control-label"><?php echo nl2br($item['place_destination']);?></label></th>
+                    </tr>
+                    <tr>
+                        <th class="widget-header header_caption" style="vertical-align: top"><label class="control-label pull-right">Remarks for Courier</label></th>
+                        <th class=" header_value" colspan="3"><label class="control-label"><?php echo nl2br($item['remarks_couriers']);?></label></th>
+                    </tr>
                     </thead>
                 </table>
+
             </div>
         </div>
         <div class="clearfix"></div>
@@ -238,7 +288,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <table class="table table-bordered">
                     <thead>
                     <tr>
-                        <th colspan="21" class="text-center text-danger danger"><?php echo $CI->lang->line('LABEL_ORDER_ITEMS');?></th>
+                        <th colspan="21" class="text-center text-danger danger"><?php echo $CI->lang->line('LABEL_RETURN_ITEMS');?></th>
                     </tr>
                     <tr>
                         <th rowspan="2" style="width: 200px;"><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></th>
@@ -246,10 +296,16 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <th rowspan="2" style="width: 150px;"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
                         <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
                         <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_WAREHOUSE_NAME'); ?></th>
-                        <th colspan="2" class="text-center" style="width: 300px;"><?php echo $CI->lang->line('LABEL_QUANTITY_APPROVE'); ?></th>
                         <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_CURRENT_STOCK_KG'); ?></th>
+                        <th colspan="2" class="text-center" style="width: 300px;"><?php echo $CI->lang->line('LABEL_QUANTITY_APPROVE'); ?></th>
+                        <th colspan="2" class="text-center" style="width: 300px;"><?php echo $CI->lang->line('LABEL_QUANTITY_RECEIVE'); ?></th>
+                        <th colspan="2" class="text-center" style="width: 300px;">New Stock</th>
                     </tr>
                     <tr>
+                        <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_PACK');?></th>
+                        <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_KG');?></th>
+                        <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_PACK');?></th>
+                        <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_KG');?></th>
                         <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_PACK');?></th>
                         <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_KG');?></th>
                     </tr>
@@ -260,13 +316,27 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     $quantity_total_approve=0;
                     $quantity_total_approve_kg=0;
 
+                    $quantity_receive=0;
+                    $quantity_total_receive=0;
+                    $quantity_total_receive_kg=0;
+
+                    $stock_quantity_new=0;
+                    $stock_quantity_new_kg=0;
+                    $stock_quantity_total_new=0;
+                    $stock_quantity_total_new_kg=0;
+
                     foreach($items as $index=>$value)
                     {
                         $quantity_approve=$value['quantity_approve'];
                         $quantity_approve_kg=(($quantity_approve*$value['pack_size'])/1000);
-
                         $quantity_total_approve+=$quantity_approve;
                         $quantity_total_approve_kg+=$quantity_approve_kg;
+
+                        $quantity_receive=$value['quantity_receive'];
+                        $quantity_receive_kg=(($quantity_receive*$value['pack_size'])/1000);
+                        $quantity_total_receive+=$quantity_receive;
+                        $quantity_total_receive_kg+=$quantity_receive_kg;
+
                         if(isset($stocks[$value['variety_id']][$value['pack_size_id']][$value['warehouse_id']]))
                         {
                             $stock_current=$stocks[$value['variety_id']][$value['pack_size_id']][$value['warehouse_id']]['current_stock'];
@@ -275,9 +345,15 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         {
                             $stock_current=0;
                         }
-                        $stock_current=(($stock_current*$value['pack_size'])/1000);
+                        $stock_current_kg=(($stock_current*$value['pack_size'])/1000);
+
+                        $stock_quantity_new=($stock_current+$quantity_receive);
+                        $stock_quantity_new_kg=($stock_current_kg+$quantity_receive_kg);
+                        $stock_quantity_total_new+=$stock_quantity_new;
+                        $stock_quantity_total_new_kg+=$stock_quantity_new_kg;
+
                         ?>
-                        <tr>
+                        <tr id="item_rows_<?php echo $index+1;?>" class='<?php if($quantity_approve!=$quantity_receive){echo 'quantity_exist_warning';}?>'>
                             <td>
                                 <label><?php echo $value['crop_name']; ?></label>
                             </td>
@@ -306,17 +382,29 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                                 </select>
                             </td>
                             <td class="text-right">
-                                <label class=" "><?php echo $quantity_approve; ?></label>
-                            </td>
-                            <td class="text-right">
-                                <label class=" " id="quantity_approve_kg_<?php echo $index+1;?>"> <?php echo number_format($quantity_approve_kg,3,'.','');?> </label>
-                            </td>
-                            <td class="text-right">
                                 <label class="control-label stock_current " id="stock_current_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>">
                                     <?php
                                     echo number_format($stock_current,3,'.','');
                                     ?>
                                 </label>
+                            </td>
+                            <td class="text-right">
+                                <label class=" "><?php echo $quantity_approve; ?></label>
+                            </td>
+                            <td class="text-right">
+                                <label class=" " id="quantity_approve_kg_<?php echo $index+1;?>"> <?php echo number_format($quantity_approve_kg,3,'.','');?> </label>
+                            </td>
+                            <td>
+                                <input type="text" value="<?php echo $quantity_receive; ?>" id="quantity_receive_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][quantity_receive]" class="form-control float_type_positive quantity_receive" />
+                            </td>
+                            <td class="text-right">
+                                <label class="" id="quantity_receive_kg_<?php echo $index+1;?>"> <?php echo number_format($quantity_receive_kg,3,'.','');?> </label>
+                            </td>
+                            <td class="text-right">
+                                <label class="control-label stock_quantity_new" id="stock_quantity_new_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>"><?php echo $stock_quantity_new; ?></label>
+                            </td>
+                            <td class="text-right">
+                                <label class="control-label stock_quantity_new_kg" id="stock_quantity_new_kg_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>"><?php echo number_format($stock_quantity_new_kg,3,'.',''); ?></label>
                             </td>
                         </tr>
                     <?php
@@ -325,109 +413,24 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     </tbody>
                     <tfoot>
                     <tr>
-                        <th colspan="5" class="text-right"><?php echo $CI->lang->line('LABEL_TOTAL');?></th>
+                        <th colspan="6" class="text-right"><?php echo $CI->lang->line('LABEL_TOTAL');?></th>
                         <th class="text-right"><label class="control-label" id="quantity_total_approve"> <?php echo $quantity_total_approve;?></label></th>
                         <th class="text-right"><label class="control-label" id="quantity_total_approve_kg"> <?php echo number_format($quantity_total_approve_kg,3,'.','');?></label></th>
-                        <th colspan="5">&nbsp;</th>
+                        <th class="text-right"><label class="control-label" id="quantity_total_receive"> <?php echo $quantity_total_receive;?></label></th>
+                        <th class="text-right"><label class="control-label" id="quantity_total_receive_kg"> <?php echo number_format($quantity_total_receive_kg,3,'.','');?></label></th>
+                        <th class="text-right"><label class="control-label" id="stock_quantity_total_new"></label></th>
+                        <th class="text-right"><label class="control-label" id="stock_quantity_total_new_kg"></label></th>
                     </tr>
                     </tfoot>
                 </table>
             </div>
             <div class="row show-grid">
                 <div class="col-xs-4">
-                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS_CHALLAN');?></label>
+                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS_RECEIVE');?></label>
                 </div>
                 <div class="col-sm-4 col-xs-8">
-                    <textarea name="item[remarks_challan]" id="remarks_challan" class="form-control"><?php echo $item['remarks_challan'];?></textarea>
+                    <textarea name="item[remarks_receive_forward]" id="remarks_receive_forward" class="form-control"><?php echo $item['remarks_receive_forward'];?></textarea>
                 </div>
-            </div>
-        </div>
-        <div class="widget-header">
-            <div class="title">
-                Delivery & Courier Information
-            </div>
-            <div class="clearfix"></div>
-        </div>
-        <div class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_DELIVERY');?><span style="color:#FF0000">*</span></label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <input type="text" name="courier[date_delivery]" id="date_delivery" class="form-control datepicker" value="<?php echo System_helper::display_date($courier['date_delivery']);?>" readonly="readonly" />
-            </div>
-        </div>
-        <div class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_CHALLAN');?></label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <input type="text" name="courier[date_challan]" id="date_challan" class="form-control datepicker" value="<?php echo $courier['date_challan']?System_helper::display_date($courier['date_challan']):'';?>" readonly="readonly" />
-            </div>
-        </div>
-        <div class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right">Challan No</label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <input type="text" name="courier[challan_no]" id="challan_no" class="form-control" value="<?php echo $courier['challan_no'];?>" />
-            </div>
-        </div>
-        <div class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right">Courier Name</label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <select id="courier_id" class="form-control" name="courier[courier_id]" >
-                    <option value=""><?php echo $CI->lang->line('SELECT');?></option>
-                    <?php
-                    foreach($couriers as $row)
-                    {
-                        ?>
-                        <option value="<?php echo $row['id'];?>" <?php if($row['id']==$courier['courier_id']){echo "selected='selected'";}?>><?php echo $row['name'];?></option>
-                    <?php
-                    }
-                    ?>
-                </select>
-            </div>
-        </div>
-        <div class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right">Courier Tracing No</label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <input type="text" name="courier[courier_tracing_no]" id="courier_tracing_no" class="form-control" value="<?php echo $courier['courier_tracing_no'];?>" />
-            </div>
-        </div>
-        <div class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right">Booking Branch (Place)</label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <textarea name="courier[place_booking_source]" id="place_booking_source" class="form-control"><?php echo $courier['place_booking_source'];?></textarea>
-            </div>
-        </div>
-        <div class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right">Receive Branch (Place)</label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <textarea name="courier[place_destination]" id="place_destination" class="form-control"><?php echo $courier['place_destination'];?></textarea>
-            </div>
-        </div>
-        <div class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right">Booking Date</label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <input type="text" name="courier[date_booking]" id="date_booking" class="form-control datepicker" value="<?php echo $courier['date_booking']?System_helper::display_date($courier['date_booking']):'';?>" readonly="readonly" />
-            </div>
-        </div>
-        <div class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS_COURIER');?></label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <textarea name="courier[remarks]" id="remarks" class="form-control"><?php echo $courier['remarks'];?></textarea>
             </div>
         </div>
     </div>
@@ -439,7 +442,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         color: #FFFFFF;
     }
 </style>
-
 <script>
     <?php
         if(sizeof($stocks)>0)
@@ -455,6 +457,30 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             <?php
         }
     ?>
+    function calculate_total()
+    {
+        var quantity_total_receive=0;
+        var quantity_total_receive_kg=0;
+        $('#items_container .quantity_receive').each(function(index, element)
+        {
+            var current_id=parseInt($(this).attr('data-current-id'));
+            var quantity_receive=parseFloat($(this).val());
+            if(isNaN(quantity_receive))
+            {
+                quantity_receive=0;
+            }
+            quantity_total_receive+=quantity_receive;
+            var quantity_receive_kg=parseFloat($('#quantity_receive_kg_'+current_id).html().replace(/,/g,''));
+            if(isNaN(quantity_receive_kg))
+            {
+                quantity_receive_kg=0;
+            }
+            quantity_total_receive_kg+=quantity_receive_kg;
+        });
+        $('#quantity_total_receive').html(quantity_total_receive);
+        $('#quantity_total_receive_kg').html(number_format((quantity_total_receive_kg),3,'.',''));
+    }
+
     $(document).ready(function()
     {
         //console.log(hq_variety_stocks)
@@ -466,29 +492,82 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         $(document).on("change",".warehouse_id",function()
         {
             var current_id=$(this).attr('data-current-id');
-            $('#quantity_approve_kg_'+current_id).removeClass('quantity_exist_warning');
-            $('#stock_current_'+current_id).removeClass('quantity_exist_warning');
 
-            $("#stock_current_"+current_id).html("");
+            $('#stock_current_'+current_id).html('');
+            $('#stock_quantity_new_'+current_id).html('');
+            $('#stock_quantity_new_kg_'+current_id).html('');
+
             var variety_id=$('#variety_id_'+current_id).val();
             var pack_size_id=$('#pack_size_id_'+current_id).val();
             var pack_size=$('#pack_size_id_'+current_id).attr('data-pack-size-name');
             var warehouse_id=$('#warehouse_id_'+current_id).val();
-            var quantity_approve_kg=parseFloat($('#quantity_approve_kg_'+current_id).html().replace(/,/g,''));
+
+            var quantity_receive=parseFloat($('#quantity_receive_'+current_id).val());
+            if(quantity_receive==undefined)
+            {
+                quantity_receive=0;
+            }
+
+            var quantity_receive_kg=parseFloat($('#quantity_receive_kg_'+current_id).html().replace(/,/g,''));
+            if(quantity_receive_kg==undefined)
+            {
+                quantity_receive_kg=0;
+            }
             var current_stock=0;
+            var current_stock_kg=0;
+            var stock_quantity_new=0;
+            var stock_quantity_new_kg=0;
             if(variety_id>0 && pack_size_id>0 && warehouse_id>0)
             {
                 if(hq_variety_stocks[variety_id][pack_size_id][warehouse_id]!=undefined)
                 {
-                    current_stock=((hq_variety_stocks[variety_id][pack_size_id][warehouse_id]['current_stock']*pack_size)/1000);
+                    current_stock=hq_variety_stocks[variety_id][pack_size_id][warehouse_id]['current_stock'];
+                    current_stock_kg=((current_stock*pack_size)/1000);
                 }
-                $('#stock_current_'+current_id).html(number_format(current_stock,'3','.',''));
-                if(quantity_approve_kg>current_stock)
-                {
-                    $('#quantity_approve_kg_'+current_id).addClass('quantity_exist_warning');
-                    $('#stock_current_'+current_id).addClass('quantity_exist_warning');
-                }
+                stock_quantity_new=(current_stock+quantity_receive);
+                stock_quantity_new_kg=(current_stock_kg+quantity_receive_kg);
             }
+            $('#stock_current_'+current_id).html(number_format(current_stock_kg,'3','.',''));
+            $('#stock_quantity_new_'+current_id).html(number_format(stock_quantity_new,'3','.',''));
+            $('#stock_quantity_new_kg_'+current_id).html(number_format(stock_quantity_new_kg,'3','.',''));
+        });
+
+        $(document).off("input",".quantity_receive");
+        $(document).on("input",".quantity_receive",function()
+        {
+            var current_id=$(this).attr('data-current-id');
+            $('#stock_quantity_new_'+current_id).html('');
+            $('#stock_quantity_new_kg_'+current_id).html('');
+            var variety_id=$('#variety_id_'+current_id).val();
+            var pack_size_id=$('#pack_size_id_'+current_id).val();
+            var pack_size=$('#pack_size_id_'+current_id).attr('data-pack-size-name');
+            var warehouse_id=$('#warehouse_id_'+current_id).val();
+            var current_stock=0;
+            var current_stock_kg=0;
+            var stock_quantity_new=0;
+            var stock_quantity_new_kg=0;
+
+            var quantity_receive=parseFloat($('#quantity_receive_'+current_id).val());
+            if(quantity_receive==undefined)
+            {
+                quantity_receive=0;
+            }
+            var quantity_receive_kg=((quantity_receive*pack_size)/1000);
+            $('#quantity_receive_kg_'+current_id).html(number_format(quantity_receive_kg,'3','.',''));
+
+            if(variety_id>0 && pack_size_id>0 && warehouse_id>0)
+            {
+                if(hq_variety_stocks[variety_id][pack_size_id][warehouse_id]!=undefined)
+                {
+                    current_stock=hq_variety_stocks[variety_id][pack_size_id][warehouse_id]['current_stock'];
+                    current_stock_kg=((current_stock*pack_size)/1000);
+                }
+                stock_quantity_new=(current_stock+quantity_receive);
+                stock_quantity_new_kg=(current_stock_kg+quantity_receive_kg);
+            }
+            $('#stock_quantity_new_'+current_id).html(number_format(stock_quantity_new,'3','.',''));
+            $('#stock_quantity_new_kg_'+current_id).html(number_format(stock_quantity_new_kg,'3','.',''));
+            calculate_total();
         });
     });
 
