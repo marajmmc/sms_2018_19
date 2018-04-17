@@ -253,14 +253,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <th rowspan="2" style="width: 12.5%;"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?></th>
                         <th rowspan="2" style="width: 12.5%;"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
                         <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
-                        <?php
-                        if(!($CI->locations['territory_id']>0))
-                        {
-                            ?>
-                            <th rowspan="2" class="text-right" style="width: 12.5%;"><?php echo $CI->lang->line('LABEL_STOCK_AVAILABLE'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
-                        <?php
-                        }
-                        ?>
+                        <th rowspan="2" class="text-right" style="width: 12.5%;"><?php echo $CI->lang->line('LABEL_STOCK_AVAILABLE'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
                         <th colspan="2" class="text-center" style="width: 12.5%;"><?php echo $CI->lang->line('LABEL_QUANTITY_ORDER'); ?></th>
                         <th rowspan="2">&nbsp;</th>
                     </tr>
@@ -294,20 +287,13 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                                     <label><?php echo $value['pack_size']; ?></label>
                                     <input type="hidden" name="items[<?php echo $index+1;?>][pack_size_id]" id="pack_size_id_<?php echo $index+1;?>" value="<?php echo $value['pack_size_id']; ?>" class="pack_size_id" data-pack-size-name="<?php echo $value['pack_size']; ?>">
                                 </td>
-                                <?php
-                                if(!($CI->locations['territory_id']>0))
-                                {
-                                    ?>
-                                    <td class="text-right">
-                                        <label class="control-label stock_available" id="stock_available_id_<?php echo $index+1;?>">
-                                            <?php
-                                            echo isset($tow_variety_info[$value['variety_id']][$value['pack_size_id']])?number_format($tow_variety_info[$value['variety_id']][$value['pack_size_id']]['stock_available'],3,'.',''):'0.000';
-                                            ?>
-                                        </label>
-                                    </td>
-                                <?php
-                                }
-                                ?>
+                                <td class="text-right">
+                                    <label class="control-label stock_available" id="stock_available_<?php echo $index+1;?>">
+                                        <?php
+                                        echo isset($tow_variety_info[$value['variety_id']][$value['pack_size_id']])?number_format($tow_variety_info[$value['variety_id']][$value['pack_size_id']]['stock_available'],3,'.',''):'0.000';
+                                        ?>
+                                    </label>
+                                </td>
                                 <td>
                                     <input type="text" value="<?php echo $value['quantity_request']; ?>" class="form-control float_type_positive quantity_request" id="quantity_request_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][quantity_request]">
                                 </td>
@@ -324,14 +310,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     </tbody>
                     <tfoot>
                     <tr>
-                        <?php
-                        $quantity_total_colspan=4;
-                        if(!($CI->locations['territory_id']>0))
-                        {
-                            $quantity_total_colspan+=1;
-                        }
-                        ?>
-                        <th colspan="<?php echo $quantity_total_colspan?>" class="text-right"><?php echo $CI->lang->line('LABEL_TOTAL');?></th>
+                        <th colspan="4" class="text-right"><?php echo $CI->lang->line('LABEL_TOTAL');?></th>
                         <th class="text-right"><label class="control-label" id="quantity_total_request"> <?php echo $quantity_total_request;?></label></th>
                         <th class="text-right"><label class="control-label" id="quantity_total_request_kg"> <?php echo number_format($quantity_total_request_kg,3,'.','');?></label></th>
                         <th>&nbsp;</th>
@@ -385,16 +364,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <option value=""><?php echo $CI->lang->line('SELECT');?></option>
                 </select>
             </td>
-            <?php
-            if(!($CI->locations['territory_id']>0))
-            {
-                ?>
-                <td class="text-right">
-                    <label class="control-label stock_available"> </label>
-                </td>
-            <?php
-            }
-            ?>
+            <td class="text-right">
+                <label class="control-label stock_available"> </label>
+            </td>
             <td class="text-right">
                 <input type="text" class="form-control float_type_positive quantity_request" value="" style="display: none;" />
             </td>
@@ -731,14 +703,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             {
                 var pack_size=parseFloat($('option:selected', $("#pack_size_id_"+current_id)).attr('data-pack-size-name'));
             }
-            if(pack_size==0)
-            {
-                quantity_request_kg=quantity_request;
-            }
-            else
-            {
-                quantity_request_kg=parseFloat((pack_size*quantity_request)/1000);
-            }
+            quantity_request_kg=parseFloat((pack_size*quantity_request)/1000);
+
             var stock_available=parseFloat($('#stock_available_'+current_id).html().replace(/,/g,''));
             if(isNaN(stock_available))
             {

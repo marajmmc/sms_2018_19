@@ -102,14 +102,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <th rowspan="2" style="width: 150px;"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?></th>
                         <th rowspan="2" style="width: 150px;"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
                         <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
-                        <?php
-                        if(!($CI->locations['territory_id']>0))
-                        {
-                            ?>
-                            <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_STOCK_AVAILABLE'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
-                        <?php
-                        }
-                        ?>
+                        <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_STOCK_AVAILABLE'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
                         <th colspan="2" class="text-center" style="width: 300px;"><?php echo $CI->lang->line('LABEL_QUANTITY_ORDER'); ?></th>
                     </tr>
                     <tr>
@@ -121,13 +114,15 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <?php
                     $quantity_total_request=0;
                     $quantity_total_request_kg=0;
+                    $stock_available=0;
                     foreach($items as $index=>$value)
                     {
                         $quantity_request_kg=(($value['quantity_request']*$value['pack_size'])/1000);
                         $quantity_total_request+=$value['quantity_request'];
                         $quantity_total_request_kg+=$quantity_request_kg;
+                        $stock_available=isset($tow_variety_info[$value['variety_id']][$value['pack_size_id']])?number_format($tow_variety_info[$value['variety_id']][$value['pack_size_id']]['stock_available'],3,'.',''):'0.000';
                         ?>
-                        <tr>
+                        <tr style="<?php if($quantity_request_kg>$stock_available){echo 'background-color: red;';}?>">
                             <td>
                                 <label><?php echo $value['crop_name']; ?></label>
                             </td>
@@ -140,20 +135,13 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                             <td class="text-right">
                                 <label><?php echo $value['pack_size']; ?></label>
                             </td>
-                            <?php
-                            if(!($CI->locations['territory_id']>0))
-                            {
-                                ?>
-                                <td class="text-right">
-                                    <label class="control-label stock_available" id="stock_available_id_<?php echo $index+1;?>">
-                                        <?php
-                                        echo isset($tow_variety_info[$value['variety_id']][$value['pack_size_id']])?number_format($tow_variety_info[$value['variety_id']][$value['pack_size_id']]['stock_available'],3,'.',''):'0.000';
-                                        ?>
-                                    </label>
-                                </td>
-                            <?php
-                            }
-                            ?>
+                            <td class="text-right">
+                                <label class="control-label stock_available" id="stock_available_id_<?php echo $index+1;?>">
+                                    <?php
+                                    echo $stock_available;
+                                    ?>
+                                </label>
+                            </td>
                             <td class="text-right">
                                 <label ><?php echo $value['quantity_request']; ?></label>
                             </td>
@@ -167,14 +155,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     </tbody>
                     <tfoot>
                     <tr>
-                        <?php
-                        $quantity_total_colspan=4;
-                        if(!($CI->locations['territory_id']>0))
-                        {
-                            $quantity_total_colspan+=1;
-                        }
-                        ?>
-                        <th colspan="<?php echo $quantity_total_colspan?>" class="text-right"><?php echo $CI->lang->line('LABEL_TOTAL');?></th>
+                        <th colspan="5" class="text-right"><?php echo $CI->lang->line('LABEL_TOTAL');?></th>
                         <th class="text-right"><label class="control-label" id="quantity_total_request"> <?php echo $quantity_total_request;?></label></th>
                         <th class="text-right"><label class="control-label" id="quantity_total_request_kg"> <?php echo number_format($quantity_total_request_kg,3,'.','');?></label></th>
                     </tr>

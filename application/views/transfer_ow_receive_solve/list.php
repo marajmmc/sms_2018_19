@@ -2,19 +2,12 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 $CI=& get_instance();
 $action_buttons=array();
-if(isset($CI->permissions['action0']) && ($CI->permissions['action0']==1))
-{
-    $action_buttons[]=array(
-        'label'=>'All List',
-        'href'=>site_url($CI->controller_url.'/index/list_all')
-    );
-}
 if(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1))
 {
     $action_buttons[]=array
     (
         'type'=>'button',
-        'label'=>'Edit',
+        'label'=>'Solve',
         'class'=>'button_jqx_action',
         'data-action-link'=>site_url($CI->controller_url.'/index/edit')
     );
@@ -33,7 +26,7 @@ if(isset($CI->permissions['action4']) && ($CI->permissions['action4']==1))
 {
     $action_buttons[]=array(
         'type'=>'button',
-        'label'=>'Return Challan '.$CI->lang->line("ACTION_PRINT"),
+        'label'=>'Challan '.$CI->lang->line('ACTION_PRINT'),
         'class'=>'button_jqx_action',
         'data-action-link'=>site_url($CI->controller_url.'/index/challan_print')
     );
@@ -60,16 +53,6 @@ if(isset($CI->permissions['action6']) && ($CI->permissions['action6']==1))
     (
         'label'=>'Preference',
         'href'=>site_url($CI->controller_url.'/index/set_preference')
-    );
-}
-if((isset($CI->permissions['action7']) && ($CI->permissions['action7']==1)))
-{
-    $action_buttons[]=array
-    (
-        'type'=>'button',
-        'label'=>'Receive',
-        'class'=>'button_jqx_action',
-        'data-action-link'=>site_url($CI->controller_url.'/index/receive')
     );
 }
 $action_buttons[]=array(
@@ -118,7 +101,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 { name: 'zone_name', type: 'string'},
                 { name: 'territory_name', type: 'string'},
                 { name: 'district_name', type: 'string'},
-                { name: 'quantity_total_approve', type: 'string'}
+                { name: 'quantity_total_approve', type: 'string'},
+                { name: 'quantity_total_receive', type: 'string'},
+                { name: 'quantity_total_difference', type: 'string'}
             ],
             id: 'id',
             type: 'POST',
@@ -144,17 +129,19 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 autorowheight: true,
                 columnsreorder: true,
                 columns:
-                [
-                    { text: '<?php echo $CI->lang->line('LABEL_BARCODE'); ?>', dataField: 'barcode',pinned:true, width:'80',hidden: <?php echo $system_preference_items['barcode']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_OUTLET_NAME'); ?>', dataField: 'outlet_name',pinned:true,filtertype: 'list', width:'100',hidden: <?php echo $system_preference_items['outlet_name']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_DATE_REQUEST'); ?>', dataField: 'date_request', width:'100',hidden: <?php echo $system_preference_items['date_request']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_OUTLET_CODE'); ?>', dataField: 'outlet_code',hidden: <?php echo $system_preference_items['outlet_code']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_DIVISION_NAME'); ?>', dataField: 'division_name',filtertype: 'list',hidden: <?php echo $system_preference_items['division_name']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_ZONE_NAME'); ?>', dataField: 'zone_name',hidden: <?php echo $system_preference_items['zone_name']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_TERRITORY_NAME'); ?>', dataField: 'territory_name',hidden: <?php echo $system_preference_items['territory_name']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_DISTRICT_NAME'); ?>', dataField: 'district_name',hidden: <?php echo $system_preference_items['district_name']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL_APPROVE'); ?>', dataField: 'quantity_total_approve', width:'100', cellsAlign:'right', hidden: <?php echo $system_preference_items['quantity_total_approve']?0:1;?>}
-                ]
+                    [
+                        { text: '<?php echo $CI->lang->line('LABEL_BARCODE'); ?>', dataField: 'barcode',pinned:true, width:'80',hidden: <?php echo $system_preference_items['barcode']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_OUTLET_NAME'); ?>', dataField: 'outlet_name',pinned:true,filtertype: 'list', width:'100',hidden: <?php echo $system_preference_items['outlet_name']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_DATE_REQUEST'); ?>', dataField: 'date_request', width:'100',hidden: <?php echo $system_preference_items['date_request']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_OUTLET_CODE'); ?>', dataField: 'outlet_code',hidden: <?php echo $system_preference_items['outlet_code']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_DIVISION_NAME'); ?>', dataField: 'division_name',filtertype: 'list',hidden: <?php echo $system_preference_items['division_name']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_ZONE_NAME'); ?>', dataField: 'zone_name',hidden: <?php echo $system_preference_items['zone_name']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_TERRITORY_NAME'); ?>', dataField: 'territory_name',hidden: <?php echo $system_preference_items['territory_name']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_DISTRICT_NAME'); ?>', dataField: 'district_name',hidden: <?php echo $system_preference_items['district_name']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL_APPROVE'); ?>', dataField: 'quantity_total_approve', width:'100', cellsAlign:'right', hidden: <?php echo $system_preference_items['quantity_total_approve']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL_RECEIVE'); ?>', dataField: 'quantity_total_receive', width:'100', cellsAlign:'right', hidden: <?php echo $system_preference_items['quantity_total_receive']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL_DIFFERENCE'); ?>', dataField: 'quantity_total_difference', width:'100', cellsAlign:'right', hidden: <?php echo $system_preference_items['quantity_total_difference']?0:1;?>}
+                    ]
             });
     });
 </script>
