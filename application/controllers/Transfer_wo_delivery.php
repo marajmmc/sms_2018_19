@@ -373,6 +373,7 @@ class Transfer_wo_delivery extends Root_Controller
             transfer_wo.id,
             transfer_wo.date_request,
             transfer_wo.quantity_total_request_kg,
+            transfer_wo.quantity_total_approve_kg,
             transfer_wo.status_request,
             transfer_wo.remarks_request,
             transfer_wo.date_approve,
@@ -470,7 +471,7 @@ class Transfer_wo_delivery extends Root_Controller
             $ajax['system_message']='Transfer order maximum quantity '.$quantity_to_maximum_kg.' kg. you have to already exist quantity ('.($quantity_total_approve_kg-$quantity_to_maximum_kg).' kg).';
             $this->json_return($ajax);
         }
-        
+
         $this->db->from($this->config->item('table_sms_transfer_wo_details').' transfer_wo_details');
         $this->db->select('transfer_wo_details.*');
         $this->db->join($this->config->item('table_login_setup_classification_varieties').' v','v.id=transfer_wo_details.variety_id','INNER');
