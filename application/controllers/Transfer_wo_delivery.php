@@ -461,6 +461,16 @@ class Transfer_wo_delivery extends Root_Controller
             }
         }
 
+        $result=Query_helper::get_info($this->config->item('table_login_setup_system_configures'),array('*'),array('purpose="'.$this->config->item('system_purpose_sms_quantity_order_max').'"', 'status ="'.$this->config->item('system_status_active').'"'),1);
+        $quantity_to_maximum_kg=$result['config_value'];
+        $quantity_total_approve_kg=$data['item']['quantity_total_approve_kg'];
+        if($quantity_total_approve_kg>$quantity_to_maximum_kg)
+        {
+            $ajax['status']=false;
+            $ajax['system_message']='Transfer order maximum quantity '.$quantity_to_maximum_kg.' kg. you have to already exist quantity ('.($quantity_total_approve_kg-$quantity_to_maximum_kg).' kg).';
+            $this->json_return($ajax);
+        }
+        
         $this->db->from($this->config->item('table_sms_transfer_wo_details').' transfer_wo_details');
         $this->db->select('transfer_wo_details.*');
         $this->db->join($this->config->item('table_login_setup_classification_varieties').' v','v.id=transfer_wo_details.variety_id','INNER');
@@ -505,15 +515,7 @@ class Transfer_wo_delivery extends Root_Controller
             }
         }
 
-        $result=Query_helper::get_info($this->config->item('table_login_setup_system_configures'),array('*'),array('purpose="'.$this->config->item('system_purpose_sms_quantity_order_max').'"', 'status ="'.$this->config->item('system_status_active').'"'),1);
-        $quantity_to_maximum_kg=$result['config_value'];
-        $quantity_total_approve_kg=$data['item']['quantity_total_approve_kg'];
-        if($quantity_total_approve_kg>$quantity_to_maximum_kg)
-        {
-            $ajax['status']=false;
-            $ajax['system_message']='Transfer order maximum quantity '.$quantity_to_maximum_kg.' kg. you have to already exist quantity ('.($quantity_total_approve_kg-$quantity_to_maximum_kg).' kg).';
-            $this->json_return($ajax);
-        }
+
 
        /*$results=Query_helper::get_info($this->config->item('table_login_setup_classification_pack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('id ASC'));
        $pack_sizes=array();
