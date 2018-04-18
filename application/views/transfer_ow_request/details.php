@@ -306,7 +306,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 if($item['status_receive']==$this->config->item('system_status_received') && $item['status_system_delivery_receive']==$this->config->item('system_status_yes'))
                 {
                 ?>
-                    <tr><th colspan="21" class="bg-info">Receive Information</th></tr>
+                    <tr><th colspan="21" class="bg-info">Receive Information </th></tr>
                     <tr>
                         <th class="widget-header header_caption"><label class="control-label pull-right">Manually Product Receive</label></th>
                         <th class="warning header_value"><label class="control-label"><?php echo $item['status_system_delivery_receive'];?></label></th>
@@ -318,7 +318,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <th colspan="21">&nbsp;</th>
                     </tr>
                     <?php
-                    if($item['user_updated_receive_forward'])
+                    if($item['user_updated_receive'])
                     {
                         ?>
                         <tr>

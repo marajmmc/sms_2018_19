@@ -930,6 +930,7 @@ class Transfer_ow_receive extends Root_Controller
         $status_quantity_deference=false;
         $old_items=array();
         $variety_ids=array();
+        $quantity_total_receive_kg=0;
         foreach($items as $item)
         {
             if(!($item['warehouse_id']>0))
@@ -951,6 +952,7 @@ class Transfer_ow_receive extends Root_Controller
             {
                 $status_quantity_deference=true;
             }
+            $quantity_total_receive_kg+=$item['quantity_receive'];
         }
         $current_stocks=Stock_helper::get_variety_stock($variety_ids);
 
@@ -960,10 +962,13 @@ class Transfer_ow_receive extends Root_Controller
         {
             $data=array();
             $data['date_receive']=$time;
+            $data['quantity_total_receive_kg']=$quantity_total_receive_kg;
             $data['status_receive']=$this->config->item('system_status_pending');
             $data['status_receive_forward']=$this->config->item('system_status_forwarded');
             $data['status_receive_approve']=$this->config->item('system_status_pending');
             $data['status_system_delivery_receive']=$this->config->item('system_status_no');
+            $data['date_updated_receive']=$time;
+            $data['user_updated_receive']=$user->user_id;
             $data['date_updated_receive_forward']=$time;
             $data['user_updated_receive_forward']=$user->user_id;
             //$this->db->set('revision_count_receive', 'revision_count_receive+1', FALSE);
@@ -975,10 +980,13 @@ class Transfer_ow_receive extends Root_Controller
         {
             $data=array();
             $data['date_receive']=$time;
+            $data['quantity_total_receive_kg']=$quantity_total_receive_kg;
             $data['status_receive']=$item_head['status_receive'];
             $data['status_receive_forward']=$this->config->item('system_status_forwarded');
             $data['status_receive_approve']=$this->config->item('system_status_approved');
             $data['status_system_delivery_receive']=$this->config->item('system_status_yes');
+            $data['date_updated_receive']=$time;
+            $data['user_updated_receive']=$user->user_id;
             $data['date_updated_receive_forward']=$time;
             $data['user_updated_receive_forward']=$user->user_id;
             $data['date_updated_receive_approve']=$time;
