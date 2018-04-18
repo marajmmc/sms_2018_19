@@ -507,7 +507,7 @@ class Transfer_wo_delivery extends Root_Controller
 
         $result=Query_helper::get_info($this->config->item('table_login_setup_system_configures'),array('*'),array('purpose="'.$this->config->item('system_purpose_sms_quantity_order_max').'"', 'status ="'.$this->config->item('system_status_active').'"'),1);
         $quantity_to_maximum_kg=$result['config_value'];
-        $quantity_total_approve_kg=$data['item']['quantity_approve'];
+        $quantity_total_approve_kg=$data['item']['quantity_total_approve_kg'];
         if($quantity_total_approve_kg>$quantity_to_maximum_kg)
         {
             $ajax['status']=false;
