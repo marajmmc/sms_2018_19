@@ -111,7 +111,7 @@ class Transfer_ow_receive_solve extends Root_Controller
             $item['district_name']=$result['district_name'];
             $item['quantity_total_approve']=number_format($result['quantity_total_approve'],3,'.','');
             $item['quantity_total_receive']=number_format($result['quantity_total_receive'],3,'.','');
-            $item['quantity_total_difference']=number_format(($result['quantity_total_approve']-$result['quantity_total_receive']),3,'.','');
+            $item['quantity_total_difference']=number_format(($result['quantity_total_receive']-$result['quantity_total_approve']),3,'.','');
             $items[]=$item;
         }
         $this->json_return($items);

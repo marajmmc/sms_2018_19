@@ -501,6 +501,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             var pack_size_id=$('#pack_size_id_'+current_id).val();
             var pack_size=$('#pack_size_id_'+current_id).attr('data-pack-size-name');
             var warehouse_id=$('#warehouse_id_'+current_id).val();
+            var quantity_approve=parseFloat($('#quantity_approve_'+current_id).html().replace(/,/g,''));
             var quantity_receive=parseFloat($('#quantity_receive_'+current_id).val());
             if(quantity_receive==undefined)
             {
@@ -529,6 +530,10 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             $('#stock_current_'+current_id).html(number_format(current_stock_kg,'3','.',''));
             $('#stock_quantity_new_'+current_id).html(stock_quantity_new);
             $('#stock_quantity_new_kg_'+current_id).html(number_format(stock_quantity_new_kg,'3','.',''));
+            if(quantity_approve!=quantity_receive)
+            {
+                $('#item_rows_'+current_id).addClass('quantity_exist_warning');
+            }
         });
 
         $(document).off("input",".quantity_receive");

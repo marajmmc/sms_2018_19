@@ -604,7 +604,7 @@ class Transfer_ow_approve extends Root_Controller
             $this->db->join($this->config->item('table_pos_setup_user_info').' pos_setup_user_info','pos_setup_user_info.user_id=transfer_ow.user_updated_delivery','LEFT');
             $this->db->select('pos_setup_user_info.name full_name_delivery_edit');
             $this->db->join($this->config->item('table_pos_setup_user_info').' pos_setup_user_info_forward','pos_setup_user_info_forward.user_id=transfer_ow.user_updated_delivery_forward','LEFT');
-            $this->db->select('pos_setup_user_info.name full_name_delivery_forward');
+            $this->db->select('pos_setup_user_info_forward.name full_name_delivery_forward');
             $this->db->join($this->config->item('table_sms_transfer_ow_courier_details').' wo_courier_details','wo_courier_details.transfer_ow_id=transfer_ow.id','LEFT');
             $this->db->select('
                                 wo_courier_details.date_delivery courier_date_delivery,
