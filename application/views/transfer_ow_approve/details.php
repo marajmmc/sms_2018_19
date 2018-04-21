@@ -23,7 +23,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 ?>
 <div class="row widget">
     <div class="widget-header">
-        <div class="title">
+        <div class="title"> 
             <?php echo $title; ?>
         </div>
         <div class="clearfix"></div>
