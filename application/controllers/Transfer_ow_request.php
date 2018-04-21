@@ -385,18 +385,6 @@ class Transfer_ow_request extends Root_Controller
             $data['territories']=true;
             $data['districts']=true;
             $data['outlets']=true;
-            /*$data['divisions']=Query_helper::get_info($this->config->item('table_login_setup_location_divisions'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
-            $data['zones']=Query_helper::get_info($this->config->item('table_login_setup_location_zones'),array('id value','name text'),array('division_id ='.$data['item']['division_id'],'status ="'.$this->config->item('system_status_active').'"'));
-            $data['territories']=Query_helper::get_info($this->config->item('table_login_setup_location_territories'),array('id value','name text'),array('zone_id ='.$data['item']['zone_id'],'status ="'.$this->config->item('system_status_active').'"'));
-            $data['districts']=Query_helper::get_info($this->config->item('table_login_setup_location_districts'),array('id value','name text'),array('territory_id ='.$data['item']['territory_id'],'status ="'.$this->config->item('system_status_active').'"'));*/
-
-            /*$this->db->from($this->config->item('table_login_csetup_customer').' customer');
-            $this->db->join($this->config->item('table_login_csetup_cus_info').' cus_info','cus_info.customer_id=customer.id','INNER');
-            $this->db->select('customer.id value, cus_info.name text');
-            $this->db->where('customer.status',$this->config->item('system_status_active'));
-            $this->db->where('cus_info.district_id',$data['item']['district_id']);
-            $this->db->where('cus_info.revision',1);
-            $data['outlets']=$this->db->get()->result_array();*/
 
             $this->db->from($this->config->item('table_sms_transfer_ow_details').' transfer_ow_details');
             $this->db->select('transfer_ow_details.*');
@@ -521,11 +509,11 @@ class Transfer_ow_request extends Root_Controller
                     $this->json_return($ajax);
                 }
 
-                $quantity_total_request=(($pack_sizes[$item['pack_size_id']]['text']*$item['quantity_request'])/1000);
-                $quantity_total_request_kg+=$quantity_total_request;
-                if($quantity_total_request>$tow_variety_info[$item['variety_id']][$item['pack_size_id']]['stock_available'])
+                $quantity_request_kg=(($pack_sizes[$item['pack_size_id']]['text']*$item['quantity_request'])/1000);
+                $quantity_total_request_kg+=$quantity_request_kg;
+                if($quantity_request_kg>$tow_variety_info[$item['variety_id']][$item['pack_size_id']]['stock_available'])
                 {
-                    $stock_available_excess=($quantity_total_request-$tow_variety_info[$item['variety_id']][$item['pack_size_id']]['stock_available']);
+                    $stock_available_excess=($quantity_request_kg-$tow_variety_info[$item['variety_id']][$item['pack_size_id']]['stock_available']);
                     $ajax['status']=false;
                     $ajax['system_message']='Return quantity already exceed. ( Exceed return quantity: '.$stock_available_excess.' kg.)';
                     $this->json_return($ajax);
@@ -733,8 +721,6 @@ class Transfer_ow_request extends Root_Controller
             $this->db->select('crop_type.id crop_type_id, crop_type.name crop_type_name');
             $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id=crop_type.crop_id','INNER');
             $this->db->select('crop.id crop_id, crop.name crop_name');
-            $this->db->join($this->config->item('table_login_basic_setup_warehouse').' warehouse','warehouse.id=transfer_ow_details.warehouse_id','LEFT');
-            $this->db->select('warehouse.name warehouse_name');
             $this->db->where('transfer_ow_details.transfer_ow_id',$item_id);
             $this->db->where('transfer_ow_details.status',$this->config->item('system_status_active'));
             $this->db->order_by('transfer_ow_details.id');

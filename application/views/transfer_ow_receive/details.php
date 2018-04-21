@@ -428,6 +428,14 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <th rowspan="2" style="width: 150px;"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?></th>
                     <th rowspan="2" style="width: 150px;"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
                     <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
+                    <?php
+                    if($item['status_delivery']==$this->config->item('system_status_delivered'))
+                    {
+                        ?>
+                        <th rowspan="2" style="width: 150px;"><?php echo $CI->lang->line('LABEL_WAREHOUSE_NAME'); ?></th>
+                    <?php
+                    }
+                    ?>
                     <th colspan="2" class="text-center bg-info" style="width: 300px;"><?php echo $CI->lang->line('LABEL_QUANTITY_ORDER'); ?></th>
                     <?php
                     if($item['status_approve']==$this->config->item('system_status_approved'))
@@ -486,7 +494,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     ?>
                 </tr>
                 </thead>
-                <tbody id="items_container">
+                <tbody>
                 <?php
 
                 $quantity_total_request=0;
@@ -541,11 +549,21 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <td class="text-right">
                             <label><?php echo $value['pack_size']; ?></label>
                         </td>
+                        <?php
+                        if($item['status_delivery']==$this->config->item('system_status_delivered'))
+                        {
+                            ?>
+                            <td class="">
+                                <label><?php echo $value['warehouse_name']; ?></label>
+                            </td>
+                        <?php
+                        }
+                        ?>
                         <td class="text-right">
                             <label ><?php echo $value['quantity_request']; ?></label>
                         </td>
                         <td class="text-right">
-                            <label id="quantity_request_kg_<?php echo $index+1;?>"> <?php echo number_format($quantity_request_kg,3,'.','');?> </label>
+                            <label> <?php echo number_format($quantity_request_kg,3,'.','');?> </label>
                         </td>
                         <?php
                         if($item['status_approve']==$this->config->item('system_status_approved'))
@@ -581,15 +599,22 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 </tbody>
                 <tfoot>
                 <tr>
-                    <th colspan="5" class="text-right"><?php echo $CI->lang->line('LABEL_TOTAL');?></th>
-                    <th class="text-right"><label class="control-label" id="quantity_total_request"> <?php echo $quantity_total_request;?></label></th>
-                    <th class="text-right"><label class="control-label" id="quantity_total_request_kg"> <?php echo number_format($quantity_total_request_kg,3,'.','');?></label></th>
+                    <?php
+                    $colspan=5;
+                    if($item['status_delivery']==$this->config->item('system_status_delivered'))
+                    {
+                        $colspan+=1;
+                    }
+                    ?>
+                    <th colspan="<?php echo $colspan?>" class="text-right"><?php echo $CI->lang->line('LABEL_TOTAL');?></th>
+                    <th class="text-right"><label class="control-label"> <?php echo $quantity_total_request;?></label></th>
+                    <th class="text-right"><label class="control-label"> <?php echo number_format($quantity_total_request_kg,3,'.','');?></label></th>
                     <?php
                     if($item['status_approve']==$this->config->item('system_status_approved'))
                     {
                         ?>
-                        <th class="text-right"><label class="control-label" id="quantity_total_request"> <?php echo $quantity_total_approve;?></label></th>
-                        <th class="text-right"><label class="control-label" id="quantity_total_request_kg"> <?php echo number_format($quantity_total_approve_kg,3,'.','');?></label></th>
+                        <th class="text-right"><label class="control-label"> <?php echo $quantity_total_approve;?></label></th>
+                        <th class="text-right"><label class="control-label"> <?php echo number_format($quantity_total_approve_kg,3,'.','');?></label></th>
                     <?php
                     }
                     ?>
@@ -597,8 +622,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     if(($item['status_receive']==$this->config->item('system_status_received') && $item['status_system_delivery_receive']==$this->config->item('system_status_yes')) || $item['status_system_delivery_receive']==$this->config->item('system_status_no'))
                     {
                         ?>
-                        <th class="text-right"><label class="control-label" id="quantity_total_request"> <?php echo $quantity_total_receive;?></label></th>
-                        <th class="text-right"><label class="control-label" id="quantity_total_request_kg"> <?php echo number_format($quantity_total_receive_kg,3,'.','');?></label></th>
+                        <th class="text-right"><label class="control-label" > <?php echo $quantity_total_receive;?></label></th>
+                        <th class="text-right"><label class="control-label"> <?php echo number_format($quantity_total_receive_kg,3,'.','');?></label></th>
                     <?php
                     }
                     ?>
@@ -606,8 +631,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     if($item['status_system_delivery_receive']==$this->config->item('system_status_no'))
                     {
                         ?>
-                        <th class="text-right"><label class="control-label" id="quantity_total_request"> <?php echo $quantity_total_difference;?></label></th>
-                        <th class="text-right"><label class="control-label" id="quantity_total_request_kg"> <?php echo number_format($quantity_total_difference_kg,3,'.','');?></label></th>
+                        <th class="text-right"><label class="control-label" > </label></th>
+                        <th class="text-right"><label class="control-label" > </label></th>
                     <?php
                     }
                     ?>

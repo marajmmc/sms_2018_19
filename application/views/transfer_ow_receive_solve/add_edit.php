@@ -143,11 +143,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <th colspan="2" class="text-center" style="width: 300px;"><?php echo $CI->lang->line('LABEL_QUANTITY_APPROVE'); ?></th>
                         <th colspan="2" class="text-center" style="width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY_RECEIVE'); ?></th>
                         <th colspan="2" class="text-center" style="width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY_DIFFERENCE'); ?></th>
-                        <th colspan="2" class="text-center" style="width: 150px;">New Stock<?php //echo $CI->lang->line('LABEL_CURRENT_STOCK'); ?></th>
                     </tr>
                     <tr>
-                        <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_PACK');?></th>
-                        <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_KG');?></th>
                         <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_PACK');?></th>
                         <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_KG');?></th>
                         <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_PACK');?></th>
@@ -178,11 +175,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     $quantity_total_difference=0;
                     $quantity_total_difference_kg=0;
 
-                    $stock_quantity_new=0;
-                    $stock_quantity_new_kg=0;
-                    $stock_quantity_total_new=0;
-                    $stock_quantity_total_new_kg=0;
-
                     foreach($items as $index=>$value)
                     {
                         $quantity_approve=$value['quantity_approve'];
@@ -212,11 +204,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         $quantity_difference_kg=($quantity_receive_kg-$quantity_approve_kg);
                         $quantity_total_difference+=$quantity_difference;
                         $quantity_total_difference_kg+=$quantity_difference_kg;
-
-                        $stock_quantity_new=($stock_current+$quantity_receive);
-                        $stock_quantity_new_kg=($stock_current_kg+$quantity_receive_kg);
-                        $stock_quantity_total_new+=$stock_quantity_new;
-                        $stock_quantity_total_new_kg+=$stock_quantity_new_kg;
 
                         ?>
                         <tr class='<?php if($quantity_approve!=$quantity_receive){echo 'quantity_exist_warning';}?>'>
@@ -256,12 +243,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                             <td class="text-right">
                                 <label> <?php echo number_format($quantity_difference_kg,3,'.',''); ?> </label>
                             </td>
-                            <td class="text-right">
-                                <label> <?php echo $stock_quantity_new; ?> </label>
-                            </td>
-                            <td class="text-right">
-                                <label> <?php echo number_format($stock_quantity_new_kg,3,'.',''); ?> </label>
-                            </td>
                         </tr>
                     <?php
                     }
@@ -278,8 +259,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <th class="text-right"><label class="control-label" id="quantity_total_receive_kg"> <?php echo number_format($quantity_total_receive_kg,3,'.','');?></label></th>
                         <th class="text-right"><label class="control-label" id="stock_quantity_total_new"> <?php echo $quantity_total_difference;?></label></th>
                         <th class="text-right"><label class="control-label" id="stock_quantity_total_new_kg"> <?php echo number_format($quantity_total_difference_kg,3,'.','');?></label></th>
-                        <th class="text-right"><label class="control-label" id="stock_quantity_total_new"> <?php echo $stock_quantity_total_new;?></label></th>
-                        <th class="text-right"><label class="control-label" id="stock_quantity_total_new_kg"> <?php echo number_format($stock_quantity_total_new_kg,3,'.','');?></label></th>
                     </tr>
                     </tfoot>
                 </table>
