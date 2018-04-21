@@ -89,7 +89,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_START');?> <span style="color:#FF0000">*</span></label>
                     </div>
                     <div class="col-xs-6">
-                        <input type="text" id="date_start" name="report[date_start]" class="form-control date_large" value="<?php echo $date_start; ?>">
+                        <input type="text" id="date_start" name="report[date_start]" class="form-control date_large" value="<?php echo System_helper::display_date(time()); ?>">
                     </div>
                 </div>
                 <div class="row show-grid">
@@ -97,12 +97,25 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_END');?> <span style="color:#FF0000">*</span></label>
                     </div>
                     <div class="col-xs-6">
-                        <input type="text" id="date_end" name="report[date_end]" class="form-control date_large" value="<?php echo $date_end; ?>">
+                        <input type="text" id="date_end" name="report[date_end]" class="form-control date_large" value="<?php echo System_helper::display_date(time()); ?>">
                     </div>
                 </div>
             </div>
             <!--Location section-->
             <div class="col-xs-6">
+                <div class="row show-grid">
+                    <div class="col-xs-6">
+                        <select id="report_name" name="report[report_name]" class="form-control">
+                            <option value="transfer">TO Wise</option>
+                            <option value="variety">Variety Wise</option>
+                            <option value="quantity">Quantity Wise</option>
+                            <option value="outlet">Outlet Wise</option>
+                        </select>
+                    </div>
+                    <div class="col-xs-6">
+                        <label class="control-label">Report Type<span style="color:#FF0000">*</span></label>
+                    </div>
+                </div>
                 <div class="row show-grid">
                     <div class="col-xs-6">
                         <?php
@@ -240,25 +253,84 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <label class="control-label"><?php echo $CI->lang->line('LABEL_OUTLET_NAME');?><span style="color:#FF0000">*</span></label>
                     </div>
                 </div>
-                <!--<div class="row show-grid">
+                <div class="row show-grid">
                     <div class="col-xs-6">
-                        <select id="status_type" name="report[status_type]" class="form-control">
-                            <option value="">All Status Type</option>
-                            <option value=""><?php /*echo $CI->lang->line('LABEL_STATUS_PENDING');*/?></option>
-                            <option value=""><?php /*echo $CI->lang->line('LABEL_STATUS_REQUEST');*/?></option>
-                            <option value=""><?php /*echo $CI->lang->line('LABEL_STATUS_APPROVE');*/?></option>
-                            <option value=""><?php /*echo $CI->lang->line('LABEL_STATUS_DELIVERY');*/?></option>
-                            <option value=""><?php /*echo $CI->lang->line('LABEL_STATUS_RECEIVE');*/?></option>
-                            <option value=""><?php /*echo $CI->lang->line('LABEL_STATUS_RECEIVE_FORWARD');*/?></option>
-                            <option value=""><?php /*echo $CI->lang->line('LABEL_STATUS_RECEIVE_APPROVE');*/?></option>
-                            <option value=""><?php /*echo $CI->lang->line('LABEL_STATUS_SYSTEM_DELIVERY_RECEIVE');*/?></option>
-                            <option value=""><?php /*echo $CI->lang->line('LABEL_STATUS');*/?></option>
+                        <select id="status_request" name="report[status_request]" class="form-control">
+                            <option value="<?php echo $this->config->item('system_status_forwarded')?>"><?php echo $this->config->item('system_status_forwarded')?></option>
+                            <option value="<?php echo $this->config->item('system_status_pending')?>"><?php echo $this->config->item('system_status_pending')?></option>
                         </select>
                     </div>
                     <div class="col-xs-6">
-                        <label class="control-label">Status Type</label>
+                        <label class="control-label"><?php echo $CI->lang->line('LABEL_STATUS_REQUEST');?><span style="color:#FF0000">*</span></label>
                     </div>
-                </div>-->
+                </div>
+                <div class="row show-grid">
+                    <div class="col-xs-6">
+                        <select id="status_approve" name="report[status_approve]" class="form-control">
+                            <option value="<?php echo $this->config->item('system_status_approved')?>"><?php echo $this->config->item('system_status_approved')?></option>
+                            <option value="<?php echo $this->config->item('system_status_pending')?>"><?php echo $this->config->item('system_status_pending')?></option>
+                            <option value="<?php echo $this->config->item('system_status_rejected')?>"><?php echo $this->config->item('system_status_rejected')?></option>
+                        </select>
+                    </div>
+                    <div class="col-xs-6">
+                        <label class="control-label"><?php echo $CI->lang->line('LABEL_STATUS_APPROVE');?><span style="color:#FF0000">*</span></label>
+                    </div>
+                </div>
+                <div class="row show-grid">
+                    <div class="col-xs-6">
+                        <select id="status_delivery" name="report[status_delivery]" class="form-control">
+                            <option value="<?php echo $this->config->item('system_status_delivered')?>"><?php echo $this->config->item('system_status_delivered')?></option>
+                            <option value="<?php echo $this->config->item('system_status_pending')?>"><?php echo $this->config->item('system_status_pending')?></option>
+                        </select>
+                    </div>
+                    <div class="col-xs-6">
+                        <label class="control-label"><?php echo $CI->lang->line('LABEL_STATUS_DELIVERY');?><span style="color:#FF0000">*</span></label>
+                    </div>
+                </div>
+                <div class="row show-grid">
+                    <div class="col-xs-6">
+                        <select id="status_receive" name="report[status_receive]" class="form-control">
+                            <option value="<?php echo $this->config->item('system_status_received')?>"><?php echo $this->config->item('system_status_received')?></option>
+                            <option value="<?php echo $this->config->item('system_status_pending')?>"><?php echo $this->config->item('system_status_pending')?></option>
+                        </select>
+                    </div>
+                    <div class="col-xs-6">
+                        <label class="control-label"><?php echo $CI->lang->line('LABEL_STATUS_RECEIVE');?><span style="color:#FF0000">*</span></label>
+                    </div>
+                </div>
+                <div class="row show-grid">
+                    <div class="col-xs-6">
+                        <select id="status_receive_forward" name="report[status_receive_forward]" class="form-control">
+                            <option value="<?php echo $this->config->item('system_status_forwarded')?>"><?php echo $this->config->item('system_status_forwarded')?></option>
+                            <option value="<?php echo $this->config->item('system_status_pending')?>"><?php echo $this->config->item('system_status_pending')?></option>
+                        </select>
+                    </div>
+                    <div class="col-xs-6">
+                        <label class="control-label"><?php echo $CI->lang->line('LABEL_STATUS_RECEIVE_FORWARD');?><span style="color:#FF0000">*</span></label>
+                    </div>
+                </div>
+                <div class="row show-grid">
+                    <div class="col-xs-6">
+                        <select id="status_receive_approve" name="report[status_receive_approve]" class="form-control">
+                            <option value="<?php echo $this->config->item('system_status_approved')?>"><?php echo $this->config->item('system_status_approved')?></option>
+                            <option value="<?php echo $this->config->item('system_status_pending')?>"><?php echo $this->config->item('system_status_pending')?></option>
+                        </select>
+                    </div>
+                    <div class="col-xs-6">
+                        <label class="control-label"><?php echo $CI->lang->line('LABEL_STATUS_RECEIVE_APPROVE');?><span style="color:#FF0000">*</span></label>
+                    </div>
+                </div>
+                <div class="row show-grid">
+                    <div class="col-xs-6">
+                        <select id="status_system_delivery_receive" name="report[status_system_delivery_receive]" class="form-control">
+                            <option value="<?php echo $this->config->item('system_status_yes')?>"><?php echo $this->config->item('system_status_yes')?></option>
+                            <option value="<?php echo $this->config->item('system_status_no')?>"><?php echo $this->config->item('system_status_no')?></option>
+                        </select>
+                    </div>
+                    <div class="col-xs-6">
+                        <label class="control-label">Manual Transfer Receive Status<span style="color:#FF0000">*</span></label>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="row show-grid">

@@ -116,7 +116,50 @@ class Report_to_wise extends Root_Controller
             $this->json_return($ajax);
         }
     }
+
     private function system_list()
+    {
+        if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
+        {
+            $reports=$this->input->post('report');
+            $reports['date_end']=System_helper::get_time($reports['date_end'])+3600*24-1;
+            $reports['date_start']=System_helper::get_time($reports['date_start']);
+            if($reports['date_start']>=$reports['date_end'])
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='Starting Date should be less than End date';
+                $this->json_return($ajax);
+            }
+
+            $data['options']=$reports;
+            if(!System_helper::get_time($reports['date_start']) || !System_helper::get_time($reports['date_end']))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='Starting date and end date is required.';
+                $this->json_return($ajax);
+            }
+            $data['system_preference_items']= $this->get_preference();
+            $data['title']="TO Wise Report";
+            $ajax['status']=true;
+            $ajax['system_content'][]=array("id"=>"#system_report_container","html"=>$this->load->view($this->controller_url."/list",$data,true));
+            if($this->message)
+            {
+                $ajax['system_message']=$this->message;
+            }
+            $ajax['system_page_url']=site_url($this->controller_url);
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+    }
+
+
+
+    private function system_list1()
     {
         if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
         {
