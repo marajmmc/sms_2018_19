@@ -1016,7 +1016,7 @@ class Transfer_ow_receive extends Root_Controller
                     $data['current_stock']=$item['quantity_receive'];
                     $data['date_updated'] = $time;
                     $data['user_updated'] = $user->user_id;
-                    Query_helper::add($this->config->item('table_pos_stock_summary_variety'),$data);
+                    Query_helper::add($this->config->item('table_sms_stock_summary_variety'),$data);
                 }
             }
             $this->message=$this->lang->line("MSG_SAVED_SUCCESS");
