@@ -29,17 +29,21 @@ class Report_to_wise extends Root_Controller
         {
             $this->system_list();
         }
-        elseif($action=="get_items")
+        elseif($action=="list_transfer")
         {
-            $this->system_get_items();
+            $this->system_list_transfer();
+        }
+        elseif($action=="get_items_transfer")
+        {
+            $this->system_get_items_transfer();
         }
         elseif($action=="details")
         {
             $this->system_details($id);
         }
-        elseif($action=="set_preference")
+        elseif($action=="set_preference_transfer")
         {
-            $this->system_set_preference();
+            $this->system_set_preference_transfer();
         }
         elseif($action=="save_preference")
         {
@@ -132,16 +136,36 @@ class Report_to_wise extends Root_Controller
             }
 
             $data['options']=$reports;
-            if(!System_helper::get_time($reports['date_start']) || !System_helper::get_time($reports['date_end']))
+            if($reports['report_name']=='transfer')
             {
-                $ajax['status']=false;
-                $ajax['system_message']='Starting date and end date is required.';
-                $this->json_return($ajax);
+                $data['system_preference_items']= $this->get_preference_transfer();
+                $data['title']="Transfer Order Report";
+                $ajax['system_content'][]=array("id"=>"#system_report_container","html"=>$this->load->view($this->controller_url."/list_transfer",$data,true));
             }
-            $data['system_preference_items']= $this->get_preference();
-            $data['title']="TO Wise Report";
+            else if($reports['report_name']=='variety')
+            {
+                $data['system_preference_items']= $this->get_preference_variety();
+                $data['title']="Variety Wise Transfer Order Report";
+                $ajax['system_content'][]=array("id"=>"#system_report_container","html"=>$this->load->view($this->controller_url."/list_variety",$data,true));
+            }
+            else if($reports['report_name']=='quantity')
+            {
+                $data['system_preference_items']= $this->get_preference_quantity();
+                $data['title']="Variety Quantity Wise Transfer Order Report";
+                $ajax['system_content'][]=array("id"=>"#system_report_container","html"=>$this->load->view($this->controller_url."/list_quantity",$data,true));
+            }
+            else if($reports['report_name']=='outlet')
+            {
+                $data['system_preference_items']= $this->get_preference_outlet();
+                $data['title']="Outlet Wise Transfer Order Report";
+                $ajax['system_content'][]=array("id"=>"#system_report_container","html"=>$this->load->view($this->controller_url."/list_outlet",$data,true));
+            }
+            else
+            {
+                $this->system_search();
+            }
+
             $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_report_container","html"=>$this->load->view($this->controller_url."/list",$data,true));
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
@@ -157,9 +181,53 @@ class Report_to_wise extends Root_Controller
         }
     }
 
+    private function get_preference_transfer()
+    {
+        $user = User_helper::get_user();
+        $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="search_transfer"'),1);
 
-
-    private function system_list1()
+        $data['division_name']= 1;
+        $data['zone_name']= 1;
+        $data['territory_name']= 1;
+        $data['district_name']= 1;
+        $data['outlet_name']= 1;
+        $data['barcode']= 1;
+        $data['date_request']= 1;
+        $data['quantity_total_request']= 1;
+        $data['status_request']= 1;
+        $data['date_approve']= 1;
+        $data['quantity_total_approve']= 1;
+        $data['status_approve']= 1;
+        $data['date_delivery']= 1;
+        $data['status_delivery']= 1;
+        $data['date_receive']= 1;
+        $data['quantity_total_receive']= 1;
+        $data['status_receive']= 1;
+        $data['status_receive_forward']= 1;
+        $data['status_receive_approve']= 1;
+        $data['status_system_delivery_receive']= 1;
+        $data['status']= 1;
+        if($result)
+        {
+            if($result['preferences']!=null)
+            {
+                $preferences=json_decode($result['preferences'],true);
+                foreach($data as $key=>$value)
+                {
+                    if(isset($preferences[$key]))
+                    {
+                        $data[$key]=$value;
+                    }
+                    else
+                    {
+                        $data[$key]=0;
+                    }
+                }
+            }
+        }
+        return $data;
+    }
+    private function system_list_transfer()
     {
         if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
         {
@@ -174,7 +242,7 @@ class Report_to_wise extends Root_Controller
             $data['system_preference_items']= $this->get_preference();
             $data['title']="TO Wise Report";
             $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_report_container","html"=>$this->load->view($this->controller_url."/list",$data,true));
+            $ajax['system_content'][]=array("id"=>"#system_report_container","html"=>$this->load->view($this->controller_url."/list_transfer",$data,true));
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
@@ -189,7 +257,7 @@ class Report_to_wise extends Root_Controller
             $this->json_return($ajax);
         }
     }
-    private function system_get_items()
+    private function system_get_items_transfer()
     {
         $crop_id=$this->input->post('crop_id');
         $crop_type_id=$this->input->post('crop_type_id');
@@ -389,6 +457,26 @@ class Report_to_wise extends Root_Controller
         $this->json_return($items);
         die();
     }
+    private function system_set_preference_transfer()
+    {
+        if(isset($this->permissions['action6']) && ($this->permissions['action6']==1))
+        {
+            $data['system_preference_items']= $this->get_preference_transfer();
+            $data['preference_method_name']='search_transfer';
+            $ajax['status']=true;
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("preference_add_edit",$data,true));
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/set_preference');
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+    }
+
+
     private function get_row($info)
     {
         $row=array();
@@ -515,71 +603,6 @@ class Report_to_wise extends Root_Controller
             $this->json_return($ajax);
         }
     }
-    private function system_set_preference()
-    {
-        if(isset($this->permissions['action6']) && ($this->permissions['action6']==1))
-        {
-            $data['system_preference_items']= $this->get_preference();
-            $data['preference_method_name']='search';
-            $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("preference_add_edit",$data,true));
-            $ajax['system_page_url']=site_url($this->controller_url.'/index/set_preference');
-            $this->json_return($ajax);
-        }
-        else
-        {
-            $ajax['status']=false;
-            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
-            $this->json_return($ajax);
-        }
-    }
-    private function get_preference()
-    {
-        $user = User_helper::get_user();
-        $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="search"'),1);
 
-        $data['division_name']= 1;
-        $data['zone_name']= 1;
-        $data['territory_name']= 1;
-        $data['district_name']= 1;
-        $data['outlet_name']= 1;
-        $data['barcode']= 1;
-        $data['date_request']= 1;
-        $data['quantity_total_request']= 1;
-        $data['status_request']= 1;
-        $data['date_approve']= 1;
-        $data['quantity_total_approve']= 1;
-        $data['status_approve']= 1;
-        $data['date_delivery']= 1;
-        $data['status_delivery']= 1;
-        $data['date_receive']= 1;
-        $data['quantity_total_receive']= 1;
-        $data['status_receive']= 1;
-        $data['status_receive_forward']= 1;
-        $data['status_receive_approve']= 1;
-        $data['status_system_delivery_receive']= 1;
-        $data['status']= 1;
 
-        /*$data['current_stock_pkt']= 1;
-        $data['current_stock_kg']= 1;*/
-        if($result)
-        {
-            if($result['preferences']!=null)
-            {
-                $preferences=json_decode($result['preferences'],true);
-                foreach($data as $key=>$value)
-                {
-                    if(isset($preferences[$key]))
-                    {
-                        $data[$key]=$value;
-                    }
-                    else
-                    {
-                        $data[$key]=0;
-                    }
-                }
-            }
-        }
-        return $data;
-    }
 }
