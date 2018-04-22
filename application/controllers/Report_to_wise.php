@@ -37,14 +37,27 @@ class Report_to_wise extends Root_Controller
         {
             $this->system_get_items_transfer();
         }
-        elseif($action=="details")
-        {
-            $this->system_details($id);
-        }
         elseif($action=="set_preference_transfer")
         {
             $this->system_set_preference_transfer();
         }
+        elseif($action=="details")
+        {
+            $this->system_details($id);
+        }
+        elseif($action=="list_variety")
+        {
+            $this->system_list_variety();
+        }
+        elseif($action=="get_items_variety")
+        {
+            $this->system_get_items_variety();
+        }
+        elseif($action=="set_preference_variety")
+        {
+            $this->system_set_preference_variety();
+        }
+
         elseif($action=="save_preference")
         {
             System_helper::save_preference();
@@ -120,7 +133,6 @@ class Report_to_wise extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
     private function system_list()
     {
         if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
@@ -181,6 +193,7 @@ class Report_to_wise extends Root_Controller
         }
     }
 
+    /* Start Transfer report function */
     private function get_preference_transfer()
     {
         $user = User_helper::get_user();
@@ -424,7 +437,7 @@ class Report_to_wise extends Root_Controller
                 $prev_district_name=$result['district_name'];
                 $first_row=false;
             }
-            $items[]=$this->get_row($result);
+            $items[]=$this->get_row_location($result);
             if(isset($all_to[$result['outlet_id']]))
             {
                 if(sizeof($all_to[$result['outlet_id']])>0)
@@ -465,7 +478,7 @@ class Report_to_wise extends Root_Controller
             $data['preference_method_name']='search_transfer';
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("preference_add_edit",$data,true));
-            $ajax['system_page_url']=site_url($this->controller_url.'/index/set_preference');
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/set_preference_transfer');
             $this->json_return($ajax);
         }
         else
@@ -474,18 +487,6 @@ class Report_to_wise extends Root_Controller
             $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
             $this->json_return($ajax);
         }
-    }
-
-
-    private function get_row($info)
-    {
-        $row=array();
-        $row['division_name']=$info['division_name'];
-        $row['zone_name']=$info['zone_name'];
-        $row['territory_name']=$info['territory_name'];
-        $row['district_name']=$info['district_name'];
-        $row['outlet_name']=$info['outlet_name'];
-        return $row;
     }
     private function system_details($id)
     {
@@ -603,6 +604,305 @@ class Report_to_wise extends Root_Controller
             $this->json_return($ajax);
         }
     }
+    /* End Transfer report function */
+
+    /* Start Variety report function */
+    private function get_preference_variety()
+    {
+        $user = User_helper::get_user();
+        $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="search_variety"'),1);
+
+        $data['crop_name']= 1;
+        $data['crop_type']= 1;
+        $data['variety_name']= 1;
+        $data['pack_size']= 1;
+        $data['date_delivery']= 1;
+        $data['outlet_name']= 1;
+        $data['quantity_order']= 1;
+        $data['quantity_approve']= 1;
+        $data['quantity_receive']= 1;
+        $data['quantity_deference']= 1;
+        if($result)
+        {
+            if($result['preferences']!=null)
+            {
+                $preferences=json_decode($result['preferences'],true);
+                foreach($data as $key=>$value)
+                {
+                    if(isset($preferences[$key]))
+                    {
+                        $data[$key]=$value;
+                    }
+                    else
+                    {
+                        $data[$key]=0;
+                    }
+                }
+            }
+        }
+        return $data;
+    }
+    private function system_list_variety()
+    {
+        if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
+        {
+            $reports=$this->input->post('report');
+            $data['options']=$reports;
+            if(!System_helper::get_time($reports['date_start']) || !System_helper::get_time($reports['date_end']))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='Starting date and end date is required.';
+                $this->json_return($ajax);
+            }
+            $data['system_preference_items']= $this->get_preference();
+            $data['title']="TO Variety Wise Report";
+            $ajax['status']=true;
+            $ajax['system_content'][]=array("id"=>"#system_report_container","html"=>$this->load->view($this->controller_url."/list_variety",$data,true));
+            if($this->message)
+            {
+                $ajax['system_message']=$this->message;
+            }
+            $ajax['system_page_url']=site_url($this->controller_url);
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+    }
+    private function system_get_items_variety()
+    {
+        $crop_id=$this->input->post('crop_id');
+        $crop_type_id=$this->input->post('crop_type_id');
+        $variety_id=$this->input->post('variety_id');
+        $pack_size_id=$this->input->post('pack_size_id');
+        $date_start=System_helper::get_time($this->input->post('date_start'));
+        $date_end=System_helper::get_time($this->input->post('date_end'));
 
 
+        $division_id=$this->input->post('division_id');
+        $zone_id=$this->input->post('zone_id');
+        $territory_id=$this->input->post('territory_id');
+        $district_id=$this->input->post('district_id');
+        $outlet_id=$this->input->post('outlet_id');
+
+        $items=array();
+
+        $this->db->from($this->config->item('table_login_csetup_cus_info').' outlet_info');
+        $this->db->select('outlet_info.customer_id outlet_id, outlet_info.name outlet_name, outlet_info.customer_code outlet_code');
+        $this->db->join($this->config->item('table_login_setup_location_districts').' districts','districts.id = outlet_info.district_id','INNER');
+        $this->db->select('districts.name district_name');
+        $this->db->join($this->config->item('table_login_setup_location_territories').' territories','territories.id = districts.territory_id','INNER');
+        $this->db->select('territories.name territory_name');
+        $this->db->join($this->config->item('table_login_setup_location_zones').' zones','zones.id = territories.zone_id','INNER');
+        $this->db->select('zones.name zone_name');
+        $this->db->join($this->config->item('table_login_setup_location_divisions').' divisions','divisions.id = zones.division_id','INNER');
+        $this->db->select('divisions.id division_id, divisions.name division_name');
+        $this->db->order_by('divisions.id, zones.id, territories.id, districts.id, outlet_info.customer_id');
+        $this->db->where('outlet_info.revision',1);
+
+        if($this->locations['division_id']>0)
+        {
+            $this->db->where('divisions.id',$this->locations['division_id']);
+            if($this->locations['zone_id']>0)
+            {
+                $this->db->where('zones.id',$this->locations['zone_id']);
+                if($this->locations['territory_id']>0)
+                {
+                    $this->db->where('territories.id',$this->locations['territory_id']);
+                    if($this->locations['district_id']>0)
+                    {
+                        $this->db->where('districts.id',$this->locations['district_id']);
+                    }
+                }
+            }
+        }
+        if($division_id)
+        {
+            $this->db->where('divisions.id',$division_id);
+        }
+        if($zone_id)
+        {
+            $this->db->where('zones.id',$zone_id);
+        }
+        if($territory_id)
+        {
+            $this->db->where('territories.id',$territory_id);
+        }
+        if($district_id)
+        {
+            $this->db->where('districts.id',$district_id);
+        }
+        if($outlet_id)
+        {
+            $this->db->where('outlet_info.customer_id',$outlet_id);
+        }
+        $data['location']=$this->db->get()->result_array();
+
+        $outlet_ids=array();
+        foreach($data['location'] as $result)
+        {
+            $outlet_ids[]=$result['outlet_id'];
+        }
+
+        $this->db->from($this->config->item('table_sms_transfer_wo').' transfer_wo');
+        $this->db->select('transfer_wo.*');
+        $this->db->join($this->config->item('table_sms_transfer_wo_details').' transfer_wo_details','transfer_wo_details.transfer_wo_id=transfer_wo.id','INNER');
+        $this->db->select('transfer_wo_details.*');
+        $this->db->where('transfer_wo_details.status',$this->config->item('system_status_active'));
+        $this->db->where('transfer_wo.date_request>='.$date_start.' and transfer_wo.date_request<='.$date_end);
+        $this->db->order_by('transfer_wo.id');
+        $this->db->group_by('transfer_wo.id');
+        if($crop_id)
+        {
+            $this->db->where('transfer_wo_details.crop_id',$crop_id);
+            if($crop_type_id)
+            {
+                $this->db->where('transfer_wo_details.crop_type_id',$crop_type_id);
+                if($variety_id)
+                {
+                    $this->db->where('transfer_wo_details.variety_id',$variety_id);
+                }
+            }
+        }
+        if($pack_size_id)
+        {
+            $this->db->where('transfer_wo_details.pack_size_id',$pack_size_id);
+        }
+        if(sizeof($outlet_ids)>0)
+        {
+            $this->db->where_in('transfer_wo.outlet_id',$outlet_ids);
+        }
+        if($outlet_id)
+        {
+            $this->db->where('transfer_wo.outlet_id',$outlet_id);
+        }
+        $data['items']=$this->db->get()->result_array();
+        $all_to=array();
+        foreach($data['items'] as $item)
+        {
+            $all_to[$item['outlet_id']][$item['transfer_wo_id']]=$item;
+        }
+
+        $first_row=true;
+        $prev_division_name='';
+        $prev_zone_name='';
+        $prev_territory_name='';
+        $prev_district_name='';
+        foreach($data['location'] as $result)
+        {
+            if(!$first_row)
+            {
+                if($prev_division_name!=$result['division_name'])
+                {
+                    $prev_division_name=$result['division_name'];
+                    $prev_zone_name=$result['zone_name'];
+                    $prev_territory_name=$result['territory_name'];
+                    $prev_district_name=$result['district_name'];
+                }
+                elseif($prev_zone_name!=$result['zone_name'])
+                {
+                    $result['division_name']='';
+                    $prev_zone_name=$result['zone_name'];
+                    $prev_territory_name=$result['territory_name'];
+                    $prev_district_name=$result['district_name'];
+                }
+                elseif($prev_territory_name!=$result['territory_name'])
+                {
+                    $result['division_name']='';
+                    $result['zone_name']='';
+                    $prev_territory_name=$result['territory_name'];
+                    $prev_district_name=$result['district_name'];
+                }
+                elseif($prev_district_name!=$result['district_name'])
+                {
+                    $result['division_name']='';
+                    $result['zone_name']='';
+                    $result['territory_name']='';
+                    $prev_district_name=$result['district_name'];
+                }
+                else
+                {
+                    $result['division_name']='';
+                    $result['zone_name']='';
+                    $result['territory_name']='';
+                    $result['district_name']='';
+                }
+            }
+            else
+            {
+                $prev_division_name=$result['division_name'];
+                $prev_zone_name=$result['zone_name'];
+                $prev_territory_name=$result['territory_name'];
+                $prev_district_name=$result['district_name'];
+                $first_row=false;
+            }
+            $items[]=$this->get_row_location($result);
+            if(isset($all_to[$result['outlet_id']]))
+            {
+                if(sizeof($all_to[$result['outlet_id']])>0)
+                {
+                    foreach($all_to[$result['outlet_id']] as $id=>$two)
+                    {
+                        $row['transfer_wo_id']=$id;
+                        $row['barcode']=Barcode_helper::get_barcode_transfer_warehouse_to_outlet($id);
+                        $row['date_request']=System_helper::display_date($two['date_request']);
+                        $row['quantity_total_request']=number_format($two['quantity_total_request_kg'],3,'.','');
+                        $row['status_request']=$two['status_request'];
+                        $row['date_approve']=System_helper::display_date($two['date_approve']);
+                        $row['quantity_total_approve']=number_format($two['quantity_total_approve_kg'],3,'.','');
+                        $row['status_approve']=$two['status_approve'];
+                        $row['date_delivery']=System_helper::display_date($two['date_delivery']);
+                        $row['status_delivery']=$two['status_delivery'];
+                        $row['date_receive']=System_helper::display_date($two['date_receive']);
+                        $row['quantity_total_receive']=number_format($two['quantity_total_receive_kg'],3,'.','');
+                        $row['status_receive']=$two['status_receive'];
+                        $row['status_receive_forward']=$two['status_receive_forward'];
+                        $row['status_receive_approve']=$two['status_receive_approve'];
+                        $row['status_system_delivery_receive']=$two['status_system_delivery_receive'];
+                        $row['status']=$two['status'];
+                        $items[]=$row;
+                    }
+                }
+            }
+        }
+
+        $this->json_return($items);
+        die();
+    }
+    private function system_set_preference_variety()
+    {
+        if(isset($this->permissions['action6']) && ($this->permissions['action6']==1))
+        {
+            $data['system_preference_items']= $this->get_preference_variety();
+            $data['preference_method_name']='search_variety';
+            $ajax['status']=true;
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("preference_add_edit",$data,true));
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/set_preference_variety');
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+    }
+    /* End Variety report function */
+
+
+
+
+    private function get_row_location($info)
+    {
+        $row=array();
+        $row['division_name']=$info['division_name'];
+        $row['zone_name']=$info['zone_name'];
+        $row['territory_name']=$info['territory_name'];
+        $row['district_name']=$info['district_name'];
+        $row['outlet_name']=$info['outlet_name'];
+        return $row;
+    }
 }

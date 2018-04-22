@@ -269,10 +269,10 @@ class Lc_receive extends Root_Controller
                 $ajax['system_message']='LC already received.';
                 $this->json_return($ajax);
             }
-            if($data['item']['status_open']==$this->config->item('system_status_closed'))
+            if($data['item']['status_open']==$this->config->item('system_status_complete'))
             {
                 $ajax['status']=false;
-                $ajax['system_message']='LC Already Closed.';
+                $ajax['system_message']='LC Already Completed.';
                 $this->json_return($ajax);
             }
 
@@ -338,10 +338,10 @@ class Lc_receive extends Root_Controller
                 $ajax['system_message']='You Can Not Modify LC Because LC Receive Completed.';
                 $this->json_return($ajax);
             }
-            if($result['status_open']==$this->config->item('system_status_closed'))
+            if($result['status_open']==$this->config->item('system_status_complete'))
             {
                 $ajax['status']=false;
-                $ajax['system_message']='LC Already Closed.';
+                $ajax['system_message']='LC Already Completed.';
                 $this->json_return($ajax);
             }
         }
@@ -505,10 +505,10 @@ class Lc_receive extends Root_Controller
                 $ajax['system_message']='LC already received.';
                 $this->json_return($ajax);
             }
-            if($data['item']['status_open']==$this->config->item('system_status_closed'))
+            if($data['item']['status_open']==$this->config->item('system_status_complete'))
             {
                 $ajax['status']=false;
-                $ajax['system_message']='LC Already Closed.';
+                $ajax['system_message']='LC Already Completed.';
                 $this->json_return($ajax);
             }
 
@@ -603,10 +603,10 @@ class Lc_receive extends Root_Controller
                 $ajax['system_message']='LC already received.';
                 $this->json_return($ajax);
             }
-            if($data['item']['status_open']==$this->config->item('system_status_closed'))
+            if($data['item']['status_open']==$this->config->item('system_status_complete'))
             {
                 $ajax['status']=false;
-                $ajax['system_message']='LC Already Closed.';
+                $ajax['system_message']='LC Already Completed.';
                 $this->json_return($ajax);
             }*/
 
@@ -695,10 +695,10 @@ class Lc_receive extends Root_Controller
                 $ajax['system_message']='You can not open this LC. LC release pending.';
                 $this->json_return($ajax);
             }
-            if($data['item']['status_open']==$this->config->item('system_status_closed'))
+            if($data['item']['status_open']==$this->config->item('system_status_complete'))
             {
                 $ajax['status']=false;
-                $ajax['system_message']='LC Already Closed.';
+                $ajax['system_message']='LC Already Completed.';
                 $this->json_return($ajax);
             }
 
@@ -790,10 +790,10 @@ class Lc_receive extends Root_Controller
                 $ajax['system_message']='You have to complete your (LC) edit receive.';
                 $this->json_return($ajax);
             }
-            /*if($data['item']['status_open']==$this->config->item('system_status_closed'))
+            /*if($data['item']['status_open']==$this->config->item('system_status_complete'))
             {
                 $ajax['status']=false;
-                $ajax['system_message']='LC Already Closed.';
+                $ajax['system_message']='LC Already Completed.';
                 $this->json_return($ajax);
             }*/
 
@@ -881,10 +881,10 @@ class Lc_receive extends Root_Controller
                 $ajax['system_message']='LC Already Received Completed.';
                 $this->json_return($ajax);
             }
-            if($data['item']['status_open']==$this->config->item('system_status_closed'))
+            if($data['item']['status_open']==$this->config->item('system_status_complete'))
             {
                 $ajax['status']=false;
-                $ajax['system_message']='LC Already Closed.';
+                $ajax['system_message']='LC Already Completed.';
                 $this->json_return($ajax);
             }
 

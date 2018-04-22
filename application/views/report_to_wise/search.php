@@ -66,57 +66,11 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         </select>
                     </div>
                 </div>
-                <!-- Fiscal Year & Date Range Section-->
+                <!-- Location Section-->
                 <div class="row show-grid">
                     <div class="col-xs-6">
-                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_FISCAL_YEAR');?></label>
+                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DIVISION_NAME');?><span style="color:#FF0000">*</span></label>
                     </div>
-                    <div class="col-xs-6">
-                        <select id="fiscal_year_id" name="report[fiscal_year_id]" class="form-control">
-                            <option value=""><?php echo $CI->lang->line('SELECT');?></option>
-                            <?php
-                            foreach($fiscal_years as $year)
-                            {?>
-                                <option value="<?php echo $year['value']?>"><?php echo $year['text'];?></option>
-                            <?php
-                            }
-                            ?>
-                        </select>
-                    </div>
-                </div>
-                <div class="row show-grid">
-                    <div class="col-xs-6">
-                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_START');?> <span style="color:#FF0000">*</span></label>
-                    </div>
-                    <div class="col-xs-6">
-                        <input type="text" id="date_start" name="report[date_start]" class="form-control date_large" value="<?php echo System_helper::display_date(time()); ?>">
-                    </div>
-                </div>
-                <div class="row show-grid">
-                    <div class="col-xs-6">
-                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_END');?> <span style="color:#FF0000">*</span></label>
-                    </div>
-                    <div class="col-xs-6">
-                        <input type="text" id="date_end" name="report[date_end]" class="form-control date_large" value="<?php echo System_helper::display_date(time()); ?>">
-                    </div>
-                </div>
-            </div>
-            <!--Location section-->
-            <div class="col-xs-6">
-                <div class="row show-grid">
-                    <div class="col-xs-6">
-                        <select id="report_name" name="report[report_name]" class="form-control">
-                            <option value="transfer">TO Wise</option>
-                            <option value="variety">Variety Wise</option>
-                            <option value="quantity">Quantity Wise</option>
-                            <option value="outlet">Outlet Wise</option>
-                        </select>
-                    </div>
-                    <div class="col-xs-6">
-                        <label class="control-label">Report Type<span style="color:#FF0000">*</span></label>
-                    </div>
-                </div>
-                <div class="row show-grid">
                     <div class="col-xs-6">
                         <?php
                         if($CI->locations['division_id']>0)
@@ -142,11 +96,11 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         }
                         ?>
                     </div>
-                    <div class="col-xs-6">
-                        <label class="control-label"><?php echo $CI->lang->line('LABEL_DIVISION_NAME');?><span style="color:#FF0000">*</span></label>
-                    </div>
                 </div>
                 <div style="<?php if(!(sizeof($zones)>0)){echo 'display:none';} ?>" class="row show-grid" id="zone_id_container">
+                    <div class="col-xs-6">
+                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ZONE_NAME');?><span style="color:#FF0000">*</span></label>
+                    </div>
                     <div class="col-xs-6">
                         <?php
                         if($CI->locations['zone_id']>0)
@@ -172,11 +126,11 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         }
                         ?>
                     </div>
-                    <div class="col-xs-6">
-                        <label class="control-label"><?php echo $CI->lang->line('LABEL_ZONE_NAME');?><span style="color:#FF0000">*</span></label>
-                    </div>
                 </div>
                 <div style="<?php if(!(sizeof($territories)>0)){echo 'display:none';} ?>" class="row show-grid" id="territory_id_container">
+                    <div class="col-xs-6">
+                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TERRITORY_NAME');?><span style="color:#FF0000">*</span></label>
+                    </div>
                     <div class="col-xs-6">
                         <?php
                         if($CI->locations['territory_id']>0)
@@ -202,11 +156,11 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         }
                         ?>
                     </div>
-                    <div class="col-xs-6">
-                        <label class="control-label"><?php echo $CI->lang->line('LABEL_TERRITORY_NAME');?><span style="color:#FF0000">*</span></label>
-                    </div>
                 </div>
                 <div style="<?php if(!(sizeof($districts)>0)){echo 'display:none';} ?>" class="row show-grid" id="district_id_container">
+                    <div class="col-xs-6">
+                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DISTRICT_NAME');?><span style="color:#FF0000">*</span></label>
+                    </div>
                     <div class="col-xs-6">
                         <?php
                         if($CI->locations['district_id']>0)
@@ -232,11 +186,11 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         }
                         ?>
                     </div>
-                    <div class="col-xs-6">
-                        <label class="control-label "><?php echo $CI->lang->line('LABEL_DISTRICT_NAME');?><span style="color:#FF0000">*</span></label>
-                    </div>
                 </div>
                 <div style="<?php if(!(sizeof($outlets)>0)){echo 'display:none';} ?>" class="row show-grid" id="outlet_id_container">
+                    <div class="col-xs-6">
+                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_OUTLET_NAME');?><span style="color:#FF0000">*</span></label>
+                    </div>
                     <div class="col-xs-6">
                         <select id="outlet_id" name="report[outlet_id]" class="form-control">
                             <option value=""><?php echo $CI->lang->line('SELECT');?></option>
@@ -249,8 +203,54 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                             ?>
                         </select>
                     </div>
+                </div>
+            </div>
+            <div class="col-xs-6">
+                <!-- Fiscal Year & Date Range Section-->
+                <div class="row show-grid">
                     <div class="col-xs-6">
-                        <label class="control-label"><?php echo $CI->lang->line('LABEL_OUTLET_NAME');?><span style="color:#FF0000">*</span></label>
+                        <select id="fiscal_year_id" name="report[fiscal_year_id]" class="form-control">
+                            <option value=""><?php echo $CI->lang->line('SELECT');?></option>
+                            <?php
+                            foreach($fiscal_years as $year)
+                            {?>
+                                <option value="<?php echo $year['value']?>"><?php echo $year['text'];?></option>
+                            <?php
+                            }
+                            ?>
+                        </select>
+                    </div>
+                    <div class="col-xs-6">
+                        <label class="control-label"><?php echo $CI->lang->line('LABEL_FISCAL_YEAR');?></label>
+                    </div>
+                </div>
+                <div class="row show-grid">
+                    <div class="col-xs-6">
+                        <input type="text" id="date_start" name="report[date_start]" class="form-control date_large" value="<?php echo System_helper::display_date(time()); ?>">
+                    </div>
+                    <div class="col-xs-6">
+                        <label class="control-label"><?php echo $CI->lang->line('LABEL_DATE_START');?> <span style="color:#FF0000">*</span></label>
+                    </div>
+                </div>
+                <div class="row show-grid">
+                    <div class="col-xs-6">
+                        <input type="text" id="date_end" name="report[date_end]" class="form-control date_large" value="<?php echo System_helper::display_date(time()); ?>">
+                    </div>
+                    <div class="col-xs-6">
+                        <label class="control-label "><?php echo $CI->lang->line('LABEL_DATE_END');?> <span style="color:#FF0000">*</span></label>
+                    </div>
+                </div>
+                <div class="row show-grid">
+                    <div class="col-xs-6">
+                        <select id="report_name" name="report[report_name]" class="form-control">
+                            <option value="transfer">TO Wise </option>
+                            <option value="variety">Variety Date Wise</option>
+                            <option value="quantity">Quantity Wise</option>
+                            <option value="outlet">Outlet Wise</option>
+                        </select>
+                    </div>
+                    <div class="col-xs-6">
+                        <label class="control-label">Report Type<span style="color:#FF0000">*</span></label>
                     </div>
                 </div>
                 <div class="row show-grid">

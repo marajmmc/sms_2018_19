@@ -16,14 +16,14 @@ if(isset($CI->permissions['action4']) && ($CI->permissions['action4']==1))
 }
 $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
-$status_closed=false;
+$status_completed=false;
 $status_open_forward=false;
 $status_release=false;
 $status_receive=false;
 $number_footer_colspan=6;
-if($item['status_open']==$this->config->item('system_status_closed'))
+if($item['status_open']==$this->config->item('system_status_complete'))
 {
-    $status_closed=true;
+    $status_completed=true;
 }
 if($item['status_open_forward']==$this->config->item('system_status_yes'))
 {
@@ -91,7 +91,7 @@ if($item['status_receive']==$this->config->item('system_status_complete'))
             }
             ?>
             <?php
-            if($status_closed)
+            if($status_completed)
             {
                 ?>
                 <tr>
@@ -137,7 +137,7 @@ if($item['status_receive']==$this->config->item('system_status_complete'))
                 <th class="bg-danger"><label class="control-label"><?php echo $item['currency_name'];?></label></th>
             </tr>
             <?php
-            if($status_closed)
+            if($status_completed)
             {
                 ?>
                 <tr>
@@ -213,7 +213,7 @@ if($item['status_receive']==$this->config->item('system_status_complete'))
             }
             ?>
             <?php
-            if($status_closed)
+            if($status_completed)
             {
                 ?>
                 <tr>
@@ -270,7 +270,7 @@ if($item['status_receive']==$this->config->item('system_status_complete'))
                     }
                     ?>
                     <?php
-                    if($status_closed)
+                    if($status_completed)
                     {
                         ?>
                         <th class=" text-center" colspan="5"><?php echo $CI->lang->line('LABEL_TOTAL_TAKA');?></th>
@@ -306,7 +306,7 @@ if($item['status_receive']==$this->config->item('system_status_complete'))
                     }
                     ?>
                     <?php
-                    if($status_closed)
+                    if($status_completed)
                     {
                         ?>
                         <th class=" text-center">Unit Price (Taka)</th>
@@ -433,7 +433,7 @@ if($item['status_receive']==$this->config->item('system_status_complete'))
                             }
                             ?>
                             <?php
-                            if($status_closed)
+                            if($status_completed)
                             {
                                 $price_variety_rate_pkt=($data['price_total_taka']/$data['quantity_receive']);
                                 $price_variety_rate_kg=($data['price_total_taka']/$quantity_receive_kg);
@@ -482,7 +482,7 @@ if($item['status_receive']==$this->config->item('system_status_complete'))
                         }
                         ?>
                         <?php
-                        if($status_closed)
+                        if($status_completed)
                         {
                             ?>
                             <th class="text-right"><label class="control-label"><?php echo number_format($price_total_unit_complete_taka,2);?></label></th>
@@ -513,7 +513,7 @@ if($item['status_receive']==$this->config->item('system_status_complete'))
         </div>
         <div class="clearfix"></div>
         <?php
-        if($status_closed)
+        if($status_completed)
         {
             ?>
             <div style="overflow-x: auto;" class="row show-grid">

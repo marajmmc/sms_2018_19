@@ -388,10 +388,10 @@ class Lc_open extends Root_Controller
                 $ajax['system_message']='LC already forwarded.';
                 $this->json_return($ajax);
             }
-            if($result['status_open']==$this->config->item('system_status_closed'))
+            if($result['status_open']==$this->config->item('system_status_complete'))
             {
                 $ajax['status']=false;
-                $ajax['system_message']='LC already closed.';
+                $ajax['system_message']='LC already completed.';
                 $this->json_return($ajax);
             }
         }
@@ -808,10 +808,10 @@ class Lc_open extends Root_Controller
                 $ajax['system_message']='LC receive pending.';
                 $this->json_return($ajax);
             }*/
-            /*if($data['item']['status_open']==$this->config->item('system_status_closed'))
+            /*if($data['item']['status_open']==$this->config->item('system_status_complete'))
             {
                 $ajax['status']=false;
-                $ajax['system_message']='LC Already Closed.';
+                $ajax['system_message']='LC Already Completed.';
                 $this->json_return($ajax);
             }*/
 
@@ -880,10 +880,10 @@ class Lc_open extends Root_Controller
                 $ajax['system_message']='LC Already Released.';
                 $this->json_return($ajax);
             }
-            if($result['status_open']==$this->config->item('system_status_closed'))
+            if($result['status_open']==$this->config->item('system_status_complete'))
             {
                 $ajax['status']=false;
-                $ajax['system_message']='LC Already Closed.';
+                $ajax['system_message']='LC Already Completed.';
                 $this->json_return($ajax);
             }
             $this->db->trans_start();  //DB Transaction Handle START
@@ -949,10 +949,10 @@ class Lc_open extends Root_Controller
                 $ajax['system_message']='Already forwarded this LC :: '. Barcode_helper::get_barcode_lc($item_id);
                 $this->json_return($ajax);
             }
-            if($data['item']['status_open']==$this->config->item('system_status_closed'))
+            if($data['item']['status_open']==$this->config->item('system_status_complete'))
             {
                 $ajax['status']=false;
-                $ajax['system_message']='Already closed this LC :: '. Barcode_helper::get_barcode_lc($item_id);
+                $ajax['system_message']='Already completed this LC :: '. Barcode_helper::get_barcode_lc($item_id);
                 $this->json_return($ajax);
             }
 
@@ -1024,10 +1024,10 @@ class Lc_open extends Root_Controller
                 $ajax['system_message']='Already LC Forwarded.';
                 $this->json_return($ajax);
             }
-            if($result['status_open']==$this->config->item('system_status_closed'))
+            if($result['status_open']==$this->config->item('system_status_complete'))
             {
                 $ajax['status']=false;
-                $ajax['system_message']='LC Already Closed.';
+                $ajax['system_message']='LC Already Completed.';
                 $this->json_return($ajax);
             }
         }

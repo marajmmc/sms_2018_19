@@ -7,7 +7,7 @@ $action_buttons[]=array
     'label'=>$CI->lang->line("ACTION_BACK"),
     'href'=>site_url($CI->controller_url)
 );
-if((isset($CI->permissions['action7']) && ($CI->permissions['action7']==1)))
+/*if((isset($CI->permissions['action7']) && ($CI->permissions['action7']==1)))
 {
     $action_buttons[]=array
     (
@@ -16,7 +16,7 @@ if((isset($CI->permissions['action7']) && ($CI->permissions['action7']==1)))
         'id'=>'button_action_save',
         'data-form'=>'#save_form'
     );
-}
+}*/
 $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
 
@@ -31,17 +31,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             </div>
             <div class="clearfix"></div>
         </div>
-        <div class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_LC_FORWARD');?><span style="color:#FF0000">*</span></label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <select id="status_open_forward" class="form-control" name="item[status_open_forward]">
-                    <option value=""><?php echo $CI->lang->line('SELECT');?></option>
-                    <option value="<?php echo $this->config->item('system_status_yes')?>"><?php echo $this->config->item('system_status_yes')?></option>
-                </select>
-            </div>
-        </div>
+
         <div class="col-md-12">
             <table class="table table-bordered table-responsive ">
                 <thead>
@@ -163,6 +153,30 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     </tr>
                     </tfoot>
                 </table>
+            </div>
+            <div class="row show-grid">
+                <div class="col-xs-4">
+                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_LC_FORWARD');?><span style="color:#FF0000">*</span></label>
+                </div>
+                <div class="col-sm-4 col-xs-8">
+                    <select id="status_open_forward" class="form-control" name="item[status_open_forward]">
+                        <option value=""><?php echo $CI->lang->line('SELECT');?></option>
+                        <option value="<?php echo $this->config->item('system_status_yes')?>"><?php echo $this->config->item('system_status_yes')?></option>
+                    </select>
+                </div>
+            </div>
+            <div class="row show-grid">
+                <div class="col-xs-4">
+
+                </div>
+                <div class="col-sm-4 col-xs-4">
+                    <div class="action_button">
+                        <button id="button_action_save" type="button" class="btn" data-form="#save_form" data-message-confirm="Are You Sure LC Forward?">Forward</button>
+                    </div>
+                </div>
+                <div class="col-sm-4 col-xs-4">
+
+                </div>
             </div>
         </div>
     </div>

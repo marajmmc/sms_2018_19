@@ -40,12 +40,12 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         </div>
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right">LC Closed<span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right">LC Completed<span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <select id="status_open" class="form-control" name="item[status_open]">
                     <option value=""><?php echo $CI->lang->line('SELECT');?></option>
-                    <option value="<?php echo $this->config->item('system_status_closed')?>"><?php echo $this->config->item('system_status_closed')?></option>
+                    <option value="<?php echo $this->config->item('system_status_complete')?>"><?php echo $this->config->item('system_status_complete')?></option>
                 </select>
             </div>
         </div>
