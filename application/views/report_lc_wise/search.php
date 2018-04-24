@@ -66,138 +66,66 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         </select>
                     </div>
                 </div>
-                <!-- Location Section-->
+                <!-- Fiscal Year & Date Range Section-->
                 <div class="row show-grid">
                     <div class="col-xs-6">
-                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DIVISION_NAME');?><span style="color:#FF0000">*</span></label>
+                        <label class="control-label pull-right">Type of Date<span style="color:#FF0000">*</span></label>
                     </div>
                     <div class="col-xs-6">
-                        <?php
-                        if($CI->locations['division_id']>0)
-                        {
-                            ?>
-                            <label class="control-label"><?php echo $CI->locations['division_name'];?></label>
-                        <?php
-                        }
-                        else
-                        {
-                            ?>
-                            <select id="division_id" name="report[division_id]" class="form-control">
-                                <option value=""><?php echo $CI->lang->line('SELECT');?></option>
-                                <?php
-                                foreach($divisions as $division)
-                                {?>
-                                    <option value="<?php echo $division['value']?>"><?php echo $division['text'];?></option>
-                                <?php
-                                }
-                                ?>
-                            </select>
-                        <?php
-                        }
-                        ?>
+                        <select id="date_type" name="report[date_type]" class="form-control">
+                            <option value="date_opening"><?php echo $CI->lang->line('LABEL_DATE_OPENING');?></option>
+                            <option value="date_expected"><?php echo $CI->lang->line('LABEL_DATE_EXPECTED');?></option>
+                            <option value="date_receive"><?php echo $CI->lang->line('LABEL_DATE_RECEIVE');?></option>
+                            <option value="date_packing_list"><?php echo $CI->lang->line('LABEL_DATE_PACKING_LIST');?></option>
+                        </select>
                     </div>
                 </div>
-                <div style="<?php if(!(sizeof($zones)>0)){echo 'display:none';} ?>" class="row show-grid" id="zone_id_container">
+                <div class="row show-grid">
                     <div class="col-xs-6">
-                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ZONE_NAME');?><span style="color:#FF0000">*</span></label>
+                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_FISCAL_YEAR');?></label>
                     </div>
                     <div class="col-xs-6">
-                        <?php
-                        if($CI->locations['zone_id']>0)
-                        {
-                            ?>
-                            <label class="control-label"><?php echo $CI->locations['zone_name'];?></label>
-                        <?php
-                        }
-                        else
-                        {
-                            ?>
-                            <select id="zone_id" name="report[zone_id]" class="form-control">
-                                <option value=""><?php echo $CI->lang->line('SELECT');?></option>
-                                <?php
-                                foreach($zones as $zone)
-                                {?>
-                                    <option value="<?php echo $zone['value']?>" <?php if($zone['value']==$item['zone_id']){ echo "selected";}?>><?php echo $zone['text'];?></option>
-                                <?php
-                                }
-                                ?>
-                            </select>
-                        <?php
-                        }
-                        ?>
-                    </div>
-                </div>
-                <div style="<?php if(!(sizeof($territories)>0)){echo 'display:none';} ?>" class="row show-grid" id="territory_id_container">
-                    <div class="col-xs-6">
-                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TERRITORY_NAME');?><span style="color:#FF0000">*</span></label>
-                    </div>
-                    <div class="col-xs-6">
-                        <?php
-                        if($CI->locations['territory_id']>0)
-                        {
-                            ?>
-                            <label class="control-label"><?php echo $CI->locations['territory_name'];?></label>
-                        <?php
-                        }
-                        else
-                        {
-                            ?>
-                            <select id="territory_id" name="report[territory_id]" class="form-control">
-                                <option value=""><?php echo $CI->lang->line('SELECT');?></option>
-                                <?php
-                                foreach($territories as $territory)
-                                {?>
-                                    <option value="<?php echo $territory['value']?>" <?php if($territory['value']==$item['territory_id']){ echo "selected";}?>><?php echo $territory['text'];?></option>
-                                <?php
-                                }
-                                ?>
-                            </select>
-                        <?php
-                        }
-                        ?>
-                    </div>
-                </div>
-                <div style="<?php if(!(sizeof($districts)>0)){echo 'display:none';} ?>" class="row show-grid" id="district_id_container">
-                    <div class="col-xs-6">
-                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DISTRICT_NAME');?><span style="color:#FF0000">*</span></label>
-                    </div>
-                    <div class="col-xs-6">
-                        <?php
-                        if($CI->locations['district_id']>0)
-                        {
-                            ?>
-                            <label class="control-label"><?php echo $CI->locations['district_name'];?></label>
-                        <?php
-                        }
-                        else
-                        {
-                            ?>
-                            <select id="district_id" name="report[district_id]" class="form-control">
-                                <option value=""><?php echo $CI->lang->line('SELECT');?></option>
-                                <?php
-                                foreach($districts as $district)
-                                {?>
-                                    <option value="<?php echo $district['value']?>" <?php if($district['value']==$item['district_id']){ echo "selected";}?>><?php echo $district['text'];?></option>
-                                <?php
-                                }
-                                ?>
-                            </select>
-                        <?php
-                        }
-                        ?>
-                    </div>
-                </div>
-                <div style="<?php if(!(sizeof($outlets)>0)){echo 'display:none';} ?>" class="row show-grid" id="outlet_id_container">
-                    <div class="col-xs-6">
-                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_OUTLET_NAME');?><span style="color:#FF0000">*</span></label>
-                    </div>
-                    <div class="col-xs-6">
-                        <select id="outlet_id" name="report[outlet_id]" class="form-control">
+                        <select id="fiscal_year_id" name="report[fiscal_year_id]" class="form-control">
                             <option value=""><?php echo $CI->lang->line('SELECT');?></option>
                             <?php
-                            foreach($outlets as $outlet)
-                            {?>
-                                <option value="<?php echo $outlet['value']?>" <?php if($outlet['value']==$item['outlet_id']){ echo "selected";}?>><?php echo $outlet['text'];?></option>
+                            foreach($fiscal_years as $year)
+                            {
+                                ?>
+                                <option value="<?php echo $year['value']?>"><?php echo $year['text'];?></option>
+                            <?php
+                            }
+                            ?>
+                        </select>
+                    </div>
+                </div>
+                <div class="row show-grid">
+                    <div class="col-xs-6">
+                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_START');?> <span style="color:#FF0000">*</span></label>
+                    </div>
+                    <div class="col-xs-6">
+                        <input type="text" id="date_start" name="report[date_start]" class="form-control date_large" value="<?php echo System_helper::display_date(time()); ?>">
+                    </div>
+                </div>
+                <div class="row show-grid">
+                    <div class="col-xs-6">
+                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_END');?> <span style="color:#FF0000">*</span></label>
+                    </div>
+                    <div class="col-xs-6">
+                        <input type="text" id="date_end" name="report[date_end]" class="form-control date_large" value="<?php echo System_helper::display_date(time()); ?>">
+                    </div>
+                </div>
+                <div style="" class="row show-grid" id="pack_size_id_container">
+                    <div class="col-xs-6">
+                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PRINCIPAL_NAME');?></label>
+                    </div>
+                    <div class="col-xs-6">
+                        <select name="report[principal_id]" class="form-control">
+                            <option value=""><?php echo $CI->lang->line('SELECT');?></option>
+                            <?php
+                            foreach($principals as $principal)
+                            {
+                                ?>
+                                <option value="<?php echo $principal['value']?>"><?php echo $principal['text'];?></option>
                             <?php
                             }
                             ?>
@@ -206,47 +134,10 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 </div>
             </div>
             <div class="col-xs-6">
-                <!-- Fiscal Year & Date Range Section-->
-                <div class="row show-grid">
-                    <div class="col-xs-6">
-                        <select id="fiscal_year_id" name="report[fiscal_year_id]" class="form-control">
-                            <option value=""><?php echo $CI->lang->line('SELECT');?></option>
-                            <?php
-                            foreach($fiscal_years as $year)
-                            {?>
-                                <option value="<?php echo $year['value']?>"><?php echo $year['text'];?></option>
-                            <?php
-                            }
-                            ?>
-                        </select>
-                    </div>
-                    <div class="col-xs-6">
-                        <label class="control-label"><?php echo $CI->lang->line('LABEL_FISCAL_YEAR');?></label>
-                    </div>
-                </div>
-                <div class="row show-grid">
-                    <div class="col-xs-6">
-                        <input type="text" id="date_start" name="report[date_start]" class="form-control date_large" value="<?php echo System_helper::display_date(time()); ?>">
-                    </div>
-                    <div class="col-xs-6">
-                        <label class="control-label"><?php echo $CI->lang->line('LABEL_DATE_START');?> <span style="color:#FF0000">*</span></label>
-                    </div>
-                </div>
-                <div class="row show-grid">
-                    <div class="col-xs-6">
-                        <input type="text" id="date_end" name="report[date_end]" class="form-control date_large" value="<?php echo System_helper::display_date(time()); ?>">
-                    </div>
-                    <div class="col-xs-6">
-                        <label class="control-label "><?php echo $CI->lang->line('LABEL_DATE_END');?> <span style="color:#FF0000">*</span></label>
-                    </div>
-                </div>
                 <div class="row show-grid">
                     <div class="col-xs-6">
                         <select id="report_name" name="report[report_name]" class="form-control">
-                            <option value="transfer">TO Wise </option>
-                            <!--<option value="variety">Variety Date Wise</option>
-                            <option value="quantity">Quantity Wise</option>
-                            <option value="outlet">Outlet Wise</option>-->
+                            <option value="lc">LC Wise </option>
                         </select>
                     </div>
                     <div class="col-xs-6">
@@ -255,80 +146,47 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 </div>
                 <div class="row show-grid">
                     <div class="col-xs-6">
-                        <select id="status_request" name="report[status_request]" class="form-control">
-                            <option value="<?php echo $this->config->item('system_status_forwarded')?>"><?php echo $this->config->item('system_status_forwarded')?></option>
-                            <option value="<?php echo $this->config->item('system_status_pending')?>"><?php echo $this->config->item('system_status_pending')?></option>
-                        </select>
-                    </div>
-                    <div class="col-xs-6">
-                        <label class="control-label"><?php echo $CI->lang->line('LABEL_STATUS_REQUEST');?><span style="color:#FF0000">*</span></label>
-                    </div>
-                </div>
-                <div class="row show-grid">
-                    <div class="col-xs-6">
-                        <select id="status_approve" name="report[status_approve]" class="form-control">
-                            <option value="<?php echo $this->config->item('system_status_approved')?>"><?php echo $this->config->item('system_status_approved')?></option>
-                            <option value="<?php echo $this->config->item('system_status_pending')?>"><?php echo $this->config->item('system_status_pending')?></option>
-                            <option value="<?php echo $this->config->item('system_status_rejected')?>"><?php echo $this->config->item('system_status_rejected')?></option>
-                        </select>
-                    </div>
-                    <div class="col-xs-6">
-                        <label class="control-label"><?php echo $CI->lang->line('LABEL_STATUS_APPROVE');?><span style="color:#FF0000">*</span></label>
-                    </div>
-                </div>
-                <div class="row show-grid">
-                    <div class="col-xs-6">
-                        <select id="status_delivery" name="report[status_delivery]" class="form-control">
-                            <option value="<?php echo $this->config->item('system_status_delivered')?>"><?php echo $this->config->item('system_status_delivered')?></option>
-                            <option value="<?php echo $this->config->item('system_status_pending')?>"><?php echo $this->config->item('system_status_pending')?></option>
-                        </select>
-                    </div>
-                    <div class="col-xs-6">
-                        <label class="control-label"><?php echo $CI->lang->line('LABEL_STATUS_DELIVERY');?><span style="color:#FF0000">*</span></label>
-                    </div>
-                </div>
-                <div class="row show-grid">
-                    <div class="col-xs-6">
-                        <select id="status_receive" name="report[status_receive]" class="form-control">
-                            <option value="<?php echo $this->config->item('system_status_received')?>"><?php echo $this->config->item('system_status_received')?></option>
-                            <option value="<?php echo $this->config->item('system_status_pending')?>"><?php echo $this->config->item('system_status_pending')?></option>
-                        </select>
-                    </div>
-                    <div class="col-xs-6">
-                        <label class="control-label"><?php echo $CI->lang->line('LABEL_STATUS_RECEIVE');?><span style="color:#FF0000">*</span></label>
-                    </div>
-                </div>
-                <div class="row show-grid">
-                    <div class="col-xs-6">
-                        <select id="status_receive_forward" name="report[status_receive_forward]" class="form-control">
-                            <option value="<?php echo $this->config->item('system_status_forwarded')?>"><?php echo $this->config->item('system_status_forwarded')?></option>
-                            <option value="<?php echo $this->config->item('system_status_pending')?>"><?php echo $this->config->item('system_status_pending')?></option>
-                        </select>
-                    </div>
-                    <div class="col-xs-6">
-                        <label class="control-label"><?php echo $CI->lang->line('LABEL_STATUS_RECEIVE_FORWARD');?><span style="color:#FF0000">*</span></label>
-                    </div>
-                </div>
-                <div class="row show-grid">
-                    <div class="col-xs-6">
-                        <select id="status_receive_approve" name="report[status_receive_approve]" class="form-control">
-                            <option value="<?php echo $this->config->item('system_status_approved')?>"><?php echo $this->config->item('system_status_approved')?></option>
-                            <option value="<?php echo $this->config->item('system_status_pending')?>"><?php echo $this->config->item('system_status_pending')?></option>
-                        </select>
-                    </div>
-                    <div class="col-xs-6">
-                        <label class="control-label"><?php echo $CI->lang->line('LABEL_STATUS_RECEIVE_APPROVE');?><span style="color:#FF0000">*</span></label>
-                    </div>
-                </div>
-                <div class="row show-grid">
-                    <div class="col-xs-6">
-                        <select id="status_system_delivery_receive" name="report[status_system_delivery_receive]" class="form-control">
+                        <select id="status_open_forward" name="report[status_open_forward]" class="form-control">
                             <option value="<?php echo $this->config->item('system_status_yes')?>"><?php echo $this->config->item('system_status_yes')?></option>
                             <option value="<?php echo $this->config->item('system_status_no')?>"><?php echo $this->config->item('system_status_no')?></option>
                         </select>
                     </div>
                     <div class="col-xs-6">
-                        <label class="control-label">Manual Transfer Receive Status<span style="color:#FF0000">*</span></label>
+                        <label class="control-label"><?php echo $CI->lang->line('LABEL_LC_FORWARD');?><span style="color:#FF0000">*</span></label>
+                    </div>
+                </div>
+                <div class="row show-grid">
+                    <div class="col-xs-6">
+                        <select id="status_release" name="report[status_release]" class="form-control">
+                            <option value="<?php echo $this->config->item('system_status_complete')?>"><?php echo $this->config->item('system_status_complete')?></option>
+                            <option value="<?php echo $this->config->item('system_status_pending')?>"><?php echo $this->config->item('system_status_pending')?></option>
+                        </select>
+                    </div>
+                    <div class="col-xs-6">
+                        <label class="control-label"><?php echo $CI->lang->line('LABEL_STATUS_RELEASE');?><span style="color:#FF0000">*</span></label>
+                    </div>
+                </div>
+                <div class="row show-grid">
+                    <div class="col-xs-6">
+                        <select id="status_receive" name="report[status_receive]" class="form-control">
+                            <option value="<?php echo $this->config->item('system_status_complete')?>"><?php echo $this->config->item('system_status_complete')?></option>
+                            <option value="<?php echo $this->config->item('system_status_pending')?>"><?php echo $this->config->item('system_status_pending')?></option>
+                        </select>
+                    </div>
+                    <div class="col-xs-6">
+                        <label class="control-label"><?php echo $CI->lang->line('LABEL_STATUS_RECEIVED');?><span style="color:#FF0000">*</span></label>
+                    </div>
+                </div>
+                <div class="row show-grid">
+                    <div class="col-xs-6">
+                        <select id="status_open" name="report[status_open]" class="form-control">
+                            <option value="<?php echo $this->config->item('system_status_complete')?>"><?php echo $this->config->item('system_status_complete')?></option>
+                            <option value="<?php echo $this->config->item('system_status_active')?>"><?php echo $this->config->item('system_status_active')?></option>
+                            <option value="<?php echo $this->config->item('system_status_delete')?>"><?php echo $this->config->item('system_status_delete')?></option>
+                        </select>
+                    </div>
+                    <div class="col-xs-6">
+                        <label class="control-label"><?php echo $CI->lang->line('LABEL_STATUS_OPEN');?><span style="color:#FF0000">*</span></label>
                     </div>
                 </div>
             </div>

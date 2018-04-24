@@ -148,6 +148,7 @@ class Report_to_wise extends Root_Controller
             }
 
             $data['options']=$reports;
+
             if($reports['report_name']=='transfer')
             {
                 $data['system_preference_items']= $this->get_preference_transfer();
@@ -240,11 +241,12 @@ class Report_to_wise extends Root_Controller
         }
         return $data;
     }
-    private function system_list_transfer()
+    /*private function system_list_transfer()
     {
         if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
         {
             $reports=$this->input->post('report');
+
             $data['options']=$reports;
             if(!System_helper::get_time($reports['date_start']) || !System_helper::get_time($reports['date_end']))
             {
@@ -269,15 +271,15 @@ class Report_to_wise extends Root_Controller
             $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
             $this->json_return($ajax);
         }
-    }
+    }*/
     private function system_get_items_transfer()
     {
         $crop_id=$this->input->post('crop_id');
         $crop_type_id=$this->input->post('crop_type_id');
         $variety_id=$this->input->post('variety_id');
         $pack_size_id=$this->input->post('pack_size_id');
-        $date_start=System_helper::get_time($this->input->post('date_start'));
-        $date_end=System_helper::get_time($this->input->post('date_end'));
+        $date_start=$this->input->post('date_start');
+        $date_end=$this->input->post('date_end');
 
 
         $division_id=$this->input->post('division_id');
@@ -285,6 +287,14 @@ class Report_to_wise extends Root_Controller
         $territory_id=$this->input->post('territory_id');
         $district_id=$this->input->post('district_id');
         $outlet_id=$this->input->post('outlet_id');
+
+        $status_request=$this->input->post('status_request');
+        $status_approve=$this->input->post('status_approve');
+        $status_delivery=$this->input->post('status_delivery');
+        $status_receive=$this->input->post('status_receive');
+        $status_receive_forward=$this->input->post('status_receive_forward');
+        $status_receive_approve=$this->input->post('status_receive_approve');
+        $status_system_delivery_receive=$this->input->post('status_system_delivery_receive');
 
         $items=array();
 
@@ -337,6 +347,7 @@ class Report_to_wise extends Root_Controller
         {
             $this->db->where('outlet_info.customer_id',$outlet_id);
         }
+
         $data['location']=$this->db->get()->result_array();
 
         $outlet_ids=array();
@@ -353,6 +364,36 @@ class Report_to_wise extends Root_Controller
         $this->db->where('transfer_wo.date_request>='.$date_start.' and transfer_wo.date_request<='.$date_end);
         $this->db->order_by('transfer_wo.id');
         $this->db->group_by('transfer_wo.id');
+        if($status_request)
+        {
+            $this->db->where('transfer_wo.status_request',$status_request);
+        }
+        if($status_approve)
+        {
+            $this->db->where('transfer_wo.status_approve',$status_approve);
+        }
+        if($status_delivery)
+        {
+            $this->db->where('transfer_wo.status_delivery',$status_delivery);
+        }
+        if($status_receive)
+        {
+            $this->db->where('transfer_wo.status_receive',$status_receive);
+        }
+        if($status_receive_forward)
+        {
+            $this->db->where('transfer_wo.status_receive_forward',$status_receive_forward);
+        }
+        if($status_receive_approve)
+        {
+            $this->db->where('transfer_wo.status_receive_approve',$status_receive_approve);
+        }
+        if($status_system_delivery_receive)
+        {
+            $this->db->where('transfer_wo.status_system_delivery_receive',$status_system_delivery_receive);
+        }
+
+
         if($crop_id)
         {
             $this->db->where('transfer_wo_details.crop_id',$crop_id);
@@ -378,6 +419,7 @@ class Report_to_wise extends Root_Controller
             $this->db->where('transfer_wo.outlet_id',$outlet_id);
         }
         $data['items']=$this->db->get()->result_array();
+        //echo $this->db->last_query();
         $all_to=array();
         foreach($data['items'] as $item)
         {
