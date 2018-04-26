@@ -114,24 +114,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <input type="text" id="date_end" name="report[date_end]" class="form-control date_large" value="<?php echo System_helper::display_date(time()); ?>">
                     </div>
                 </div>
-                <div style="" class="row show-grid" id="pack_size_id_container">
-                    <div class="col-xs-6">
-                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PRINCIPAL_NAME');?></label>
-                    </div>
-                    <div class="col-xs-6">
-                        <select name="report[principal_id]" class="form-control">
-                            <option value=""><?php echo $CI->lang->line('SELECT');?></option>
-                            <?php
-                            foreach($principals as $principal)
-                            {
-                                ?>
-                                <option value="<?php echo $principal['value']?>"><?php echo $principal['text'];?></option>
-                            <?php
-                            }
-                            ?>
-                        </select>
-                    </div>
-                </div>
             </div>
             <div class="col-xs-6">
                 <div class="row show-grid">
@@ -160,6 +142,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <select id="status_release" name="report[status_release]" class="form-control">
                             <option value="<?php echo $this->config->item('system_status_complete')?>"><?php echo $this->config->item('system_status_complete')?></option>
                             <option value="<?php echo $this->config->item('system_status_pending')?>"><?php echo $this->config->item('system_status_pending')?></option>
+                            <option value=""><?php echo $CI->lang->line('LABEL_SELECT_ALL');?></option>
                         </select>
                     </div>
                     <div class="col-xs-6">
@@ -171,6 +154,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <select id="status_receive" name="report[status_receive]" class="form-control">
                             <option value="<?php echo $this->config->item('system_status_complete')?>"><?php echo $this->config->item('system_status_complete')?></option>
                             <option value="<?php echo $this->config->item('system_status_pending')?>"><?php echo $this->config->item('system_status_pending')?></option>
+                            <option value=""><?php echo $CI->lang->line('LABEL_SELECT_ALL');?></option>
                         </select>
                     </div>
                     <div class="col-xs-6">
@@ -183,10 +167,64 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                             <option value="<?php echo $this->config->item('system_status_complete')?>"><?php echo $this->config->item('system_status_complete')?></option>
                             <option value="<?php echo $this->config->item('system_status_active')?>"><?php echo $this->config->item('system_status_active')?></option>
                             <option value="<?php echo $this->config->item('system_status_delete')?>"><?php echo $this->config->item('system_status_delete')?></option>
+                            <option value=""><?php echo $CI->lang->line('LABEL_SELECT_ALL');?></option>
                         </select>
                     </div>
                     <div class="col-xs-6">
                         <label class="control-label"><?php echo $CI->lang->line('LABEL_STATUS_OPEN');?><span style="color:#FF0000">*</span></label>
+                    </div>
+                </div>
+                <div style="" class="row show-grid" id="pack_size_id_container">
+                    <div class="col-xs-6">
+                        <select name="report[principal_id]" class="form-control">
+                            <option value=""><?php echo $CI->lang->line('SELECT');?></option>
+                            <?php
+                            foreach($principals as $principal)
+                            {
+                                ?>
+                                <option value="<?php echo $principal['value']?>"><?php echo $principal['text'];?></option>
+                            <?php
+                            }
+                            ?>
+                        </select>
+                    </div>
+                    <div class="col-xs-6">
+                        <label class="control-label"><?php echo $CI->lang->line('LABEL_PRINCIPAL_NAME');?></label>
+                    </div>
+                </div>
+                <div style="" class="row show-grid">
+                    <div class="col-xs-6">
+                        <select name="report[currency_id]" class="form-control">
+                            <option value=""><?php echo $CI->lang->line('SELECT');?></option>
+                            <?php
+                            foreach($currencies as $currency)
+                            {
+                                ?>
+                                <option value="<?php echo $currency['value']?>"><?php echo $currency['text'];?></option>
+                            <?php
+                            }
+                            ?>
+                        </select>
+                    </div>
+                    <div class="col-xs-6">
+                        <label class="control-label"><?php echo $CI->lang->line('LABEL_CURRENCY_NAME');?></label>
+                    </div>
+                </div>
+                <div style="" class="row show-grid">
+                    <div class="col-xs-6">
+                        <select name="report[bank_account_id]" class="form-control">
+                            <option value=""><?php echo $CI->lang->line('SELECT');?></option>
+                            <?php
+                            foreach($bank_accounts as $bank_account)
+                            {?>
+                                <option value="<?php echo $bank_account['value']?>" ><?php echo $bank_account['text'];?></option>
+                            <?php
+                            }
+                            ?>
+                        </select>
+                    </div>
+                    <div class="col-xs-6">
+                        <label class="control-label"><?php echo $CI->lang->line('LABEL_BANK_NAME');?></label>
                     </div>
                 </div>
             </div>

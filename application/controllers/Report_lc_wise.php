@@ -51,8 +51,18 @@ class Report_lc_wise extends Root_Controller
     {
         if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
         {
-            $data['principals']=Query_helper::get_info($this->config->item('table_login_basic_setup_principal'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('ordering'));
             $data['pack_sizes']=Query_helper::get_info($this->config->item('table_login_setup_classification_pack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
+            $data['principals']=Query_helper::get_info($this->config->item('table_login_basic_setup_principal'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('ordering'));
+            $data['currencies']=Query_helper::get_info($this->config->item('table_login_setup_currency'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('ordering'));
+            $this->db->from($this->config->item('table_login_setup_bank_account').' ba');
+            $this->db->select('ba.id value');
+            $this->db->select("CONCAT_WS(' ( ',ba.account_number,  CONCAT_WS('', bank.name,' - ',ba.branch_name,')')) text");
+            $this->db->join($this->config->item('table_login_setup_bank').' bank','bank.id=ba.bank_id AND bank.status='.'"'.$this->config->item('system_status_active').'"','INNER');
+            $this->db->join($this->config->item('table_login_setup_bank_account_purpose').' bap','bap.bank_account_id=ba.id AND bap.revision=1 AND bap.purpose ="'.$this->config->item('system_bank_account_purpose_lc').'" AND bap.status='.'"'.$this->config->item('system_status_active').'"','INNER');
+            $this->db->where('ba.status',$this->config->item('system_status_active'));
+            $this->db->where('ba.account_type_expense',1);
+            $data['bank_accounts']=$this->db->get()->result_array();
+
             $fiscal_years=Query_helper::get_info($this->config->item('table_login_basic_setup_fiscal_year'),'*',array());
             $data['fiscal_years']=array();
             foreach($fiscal_years as $year)
@@ -131,6 +141,9 @@ class Report_lc_wise extends Root_Controller
         $data['fiscal_year']= 1;
         $data['month']= 1;
         $data['date_opening']= 1;
+        $data['date_expected']= 1;
+        $data['date_receive']= 1;
+        $data['date_packing_list']= 1;
         $data['principal_name']= 1;
         $data['currency_name']= 1;
         $data['lc_number']= 1;
@@ -172,6 +185,8 @@ class Report_lc_wise extends Root_Controller
         $date_end=$this->input->post('date_end');
 
         $principal_id=$this->input->post('principal_id');
+        $currency_id=$this->input->post('currency_id');
+        $bank_account_id=$this->input->post('bank_account_id');
 
         $status_open_forward=$this->input->post('status_open_forward');
         $status_release=$this->input->post('status_release');
@@ -180,14 +195,23 @@ class Report_lc_wise extends Root_Controller
 
         $this->db->from($this->config->item('table_sms_lc_open').' lc');
         $this->db->select('lc.*');
-        $this->db->select('fy.name fiscal_year');
-        $this->db->select('principal.name principal_name');
-        $this->db->select('currency.name currency_name');
+        $this->db->join($this->config->item('table_sms_lc_details').' lc_details','lc_details.lc_id = lc.id','INNER');
+        //$this->db->select('lcd.*');
+        $this->db->join($this->config->item('table_login_setup_classification_varieties').' v','v.id = lc_details.variety_id','INNER');
+        $this->db->join($this->config->item('table_login_setup_classification_pack_size').' pack','pack.id = lc_details.pack_size_id','LEFT');
+        $this->db->join($this->config->item('table_login_setup_classification_crop_types').' crop_type','crop_type.id = v.crop_type_id','LEFT');
+        $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = crop_type.crop_id','LEFT');
+
         $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.id = lc.fiscal_year_id','INNER');
-        $this->db->join($this->config->item('table_login_setup_currency').' currency','currency.id = lc.currency_id','INNER');
+        $this->db->select('fy.name fiscal_year');
         $this->db->join($this->config->item('table_login_basic_setup_principal').' principal','principal.id = lc.principal_id','INNER');
+        $this->db->select('principal.name principal_name');
+        $this->db->join($this->config->item('table_login_setup_currency').' currency','currency.id = lc.currency_id','INNER');
+        $this->db->select('currency.name currency_name');
         $this->db->where('lc.status_open !=',$this->config->item('system_status_delete'));
+        $this->db->group_by('lc.id');
         $this->db->order_by('lc.id','DESC');
+
         if($date_type=='date_opening')
         {
             $this->db->where('lc.date_opening>='.$date_start.' and lc.date_opening<='.$date_end);
@@ -226,12 +250,12 @@ class Report_lc_wise extends Root_Controller
             $this->db->where('lc.status_open',$status_open);
         }
 
-        /*if($crop_id)
+        if($crop_id)
         {
-            $this->db->where('lc_details.crop_id',$crop_id);
+            $this->db->where('crop.id',$crop_id);
             if($crop_type_id)
             {
-                $this->db->where('lc_details.crop_type_id',$crop_type_id);
+                $this->db->where('crop_type.id',$crop_type_id);
                 if($variety_id)
                 {
                     $this->db->where('lc_details.variety_id',$variety_id);
@@ -241,10 +265,18 @@ class Report_lc_wise extends Root_Controller
         if($pack_size_id)
         {
             $this->db->where('lc_details.pack_size_id',$pack_size_id);
-        }*/
+        }
         if($principal_id)
         {
             $this->db->where('lc.principal_id',$principal_id);
+        }
+        if($currency_id)
+        {
+            $this->db->where('lc.currency_id',$currency_id);
+        }
+        if($bank_account_id)
+        {
+            $this->db->where('lc.bank_account_id',$bank_account_id);
         }
 
         $results=$this->db->get()->result_array();

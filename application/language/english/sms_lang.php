@@ -84,6 +84,7 @@ $lang['INACTIVE'] = 'In-active';
 $lang['STATUS'] = 'Status';
 $lang['DELETE'] = 'Delete';
 $lang['SELECT'] = 'Select';
+$lang['LABEL_SELECT_ALL'] = 'All';
 
 $lang['LABEL_YES'] = 'Yes';
 $lang['LABEL_NO'] = 'No';
