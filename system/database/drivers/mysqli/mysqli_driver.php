@@ -146,8 +146,9 @@ class CI_DB_mysqli_driver extends CI_DB {
 			{
 				$this->_mysqli->options(MYSQLI_INIT_COMMAND,
 					'SET SESSION sql_mode =
-					REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(
+					REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(
 					@@sql_mode,
+					"ONLY_FULL_GROUP_BY,", ""),
 					"STRICT_ALL_TABLES,", ""),
 					",STRICT_ALL_TABLES", ""),
 					"STRICT_ALL_TABLES", ""),

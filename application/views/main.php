@@ -179,10 +179,7 @@ if($result)
         </div>
         <footer class="hidden-print navbar-fixed-bottom">
             <div>
-                All Rights Reserved & &copy; Copyright 2017 by A.R. Malik Seeds (Pvt.) Ltd. Design & Developed by :
-                <a href="http://disb.solutions/" target="_blank" class="external">
-                    <img src="<?php echo base_url('images/logo_disb.png');?>" alt="DISB Logo" style="width: 50px"/>
-                </a>
+                All Rights Reserved & &copy; Copyright 2017 by A.R. Malik Seeds (Pvt.) Ltd.
             </div>
             <div class="clearfix"></div>
         </footer>
