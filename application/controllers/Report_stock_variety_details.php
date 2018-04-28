@@ -179,10 +179,10 @@ class Report_stock_variety_details extends Root_Controller
         $this->db->select('SUM(CASE WHEN details.date_convert>='.$date_start.' and details.date_convert<='.$date_end.' then details.quantity_packet_actual ELSE 0 END) in_convert_bulk_pack',false);
         $this->db->where('details.status !=',$this->config->item('system_status_delete'));
         $this->db->where('details.variety_id',$variety_id);
-        if($pack_size_id>-1)
+        /*if($pack_size_id>-1)
         {
             $this->db->where('details.pack_size_id',$pack_size_id);
-        }
+        }*/
         $this->db->group_by('details.variety_id');
         $this->db->group_by('details.pack_size_id');
         $this->db->group_by('details.warehouse_id_source');
@@ -194,14 +194,30 @@ class Report_stock_variety_details extends Root_Controller
             {
                 $packs[$result['pack_size_id']]=$this->initialize_row($warehouses);
             }
-            $packs[0]['stock_opening'][$result['warehouse_id_source']]-=$result['out_convert_bulk_pack_opening'];
-            $packs[$result['pack_size_id']]['stock_opening'][$result['warehouse_id_destination']]+=$result['in_convert_bulk_pack_opening'];
+            if($pack_size_id>0)
+            {
+                $packs[$result['pack_size_id']]['stock_opening'][$result['warehouse_id_destination']]+=$result['in_convert_bulk_pack_opening'];
+                $packs[$result['pack_size_id']]['in_convert_bulk_pack'][$result['warehouse_id_destination']]+=$result['in_convert_bulk_pack'];
+                $packs[$result['pack_size_id']]['stock_current'][$result['warehouse_id_destination']]+=($result['in_convert_bulk_pack_opening']+$result['in_convert_bulk_pack']);
+            }
+            else if($pack_size_id==0)
+            {
+                $packs[0]['stock_opening'][$result['warehouse_id_source']]-=$result['out_convert_bulk_pack_opening'];
+                $packs[0]['out_convert_bulk_pack'][$result['warehouse_id_source']]+=$result['out_convert_bulk_pack'];
+                $packs[0]['stock_current'][$result['warehouse_id_source']]-=($result['out_convert_bulk_pack_opening']+$result['out_convert_bulk_pack']);
+            }
+            else
+            {
+                $packs[0]['stock_opening'][$result['warehouse_id_source']]-=$result['out_convert_bulk_pack_opening'];
+                $packs[$result['pack_size_id']]['stock_opening'][$result['warehouse_id_destination']]+=$result['in_convert_bulk_pack_opening'];
+                $packs[0]['out_convert_bulk_pack'][$result['warehouse_id_source']]+=$result['out_convert_bulk_pack'];
+                $packs[$result['pack_size_id']]['in_convert_bulk_pack'][$result['warehouse_id_destination']]+=$result['in_convert_bulk_pack'];
+                $packs[0]['stock_current'][$result['warehouse_id_source']]-=($result['out_convert_bulk_pack_opening']+$result['out_convert_bulk_pack']);
+                $packs[$result['pack_size_id']]['stock_current'][$result['warehouse_id_destination']]+=($result['in_convert_bulk_pack_opening']+$result['in_convert_bulk_pack']);
+            }
 
-            $packs[0]['out_convert_bulk_pack'][$result['warehouse_id_source']]+=$result['out_convert_bulk_pack'];
-            $packs[$result['pack_size_id']]['in_convert_bulk_pack'][$result['warehouse_id_destination']]+=$result['in_convert_bulk_pack'];
 
-            $packs[0]['stock_current'][$result['warehouse_id_source']]-=($result['out_convert_bulk_pack_opening']+$result['out_convert_bulk_pack']);
-            $packs[$result['pack_size_id']]['stock_current'][$result['warehouse_id_destination']]+=($result['in_convert_bulk_pack_opening']+$result['in_convert_bulk_pack']);
+
         }
 
         //transfer in and out
@@ -269,7 +285,34 @@ class Report_stock_variety_details extends Root_Controller
             $packs[$result['pack_size_id']]['stock_current'][$result['receive_warehouse_id']]+=($result['in_opening']+$result['in_lc']);
         }
 
-        //in transfer from outlet pending
+        //in transfer from outlet
+        $this->db->from($this->config->item('table_sms_transfer_ow_details').' details');
+        $this->db->select('details.variety_id,details.pack_size_id,details.warehouse_id');
+
+        $this->db->select('SUM(CASE WHEN ow.date_receive<'.$date_start.' then details.quantity_receive ELSE 0 END) in_opening',false);
+
+        $this->db->select('SUM(CASE WHEN ow.date_receive>='.$date_start.' and ow.date_receive<='.$date_end.' then details.quantity_receive ELSE 0 END) in_ow',false);
+        $this->db->join($this->config->item('table_sms_transfer_ow').' ow','ow.id=details.transfer_ow_id','INNER');
+        $this->db->where('ow.status !=',$this->config->item('system_status_delete'));
+        $this->db->where('ow.status_receive',$this->config->item('system_status_received'));
+        $this->db->where('details.variety_id',$variety_id);
+        if($pack_size_id>-1)
+        {
+            $this->db->where('details.pack_size_id',$pack_size_id);
+        }
+        $this->db->group_by('details.variety_id');
+        $this->db->group_by('details.pack_size_id');
+        $this->db->group_by('details.warehouse_id');
+        $results=$this->db->get()->result_array();
+
+        foreach($results as $result)
+        {
+            $packs[$result['pack_size_id']]['stock_opening'][$result['warehouse_id']]+=$result['in_opening'];
+            $packs[$result['pack_size_id']]['in_ow'][$result['warehouse_id']]+=$result['in_ow'];
+            $packs[$result['pack_size_id']]['stock_current'][$result['warehouse_id']]+=($result['in_opening']+$result['in_ow']);
+        }
+
+
         //out transfer to outlet
         $this->db->from($this->config->item('table_sms_transfer_wo_details').' details');
         $this->db->select('details.variety_id,details.pack_size_id,details.warehouse_id');
@@ -489,6 +532,7 @@ class Report_stock_variety_details extends Root_Controller
             $data['out_convert_bulk_pack'][$warehouse['value']]=0;
             $data['in_convert_bulk_pack'][$warehouse['value']]=0;
             $data['in_lc'][$warehouse['value']]=0;
+            $data['in_ow'][$warehouse['value']]=0;
             $data['out_wo'][$warehouse['value']]=0;
             $data['out_stock_sample'][$warehouse['value']]=0;
             $data['out_stock_rnd'][$warehouse['value']]=0;
