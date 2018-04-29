@@ -53,7 +53,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
     $(document).ready(function ()
     {
 
-        var url = "<?php echo site_url($CI->controller_url.'/index/get_items_lc');?>";
+        var url = "<?php echo site_url($CI->controller_url.'/index/get_items');?>";
         // prepare the data
         var source =
         {
@@ -64,6 +64,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 { name: 'fiscal_year', type: 'string' },
                 { name: 'month', type: 'string' },
                 { name: 'date_opening', type: 'string' },
+                { name: 'date_expected', type: 'string' },
+                { name: 'date_forwarded_time', type: 'string' },
                 { name: 'principal_name', type: 'string' },
                 { name: 'currency_name', type: 'string' },
                 { name: 'lc_number', type: 'string' },
@@ -125,6 +127,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         { text: '<?php echo $CI->lang->line('LABEL_FISCAL_YEAR'); ?>', dataField: 'fiscal_year',pinned:true, width:65, hidden: <?php echo $system_preference_items['fiscal_year']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_MONTH'); ?>', dataField: 'month',pinned:true, width:80, hidden: <?php echo $system_preference_items['month']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_DATE_OPENING'); ?>', dataField: 'date_opening',pinned:true, width:100, hidden: <?php echo $system_preference_items['date_opening']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_DATE_EXPECTED'); ?>', dataField: 'date_expected',pinned:true, width:100, hidden: <?php echo $system_preference_items['date_expected']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_DATE_FORWARDED_TIME'); ?>', dataField: 'date_forwarded_time',pinned:true, width:100, hidden: <?php echo $system_preference_items['date_forwarded_time']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_PRINCIPAL_NAME'); ?>', dataField: 'principal_name',pinned:true, width:180, hidden: <?php echo $system_preference_items['principal_name']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_CURRENCY_NAME'); ?>', dataField: 'currency_name', width:80, hidden: <?php echo $system_preference_items['currency_name']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_LC_NUMBER'); ?>', dataField: 'lc_number', hidden: <?php echo $system_preference_items['lc_number']?0:1;?>},

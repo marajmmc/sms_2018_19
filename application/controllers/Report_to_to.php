@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Report_to_wise extends Root_Controller
+class Report_to_to extends Root_Controller
 {
     public $message;
     public $permissions;
@@ -9,8 +9,8 @@ class Report_to_wise extends Root_Controller
     {
         parent::__construct();
         $this->message="";
-        $this->permissions=User_helper::get_permission('Report_to_wise');
-        $this->controller_url='report_to_wise';
+        $this->permissions=User_helper::get_permission('Report_to_to');
+        $this->controller_url='report_to_to';
         $this->locations=User_helper::get_locations();
         if(!($this->locations))
         {
