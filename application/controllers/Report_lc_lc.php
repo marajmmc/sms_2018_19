@@ -123,8 +123,10 @@ class Report_lc_lc extends Root_Controller
         $data['date_opening']= 1;
         $data['date_expected']= 1;
         $data['date_forwarded_time']= 1;
+        $data['date_released_time']= 1;
         $data['date_receive']= 1;
-        $data['date_packing_list']= 1;
+        $data['date_received_time']= 1;
+        $data['date_completed_time']= 1;
         $data['principal_name']= 1;
         $data['currency_name']= 1;
         $data['lc_number']= 1;
@@ -216,7 +218,10 @@ class Report_lc_lc extends Root_Controller
             $item['date_opening']=System_helper::display_date($result['date_opening']);
             $item['date_expected']=System_helper::display_date($result['date_expected']);
             $item['date_forwarded_time']=System_helper::display_date_time($result['date_open_forward']);
-            $item['date_forwarded_time']=System_helper::display_date_time($result['date_open_forward']);
+            $item['date_released_time']=System_helper::display_date_time($result['date_release_completed']);
+            $item['date_receive']=System_helper::display_date($result['date_receive']);
+            $item['date_received_time']=System_helper::display_date_time($result['date_receive_completed']);
+            $item['date_completed_time']=System_helper::display_date_time($result['date_receive_completed']);
             $item['principal_name']=$result['principal_name'];
             $item['currency_name']=$result['currency_name'];
             $item['lc_number']=$result['lc_number'];

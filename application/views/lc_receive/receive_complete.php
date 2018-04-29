@@ -217,7 +217,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 </div>
                 <div class="col-sm-4 col-xs-4">
                     <div class="action_button">
-                        <button id="button_action_save" type="button" class="btn" data-form="#save_form" data-message-confirm="Are You Sure LC Receive?">LC Receive</button>
+                        <button id="button_action_save" type="button" class="btn" data-form="#save_form" data-message-confirm="Are You Want To LC Received?">LC Received</button>
                     </div>
                 </div>
                 <div class="col-sm-4 col-xs-4">

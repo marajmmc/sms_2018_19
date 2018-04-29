@@ -128,8 +128,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                             <option value="date_expected"><?php echo $CI->lang->line('LABEL_DATE_EXPECTED');?></option>
                             <option value="date_open_forward">LC Forward Time</option>
                             <option value="date_release_completed">LC Released Time</option>
-                            <option value="date_receive"><?php echo $CI->lang->line('LABEL_DATE_RECEIVE');?></option>
-                            <option value="date_packing_list"><?php echo $CI->lang->line('LABEL_DATE_PACKING_LIST');?></option>
+                            <option value="date_receive">LC Receive Date</option>
+                            <option value="date_receive_completed">LC Received Time</option>
+                            <option value="date_expense_completed">LC Completed Time</option>
                         </select>
                     </div>
                     <div class="col-xs-6">
