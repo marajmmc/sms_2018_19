@@ -35,6 +35,10 @@ class Lc_receive extends Root_Controller
         {
             $this->system_edit($id);
         }
+        elseif($action=="add_edit_lot_number")
+        {
+            $this->system_add_edit_lot_number($id);
+        }
         elseif($action=="save")
         {
             $this->system_save();
@@ -240,15 +244,15 @@ class Lc_receive extends Root_Controller
             $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
             {
-                System_helper::invalid_try('Edit Non Exists',$item_id);
+                System_helper::invalid_try('add_edit_lot_number',$item_id,'LC Non Exists');
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid LC.';
                 $this->json_return($ajax);
             }
-            if($data['item']['status_receive']==$this->config->item('system_status_complete'))
+            if($data['item']['revision_receive_count']==0)
             {
                 $ajax['status']=false;
-                $ajax['system_message']='LC Already Received Completed.';
+                $ajax['system_message']='You have to complete your (LC) edit receive.';
                 $this->json_return($ajax);
             }
             if($data['item']['status_open_forward']!=$this->config->item('system_status_yes'))
@@ -327,7 +331,7 @@ class Lc_receive extends Root_Controller
             $result=Query_helper::get_info($this->config->item('table_sms_lc_open'),'*',array('id ='.$id, 'status_open != "'.$this->config->item('system_status_delete').'"', 'status_open_forward = "'.$this->config->item('system_status_yes').'"', 'status_release = "'.$this->config->item('system_status_complete').'"'),1);
             if(!$result)
             {
-                System_helper::invalid_try('Update Receive Non Exists',$id);
+                System_helper::invalid_try('save',$id,'Update Receive Non Exists');
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid LC.';
                 $this->json_return($ajax);
@@ -448,6 +452,107 @@ class Lc_receive extends Root_Controller
             $this->json_return($ajax);
         }
     }
+    private function system_add_edit_lot_number($id)
+    {
+        if((isset($this->permissions['action1']) && ($this->permissions['action1']==1)) || (isset($this->permissions['action2']) && ($this->permissions['action2']==1)))
+        {
+            if($id>0)
+            {
+                $item_id=$id;
+            }
+            else
+            {
+                $item_id=$this->input->post('id');
+            }
+
+            $this->db->from($this->config->item('table_sms_lc_open').' lco');
+            $this->db->select('lco.*');
+            $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.id = lco.fiscal_year_id','INNER');
+            $this->db->select('fy.name fiscal_year');
+            $this->db->join($this->config->item('table_login_setup_currency').' currency','currency.id = lco.currency_id','INNER');
+            $this->db->select('currency.name currency_name');
+            $this->db->join($this->config->item('table_login_basic_setup_principal').' principal','principal.id = lco.principal_id','INNER');
+            $this->db->select('principal.name principal_name');
+            $this->db->join($this->config->item('table_login_setup_bank_account').' ba','ba.id = lco.bank_account_id','INNER');
+            $this->db->join($this->config->item('table_login_setup_bank').' bank','bank.id = ba.bank_id','INNER');
+            $this->db->select("CONCAT_WS(' ( ',ba.account_number,  CONCAT_WS('', bank.name,' - ',ba.branch_name,')')) bank_account_number");
+            $this->db->join($this->config->item('table_login_setup_user_info').' ui','ui.user_id = lco.user_release_completed','INNER');
+            $this->db->select('ui.name user_full_name');
+            $this->db->where('lco.id',$item_id);
+            $this->db->where('lco.status_open !=',$this->config->item('system_status_delete'));
+            $data['item']=$this->db->get()->row_array();
+            if(!$data['item'])
+            {
+                System_helper::invalid_try('add_edit_lot_number',$item_id,'LC Non Exists');
+                $ajax['status']=false;
+                $ajax['system_message']='Invalid LC.';
+                $this->json_return($ajax);
+            }
+            if($data['item']['revision_receive_count']==0)
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='You have to complete your (LC) edit receive.';
+                $this->json_return($ajax);
+            }
+            if($data['item']['status_open_forward']!=$this->config->item('system_status_yes'))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='You can not see this LC. LC not forwarded.';
+                $this->json_return($ajax);
+            }
+            if($data['item']['status_release']!=$this->config->item('system_status_complete'))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='You can not open this LC. LC release pending.';
+                $this->json_return($ajax);
+            }
+            if($data['item']['status_receive']==$this->config->item('system_status_complete'))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='LC already received.';
+                $this->json_return($ajax);
+            }
+            if($data['item']['status_open']==$this->config->item('system_status_complete'))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='LC Already Completed.';
+                $this->json_return($ajax);
+            }
+
+            $this->db->from($this->config->item('table_sms_lc_details').' lcd');
+            $this->db->select('lcd.*');
+            $this->db->select('v.id variety_id, v.name variety_name');
+            $this->db->select('vp.name_import variety_name_import');
+            $this->db->select('pack.name pack_size');
+            $this->db->join($this->config->item('table_login_setup_classification_varieties').' v','v.id = lcd.variety_id','INNER');
+            $this->db->join($this->config->item('table_login_setup_classification_variety_principals').' vp','vp.variety_id = v.id AND vp.principal_id = '.$data['item']['principal_id'].' AND vp.revision = 1','INNER');
+            $this->db->join($this->config->item('table_login_setup_classification_pack_size').' pack','pack.id = lcd.pack_size_id','LEFT');
+            $this->db->join($this->config->item('table_login_basic_setup_warehouse').' warehouse','warehouse.id = lcd.receive_warehouse_id','LEFT');
+            $this->db->select('warehouse.name warehouse_name');
+            $this->db->where('lcd.lc_id',$item_id);
+            $this->db->where('lcd.quantity_open >0');
+            $this->db->order_by('lcd.id','ASC');
+            $data['items']=$this->db->get()->result_array();
+
+            $data['warehouses']=Query_helper::get_info($this->config->item('table_login_basic_setup_warehouse'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
+
+            $data['title']="LC Receive :: ".Barcode_helper::get_barcode_lc($item_id);
+            $ajax['status']=true;
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/add_edit_lot_number",$data,true));
+            if($this->message)
+            {
+                $ajax['system_message']=$this->message;
+            }
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/add_edit_lot_number/'.$item_id);
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+    }
     private function system_details($id)
     {
         if((isset($this->permissions['action0']) && ($this->permissions['action0']==1)))
@@ -476,7 +581,7 @@ class Lc_receive extends Root_Controller
             $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
             {
-                System_helper::invalid_try('View Receive Non Exists',$item_id);
+                System_helper::invalid_try('details',$item_id,'View Receive Non Exists');
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid LC.';
                 $this->json_return($ajax);
@@ -672,7 +777,7 @@ class Lc_receive extends Root_Controller
             $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
             {
-                System_helper::invalid_try('View Receive Non Exists',$item_id);
+                System_helper::invalid_try('details_print',$item_id,'View Receive Non Exists');
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid LC.';
                 $this->json_return($ajax);
@@ -767,7 +872,7 @@ class Lc_receive extends Root_Controller
             $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
             {
-                System_helper::invalid_try('View Receive Non Exists',$item_id);
+                System_helper::invalid_try('details_print_all_lc',$item_id,'View Receive Non Exists');
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid LC.';
                 $this->json_return($ajax);
@@ -864,7 +969,7 @@ class Lc_receive extends Root_Controller
             $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
             {
-                System_helper::invalid_try('Edit Receive Complete Non Exists',$item_id);
+                System_helper::invalid_try('receive_complete',$item_id,'Edit Receive Complete Non Exists');
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid LC.';
                 $this->json_return($ajax);
@@ -959,7 +1064,7 @@ class Lc_receive extends Root_Controller
             $result=Query_helper::get_info($this->config->item('table_sms_lc_open'),'*',array('id ='.$id, 'status_open != "'.$this->config->item('system_status_delete').'"', 'status_open_forward = "'.$this->config->item('system_status_yes').'"', 'status_release = "'.$this->config->item('system_status_complete').'"', 'status_receive = "'.$this->config->item('system_status_pending').'"'),1);
             if(!$result)
             {
-                System_helper::invalid_try('Update Receive Completed LC Non Exists',$id);
+                System_helper::invalid_try('save_receive_complete',$id,'Update Receive Completed LC Non Exists');
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid LC.';
                 $this->json_return($ajax);

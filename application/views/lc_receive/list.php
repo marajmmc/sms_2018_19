@@ -18,6 +18,13 @@ if((isset($CI->permissions['action1']) && ($CI->permissions['action1']==1)) || (
         'class'=>'button_jqx_action',
         'data-action-link'=>site_url($CI->controller_url.'/index/edit')
     );
+    $action_buttons[]=array
+    (
+        'type'=>'button',
+        'label'=>'Lot Number Assign',
+        'class'=>'button_jqx_action',
+        'data-action-link'=>site_url($CI->controller_url.'/index/add_edit_lot_number')
+    );
 }
 if(isset($CI->permissions['action0']) && ($CI->permissions['action0']==1))
 {

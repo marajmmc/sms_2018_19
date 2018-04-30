@@ -29,35 +29,18 @@ class Report_to_to extends Root_Controller
         {
             $this->system_list();
         }
-        elseif($action=="list_transfer")
+        elseif($action=="get_items")
         {
-            $this->system_list_transfer();
+            $this->system_get_items();
         }
-        elseif($action=="get_items_transfer")
+        elseif($action=="set_preference")
         {
-            $this->system_get_items_transfer();
-        }
-        elseif($action=="set_preference_transfer")
-        {
-            $this->system_set_preference_transfer();
+            $this->system_set_preference();
         }
         elseif($action=="details")
         {
             $this->system_details($id);
         }
-        elseif($action=="list_variety")
-        {
-            $this->system_list_variety();
-        }
-        elseif($action=="get_items_variety")
-        {
-            $this->system_get_items_variety();
-        }
-        elseif($action=="set_preference_variety")
-        {
-            $this->system_set_preference_variety();
-        }
-
         elseif($action=="save_preference")
         {
             System_helper::save_preference();
@@ -71,18 +54,17 @@ class Report_to_to extends Root_Controller
     {
         if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
         {
-            $data['warehouses']=Query_helper::get_info($this->config->item('table_login_basic_setup_warehouse'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
-            $data['pack_sizes']=Query_helper::get_info($this->config->item('table_login_setup_classification_pack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
+            //$data['warehouses']=Query_helper::get_info($this->config->item('table_login_basic_setup_warehouse'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
+            //$data['pack_sizes']=Query_helper::get_info($this->config->item('table_login_setup_classification_pack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $fiscal_years=Query_helper::get_info($this->config->item('table_login_basic_setup_fiscal_year'),'*',array());
             $data['fiscal_years']=array();
             foreach($fiscal_years as $year)
             {
                 $data['fiscal_years'][]=array('text'=>$year['name'],'value'=>System_helper::display_date($year['date_start']).'/'.System_helper::display_date($year['date_end']));
             }
+
             $data['date_start']='';
             $data['date_end']='';
-
-            $data['item']['outlet_id']='';
             $data['item']['zone_id']='';
             $data['item']['territory_id']='';
             $data['item']['district_id']='';
@@ -149,34 +131,9 @@ class Report_to_to extends Root_Controller
 
             $data['options']=$reports;
 
-            if($reports['report_name']=='transfer')
-            {
-                $data['system_preference_items']= $this->get_preference_transfer();
-                $data['title']="Transfer Order Report";
-                $ajax['system_content'][]=array("id"=>"#system_report_container","html"=>$this->load->view($this->controller_url."/list_transfer",$data,true));
-            }
-            else if($reports['report_name']=='variety')
-            {
-                $data['system_preference_items']= $this->get_preference_variety();
-                $data['title']="Variety Wise Transfer Order Report";
-                $ajax['system_content'][]=array("id"=>"#system_report_container","html"=>$this->load->view($this->controller_url."/list_variety",$data,true));
-            }
-            else if($reports['report_name']=='quantity')
-            {
-                $data['system_preference_items']= $this->get_preference_quantity();
-                $data['title']="Variety Quantity Wise Transfer Order Report";
-                $ajax['system_content'][]=array("id"=>"#system_report_container","html"=>$this->load->view($this->controller_url."/list_quantity",$data,true));
-            }
-            else if($reports['report_name']=='outlet')
-            {
-                $data['system_preference_items']= $this->get_preference_outlet();
-                $data['title']="Outlet Wise Transfer Order Report";
-                $ajax['system_content'][]=array("id"=>"#system_report_container","html"=>$this->load->view($this->controller_url."/list_outlet",$data,true));
-            }
-            else
-            {
-                $this->system_search();
-            }
+            $data['system_preference_items']= $this->get_preference();
+            $data['title']="TO (Transfer Order) Report";
+            $ajax['system_content'][]=array("id"=>"#system_report_container","html"=>$this->load->view($this->controller_url."/list",$data,true));
 
             $ajax['status']=true;
             if($this->message)
@@ -195,7 +152,7 @@ class Report_to_to extends Root_Controller
     }
 
     /* Start Transfer report function */
-    private function get_preference_transfer()
+    private function get_preference()
     {
         $user = User_helper::get_user();
         $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="search_transfer"'),1);
@@ -241,46 +198,13 @@ class Report_to_to extends Root_Controller
         }
         return $data;
     }
-    /*private function system_list_transfer()
+    private function system_get_items()
     {
-        if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
-        {
-            $reports=$this->input->post('report');
 
-            $data['options']=$reports;
-            if(!System_helper::get_time($reports['date_start']) || !System_helper::get_time($reports['date_end']))
-            {
-                $ajax['status']=false;
-                $ajax['system_message']='Starting date and end date is required.';
-                $this->json_return($ajax);
-            }
-            $data['system_preference_items']= $this->get_preference();
-            $data['title']="TO Wise Report";
-            $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_report_container","html"=>$this->load->view($this->controller_url."/list_transfer",$data,true));
-            if($this->message)
-            {
-                $ajax['system_message']=$this->message;
-            }
-            $ajax['system_page_url']=site_url($this->controller_url);
-            $this->json_return($ajax);
-        }
-        else
-        {
-            $ajax['status']=false;
-            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
-            $this->json_return($ajax);
-        }
-    }*/
-    private function system_get_items_transfer()
-    {
-        $crop_id=$this->input->post('crop_id');
-        $crop_type_id=$this->input->post('crop_type_id');
-        $variety_id=$this->input->post('variety_id');
-        $pack_size_id=$this->input->post('pack_size_id');
+        $fiscal_year_id=$this->input->post('fiscal_year_id');
         $date_start=$this->input->post('date_start');
         $date_end=$this->input->post('date_end');
-
+        $date_type=$this->input->post('date_type');
 
         $division_id=$this->input->post('division_id');
         $zone_id=$this->input->post('zone_id');
@@ -292,7 +216,7 @@ class Report_to_to extends Root_Controller
         $status_approve=$this->input->post('status_approve');
         $status_delivery=$this->input->post('status_delivery');
         $status_receive=$this->input->post('status_receive');
-        $status_receive_forward=$this->input->post('status_receive_forward');
+        //$status_receive_forward=$this->input->post('status_receive_forward');
         $status_receive_approve=$this->input->post('status_receive_approve');
         $status_system_delivery_receive=$this->input->post('status_system_delivery_receive');
 
@@ -358,12 +282,13 @@ class Report_to_to extends Root_Controller
 
         $this->db->from($this->config->item('table_sms_transfer_wo').' transfer_wo');
         $this->db->select('transfer_wo.*');
-        $this->db->join($this->config->item('table_sms_transfer_wo_details').' transfer_wo_details','transfer_wo_details.transfer_wo_id=transfer_wo.id','INNER');
+        /*$this->db->join($this->config->item('table_sms_transfer_wo_details').' transfer_wo_details','transfer_wo_details.transfer_wo_id=transfer_wo.id','INNER');
         $this->db->select('transfer_wo_details.*');
-        $this->db->where('transfer_wo_details.status',$this->config->item('system_status_active'));
-        $this->db->where('transfer_wo.date_request>='.$date_start.' and transfer_wo.date_request<='.$date_end);
+        $this->db->where('transfer_wo_details.status',$this->config->item('system_status_active'));*/
+        //$this->db->where('transfer_wo.date_request>='.$date_start.' and transfer_wo.date_request<='.$date_end);
         $this->db->order_by('transfer_wo.id');
         $this->db->group_by('transfer_wo.id');
+        //$this->db->where('transfer_wo.'..'>='.$date_start.' and transfer_wo.date_request<='.$date_end);
         if($status_request)
         {
             $this->db->where('transfer_wo.status_request',$status_request);
@@ -380,10 +305,10 @@ class Report_to_to extends Root_Controller
         {
             $this->db->where('transfer_wo.status_receive',$status_receive);
         }
-        if($status_receive_forward)
+        /*if($status_receive_forward)
         {
             $this->db->where('transfer_wo.status_receive_forward',$status_receive_forward);
-        }
+        }*/
         if($status_receive_approve)
         {
             $this->db->where('transfer_wo.status_receive_approve',$status_receive_approve);
@@ -394,7 +319,7 @@ class Report_to_to extends Root_Controller
         }
 
 
-        if($crop_id)
+        /*if($crop_id)
         {
             $this->db->where('transfer_wo_details.crop_id',$crop_id);
             if($crop_type_id)
@@ -409,7 +334,7 @@ class Report_to_to extends Root_Controller
         if($pack_size_id)
         {
             $this->db->where('transfer_wo_details.pack_size_id',$pack_size_id);
-        }
+        }*/
         if(sizeof($outlet_ids)>0)
         {
             $this->db->where_in('transfer_wo.outlet_id',$outlet_ids);
@@ -512,7 +437,7 @@ class Report_to_to extends Root_Controller
         $this->json_return($items);
         die();
     }
-    private function system_set_preference_transfer()
+    private function system_set_preference()
     {
         if(isset($this->permissions['action6']) && ($this->permissions['action6']==1))
         {

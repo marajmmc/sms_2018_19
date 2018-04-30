@@ -64,21 +64,22 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                             <option value=""><?php echo $CI->lang->line('LABEL_SELECT_ALL');?></option>
                             <option value="<?php echo $this->config->item('system_status_received')?>"><?php echo $this->config->item('system_status_received')?></option>
                             <option value="<?php echo $this->config->item('system_status_pending')?>"><?php echo $this->config->item('system_status_pending')?></option>
+                            <option value="<?php echo $this->config->item('system_status_forwarded')?>"><?php echo $this->config->item('system_status_forwarded')?></option>
                         </select>
                     </div>
                 </div>
-                <div class="row show-grid">
+                <!--<div class="row show-grid">
                     <div class="col-xs-6">
-                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_STATUS_RECEIVE_FORWARD');?><span style="color:#FF0000">*</span></label>
+                        <label class="control-label pull-right"><?php /*echo $CI->lang->line('LABEL_STATUS_RECEIVE_FORWARD');*/?><span style="color:#FF0000">*</span></label>
                     </div>
                     <div class="col-xs-6">
                         <select id="status_receive_forward" name="report[status_receive_forward]" class="form-control">
-                            <option value=""><?php echo $CI->lang->line('LABEL_SELECT_ALL');?></option>
-                            <option value="<?php echo $this->config->item('system_status_forwarded')?>"><?php echo $this->config->item('system_status_forwarded')?></option>
-                            <option value="<?php echo $this->config->item('system_status_pending')?>"><?php echo $this->config->item('system_status_pending')?></option>
+                            <option value=""><?php /*echo $CI->lang->line('LABEL_SELECT_ALL');*/?></option>
+                            <option value="<?php /*echo $this->config->item('system_status_forwarded')*/?>"><?php /*echo $this->config->item('system_status_forwarded')*/?></option>
+                            <option value="<?php /*echo $this->config->item('system_status_pending')*/?>"><?php /*echo $this->config->item('system_status_pending')*/?></option>
                         </select>
                     </div>
-                </div>
+                </div>-->
                 <div class="row show-grid">
                     <div class="col-xs-6">
                         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_STATUS_RECEIVE_APPROVE');?><span style="color:#FF0000">*</span></label>
