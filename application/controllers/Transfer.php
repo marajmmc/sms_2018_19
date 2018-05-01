@@ -5,7 +5,7 @@ class Transfer extends CI_Controller
     public function index()
     {
         //$this->stock();
-        $this->transfer_wo();
+        //$this->transfer_wo();
     }
     private function stock()
     {
