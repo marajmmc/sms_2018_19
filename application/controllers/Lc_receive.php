@@ -244,15 +244,9 @@ class Lc_receive extends Root_Controller
             $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
             {
-                System_helper::invalid_try('add_edit_lot_number',$item_id,'LC Non Exists');
+                System_helper::invalid_try('edit',$item_id,'LC Non Exists');
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid LC.';
-                $this->json_return($ajax);
-            }
-            if($data['item']['revision_receive_count']==0)
-            {
-                $ajax['status']=false;
-                $ajax['system_message']='You have to complete your (LC) edit receive.';
                 $this->json_return($ajax);
             }
             if($data['item']['status_open_forward']!=$this->config->item('system_status_yes'))
@@ -534,7 +528,7 @@ class Lc_receive extends Root_Controller
             $this->db->order_by('lcd.id','ASC');
             $data['items']=$this->db->get()->result_array();
 
-            $data['warehouses']=Query_helper::get_info($this->config->item('table_login_basic_setup_warehouse'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
+            //$data['warehouses']=Query_helper::get_info($this->config->item('table_login_basic_setup_warehouse'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
 
             $data['title']="LC Receive :: ".Barcode_helper::get_barcode_lc($item_id);
             $ajax['status']=true;

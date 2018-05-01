@@ -113,6 +113,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     </tr>
                     </thead>
                     <?php
+                    $lot_numbers=array();
                     if(!empty($items))
                     {
                         ?>
@@ -154,6 +155,37 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                                 <td class="text-right"><label class="control-label"><?php echo ($data['quantity_release']-$data['quantity_receive'])?></label></td>
                                 <td class="text-right"><label class="control-label"><?php echo number_format(($quantity_release_kg-$quantity_receive_kg),3,'.','')?></label></td>
                             </tr>
+                            <tr>
+                                <th colspan="21">
+                                    <div style="overflow-x: auto;" class="row show-grid">
+                                        <table class="table table-bordered">
+                                            <thead>
+                                            <tr>
+                                                <th style="min-width: 100px; text-align: right;">Box Number (Start)</th>
+                                                <th style="min-width: 100px; text-align: right;">Box Number (End)</th>
+                                                <th style="min-width: 150px; text-align: right;">Lot Number</th>
+                                                <th style="min-width: 150px; text-align: right;">Quantity</th>
+                                                <th>&nbsp;</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody id="items_container_<?php echo $data['id']?>" class="items_container">
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="row show-grid">
+                                        <div class="col-xs-4">
+
+                                        </div>
+                                        <div class="col-xs-4">
+                                            <button type="button" class="btn btn-warning system_button_add_more" data-current-id="0<?php //echo sizeof($lot_numbers[$data['variety_id']]);?>" data-current-container-id="<?php echo $data['id']?>"><?php echo $CI->lang->line('LABEL_ADD_MORE');?></button>
+                                        </div>
+                                        <div class="col-xs-4">
+
+                                        </div>
+                                    </div>
+                                </th>
+                            </tr>
                         <?php
                         }
                         ?>
@@ -188,94 +220,86 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
     </div>
     <div class="clearfix"></div>
 </form>
+<div id="system_content_add_more" style="display: none">
+    <table>
+        <tbody>
+        <tr>
+            <td class="text-right">
+                <input type="text" class="form-control float_type_positive number_box_start " />
+            </td>
+            <td class="text-right">
+                <input type="text" class="form-control float_type_positive number_box_end" />
+            </td>
+            <td class="text-right">
+                <select class="form-control number_lot">
+                    <option value=""><?php echo $CI->lang->line('SELECT'); ?></option>
+                    <?php
+                    if($item['lot_number'])
+                    {
+                        $lot_numbers=explode(',',$item['lot_number']);
+                        foreach($lot_numbers as $lot_number)
+                        {
+                            ?>
+                            <option value="<?php echo $lot_number?>"><?php echo $lot_number?></option>
+                            <?php
+                        }
+                    }
+                    ?>
+                </select>
+            </td>
+            <td class="text-right">
+                <input type="text" class="form-control float_type_positive quantity" value="" />
+            </td>
+            <td>
+                <button type="button" class="btn btn-danger system_button_add_delete"><?php echo $CI->lang->line('DELETE'); ?></button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
 <script>
     $(document).ready(function()
     {
-        //$(".datepicker").datepicker({dateFormat : display_date_format,changeMonth: true,changeYear: true,yearRange: "c-2:c+2"});
-        $(".datepicker").datepicker({dateFormat : display_date_format});
-
-        $(document).off('input','.quantity_receive');
-        $(document).on('input', '.quantity_receive', function()
+        $(document).off("click", ".system_button_add_more");
+        $(document).on("click", ".system_button_add_more", function(event)
         {
+            var current_container_id=parseInt($(this).attr('data-current-container-id'));
             var current_id=parseInt($(this).attr('data-current-id'));
-            var quantity_release=parseFloat($('#quantity_release_'+current_id).html().replace(/,/g,''));
-            var quantity_release_kg=parseFloat($('#quantity_release_kg_'+current_id).html().replace(/,/g,''));
-            if(isNaN(quantity_release))
-            {
-                quantity_release=0;
-            }
-            if(isNaN(quantity_release_kg))
-            {
-                quantity_release_kg=0;
-            }
-            var quantity_receive=parseFloat($(this).val());
-            var quantity_receive_kg=0;
-            if(isNaN(quantity_receive))
-            {
-                quantity_receive=0;
-            }
-            var pack_size=parseFloat($("#pack_size_id_"+current_id).attr('data-pack-size-name'));
-            if(pack_size==0)
-            {
-                quantity_receive_kg=quantity_receive;
-            }
-            else
-            {
-                quantity_receive_kg=parseFloat((pack_size*quantity_receive)/1000);
-            }
-            $("#quantity_receive_kg_"+current_id).html(number_format(quantity_receive_kg,3,'.',''));
-            $("#quantity_deference_"+current_id).html((quantity_release-quantity_receive));
-            $("#quantity_deference_kg_"+current_id).html(number_format((quantity_release_kg-quantity_receive_kg),3,'.',''));
-            calculate_total();
-        })
-        function calculate_total()
+            current_id=current_id+1;
+
+            $(this).attr('data-current-id',current_id);
+            var content_id='#system_content_add_more table tbody';
+
+            $(content_id+' .number_box_start').attr('id','number_box_start_'+current_container_id);
+            $(content_id+' .number_box_start').attr('data-current-id',current_container_id);
+            $(content_id+' .number_box_start').attr('name','items['+current_container_id+'][number_box_start][]');
+
+            /*$(content_id+' .pack_size_id').attr('id','pack_size_id_'+current_id);
+            $(content_id+' .pack_size_id').attr('data-current-id',current_id);
+            $(content_id+' .pack_size_id').attr('name','items['+current_id+'][pack_size_id]');
+
+            $(content_id+' .quantity_open').attr('id','quantity_open_'+current_id);
+            $(content_id+' .quantity_open').attr('data-current-id',current_id);
+            $(content_id+' .quantity_open').attr('name','items['+current_id+'][quantity_open]');
+
+            $(content_id+' .quantity_open_kg').attr('id','quantity_open_kg_'+current_id);
+            $(content_id+' .quantity_open_kg').attr('data-current-id',current_id);
+
+            $(content_id+' .price_unit_currency').attr('id','price_unit_currency_'+current_id);
+            $(content_id+' .price_unit_currency').attr('data-current-id',current_id);
+            $(content_id+' .price_unit_currency').attr('name','items['+current_id+'][price_unit_currency]');
+
+            $(content_id+' .price_open_currency').attr('id','price_open_currency_'+current_id);
+            $(content_id+' .price_open_currency').attr('data-current-id',current_id);
+            $(content_id+' .price_open_currency').attr('name','items['+current_id+'][price_open_currency]');*/
+            var html=$(content_id).html();
+            $("#items_container_"+current_container_id).append(html);
+        });
+        $(document).off('click','.system_button_add_delete');
+        $(document).on("click", ".system_button_add_delete", function(event)
         {
-            var quantity_total_release=0;
-            var quantity_total_receive=0;
-            var quantity_total_receive_kg=0;
-            var quantity_total_deference=0;
-            var quantity_total_deference_kg=0;
-            $('.quantity_receive').each(function(index, element)
-            {
-                var current_id=parseInt($(this).attr('data-current-id'));
-                var quantity_release=parseFloat($('#quantity_release_'+current_id).html().replace(/,/g,''));
-                if(isNaN(quantity_release))
-                {
-                    quantity_release=0;
-                }
-                var quantity_receive=parseFloat($(this).val());
-                if(isNaN(quantity_receive))
-                {
-                    quantity_receive=0;
-                }
-                var quantity_receive_kg=parseFloat($('#quantity_receive_kg_'+current_id).html().replace(/,/g,''));
-                if(isNaN(quantity_receive_kg))
-                {
-                    quantity_receive_kg=0;
-                }
-                var quantity_deference=parseFloat($('#quantity_deference_'+current_id).html().replace(/,/g,''));
-                if(isNaN(quantity_deference))
-                {
-                    quantity_deference=0;
-                }
-                var quantity_deference_kg=parseFloat($('#quantity_deference_kg_'+current_id).html().replace(/,/g,''));
-                if(isNaN(quantity_deference_kg))
-                {
-                    quantity_deference_kg=0;
-                }
-
-
-                quantity_total_release+=quantity_release;
-                quantity_total_receive+=quantity_receive;
-                quantity_total_receive_kg+=quantity_receive_kg;
-                quantity_total_deference+=quantity_deference;
-                quantity_total_deference_kg+=quantity_deference_kg;
-            });
-            var quantity_total_release_kg=$("#lbl_quantity_total_release_kg").html().replace(/,/g,'');
-            $('#lbl_quantity_total_receive').html(quantity_total_receive);
-            $('#lbl_quantity_total_receive_kg').html(number_format(quantity_total_receive_kg,3,'.',''));
-            $('#lbl_quantity_total_deference').html((quantity_total_deference));
-            $('#lbl_quantity_total_deference_kg').html(number_format((quantity_total_deference_kg),3,'.',''));
-        }
+            $(this).closest('tr').remove();
+            //calculate_total();
+        });
     })
 </script>

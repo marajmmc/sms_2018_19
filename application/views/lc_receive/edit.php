@@ -116,6 +116,12 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <input type="text" name="item[lot_number]" id="lot_number" class="form-control" value="<?php echo $item['lot_number'];?>" />
                 </div>
             </div>
+            <div style="font-size: 12px;margin-top: -10px;font-style: italic; color: red;" class="row show-grid">
+                <div class="col-xs-4"></div>
+                <div class="col-sm-4 col-xs-8">
+                    If you provide multiple lot number must be using comma (,) separator for example: 001,002,003,....
+                </div>
+            </div>
             <div class="row show-grid">
                 <div class="col-xs-4">
                     <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS_LC_RECEIVE');?> </label>
