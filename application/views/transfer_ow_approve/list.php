@@ -138,6 +138,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 height: '350px',
                 autorowheight: true,
                 columnsreorder: true,
+                enablebrowserselection: true,
                 columns:
                 [
                     { text: '<?php echo $CI->lang->line('LABEL_BARCODE'); ?>', dataField: 'barcode',pinned:true, width:'80',hidden: <?php echo $system_preference_items['barcode']?0:1;?>},
