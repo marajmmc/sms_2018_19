@@ -35,13 +35,17 @@ class Lc_receive extends Root_Controller
         {
             $this->system_edit($id);
         }
+        elseif($action=="save")
+        {
+            $this->system_save();
+        }
         elseif($action=="add_edit_lot_number")
         {
             $this->system_add_edit_lot_number($id);
         }
-        elseif($action=="save")
+        elseif($action=="save_add_edit_lot_number")
         {
-            $this->system_save();
+            $this->system_save_add_edit_lot_number();
         }
         elseif($action=="details")
         {
@@ -482,10 +486,10 @@ class Lc_receive extends Root_Controller
                 $ajax['system_message']='Invalid LC.';
                 $this->json_return($ajax);
             }
-            if($data['item']['revision_receive_count']==0)
+            if(!$data['item']['lot_number'])
             {
                 $ajax['status']=false;
-                $ajax['system_message']='You have to complete your (LC) edit receive.';
+                $ajax['system_message']='Lot number is empty.';
                 $this->json_return($ajax);
             }
             if($data['item']['status_open_forward']!=$this->config->item('system_status_yes'))
@@ -544,6 +548,109 @@ class Lc_receive extends Root_Controller
         {
             $ajax['status']=false;
             $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+    }
+    private function system_save_add_edit_lot_number()
+    {
+
+        $id = $this->input->post("id");
+        /*$user = User_helper::get_user();
+        $time=time();
+        //$item_head=$this->input->post('item');*/
+        $items=$this->input->post('items');
+        if($id>0)
+        {
+            if(!((isset($this->permissions['action1']) && ($this->permissions['action1']==1)) || (isset($this->permissions['action2']) && ($this->permissions['action2']==1))))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+                $this->json_return($ajax);
+            }
+            $result=Query_helper::get_info($this->config->item('table_sms_lc_open'),'*',array('id ='.$id, 'status_open != "'.$this->config->item('system_status_delete').'"', 'status_open_forward = "'.$this->config->item('system_status_yes').'"', 'status_release = "'.$this->config->item('system_status_complete').'"'),1);
+            if(!$result)
+            {
+                System_helper::invalid_try('save',$id,'Update Receive Non Exists');
+                $ajax['status']=false;
+                $ajax['system_message']='Invalid LC.';
+                $this->json_return($ajax);
+            }
+            if($result['revision_receive_count']==0)
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='You have to complete your (LC) edit receive.';
+                $this->json_return($ajax);
+            }
+            if($result['status_receive']==$this->config->item('system_status_complete'))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='You Can Not Modify LC Because LC Receive Completed.';
+                $this->json_return($ajax);
+            }
+            if($result['status_open']==$this->config->item('system_status_complete'))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='LC Already Completed.';
+                $this->json_return($ajax);
+            }
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+
+        /*if(!$this->check_validation())
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->message;
+            $this->json_return($ajax);
+        }*/
+
+
+        $results=Query_helper::get_info($this->config->item('table_sms_lc_details'),'*',array('lc_id='.$id,'quantity_open > 0'));
+        $lot_numbers=array();
+
+        if($results)
+        {
+            foreach($results as $result)
+            {
+                if(isset($items[$result['id']]['number_box_start']) && sizeof($items[$result['id']]['number_box_start'])>0)
+                {
+                    for($i=0; $i<sizeof($items[$result['id']]['number_box_start']); $i++)
+                    {
+                        /* this code for variety, pack size & lot number wise search report.*/
+                        $lot_numbers[$result['variety_id']][$result['pack_size_id']]['number_box_start'][]=$items[$result['id']]['number_box_start'][$i];
+                        $lot_numbers[$result['variety_id']][$result['pack_size_id']]['number_box_end'][]=$items[$result['id']]['number_box_end'][$i];
+                        $lot_numbers[$result['variety_id']][$result['pack_size_id']]['number_lot'][]=$items[$result['id']]['number_lot'][$i];
+                        $lot_numbers[$result['variety_id']][$result['pack_size_id']]['quantity_lot'][]=$items[$result['id']]['quantity_lot'][$i];
+
+                        /*$lot_numbers[$result['id']]['number_box_start'][]=$items[$result['id']]['number_box_start'][$i];
+                        $lot_numbers[$result['id']]['number_box_end'][]=$items[$result['id']]['number_box_end'][$i];
+                        $lot_numbers[$result['id']]['number_lot'][]=$items[$result['id']]['number_lot'][$i];
+                        $lot_numbers[$result['id']]['quantity_lot'][]=$items[$result['id']]['quantity_lot'][$i];*/
+                    }
+                }
+            }
+        }
+        $lot_numbers_encode=json_encode($lot_numbers);
+
+        $this->db->trans_start();  //DB Transaction Handle START
+
+        $item_head['lot_numbers_encode']=$lot_numbers_encode;
+        Query_helper::update($this->config->item('table_sms_lc_open'),$item_head,array('id='.$id));
+
+        $this->db->trans_complete();   //DB Transaction Handle END
+        if ($this->db->trans_status() === TRUE)
+        {
+            $this->message=$this->lang->line("MSG_SAVED_SUCCESS");
+            $this->system_list();
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("MSG_SAVED_FAIL");
             $this->json_return($ajax);
         }
     }

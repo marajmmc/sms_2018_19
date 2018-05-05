@@ -82,6 +82,10 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS_LC_RELEASE');?></label></th>
                     <th class=" header_value" colspan="3"><label class="control-label"><?php echo nl2br($item['remarks_release']);?></label></th>
                 </tr>
+                <tr>
+                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_NUMBER_LOT');?></label></th>
+                    <th class="bg-danger header_value" colspan="3"><label class="control-label"><?php echo $item['lot_number'];?></label></th>
+                </tr>
                 </thead>
             </table>
         </div>
@@ -101,19 +105,19 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <th class="label-info text-center" rowspan="2"><?php echo $CI->lang->line('LABEL_WAREHOUSE_NAME'); ?></th>
                         <th class="label-primary text-center" colspan="2">Release Information</th>
                         <th class="label-success text-center" colspan="2">Receive Information</th>
-                        <th class="label-danger text-center" colspan="2">Deference Information</th>
+                        <!--<th class="label-danger text-center" colspan="2">Deference Information</th>-->
                     </tr>
                     <tr>
                         <th class="label-primary text-center"><?php echo $CI->lang->line('LABEL_QUANTITY_KG_PACK'); ?></th>
                         <th class="label-primary text-center"><?php echo $CI->lang->line('KG');?></th>
                         <th class="label-success text-center"><?php echo $CI->lang->line('LABEL_QUANTITY_KG_PACK'); ?></th>
                         <th class="label-success text-center"><?php echo $CI->lang->line('KG');?></th>
-                        <th class="label-danger text-center"><?php echo $CI->lang->line('LABEL_QUANTITY_KG_PACK'); ?></th>
-                        <th class="label-danger text-center"><?php echo $CI->lang->line('KG');?></th>
+                        <!--<th class="label-danger text-center"><?php /*echo $CI->lang->line('LABEL_QUANTITY_KG_PACK'); */?></th>
+                        <th class="label-danger text-center"><?php /*echo $CI->lang->line('KG');*/?></th>-->
                     </tr>
                     </thead>
                     <?php
-                    $lot_numbers=array();
+                    $lot_numbers_encode=json_decode($item['lot_numbers_encode'], true);
                     if(!empty($items))
                     {
                         ?>
@@ -152,24 +156,73 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                                 <td class="text-right"><label class="control-label" for=""><?php echo number_format($quantity_release_kg,3,'.','')?></label></td>
                                 <td class="text-right"><label class="control-label" for=""><?php echo $data['quantity_receive']; ?></label></td>
                                 <td class="text-right" ><label class="control-label "><?php echo number_format($quantity_receive_kg,3,'.',''); ?></label></td>
-                                <td class="text-right"><label class="control-label"><?php echo ($data['quantity_release']-$data['quantity_receive'])?></label></td>
-                                <td class="text-right"><label class="control-label"><?php echo number_format(($quantity_release_kg-$quantity_receive_kg),3,'.','')?></label></td>
+                                <!--<td class="text-right"><label class="control-label"><?php /*echo ($data['quantity_release']-$data['quantity_receive'])*/?></label></td>
+                                <td class="text-right"><label class="control-label"><?php /*echo number_format(($quantity_release_kg-$quantity_receive_kg),3,'.','')*/?></label></td>-->
                             </tr>
                             <tr>
                                 <th colspan="21">
                                     <div style="overflow-x: auto;" class="row show-grid">
-                                        <table class="table table-bordered">
+                                        <table class="table table-bordered" style="width: 50%; float: right">
                                             <thead>
                                             <tr>
-                                                <th style="min-width: 100px; text-align: right;">Box Number (Start)</th>
-                                                <th style="min-width: 100px; text-align: right;">Box Number (End)</th>
-                                                <th style="min-width: 150px; text-align: right;">Lot Number</th>
-                                                <th style="min-width: 150px; text-align: right;">Quantity</th>
+                                                <th style="text-align: right;">Box Number (Start)</th>
+                                                <th style="text-align: right;">Box Number (End)</th>
+                                                <th style="text-align: left;">Lot Number</th>
+                                                <th style="text-align: right;">Quantity</th>
                                                 <th>&nbsp;</th>
                                             </tr>
                                             </thead>
                                             <tbody id="items_container_<?php echo $data['id']?>" class="items_container">
-
+                                            <?php
+                                            if(isset($lot_numbers_encode[$data['variety_id']][$data['pack_size_id']]['number_box_start']) && sizeof($lot_numbers_encode[$data['variety_id']][$data['pack_size_id']]['number_box_start'])>0)
+                                            {
+                                                for($i=0; $i<sizeof($lot_numbers_encode[$data['variety_id']][$data['pack_size_id']]['number_box_start']); $i++)
+                                                {
+                                                    ?>
+                                                    <tr>
+                                                        <td class="text-right">
+                                                            <input type="text" class="form-control float_type_positive number_box_start" name="items[<?php echo $data['id']?>][number_box_start][]" value="<?php echo $lot_numbers_encode[$data['variety_id']][$data['pack_size_id']]['number_box_start'][$i]?>" />
+                                                        </td>
+                                                        <td class="text-right">
+                                                            <input type="text" class="form-control float_type_positive number_box_end" name="items[<?php echo $data['id']?>][number_box_end][]" value="<?php echo $lot_numbers_encode[$data['variety_id']][$data['pack_size_id']]['number_box_end'][$i]?>" />
+                                                        </td>
+                                                        <td class="text-right">
+                                                            <select class="form-control number_lot" name="items[<?php echo $data['id']?>][number_lot][]">
+                                                                <option value=""><?php echo $CI->lang->line('SELECT'); ?></option>
+                                                                <?php
+                                                                if($item['lot_number'])
+                                                                {
+                                                                    $lot_numbers=explode(',',$item['lot_number']);
+                                                                    foreach($lot_numbers as $lot_number)
+                                                                    {
+                                                                        if($lot_number==$lot_numbers_encode[$data['variety_id']][$data['pack_size_id']]['number_lot'][$i])
+                                                                        {
+                                                                            ?>
+                                                                            <option value="<?php echo $lot_number?>" selected="selected"><?php echo $lot_number?></option>
+                                                                        <?php
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            ?>
+                                                                            <option value="<?php echo $lot_number?>"><?php echo $lot_number?></option>
+                                                                        <?php
+                                                                        }
+                                                                    }
+                                                                }
+                                                                ?>
+                                                            </select>
+                                                        </td>
+                                                        <td class="text-right">
+                                                            <input type="text" class="form-control float_type_positive quantity_lot" name="items[<?php echo $data['id']?>][quantity_lot][]" value="<?php echo $lot_numbers_encode[$data['variety_id']][$data['pack_size_id']]['quantity_lot'][$i]?>" />
+                                                        </td>
+                                                        <td>
+                                                            <button type="button" class="btn btn-danger system_button_add_delete"><?php echo $CI->lang->line('DELETE'); ?></button>
+                                                        </td>
+                                                    </tr>
+                                                <?php
+                                                }
+                                            }
+                                            ?>
                                             </tbody>
                                         </table>
                                     </div>
@@ -178,10 +231,10 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
                                         </div>
                                         <div class="col-xs-4">
-                                            <button type="button" class="btn btn-warning system_button_add_more" data-current-id="0<?php //echo sizeof($lot_numbers[$data['variety_id']]);?>" data-current-container-id="<?php echo $data['id']?>"><?php echo $CI->lang->line('LABEL_ADD_MORE');?></button>
+
                                         </div>
                                         <div class="col-xs-4">
-
+                                            <button type="button" class="btn btn-warning system_button_add_more pull-right" data-current-id="<?php //echo isset($lot_numbers_encode[$data['variety_id']][$data['pack_size_id']])?sizeof($lot_numbers_encode[$data['variety_id']][$data['pack_size_id']]):0;?>" data-current-container-id="<?php echo $data['id']?>"><?php echo $CI->lang->line('LABEL_ADD_MORE');?></button>
                                         </div>
                                     </div>
                                 </th>
@@ -197,8 +250,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                             <th class="text-right"><label class="control-label"><?php echo number_format($quantity_total_release_kg,3,'.','');?></label></th>
                             <th class="text-right"><label class="control-label"><?php echo $quantity_total_receive;?></label></th>
                             <th class="text-right"><label class="control-label"><?php echo number_format($quantity_total_receive_kg,3,'.','');?></label></th>
-                            <th class="text-right"><label class="control-label"><?php echo ($quantity_total_release-$quantity_total_receive);?></label></th>
-                            <th class="text-right"><label class="control-label"><?php echo number_format(($quantity_total_release_kg-$quantity_total_receive_kg),3,'.','');?></label></th>
+                            <!--<th class="text-right"><label class="control-label"><?php /*echo ($quantity_total_release-$quantity_total_receive);*/?></label></th>
+                            <th class="text-right"><label class="control-label"><?php /*echo number_format(($quantity_total_release_kg-$quantity_total_receive_kg),3,'.','');*/?></label></th>-->
                         </tr>
                         </tfoot>
                     <?php
@@ -248,7 +301,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 </select>
             </td>
             <td class="text-right">
-                <input type="text" class="form-control float_type_positive quantity" value="" />
+                <input type="text" class="form-control float_type_positive quantity_lot" value="" />
             </td>
             <td>
                 <button type="button" class="btn btn-danger system_button_add_delete"><?php echo $CI->lang->line('DELETE'); ?></button>
@@ -263,35 +316,28 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         $(document).off("click", ".system_button_add_more");
         $(document).on("click", ".system_button_add_more", function(event)
         {
-            var current_container_id=parseInt($(this).attr('data-current-container-id'));
-            var current_id=parseInt($(this).attr('data-current-id'));
+            /*var current_id=parseInt($(this).attr('data-current-id'));
             current_id=current_id+1;
-
-            $(this).attr('data-current-id',current_id);
+            $(this).attr('data-current-id',current_id);*/
+            var current_container_id=parseInt($(this).attr('data-current-container-id'));
             var content_id='#system_content_add_more table tbody';
 
             $(content_id+' .number_box_start').attr('id','number_box_start_'+current_container_id);
             $(content_id+' .number_box_start').attr('data-current-id',current_container_id);
             $(content_id+' .number_box_start').attr('name','items['+current_container_id+'][number_box_start][]');
 
-            /*$(content_id+' .pack_size_id').attr('id','pack_size_id_'+current_id);
-            $(content_id+' .pack_size_id').attr('data-current-id',current_id);
-            $(content_id+' .pack_size_id').attr('name','items['+current_id+'][pack_size_id]');
+            $(content_id+' .number_box_end').attr('id','number_box_end_'+current_container_id);
+            $(content_id+' .number_box_end').attr('data-current-id',current_container_id);
+            $(content_id+' .number_box_end').attr('name','items['+current_container_id+'][number_box_end][]');
 
-            $(content_id+' .quantity_open').attr('id','quantity_open_'+current_id);
-            $(content_id+' .quantity_open').attr('data-current-id',current_id);
-            $(content_id+' .quantity_open').attr('name','items['+current_id+'][quantity_open]');
+            $(content_id+' .number_lot').attr('id','number_lot_'+current_container_id);
+            $(content_id+' .number_lot').attr('data-current-id',current_container_id);
+            $(content_id+' .number_lot').attr('name','items['+current_container_id+'][number_lot][]');
 
-            $(content_id+' .quantity_open_kg').attr('id','quantity_open_kg_'+current_id);
-            $(content_id+' .quantity_open_kg').attr('data-current-id',current_id);
+            $(content_id+' .quantity_lot').attr('id','quantity_lot_'+current_container_id);
+            $(content_id+' .quantity_lot').attr('data-current-id',current_container_id);
+            $(content_id+' .quantity_lot').attr('name','items['+current_container_id+'][quantity_lot][]');
 
-            $(content_id+' .price_unit_currency').attr('id','price_unit_currency_'+current_id);
-            $(content_id+' .price_unit_currency').attr('data-current-id',current_id);
-            $(content_id+' .price_unit_currency').attr('name','items['+current_id+'][price_unit_currency]');
-
-            $(content_id+' .price_open_currency').attr('id','price_open_currency_'+current_id);
-            $(content_id+' .price_open_currency').attr('data-current-id',current_id);
-            $(content_id+' .price_open_currency').attr('name','items['+current_id+'][price_open_currency]');*/
             var html=$(content_id).html();
             $("#items_container_"+current_container_id).append(html);
         });
