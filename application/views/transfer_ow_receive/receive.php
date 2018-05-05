@@ -279,12 +279,14 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <th rowspan="2" style="width: 150px;"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
                         <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
                         <th rowspan="2" style="width: 150px;"><?php echo $CI->lang->line('LABEL_WAREHOUSE_NAME'); ?></th>
-                        <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_CURRENT_STOCK_KG'); ?></th>
+                        <th colspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_CURRENT_STOCK'); ?></th>
                         <th colspan="2" class="text-center" style="width: 300px;"><?php echo $CI->lang->line('LABEL_QUANTITY_APPROVE'); ?></th>
                         <th colspan="2" class="text-center" style="width: 300px;"><?php echo $CI->lang->line('LABEL_QUANTITY_RECEIVE'); ?></th>
                         <th colspan="2" class="text-center" style="width: 300px;">New Quantity</th>
                     </tr>
                     <tr>
+                        <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_PACK');?></th>
+                        <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_KG');?></th>
                         <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_PACK');?></th>
                         <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_KG');?></th>
                         <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_PACK');?></th>
@@ -352,6 +354,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                                 <label><?php echo $value['warehouse_name']; ?></label>
                             </td>
                             <td class="text-right">
+                                <label> <?php echo $stock_current; ?> </label>
+                            </td>
+                            <td class="text-right">
                                 <label> <?php echo number_format($stock_current_kg,3,'.',''); ?> </label>
                             </td>
                             <td class="text-right">
@@ -379,7 +384,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     </tbody>
                     <tfoot>
                     <tr>
-                        <th colspan="6" class="text-right"><?php echo $CI->lang->line('LABEL_TOTAL');?></th>
+                        <th colspan="7" class="text-right"><?php echo $CI->lang->line('LABEL_TOTAL');?></th>
                         <th class="text-right"><label class="control-label"><?php echo $quantity_total_approve;?></label></th>
                         <th class="text-right"><label class="control-label"> <?php echo number_format($quantity_total_approve_kg,3,'.','');?></label></th>
                         <th class="text-right"><label class="control-label"> <?php echo $quantity_total_receive;?></label></th>
@@ -413,8 +418,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
             </div>
             <div class="col-sm-4 col-xs-4">
-                <div class="action_button">
-                    <button id="button_action_save" type="button" class="btn" data-form="#save_form" data-message-confirm="Are You Sure Outlet to HQ transfer receive done?">Outlet to HQ `TR` Receive</button>
+                <div class="action_button pull-right">
+                    <button id="button_action_save" type="button" class="btn" data-form="#save_form" data-message-confirm="Are You Sure Outlet to HQ transfer receive done?">Save</button>
                 </div>
             </div>
             <div class="col-sm-4 col-xs-4">

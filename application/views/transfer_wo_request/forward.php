@@ -118,13 +118,22 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         if(!($CI->locations['territory_id']>0))
                         {
                             ?>
-                            <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_STOCK_AVAILABLE'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
+                            <th colspan="2" class="text-center" style="width: 150px;"><?php echo $CI->lang->line('LABEL_STOCK_AVAILABLE'); ?> </th>
                         <?php
                         }
                         ?>
                         <th colspan="2" class="text-center" style="width: 300px;"><?php echo $CI->lang->line('LABEL_QUANTITY_ORDER'); ?></th>
                     </tr>
                     <tr>
+                        <?php
+                        if(!($CI->locations['territory_id']>0))
+                        {
+                            ?>
+                            <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_PACK');?></th>
+                            <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_KG');?></th>
+                        <?php
+                        }
+                        ?>
                         <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_PACK');?></th>
                         <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_KG');?></th>
                     </tr>
@@ -185,6 +194,11 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                             {
                                 ?>
                                 <td class="text-right">
+                                    <label class="control-label stock_available_pkt" id="stock_available_pkt_id_<?php echo $index+1;?>">
+                                        <?php echo isset($two_variety_info[$value['variety_id']][$value['pack_size_id']])?$two_variety_info[$value['variety_id']][$value['pack_size_id']]['stock_available_pkt']:'0'; ?>
+                                    </label>
+                                </td>
+                                <td class="text-right">
                                     <label class="control-label stock_available" id="stock_available_id_<?php echo $index+1;?>">
                                         <?php
                                         echo isset($two_variety_info[$value['variety_id']][$value['pack_size_id']])?number_format($two_variety_info[$value['variety_id']][$value['pack_size_id']]['stock_available'],3,'.',''):'0.000';
@@ -208,7 +222,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <tfoot>
                     <tr>
                         <?php
-                        $quantity_total_colspan=8;
+                        $quantity_total_colspan=9;
                         if(!($CI->locations['territory_id']>0))
                         {
                             $quantity_total_colspan+=1;
@@ -238,8 +252,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
             </div>
             <div class="col-sm-4 col-xs-4">
-                <div class="action_button">
-                    <button id="button_action_save" type="button" class="btn" data-form="#save_form" data-message-confirm="Are You Sure HQ to Outlet Forward TO?">HQ to Outlet `TO` Forward</button>
+                <div class="action_button pull-right">
+                    <button id="button_action_save" type="button" class="btn" data-form="#save_form" data-message-confirm="Are You Sure HQ to Outlet Forward TO?">Save</button>
                 </div>
             </div>
             <div class="col-sm-4 col-xs-4">

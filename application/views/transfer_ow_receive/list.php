@@ -33,7 +33,7 @@ if(isset($CI->permissions['action4']) && ($CI->permissions['action4']==1))
 {
     $action_buttons[]=array(
         'type'=>'button',
-        'label'=>'Return Challan '.$CI->lang->line("ACTION_PRINT"),
+        'label'=>'Challan '.$CI->lang->line("ACTION_PRINT"),
         'class'=>'button_jqx_action',
         'data-action-link'=>site_url($CI->controller_url.'/index/challan_print')
     );

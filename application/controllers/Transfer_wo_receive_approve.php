@@ -282,7 +282,6 @@ class Transfer_wo_receive_approve extends Root_Controller
                 $item_id=$this->input->post('id');
             }
 
-
             /// i think no need this query because system delivery receive always will to be equal to 'no'. So just left join
             $result=Query_helper::get_info($this->config->item('table_sms_transfer_wo'),'*',array('id ='.$item_id,'status_system_delivery_receive ="'.$this->config->item('system_status_no').'"'),1);
             if($result)
@@ -392,9 +391,17 @@ class Transfer_wo_receive_approve extends Root_Controller
             $this->db->where('transfer_wo_details.status',$this->config->item('system_status_active'));
             $data['items']=$this->db->get()->result_array();
 
+            $variety_ids=array();
+            foreach($data['items'] as $item)
+            {
+                //$old_items[$item['variety_id']][$item['pack_size_id']]=$item;
+                $variety_ids[$item['variety_id']]=$item['variety_id'];
+            }
+            $data['stocks']=Stock_helper::get_variety_stock_outlet($data['item']['outlet_id'],$variety_ids);
+
             $data['title']="HQ to Outlet Receive Approve:: ". Barcode_helper::get_barcode_transfer_warehouse_to_outlet($data['item']['id']);
             $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/add_edit",$data,true));
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/edit",$data,true));
             if($this->message)
             {
                 $ajax['system_message']=$this->message;

@@ -295,12 +295,14 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <th rowspan="2" style="width: 150px;"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
                         <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
                         <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_WAREHOUSE_NAME'); ?></th>
-                        <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_CURRENT_STOCK_KG'); ?></th>
+                        <th colspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_CURRENT_STOCK'); ?></th>
                         <th colspan="2" class="text-center" style="width: 300px;"><?php echo $CI->lang->line('LABEL_QUANTITY_APPROVE'); ?></th>
                         <th colspan="2" class="text-center" style="width: 300px;"><?php echo $CI->lang->line('LABEL_QUANTITY_RECEIVE'); ?></th>
                         <th colspan="2" class="text-center" style="width: 300px;">New Stock</th>
                     </tr>
                     <tr>
+                        <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_PACK');?></th>
+                        <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_KG');?></th>
                         <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_PACK');?></th>
                         <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_KG');?></th>
                         <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_PACK');?></th>
@@ -381,10 +383,13 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                                 </select>
                             </td>
                             <td class="text-right">
+                                <label class="control-label stock_current_pkt " id="stock_current_pkt_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>">
+                                    <?php echo $stock_current; ?>
+                                </label>
+                            </td>
+                            <td class="text-right">
                                 <label class="control-label stock_current " id="stock_current_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>">
-                                    <?php
-                                    echo number_format($stock_current_kg,3,'.','');
-                                    ?>
+                                    <?php echo number_format($stock_current_kg,3,'.',''); ?>
                                 </label>
                             </td>
                             <td class="text-right">
@@ -412,7 +417,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     </tbody>
                     <tfoot>
                     <tr>
-                        <th colspan="6" class="text-right"><?php echo $CI->lang->line('LABEL_TOTAL');?></th>
+                        <th colspan="7" class="text-right"><?php echo $CI->lang->line('LABEL_TOTAL');?></th>
                         <th class="text-right"><label class="control-label" id="quantity_total_approve"> <?php echo $quantity_total_approve;?></label></th>
                         <th class="text-right"><label class="control-label" id="quantity_total_approve_kg"> <?php echo number_format($quantity_total_approve_kg,3,'.','');?></label></th>
                         <th class="text-right"><label class="control-label" id="quantity_total_receive"> <?php echo $quantity_total_receive;?></label></th>
@@ -493,6 +498,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             var current_id=$(this).attr('data-current-id');
 
             $('#item_rows_'+current_id).removeClass('quantity_exist_warning');
+            $('#stock_current_pkt_'+current_id).html('');
             $('#stock_current_'+current_id).html('');
             $('#stock_quantity_new_'+current_id).html('');
             $('#stock_quantity_new_kg_'+current_id).html('');
@@ -527,6 +533,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 stock_quantity_new=(current_stock+quantity_receive);
                 stock_quantity_new_kg=(current_stock_kg+quantity_receive_kg);
             }
+            $('#stock_current_pkt_'+current_id).html(current_stock);
             $('#stock_current_'+current_id).html(number_format(current_stock_kg,'3','.',''));
             $('#stock_quantity_new_'+current_id).html(stock_quantity_new);
             $('#stock_quantity_new_kg_'+current_id).html(number_format(stock_quantity_new_kg,'3','.',''));

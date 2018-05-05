@@ -266,10 +266,12 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <th rowspan="2" style="width: 150px;"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
                         <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
                         <th rowspan="2" style="width: 150px;"><?php echo $CI->lang->line('LABEL_WAREHOUSE_NAME'); ?></th>
-                        <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_CURRENT_STOCK_KG'); ?></th>
+                        <th colspan="2" class="text-center" style="width: 150px;"><?php echo $CI->lang->line('LABEL_CURRENT_STOCK'); ?></th>
                         <th colspan="2" class="text-center" style="width: 300px;"><?php echo $CI->lang->line('LABEL_QUANTITY_APPROVE'); ?></th>
                     </tr>
                     <tr>
+                        <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_PACK');?></th>
+                        <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_KG');?></th>
                         <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_PACK');?></th>
                         <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_KG');?></th>
                     </tr>
@@ -279,6 +281,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     $quantity_approve=0;
                     $quantity_total_approve=0;
                     $quantity_total_approve_kg=0;
+
+                    $stock_current_kg=0;
 
                     foreach($items as $index=>$value)
                     {
@@ -295,7 +299,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         {
                             $stock_current=0;
                         }
-                        $stock_current=(($stock_current*$value['pack_size'])/1000);
+                        $stock_current_kg=(($stock_current*$value['pack_size'])/1000);
                         ?>
                         <tr>
                             <td>
@@ -314,7 +318,10 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                                 <label><?php echo $value['warehouse_name']; ?></label>
                             </td>
                             <td class="text-right">
-                                <label> <?php echo number_format($stock_current,3,'.',''); ?> </label>
+                                <label> <?php echo $stock_current; ?> </label>
+                            </td>
+                            <td class="text-right">
+                                <label> <?php echo number_format($stock_current_kg,3,'.',''); ?> </label>
                             </td>
                             <td class="text-right">
                                 <label class=" "><?php echo $quantity_approve; ?></label>
@@ -329,16 +336,23 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     </tbody>
                     <tfoot>
                     <tr>
-                        <th colspan="6" class="text-right"><?php echo $CI->lang->line('LABEL_TOTAL');?></th>
+                        <th colspan="7" class="text-right"><?php echo $CI->lang->line('LABEL_TOTAL');?></th>
                         <th class="text-right"><label class="control-label" id="quantity_total_approve"> <?php echo $quantity_total_approve;?></label></th>
                         <th class="text-right"><label class="control-label" id="quantity_total_approve_kg"> <?php echo number_format($quantity_total_approve_kg,3,'.','');?></label></th>
                     </tr>
-                    <tr>
-                        <td colspan="21">
-                            <strong><?php echo $CI->lang->line('LABEL_REMARKS_CHALLAN');?>: </strong>
-                            <?php echo nl2br($item['remarks_challan']);?>
-                        </td>
-                    </tr>
+                    <?php
+                    if($item['remarks_challan'])
+                    {
+                        ?>
+                        <tr>
+                            <td colspan="21">
+                                <strong><?php echo $CI->lang->line('LABEL_REMARKS_CHALLAN');?>: </strong>
+                                <?php echo nl2br($item['remarks_challan']);?>
+                            </td>
+                        </tr>
+                    <?php
+                    }
+                    ?>
                     </tfoot>
                 </table>
             </div>
@@ -373,8 +387,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
             </div>
             <div class="col-sm-4 col-xs-4">
-                <div class="action_button">
-                    <button id="button_action_save" type="button" class="btn" data-form="#save_form" data-message-confirm="Are You Sure HQ to outlet transfer delivery done?">HQ to Outlet `TO` Delivered</button>
+                <div class="action_button pull-right">
+                    <button id="button_action_save" type="button" class="btn" data-form="#save_form" data-message-confirm="Are You Sure HQ to outlet transfer delivery done?">Save</button>
                 </div>
             </div>
             <div class="col-sm-4 col-xs-4">

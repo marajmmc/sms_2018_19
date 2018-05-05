@@ -509,13 +509,14 @@ class Transfer_ow_request extends Root_Controller
                     $this->json_return($ajax);
                 }
 
+                $quantity_request=$item['quantity_request'];
                 $quantity_request_kg=(($pack_sizes[$item['pack_size_id']]['text']*$item['quantity_request'])/1000);
                 $quantity_total_request_kg+=$quantity_request_kg;
-                if($quantity_request_kg>$tow_variety_info[$item['variety_id']][$item['pack_size_id']]['stock_available'])
+                if($quantity_request>$tow_variety_info[$item['variety_id']][$item['pack_size_id']]['stock_available_pkt'])
                 {
-                    $stock_available_excess=($quantity_request_kg-$tow_variety_info[$item['variety_id']][$item['pack_size_id']]['stock_available']);
+                    $stock_available_excess=($quantity_request-$tow_variety_info[$item['variety_id']][$item['pack_size_id']]['stock_available_pkt']);
                     $ajax['status']=false;
-                    $ajax['system_message']='Return quantity already exceed. ( Exceed return quantity: '.$stock_available_excess.' kg.)';
+                    $ajax['system_message']='Return quantity already exceed. ( Exceed return quantity: '.$stock_available_excess.' pkt.)';
                     $this->json_return($ajax);
                 }
             }

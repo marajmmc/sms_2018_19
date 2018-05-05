@@ -496,13 +496,14 @@ class Transfer_ow_approve extends Root_Controller
                 $ajax['system_message']='Invalid variety information :: ( Variety ID: '.$item['variety_id'].' )';
                 $this->json_return($ajax);
             }
+            $quantity_approve=$item['quantity_approve'];
             $quantity_approve_kg=(($pack_sizes[$item['pack_size_id']]['text']*$item['quantity_approve'])/1000);
             $quantity_total_approve_kg+=$quantity_approve_kg;
-            if($quantity_approve_kg>$tow_variety_info[$item['variety_id']][$item['pack_size_id']]['stock_available'])
+            if($quantity_approve>$tow_variety_info[$item['variety_id']][$item['pack_size_id']]['stock_available_pkt'])
             {
-                $stock_available_excess=($quantity_approve_kg-$tow_variety_info[$item['variety_id']][$item['pack_size_id']]['stock_available']);
+                $stock_available_excess=($quantity_approve-$tow_variety_info[$item['variety_id']][$item['pack_size_id']]['stock_available_pkt']);
                 $ajax['status']=false;
-                $ajax['system_message']='Available quantity already exceed. ( Exceed quantity is: '.number_format($stock_available_excess,3,'.','').' kg.)';
+                $ajax['system_message']='Available quantity already exceed. ( Exceed quantity is: '.$stock_available_excess.' pkt)';
                 $this->json_return($ajax);
             }
         }

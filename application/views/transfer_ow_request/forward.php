@@ -102,10 +102,12 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <th rowspan="2" style="width: 150px;"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?></th>
                         <th rowspan="2" style="width: 150px;"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
                         <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
-                        <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_STOCK_AVAILABLE'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
+                        <th colspan="2" class="text-center" style="width: 12.5%;"><?php echo $CI->lang->line('LABEL_STOCK_AVAILABLE'); ?> </th>
                         <th colspan="2" class="text-center" style="width: 300px;"><?php echo $CI->lang->line('LABEL_QUANTITY_ORDER'); ?></th>
                     </tr>
                     <tr>
+                        <th style="width: 12.5%;" class="text-right"><?php echo $CI->lang->line('LABEL_PACK');?></th>
+                        <th style="width: 12.5%;" class="text-right"><?php echo $CI->lang->line('LABEL_KG');?></th>
                         <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_PACK');?></th>
                         <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_KG');?></th>
                     </tr>
@@ -114,15 +116,15 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <?php
                     $quantity_total_request=0;
                     $quantity_total_request_kg=0;
-                    $stock_available=0;
+                    $stock_available_pkt=0;
                     foreach($items as $index=>$value)
                     {
                         $quantity_request_kg=(($value['quantity_request']*$value['pack_size'])/1000);
                         $quantity_total_request+=$value['quantity_request'];
                         $quantity_total_request_kg+=$quantity_request_kg;
-                        $stock_available=isset($tow_variety_info[$value['variety_id']][$value['pack_size_id']])?number_format($tow_variety_info[$value['variety_id']][$value['pack_size_id']]['stock_available'],3,'.',''):'0.000';
+                        $stock_available_pkt=isset($tow_variety_info[$value['variety_id']][$value['pack_size_id']])?$tow_variety_info[$value['variety_id']][$value['pack_size_id']]['stock_available_pkt']:'0.000';
                         ?>
-                        <tr style="<?php if($quantity_request_kg>$stock_available){echo 'background-color: red;';}?>">
+                        <tr style="<?php if($value['quantity_request']>$stock_available_pkt){echo 'background-color: red;';}?>">
                             <td>
                                 <label><?php echo $value['crop_name']; ?></label>
                             </td>
@@ -136,10 +138,13 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                                 <label><?php echo $value['pack_size']; ?></label>
                             </td>
                             <td class="text-right">
-                                <label class="control-label stock_available" id="stock_available_id_<?php echo $index+1;?>">
-                                    <?php
-                                    echo $stock_available;
-                                    ?>
+                                <label class="control-label stock_available_pkt" id="stock_available_pkt_<?php echo $index+1;?>">
+                                    <?php echo $stock_available_pkt; ?>
+                                </label>
+                            </td>
+                            <td class="text-right">
+                                <label class="control-label stock_available" id="stock_available_<?php echo $index+1;?>">
+                                    <?php echo isset($tow_variety_info[$value['variety_id']][$value['pack_size_id']])?number_format($tow_variety_info[$value['variety_id']][$value['pack_size_id']]['stock_available'],3,'.',''):'0.000'; ?>
                                 </label>
                             </td>
                             <td class="text-right">
@@ -155,7 +160,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     </tbody>
                     <tfoot>
                     <tr>
-                        <th colspan="5" class="text-right"><?php echo $CI->lang->line('LABEL_TOTAL');?></th>
+                        <th colspan="6" class="text-right"><?php echo $CI->lang->line('LABEL_TOTAL');?></th>
                         <th class="text-right"><label class="control-label" id="quantity_total_request"> <?php echo $quantity_total_request;?></label></th>
                         <th class="text-right"><label class="control-label" id="quantity_total_request_kg"> <?php echo number_format($quantity_total_request_kg,3,'.','');?></label></th>
                     </tr>
@@ -176,11 +181,11 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         </div>
         <div class="row show-grid">
             <div class="col-xs-4">
-
+z
             </div>
             <div class="col-sm-4 col-xs-4">
-                <div class="action_button">
-                    <button id="button_action_save" type="button" class="btn" data-form="#save_form" data-message-confirm="Are You Sure Outlet to HQ Forward TO?">Outlet to HQ `TO` Forward</button>
+                <div class="action_button pull-right">
+                    <button id="button_action_save" type="button" class="btn" data-form="#save_form" data-message-confirm="Are You Sure Outlet to HQ Forward TO?">Save</button>
                 </div>
             </div>
             <div class="col-sm-4 col-xs-4">

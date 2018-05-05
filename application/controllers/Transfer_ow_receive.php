@@ -327,7 +327,7 @@ class Transfer_ow_receive extends Root_Controller
 
             $data['title']="Outlet to HQ Transfer Receive Edit :: ". Barcode_helper::get_barcode_transfer_outlet_to_warehouse($data['item']['id']);
             $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/add_edit",$data,true));
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/edit",$data,true));
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
@@ -455,7 +455,7 @@ class Transfer_ow_receive extends Root_Controller
 
         $this->db->trans_start();  //DB Transaction Handle START
 
-        /* variety relational table insert & update*/
+        /* variety relational table insert & update */
         $data=array();
         $data['date_updated'] = $time;
         $data['user_updated'] = $user->user_id;
@@ -812,6 +812,7 @@ class Transfer_ow_receive extends Root_Controller
             $this->db->select('warehouse.name warehouse_name');
             $this->db->where('transfer_ow_details.transfer_ow_id',$item_id);
             $this->db->where('transfer_ow_details.status',$this->config->item('system_status_active'));
+            $this->db->order_by('transfer_ow_details.id');
             $data['items']=$this->db->get()->result_array();
 
             $variety_ids=array();

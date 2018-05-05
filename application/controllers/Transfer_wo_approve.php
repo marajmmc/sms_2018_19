@@ -382,7 +382,7 @@ class Transfer_wo_approve extends Root_Controller
 
             $data['title']="HQ to Outlet Transfer Approve Edit :: ". Barcode_helper::get_barcode_transfer_warehouse_to_outlet($data['item']['id']);
             $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/add_edit",$data,true));
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/edit",$data,true));
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
@@ -530,7 +530,8 @@ class Transfer_wo_approve extends Root_Controller
                 $ajax['system_message']='Invalid variety information :: ( Variety ID: '.$item['variety_id'].' )';
                 $this->json_return($ajax);
             }
-            $quantity_approve_kg=(($pack_sizes[$item['pack_size_id']]['text']*$item['quantity_approve'])/1000);
+            $quantity_approve=$item['quantity_approve'];
+            $quantity_approve_kg=(($pack_sizes[$item['pack_size_id']]['text']*$quantity_approve)/1000);
             $quantity_total_approve_kg+=$quantity_approve_kg;
             if($quantity_approve_kg>$two_variety_info[$item['variety_id']][$item['pack_size_id']]['quantity_max_transferable'])
             {
@@ -539,11 +540,11 @@ class Transfer_wo_approve extends Root_Controller
                 $ajax['system_message']='Outlet maximum transferable quantity exceed. ( Exceed quantity is: '.$quantity_max_transferable_excess.' kg.)';
                 $this->json_return($ajax);
             }
-            if($quantity_approve_kg>$two_variety_info[$item['variety_id']][$item['pack_size_id']]['stock_available'])
+            if($quantity_approve>$two_variety_info[$item['variety_id']][$item['pack_size_id']]['stock_available_pkt'])
             {
-                $stock_available_excess=($quantity_approve_kg-$two_variety_info[$item['variety_id']][$item['pack_size_id']]['stock_available']);
+                $stock_available_excess=($quantity_approve-$two_variety_info[$item['variety_id']][$item['pack_size_id']]['stock_available_pkt']);
                 $ajax['status']=false;
-                $ajax['system_message']='Available quantity already exceed. ( Exceed quantity is: '.number_format($stock_available_excess,3,'.','').' kg.)';
+                $ajax['system_message']='Available quantity already exceed. ( Exceed quantity is: '.$stock_available_excess.' pkt.)';
                 $this->json_return($ajax);
             }
         }
@@ -999,7 +1000,8 @@ class Transfer_wo_approve extends Root_Controller
                 $this->json_return($ajax);
             }
 
-            $quantity_total_approve=(($item['pack_size']*$item['quantity_approve'])/1000);
+            $quantity_approve=$item['quantity_approve'];
+            $quantity_total_approve=(($item['pack_size']*$quantity_approve)/1000);
             $quantity_total_approve_kg+=$quantity_total_approve;
             if($quantity_total_approve>$two_variety_info[$item['variety_id']][$item['pack_size_id']]['quantity_max_transferable'])
             {
@@ -1008,11 +1010,11 @@ class Transfer_wo_approve extends Root_Controller
                 $ajax['system_message']='Outlet maximum transferable quantity already exist. ( Excess order quantity: '.$quantity_max_transferable_excess.' kg.)';
                 $this->json_return($ajax);
             }
-            if($quantity_total_approve>$two_variety_info[$item['variety_id']][$item['pack_size_id']]['stock_available'])
+            if($quantity_approve>$two_variety_info[$item['variety_id']][$item['pack_size_id']]['stock_available_pkt'])
             {
-                $stock_available_excess=($quantity_total_approve-$two_variety_info[$item['variety_id']][$item['pack_size_id']]['stock_available']);
+                $stock_available_excess=($quantity_approve-$two_variety_info[$item['variety_id']][$item['pack_size_id']]['stock_available_pkt']);
                 $ajax['status']=false;
-                $ajax['system_message']='Available quantity already exist. ( Excess approve quantity: '.$stock_available_excess.' kg.)';
+                $ajax['system_message']='Available quantity already exist. ( Excess approve quantity: '.$stock_available_excess.' pkt.)';
                 $this->json_return($ajax);
             }
         }

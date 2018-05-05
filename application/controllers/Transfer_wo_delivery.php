@@ -337,7 +337,7 @@ class Transfer_wo_delivery extends Root_Controller
 
             $data['title']="HQ to Outlet Edit Delivery :: ". Barcode_helper::get_barcode_transfer_warehouse_to_outlet($data['item']['id']);
             $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/add_edit",$data,true));
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/edit",$data,true));
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
@@ -515,16 +515,6 @@ class Transfer_wo_delivery extends Root_Controller
                 $this->json_return($ajax);
             }
         }
-
-
-
-       /*$results=Query_helper::get_info($this->config->item('table_login_setup_classification_pack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('id ASC'));
-       $pack_sizes=array();
-        foreach($results as $result)
-        {
-            $pack_sizes[$result['value']]['value']=$result['value'];
-            $pack_sizes[$result['value']]['text']=$result['text'];
-        }*/
 
         $this->db->trans_start();  //DB Transaction Handle START
 

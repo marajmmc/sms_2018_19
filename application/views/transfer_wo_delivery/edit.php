@@ -247,9 +247,11 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
                         <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_WAREHOUSE_NAME'); ?></th>
                         <th colspan="2" class="text-center" style="width: 300px;"><?php echo $CI->lang->line('LABEL_QUANTITY_APPROVE'); ?></th>
-                        <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_CURRENT_STOCK_KG'); ?></th>
+                        <th colspan="2" class="text-center" style="width: 150px;"><?php echo $CI->lang->line('LABEL_CURRENT_STOCK_KG'); ?></th>
                     </tr>
                     <tr>
+                        <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_PACK');?></th>
+                        <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_KG');?></th>
                         <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_PACK');?></th>
                         <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_KG');?></th>
                     </tr>
@@ -259,7 +261,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     $quantity_approve=0;
                     $quantity_total_approve=0;
                     $quantity_total_approve_kg=0;
-
+                    $stock_current_kg=0;
                     foreach($items as $index=>$value)
                     {
                         $quantity_approve=$value['quantity_approve'];
@@ -275,7 +277,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         {
                             $stock_current=0;
                         }
-                        $stock_current=(($stock_current*$value['pack_size'])/1000);
+                        $stock_current_kg=(($stock_current*$value['pack_size'])/1000);
                         ?>
                         <tr>
                             <td>
@@ -306,16 +308,19 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                                 </select>
                             </td>
                             <td class="text-right">
-                                <label class=" "><?php echo $quantity_approve; ?></label>
+                                <label class=" " id="quantity_approve_<?php echo $index+1;?>"><?php echo $quantity_approve; ?></label>
                             </td>
                             <td class="text-right">
                                 <label class=" " id="quantity_approve_kg_<?php echo $index+1;?>"> <?php echo number_format($quantity_approve_kg,3,'.','');?> </label>
                             </td>
                             <td class="text-right">
-                                <label class="control-label stock_current " id="stock_current_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>">
-                                    <?php
-                                    echo number_format($stock_current,3,'.','');
-                                    ?>
+                                <label class="control-label stock_current_pkt " id="stock_current_pkt_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>">
+                                    <?php echo number_format($stock_current,3,'.',''); ?>
+                                </label>
+                            </td>
+                            <td class="text-right">
+                                <label class="control-label stock_current_kg " id="stock_current_kg_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>">
+                                    <?php echo number_format($stock_current_kg,3,'.',''); ?>
                                 </label>
                             </td>
                         </tr>
@@ -466,27 +471,35 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         $(document).on("change",".warehouse_id",function()
         {
             var current_id=$(this).attr('data-current-id');
+            $('#quantity_approve_'+current_id).removeClass('quantity_exist_warning');
             $('#quantity_approve_kg_'+current_id).removeClass('quantity_exist_warning');
-            $('#stock_current_'+current_id).removeClass('quantity_exist_warning');
+            $('#stock_current_pkt_'+current_id).removeClass('quantity_exist_warning');
+            $('#stock_current_kg_'+current_id).removeClass('quantity_exist_warning');
 
-            $("#stock_current_"+current_id).html("");
+            $("#stock_current_pkt_"+current_id).html("");
+            $("#stock_current_kg_"+current_id).html("");
             var variety_id=$('#variety_id_'+current_id).val();
             var pack_size_id=$('#pack_size_id_'+current_id).val();
             var pack_size=$('#pack_size_id_'+current_id).attr('data-pack-size-name');
             var warehouse_id=$('#warehouse_id_'+current_id).val();
-            var quantity_approve_kg=parseFloat($('#quantity_approve_kg_'+current_id).html().replace(/,/g,''));
-            var current_stock=0;
+            var quantity_approve=parseFloat($('#quantity_approve_'+current_id).html().replace(/,/g,''));
+            var current_stock_pkt=0;
+            var current_stock_kg=0;
             if(variety_id>0 && pack_size_id>0 && warehouse_id>0)
             {
                 if(hq_variety_stocks[variety_id][pack_size_id][warehouse_id]!=undefined)
                 {
-                    current_stock=((hq_variety_stocks[variety_id][pack_size_id][warehouse_id]['current_stock']*pack_size)/1000);
+                    current_stock_pkt=hq_variety_stocks[variety_id][pack_size_id][warehouse_id]['current_stock'];
+                    current_stock_kg=((current_stock_pkt*pack_size)/1000);
                 }
-                $('#stock_current_'+current_id).html(number_format(current_stock,'3','.',''));
-                if(quantity_approve_kg>current_stock)
+                $('#stock_current_pkt_'+current_id).html(current_stock_pkt);
+                $('#stock_current_kg_'+current_id).html(number_format(current_stock_kg,'3','.',''));
+                if(quantity_approve>current_stock_pkt)
                 {
+                    $('#quantity_approve_'+current_id).addClass('quantity_exist_warning');
                     $('#quantity_approve_kg_'+current_id).addClass('quantity_exist_warning');
-                    $('#stock_current_'+current_id).addClass('quantity_exist_warning');
+                    $('#stock_current_pkt_'+current_id).addClass('quantity_exist_warning');
+                    $('#stock_current_kg_'+current_id).addClass('quantity_exist_warning');
                 }
             }
         });

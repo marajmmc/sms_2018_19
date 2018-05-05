@@ -56,6 +56,7 @@ class Stock_helper
         {
 
             $two_variety_info[$result['variety_id']][$result['pack_size_id']]['pack_size']=$result['pack_size'];
+            $two_variety_info[$result['variety_id']][$result['pack_size_id']]['stock_available_pkt']=$result['current_stock'];
             $two_variety_info[$result['variety_id']][$result['pack_size_id']]['stock_available']=(($result['current_stock']*$result['pack_size'])/1000);
             $two_variety_info[$result['variety_id']][$result['pack_size_id']]['quantity_min']=0;
             $two_variety_info[$result['variety_id']][$result['pack_size_id']]['quantity_max']=0;
@@ -75,6 +76,7 @@ class Stock_helper
         foreach($results as $result)
         {
             $two_variety_info[$result['variety_id']][$result['pack_size_id']]['stock_available']=($two_variety_info[$result['variety_id']][$result['pack_size_id']]['stock_available']-(($result['quantity_approve']*$two_variety_info[$result['variety_id']][$result['pack_size_id']]['pack_size'])/1000));
+            $two_variety_info[$result['variety_id']][$result['pack_size_id']]['stock_available_pkt']=($two_variety_info[$result['variety_id']][$result['pack_size_id']]['stock_available_pkt']-$result['quantity_approve']);
         }
 
         /* min max stock */
@@ -145,6 +147,7 @@ class Stock_helper
         {
             $tow_variety_info[$result['variety_id']][$result['pack_size_id']]['pack_size']=$result['pack_size'];
             $tow_variety_info[$result['variety_id']][$result['pack_size_id']]['stock_available']=(($result['current_stock']*$result['pack_size'])/1000);
+            $tow_variety_info[$result['variety_id']][$result['pack_size_id']]['stock_available_pkt']=$result['current_stock'];
         }
 
         /* calculate available stock */
@@ -160,6 +163,7 @@ class Stock_helper
         foreach($results as $result)
         {
             $tow_variety_info[$result['variety_id']][$result['pack_size_id']]['stock_available']=($tow_variety_info[$result['variety_id']][$result['pack_size_id']]['stock_available']-(($result['quantity_approve']*$tow_variety_info[$result['variety_id']][$result['pack_size_id']]['pack_size'])/1000));
+            $tow_variety_info[$result['variety_id']][$result['pack_size_id']]['stock_available_pkt']=($tow_variety_info[$result['variety_id']][$result['pack_size_id']]['stock_available']-$result['quantity_approve']);
         }
         return $tow_variety_info;
     }
