@@ -492,7 +492,7 @@ class Lc_receive extends Root_Controller
                 $ajax['system_message']='Lot number is empty.';
                 $this->json_return($ajax);
             }
-            if($data['item']['status_open_forward']!=$this->config->item('system_status_yes'))
+            /*if($data['item']['status_open_forward']!=$this->config->item('system_status_yes'))
             {
                 $ajax['status']=false;
                 $ajax['system_message']='You can not see this LC. LC not forwarded.';
@@ -515,7 +515,7 @@ class Lc_receive extends Root_Controller
                 $ajax['status']=false;
                 $ajax['system_message']='LC Already Completed.';
                 $this->json_return($ajax);
-            }
+            }*/
 
             $this->db->from($this->config->item('table_sms_lc_details').' lcd');
             $this->db->select('lcd.*');
@@ -581,7 +581,7 @@ class Lc_receive extends Root_Controller
                 $ajax['system_message']='You have to complete your (LC) edit receive.';
                 $this->json_return($ajax);
             }
-            if($result['status_receive']==$this->config->item('system_status_complete'))
+            /*if($result['status_receive']==$this->config->item('system_status_complete'))
             {
                 $ajax['status']=false;
                 $ajax['system_message']='You Can Not Modify LC Because LC Receive Completed.';
@@ -592,7 +592,7 @@ class Lc_receive extends Root_Controller
                 $ajax['status']=false;
                 $ajax['system_message']='LC Already Completed.';
                 $this->json_return($ajax);
-            }
+            }*/
         }
         else
         {
@@ -620,6 +620,12 @@ class Lc_receive extends Root_Controller
                 {
                     for($i=0; $i<sizeof($items[$result['id']]['number_box_start']); $i++)
                     {
+                        if(!$items[$result['id']]['number_lot'][$i] || !$items[$result['id']]['quantity_lot'][$i])
+                        {
+                            $ajax['status']=false;
+                            $ajax['system_message']='Lot number & quantity field is required.';
+                            $this->json_return($ajax);
+                        }
                         /* this code for variety, pack size & lot number wise search report.*/
                         $lot_numbers[$result['variety_id']][$result['pack_size_id']]['number_box_start'][]=$items[$result['id']]['number_box_start'][$i];
                         $lot_numbers[$result['variety_id']][$result['pack_size_id']]['number_box_end'][]=$items[$result['id']]['number_box_end'][$i];

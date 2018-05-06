@@ -167,16 +167,16 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                                             <tr>
                                                 <th style="text-align: right;">Box Number (Start)</th>
                                                 <th style="text-align: right;">Box Number (End)</th>
-                                                <th style="text-align: left;">Lot Number</th>
-                                                <th style="text-align: right;">Quantity</th>
+                                                <th style="text-align: left;">Lot Number <span style="color:#FF0000">*</span></th>
+                                                <th style="text-align: right;">Quantity <span style="color:#FF0000">*</span></th>
                                                 <th>&nbsp;</th>
                                             </tr>
                                             </thead>
                                             <tbody id="items_container_<?php echo $data['id']?>" class="items_container">
                                             <?php
-                                            if(isset($lot_numbers_encode[$data['variety_id']][$data['pack_size_id']]['number_box_start']) && sizeof($lot_numbers_encode[$data['variety_id']][$data['pack_size_id']]['number_box_start'])>0)
+                                            if(isset($lot_numbers_encode[$data['variety_id']][$data['pack_size_id']]['number_lot']) && sizeof($lot_numbers_encode[$data['variety_id']][$data['pack_size_id']]['number_lot'])>0)
                                             {
-                                                for($i=0; $i<sizeof($lot_numbers_encode[$data['variety_id']][$data['pack_size_id']]['number_box_start']); $i++)
+                                                for($i=0; $i<sizeof($lot_numbers_encode[$data['variety_id']][$data['pack_size_id']]['number_lot']); $i++)
                                                 {
                                                     ?>
                                                     <tr>
@@ -195,17 +195,20 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                                                                     $lot_numbers=explode(',',$item['lot_number']);
                                                                     foreach($lot_numbers as $lot_number)
                                                                     {
-                                                                        if($lot_number==$lot_numbers_encode[$data['variety_id']][$data['pack_size_id']]['number_lot'][$i])
+                                                                        if($lot_number)
                                                                         {
-                                                                            ?>
-                                                                            <option value="<?php echo $lot_number?>" selected="selected"><?php echo $lot_number?></option>
-                                                                        <?php
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            ?>
-                                                                            <option value="<?php echo $lot_number?>"><?php echo $lot_number?></option>
-                                                                        <?php
+                                                                            if($lot_number==$lot_numbers_encode[$data['variety_id']][$data['pack_size_id']]['number_lot'][$i])
+                                                                            {
+                                                                                ?>
+                                                                                <option value="<?php echo $lot_number?>" selected="selected"><?php echo $lot_number?></option>
+                                                                            <?php
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                ?>
+                                                                                <option value="<?php echo $lot_number?>"><?php echo $lot_number?></option>
+                                                                            <?php
+                                                                            }
                                                                         }
                                                                     }
                                                                 }
