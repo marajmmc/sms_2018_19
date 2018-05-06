@@ -555,9 +555,9 @@ class Lc_receive extends Root_Controller
     {
 
         $id = $this->input->post("id");
-        /*$user = User_helper::get_user();
+        $user = User_helper::get_user();
         $time=time();
-        //$item_head=$this->input->post('item');*/
+        /*//$item_head=$this->input->post('item');*/
         $items=$this->input->post('items');
         if($id>0)
         {
@@ -644,6 +644,9 @@ class Lc_receive extends Root_Controller
 
         $this->db->trans_start();  //DB Transaction Handle START
 
+        $item_head['date_updated_lot_number']=$time;
+        $item_head['user_updated_lot_number']=$user->user_id;
+        $this->db->set('revision_lot_number_count', 'revision_lot_number_count+1', FALSE);
         $item_head['lot_numbers_encode']=$lot_numbers_encode;
         Query_helper::update($this->config->item('table_sms_lc_open'),$item_head,array('id='.$id));
 

@@ -295,9 +295,12 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         $lot_numbers=explode(',',$item['lot_number']);
                         foreach($lot_numbers as $lot_number)
                         {
-                            ?>
-                            <option value="<?php echo $lot_number?>"><?php echo $lot_number?></option>
+                            if($lot_number)
+                            {
+                                ?>
+                                <option value="<?php echo $lot_number?>"><?php echo $lot_number?></option>
                             <?php
+                            }
                         }
                     }
                     ?>
