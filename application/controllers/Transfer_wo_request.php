@@ -107,7 +107,7 @@ class Transfer_wo_request extends Root_Controller
     private function system_get_items()
     {
         $this->db->from($this->config->item('table_sms_transfer_wo').' transfer_wo');
-        $this->db->select('transfer_wo.id, transfer_wo.date_request, transfer_wo.quantity_total_request_kg quantity_total_request');
+        $this->db->select('transfer_wo.id, transfer_wo.date_request, transfer_wo.quantity_total_request_kg quantity_total_request, transfer_wo.remarks_request');
         $this->db->join($this->config->item('table_login_csetup_cus_info').' outlet_info','outlet_info.customer_id=transfer_wo.outlet_id AND outlet_info.type="'.$this->config->item('system_customer_type_outlet_id').'"','INNER');
         $this->db->select('outlet_info.name outlet_name, outlet_info.customer_code outlet_code');
         $this->db->join($this->config->item('table_login_setup_location_districts').' districts','districts.id = outlet_info.district_id','INNER');
@@ -148,6 +148,7 @@ class Transfer_wo_request extends Root_Controller
             $item['outlet_name']=$result['outlet_name'];
             $item['date_request']=System_helper::display_date($result['date_request']);
             $item['outlet_code']=$result['outlet_code'];
+            $item['remarks_request']=$result['remarks_request'];
             $item['division_name']=$result['division_name'];
             $item['zone_name']=$result['zone_name'];
             $item['territory_name']=$result['territory_name'];
@@ -1066,6 +1067,7 @@ class Transfer_wo_request extends Root_Controller
         $data['outlet_name']= 1;
         $data['date_request']= 1;
         $data['outlet_code']= 1;
+        $data['remarks_request']= 1;
         $data['division_name']= 1;
         $data['zone_name']= 1;
         $data['territory_name']= 1;
