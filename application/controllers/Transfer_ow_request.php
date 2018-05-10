@@ -1031,6 +1031,7 @@ class Transfer_ow_request extends Root_Controller
         $data['outlet_name']= 1;
         $data['date_request']= 1;
         $data['outlet_code']= 1;
+        $data['remarks_request']= 1;
         $data['division_name']= 1;
         $data['zone_name']= 1;
         $data['territory_name']= 1;
