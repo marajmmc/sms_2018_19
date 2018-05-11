@@ -437,5 +437,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 $('#warehouse_id_destination_container').hide();
             }
         });
+        $(document).off('change','#warehouse_id_destination');
     });
 </script>
