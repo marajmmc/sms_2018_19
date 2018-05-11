@@ -340,6 +340,7 @@ $lang['LABEL_WAREHOUSE_4_PKT'] = '4th Floor(pkt)';
 $lang['LABEL_WAREHOUSE_4_KG'] = '4th Floor(kg)';
 $lang['LABEL_WAREHOUSE_5_PKT'] = 'Siddique Bazar(pkt)';
 $lang['LABEL_WAREHOUSE_5_KG'] = 'Siddique Bazar(kg)';
+$lang['LABEL_PACKET_ALL'] = 'Packets';
 
 // Office staff
 $lang['LABEL_NUMBER_OF_SUBORDINATE'] = 'Number Of Subordinate';

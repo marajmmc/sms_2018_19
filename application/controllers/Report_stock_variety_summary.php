@@ -126,6 +126,10 @@ class Report_stock_variety_summary extends Root_Controller
         {
             $this->db->where('stock_summary_variety.pack_size_id',$pack_size_id);
         }
+        elseif($pack_size_id ==-2)
+        {
+            $this->db->where('stock_summary_variety.pack_size_id >',0);
+        }
         $results=$this->db->get()->result_array();
         $varieties=array();
         foreach($results as $result)
