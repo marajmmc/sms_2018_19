@@ -823,7 +823,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 //console.log(two_variety_info[variety_id][pack_size_id])
                 $("#quantity_min_"+current_id).html(number_format(two_variety_info[variety_id][pack_size_id]['quantity_min'],3,'.',''));
                 $("#quantity_max_"+current_id).html(number_format(two_variety_info[variety_id][pack_size_id]['quantity_max'],3,'.',''));
-                $("#stock_available_pkt_"+current_id).html(number_format(two_variety_info[variety_id][pack_size_id]['stock_available_pkt'],3,'.',''));
+                $("#stock_available_pkt_"+current_id).html(two_variety_info[variety_id][pack_size_id]['stock_available_pkt']);
                 $("#stock_available_"+current_id).html(number_format(two_variety_info[variety_id][pack_size_id]['stock_available'],3,'.',''));
                 $("#stock_outlet_"+current_id).html(number_format(two_variety_info[variety_id][pack_size_id]['stock_outlet'],3,'.',''));
                 $("#quantity_max_transferable_"+current_id).html(number_format(two_variety_info[variety_id][pack_size_id]['quantity_max_transferable'],3,'.',''));

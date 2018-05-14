@@ -105,6 +105,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 { name: 'status', type: 'string'}
             ],
             id: 'id',
+            type: 'POST',
             url: url
         };
 
