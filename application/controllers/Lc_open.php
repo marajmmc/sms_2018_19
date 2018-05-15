@@ -874,7 +874,7 @@ class Lc_open extends Root_Controller
                 $ajax['system_message']='Invalid LC.';
                 $this->json_return($ajax);
             }
-            if($result['status_open_release']==$this->config->item('system_status_complete'))
+            if($result['status_release']==$this->config->item('system_status_complete'))
             {
                 $ajax['status']=false;
                 $ajax['system_message']='LC Already Released.';
