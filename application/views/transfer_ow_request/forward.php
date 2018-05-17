@@ -181,7 +181,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         </div>
         <div class="row show-grid">
             <div class="col-xs-4">
-z
+
             </div>
             <div class="col-sm-4 col-xs-4">
                 <div class="action_button pull-right">
