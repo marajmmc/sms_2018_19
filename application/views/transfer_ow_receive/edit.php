@@ -527,7 +527,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             {
                 if(hq_variety_stocks[variety_id][pack_size_id][warehouse_id]!=undefined)
                 {
-                    current_stock=hq_variety_stocks[variety_id][pack_size_id][warehouse_id]['current_stock'];
+                    current_stock=parseFloat(hq_variety_stocks[variety_id][pack_size_id][warehouse_id]['current_stock']);
                     current_stock_kg=((current_stock*pack_size)/1000);
                 }
                 stock_quantity_new=(current_stock+quantity_receive);

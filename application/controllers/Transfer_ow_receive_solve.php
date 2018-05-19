@@ -133,6 +133,7 @@ class Transfer_ow_receive_solve extends Root_Controller
             $this->db->join($this->config->item('table_sms_transfer_ow').' transfer_ow','transfer_ow.id=transfer_ow_receive_solves.transfer_ow_id','INNER');
             $this->db->select(
                 '
+                transfer_ow.id transfer_ow_id,
                 transfer_ow.date_request,
                 transfer_ow.date_approve,
                 transfer_ow.date_delivery,
@@ -208,7 +209,7 @@ class Transfer_ow_receive_solve extends Root_Controller
             }
             $data['stocks']=Stock_helper::get_variety_stock_outlet($data['item']['outlet_id'],$variety_ids);
 
-            $data['title']="HQ to Outlet Receive Approve Solve:: ". Barcode_helper::get_barcode_transfer_warehouse_to_outlet($data['item']['id']);
+            $data['title']="HQ to Outlet Receive Approve Solve:: ". Barcode_helper::get_barcode_transfer_warehouse_to_outlet($data['item']['transfer_ow_id']);
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/add_edit",$data,true));
             if($this->message)
@@ -304,7 +305,7 @@ class Transfer_ow_receive_solve extends Root_Controller
     {
         $user = User_helper::get_user();
         $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
-        //$data['id']= 1;
+        $data['id']= 1;
         $data['barcode']= 1;
         $data['outlet_name']= 1;
         $data['date_request']= 1;
