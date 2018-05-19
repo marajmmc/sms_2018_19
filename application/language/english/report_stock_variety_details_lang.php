@@ -1,5 +1,7 @@
 <?php
 $lang['LABEL_STOCK_OPENING']='Opening Stock';
+$lang['LABEL_OPENING_STOCK_PKT']='OS(pkt)';
+$lang['LABEL_OPENING_STOCK_KG']='OS(kg)';
 $lang['LABEL_IN_STOCK_IN']='In';
 $lang['LABEL_IN_STOCK_IN_PKT']='In(pkt)';
 $lang['LABEL_IN_STOCK_IN_KG']='In(kg)';
@@ -13,6 +15,8 @@ $lang['LABEL_IN_STOCK_DELIVERY_SHORT_PKT']='DS(pkt)';
 $lang['LABEL_IN_STOCK_DELIVERY_SHORT_KG']='DS(kg)';
 
 $lang['LABEL_STOCK_CURRENT']='End Stock';
+$lang['LABEL_END_STOCK_PKT']='End Stock(pkt)';
+$lang['LABEL_END_STOCK_KG']='End Stock(kg)';
 $lang['LABEL_CURRENT_STOCK_PKT']='CS(pkt)';
 $lang['LABEL_CURRENT_STOCK_CAL_PKT']='CS(pkt) Sum';
 $lang['LABEL_CURRENT_STOCK_KG']='CS(kg)';
