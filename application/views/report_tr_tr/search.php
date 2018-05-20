@@ -281,13 +281,13 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <div class="row show-grid">
                     <div class="col-xs-6">
                         <select id="date_type" name="report[date_type]" class="form-control">
-                            <option value="date_request">TO Date</option>
-                            <option value="date_updated_forward">TO Forward Time</option>
-                            <option value="date_approve">TO Approve Date</option>
-                            <option value="date_delivery">TO Delivery Date</option>
-                            <option value="date_updated_delivery_forward">TO Delivery Time</option>
-                            <option value="date_receive">TO Receive Date</option>
-                            <option value="date_updated_receive_approve">TO Receive Approval Time</option>
+                            <option value="date_request">TR Date</option>
+                            <option value="date_updated_forward">TR Forward Time</option>
+                            <option value="date_approve">TR Approve Date</option>
+                            <option value="date_delivery">TR Delivery Date</option>
+                            <option value="date_updated_delivery_forward">TR Delivery Time</option>
+                            <option value="date_receive">TR Receive Date</option>
+                            <option value="date_updated_receive_approve">TR Receive Approval Time</option>
                         </select>
                     </div>
                     <div class="col-xs-6">

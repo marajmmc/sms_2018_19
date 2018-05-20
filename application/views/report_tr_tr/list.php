@@ -25,7 +25,7 @@ if(isset($CI->permissions['action6']) && ($CI->permissions['action6']==1))
     $action_buttons[]=array
     (
         'label'=>'Preference',
-        'href'=>site_url($CI->controller_url.'/index/set_preference_variety')
+        'href'=>site_url($CI->controller_url.'/index/set_preference_transfer')
     );
 }
 $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
@@ -53,13 +53,13 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
     $(document).ready(function ()
     {
 
-        var url = "<?php echo site_url($CI->controller_url.'/index/get_items_variety');?>";
+        var url = "<?php echo site_url($CI->controller_url.'/index/get_items');?>";
         // prepare the data
         var source =
         {
             dataType: "json",
             dataFields: [
-                { name: 'transfer_wo_id', type: 'string' },
+                { name: 'transfer_ow_id', type: 'string' },
                 { name: 'division_name', type: 'string' },
                 { name: 'zone_name', type: 'string' },
                 { name: 'territory_name', type: 'string' },
@@ -91,12 +91,12 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         {
             var element = $(defaultHtml);
             element.css({'margin': '0px','width': '100%', 'height': '100%',padding:'5px'});
-            console.log(record.transfer_wo_id);
+            console.log(record.transfer_ow_id);
             if(column=='details_button')
             {
-                if(record.transfer_wo_id)
+                if(record.transfer_ow_id)
                 {
-                    element.html('<div><button class="btn btn-primary pop_up" data-action-link="<?php echo site_url($CI->controller_url.'/index/details'); ?>/'+record.transfer_wo_id+'">View Details</button></div>');
+                    element.html('<div><button class="btn btn-primary pop_up" data-action-link="<?php echo site_url($CI->controller_url.'/index/details'); ?>/'+record.transfer_ow_id+'">View Details</button></div>');
                 }
                 else
                 {

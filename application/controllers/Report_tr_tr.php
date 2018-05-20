@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Report_to_to extends Root_Controller
+class Report_tr_tr extends Root_Controller
 {
     public $message;
     public $permissions;
@@ -98,7 +98,7 @@ class Report_to_to extends Root_Controller
                 }
             }
 
-            $data['title']="TO Wise Report Search";
+            $data['title']="TR Wise Report Search";
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/search",$data,true));
             if($this->message)
@@ -138,7 +138,7 @@ class Report_to_to extends Root_Controller
             $data['options']=$reports;
 
             $data['system_preference_items']= $this->get_preference();
-            $data['title']="TO (Transfer Order) Report";
+            $data['title']="TR (Outlet to HQ Transfer Return) Report";
             $ajax['system_content'][]=array("id"=>"#system_report_container","html"=>$this->load->view($this->controller_url."/list",$data,true));
 
             $ajax['status']=true;
@@ -286,52 +286,53 @@ class Report_to_to extends Root_Controller
             $outlet_ids[]=$result['outlet_id'];
         }
 
-        $this->db->from($this->config->item('table_sms_transfer_wo').' transfer_wo');
-        $this->db->select('transfer_wo.*');
-        $this->db->order_by('transfer_wo.id');
-        $this->db->group_by('transfer_wo.id');
-        $this->db->where('transfer_wo.'.$date_type.'>='.$date_start.' and transfer_wo.'.$date_type.'<='.$date_end);
+        $this->db->from($this->config->item('table_sms_transfer_ow').' transfer_ow');
+        $this->db->select('transfer_ow.*');
+        $this->db->order_by('transfer_ow.id');
+        $this->db->group_by('transfer_ow.id');
+        $this->db->where('transfer_ow.'.$date_type.'>='.$date_start.' and transfer_ow.'.$date_type.'<='.$date_end);
         if($status_request)
         {
-            $this->db->where('transfer_wo.status_request',$status_request);
+            $this->db->where('transfer_ow.status_request',$status_request);
         }
         if($status_approve)
         {
-            $this->db->where('transfer_wo.status_approve',$status_approve);
+            $this->db->where('transfer_ow.status_approve',$status_approve);
         }
         if($status_delivery)
         {
-            $this->db->where('transfer_wo.status_delivery',$status_delivery);
+            $this->db->where('transfer_ow.status_delivery',$status_delivery);
         }
         if($status_receive)
         {
             if($status_receive==$this->config->item('system_status_forwarded'))
             {
-                $this->db->where('transfer_wo.status_receive_forward',$status_receive);
+                $this->db->where('transfer_ow.status_receive_forward',$status_receive);
             }
             else
             {
-                $this->db->where('transfer_wo.status_receive',$status_receive);
+                $this->db->where('transfer_ow.status_receive',$status_receive);
             }
         }
         if($status_receive_approve)
         {
-            $this->db->where('transfer_wo.status_receive_approve',$status_receive_approve);
+            $this->db->where('transfer_ow.status_receive_approve',$status_receive_approve);
         }
         if($status_system_delivery_receive)
         {
-            $this->db->where('transfer_wo.status_system_delivery_receive',$status_system_delivery_receive);
+            $this->db->where('transfer_ow.status_system_delivery_receive',$status_system_delivery_receive);
         }
 
         if(sizeof($outlet_ids)>0)
         {
-            $this->db->where_in('transfer_wo.outlet_id',$outlet_ids);
+            $this->db->where_in('transfer_ow.outlet_id',$outlet_ids);
         }
         if($outlet_id)
         {
-            $this->db->where('transfer_wo.outlet_id',$outlet_id);
+            $this->db->where('transfer_ow.outlet_id',$outlet_id);
         }
         $data['items']=$this->db->get()->result_array();
+        //echo $this->db->last_query();
         $all_to=array();
         foreach($data['items'] as $item)
         {
@@ -398,7 +399,7 @@ class Report_to_to extends Root_Controller
                 {
                     foreach($all_to[$result['outlet_id']] as $id=>$two)
                     {
-                        $row['transfer_wo_id']=$id;
+                        $row['transfer_ow_id']=$id;
                         $row['barcode']=Barcode_helper::get_barcode_transfer_warehouse_to_outlet($id);
                         $row['date_request']=System_helper::display_date($two['date_request']);
                         $row['quantity_total_request']=number_format($two['quantity_total_request_kg'],3,'.','');
@@ -467,9 +468,9 @@ class Report_to_to extends Root_Controller
             {
                 $item_id=$this->input->post('id');
             }
-            $this->db->from($this->config->item('table_sms_transfer_wo').' transfer_wo');
-            $this->db->select('transfer_wo.*');
-            $this->db->join($this->config->item('table_login_csetup_cus_info').' outlet_info','outlet_info.customer_id=transfer_wo.outlet_id AND outlet_info.type="'.$this->config->item('system_customer_type_outlet_id').'"','INNER');
+            $this->db->from($this->config->item('table_sms_transfer_ow').' transfer_ow');
+            $this->db->select('transfer_ow.*');
+            $this->db->join($this->config->item('table_login_csetup_cus_info').' outlet_info','outlet_info.customer_id=transfer_ow.outlet_id AND outlet_info.type="'.$this->config->item('system_customer_type_outlet_id').'"','INNER');
             $this->db->select('outlet_info.customer_id outlet_id, outlet_info.name outlet_name, outlet_info.customer_code outlet_code');
             $this->db->join($this->config->item('table_login_setup_location_districts').' districts','districts.id = outlet_info.district_id','INNER');
             $this->db->select('districts.id district_id, districts.name district_name');
@@ -479,9 +480,9 @@ class Report_to_to extends Root_Controller
             $this->db->select('zones.id zone_id, zones.name zone_name');
             $this->db->join($this->config->item('table_login_setup_location_divisions').' divisions','divisions.id = zones.division_id','INNER');
             $this->db->select('divisions.id division_id, divisions.name division_name');
-            $this->db->join($this->config->item('table_pos_setup_user_info').' pos_setup_user_info','pos_setup_user_info.user_id=transfer_wo.user_updated_receive_forward','LEFT');
+            $this->db->join($this->config->item('table_pos_setup_user_info').' pos_setup_user_info','pos_setup_user_info.user_id=transfer_ow.user_updated_receive_forward','LEFT');
             $this->db->select('pos_setup_user_info.name full_name_receive_forward');
-            $this->db->join($this->config->item('table_sms_transfer_wo_courier_details').' wo_courier_details','wo_courier_details.transfer_wo_id=transfer_wo.id','LEFT');
+            $this->db->join($this->config->item('table_sms_transfer_ow_courier_details').' wo_courier_details','wo_courier_details.transfer_ow_id=transfer_ow.id','LEFT');
             $this->db->select('
                                 wo_courier_details.date_delivery courier_date_delivery,
                                 wo_courier_details.date_challan,
@@ -494,10 +495,10 @@ class Report_to_to extends Root_Controller
                                 ');
             $this->db->join($this->config->item('table_login_basic_setup_couriers').' courier','courier.id=wo_courier_details.courier_id','LEFT');
             $this->db->select('courier.name courier_name');
-            $this->db->where('transfer_wo.status !=',$this->config->item('system_status_delete'));
-            $this->db->where('transfer_wo.id',$item_id);
+            $this->db->where('transfer_ow.status !=',$this->config->item('system_status_delete'));
+            $this->db->where('transfer_ow.id',$item_id);
             $this->db->where('outlet_info.revision',1);
-            $this->db->order_by('transfer_wo.id','DESC');
+            $this->db->order_by('transfer_ow.id','DESC');
             /*if($this->locations['division_id']>0)
             {
                 $this->db->where('divisions.id',$this->locations['division_id']);
@@ -534,27 +535,27 @@ class Report_to_to extends Root_Controller
             $user_ids[$data['item']['user_updated_receive_approve']]=$data['item']['user_updated_receive_approve'];
             $data['users']=System_helper::get_users_info($user_ids);
 
-            $this->db->from($this->config->item('table_sms_transfer_wo_details').' transfer_wo_details');
-            $this->db->select('transfer_wo_details.*');
-            $this->db->join($this->config->item('table_login_setup_classification_varieties').' v','v.id=transfer_wo_details.variety_id','INNER');
+            $this->db->from($this->config->item('table_sms_transfer_ow_details').' transfer_ow_details');
+            $this->db->select('transfer_ow_details.*');
+            $this->db->join($this->config->item('table_login_setup_classification_varieties').' v','v.id=transfer_ow_details.variety_id','INNER');
             $this->db->select('v.name variety_name');
             $this->db->join($this->config->item('table_login_setup_classification_crop_types').' crop_type','crop_type.id=v.crop_type_id','INNER');
             $this->db->select('crop_type.id crop_type_id, crop_type.name crop_type_name');
             $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id=crop_type.crop_id','INNER');
             $this->db->select('crop.id crop_id, crop.name crop_name');
-            $this->db->join($this->config->item('table_login_basic_setup_warehouse').' warehouse','warehouse.id=transfer_wo_details.warehouse_id','LEFT');
+            $this->db->join($this->config->item('table_login_basic_setup_warehouse').' warehouse','warehouse.id=transfer_ow_details.warehouse_id','LEFT');
             $this->db->select('warehouse.name warehouse_name');
-            $this->db->where('transfer_wo_details.transfer_wo_id',$item_id);
-            $this->db->where('transfer_wo_details.status',$this->config->item('system_status_active'));
-            $this->db->order_by('transfer_wo_details.id');
+            $this->db->where('transfer_ow_details.transfer_ow_id',$item_id);
+            $this->db->where('transfer_ow_details.status',$this->config->item('system_status_active'));
+            $this->db->order_by('transfer_ow_details.id');
             $data['items']=$this->db->get()->result_array();
 
             /*$result=Query_helper::get_info($this->config->item('table_login_setup_system_configures'),array('*'),array('purpose="'.$this->config->item('system_purpose_sms_quantity_order_max').'"', 'status ="'.$this->config->item('system_status_active').'"'),1);
             $data['quantity_to_maximum_kg']=$result['config_value'];
             $data['crops']=Query_helper::get_info($this->config->item('table_login_setup_classification_crops'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
-            $data['two_variety_info']=Stock_helper::transfer_wo_variety_stock_info($data['item']['outlet_id']);*/
+            $data['two_variety_info']=Stock_helper::transfer_ow_variety_stock_info($data['item']['outlet_id']);*/
 
-            $data['title']="HQ to Outlet Details Transfer Request :: ". Barcode_helper::get_barcode_transfer_warehouse_to_outlet($data['item']['id']);
+            $data['title']="Outlet to HQ Details Transfer Request :: ". Barcode_helper::get_barcode_transfer_warehouse_to_outlet($data['item']['id']);
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#popup_content","html"=>$this->load->view($this->controller_url."/details",$data,true));
             if($this->message)
@@ -714,43 +715,43 @@ class Report_to_to extends Root_Controller
             $outlet_ids[]=$result['outlet_id'];
         }
 
-        $this->db->from($this->config->item('table_sms_transfer_wo').' transfer_wo');
-        $this->db->select('transfer_wo.*');
-        $this->db->join($this->config->item('table_sms_transfer_wo_details').' transfer_wo_details','transfer_wo_details.transfer_wo_id=transfer_wo.id','INNER');
-        $this->db->select('transfer_wo_details.*');
-        $this->db->where('transfer_wo_details.status',$this->config->item('system_status_active'));
-        $this->db->where('transfer_wo.date_request>='.$date_start.' and transfer_wo.date_request<='.$date_end);
-        $this->db->order_by('transfer_wo.id');
-        $this->db->group_by('transfer_wo.id');
+        $this->db->from($this->config->item('table_sms_transfer_ow').' transfer_ow');
+        $this->db->select('transfer_ow.*');
+        $this->db->join($this->config->item('table_sms_transfer_ow_details').' transfer_ow_details','transfer_ow_details.transfer_ow_id=transfer_ow.id','INNER');
+        $this->db->select('transfer_ow_details.*');
+        $this->db->where('transfer_ow_details.status',$this->config->item('system_status_active'));
+        $this->db->where('transfer_ow.date_request>='.$date_start.' and transfer_ow.date_request<='.$date_end);
+        $this->db->order_by('transfer_ow.id');
+        $this->db->group_by('transfer_ow.id');
         if($crop_id)
         {
-            $this->db->where('transfer_wo_details.crop_id',$crop_id);
+            $this->db->where('transfer_ow_details.crop_id',$crop_id);
             if($crop_type_id)
             {
-                $this->db->where('transfer_wo_details.crop_type_id',$crop_type_id);
+                $this->db->where('transfer_ow_details.crop_type_id',$crop_type_id);
                 if($variety_id)
                 {
-                    $this->db->where('transfer_wo_details.variety_id',$variety_id);
+                    $this->db->where('transfer_ow_details.variety_id',$variety_id);
                 }
             }
         }
         if($pack_size_id)
         {
-            $this->db->where('transfer_wo_details.pack_size_id',$pack_size_id);
+            $this->db->where('transfer_ow_details.pack_size_id',$pack_size_id);
         }
         if(sizeof($outlet_ids)>0)
         {
-            $this->db->where_in('transfer_wo.outlet_id',$outlet_ids);
+            $this->db->where_in('transfer_ow.outlet_id',$outlet_ids);
         }
         if($outlet_id)
         {
-            $this->db->where('transfer_wo.outlet_id',$outlet_id);
+            $this->db->where('transfer_ow.outlet_id',$outlet_id);
         }
         $data['items']=$this->db->get()->result_array();
         $all_to=array();
         foreach($data['items'] as $item)
         {
-            $all_to[$item['outlet_id']][$item['transfer_wo_id']]=$item;
+            $all_to[$item['outlet_id']][$item['transfer_ow_id']]=$item;
         }
 
         $first_row=true;
@@ -813,7 +814,7 @@ class Report_to_to extends Root_Controller
                 {
                     foreach($all_to[$result['outlet_id']] as $id=>$two)
                     {
-                        $row['transfer_wo_id']=$id;
+                        $row['transfer_ow_id']=$id;
                         $row['barcode']=Barcode_helper::get_barcode_transfer_warehouse_to_outlet($id);
                         $row['date_request']=System_helper::display_date($two['date_request']);
                         $row['quantity_total_request']=number_format($two['quantity_total_request_kg'],3,'.','');
