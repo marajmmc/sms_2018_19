@@ -61,7 +61,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             dataFields: [
                 { name: 'pack_size', type: 'string' },
                 { name: 'type', type: 'string' },
-                { name: 'current_stock_pcs_kg', type: 'string' }
+                { name: 'quantity_total_pcs_kg', type: 'string' }
             ],
             id: 'id',
             type: 'POST',
@@ -131,7 +131,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     [
                         { text: '<?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?>', dataField: 'pack_size',pinned:true,width:'100',cellsalign: 'right',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['pack_size']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
                         { text: '<?php echo $CI->lang->line('LABEL_TYPE'); ?>', dataField: 'type',pinned:true,width:'200',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['type']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
-                        { text: '<?php echo $CI->lang->line('LABEL_CURRENT_STOCK_PCS_KG'); ?>', dataField: 'current_stock_pcs_kg',cellsalign: 'right',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['current_stock_pcs_kg']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer}
+                        { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL_PCS_KG'); ?>', dataField: 'quantity_total_pcs_kg',cellsalign: 'right',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['quantity_total_pcs_kg']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer}
                     ]
             });
     });

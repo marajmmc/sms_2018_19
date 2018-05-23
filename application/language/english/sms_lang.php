@@ -259,6 +259,7 @@ $lang['LABEL_QUANTITY_TOTAL_KG']='Total Quantity (Kg)';
 $lang['LABEL_QUANTITY_TOTAL_PACK_KG']='Total Quantity (Pkt/Kg)';
 $lang['LABEL_QUANTITY_TOTAL_PIECES']='Total Quantity (Pcs)';
 $lang['LABEL_QUANTITY_KG_PACK']='Quantity (Pkt/Kg)';
+$lang['LABEL_QUANTITY_TOTAL_PCS_KG']='Total (Pcs/Kg)';
 
 $lang['LABEL_QUANTITY_APPROVE'] = 'Approve Quantity';
 
