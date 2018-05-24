@@ -163,7 +163,7 @@ class Stock_helper
         foreach($results as $result)
         {
             $tow_variety_info[$result['variety_id']][$result['pack_size_id']]['stock_available']=($tow_variety_info[$result['variety_id']][$result['pack_size_id']]['stock_available']-(($result['quantity_approve']*$tow_variety_info[$result['variety_id']][$result['pack_size_id']]['pack_size'])/1000));
-            $tow_variety_info[$result['variety_id']][$result['pack_size_id']]['stock_available_pkt']=($tow_variety_info[$result['variety_id']][$result['pack_size_id']]['stock_available']-$result['quantity_approve']);
+            $tow_variety_info[$result['variety_id']][$result['pack_size_id']]['stock_available_pkt']=($tow_variety_info[$result['variety_id']][$result['pack_size_id']]['stock_available_pkt']-$result['quantity_approve']);
         }
         return $tow_variety_info;
     }
