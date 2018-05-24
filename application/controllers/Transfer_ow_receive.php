@@ -485,7 +485,7 @@ class Transfer_ow_receive extends Root_Controller
             $data['variety_id']=$item['variety_id'];
             $data['pack_size_id']=$item['pack_size_id'];
             $data['pack_size']=$old_items[$item['variety_id']][$item['pack_size_id']]['pack_size'];
-            $data['quantity']=$old_items[$item['variety_id']][$item['pack_size_id']]['quantity_approve'];
+            $data['quantity']=$item['quantity_receive'];
             $data['revision']=1;
             $data['date_created']=$time;
             $data['user_created']=$user->user_id;
