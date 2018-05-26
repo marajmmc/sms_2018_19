@@ -245,8 +245,8 @@ class Report_stock_raw_details extends Root_Controller
         {
             if($packing_item==$this->config->item('system_common_foil'))
             {
-                $result['variety_id']=0;
-                $result['pack_size_id']=0;
+                $result['variety_id']='';
+                $result['pack_size_id']='';
             }
             if(!(isset($stocks[$result['variety_id']][$result['pack_size_id']])))
             {
@@ -318,8 +318,8 @@ class Report_stock_raw_details extends Root_Controller
         {
             if($packing_item==$this->config->item('system_common_foil'))
             {
-                $result['variety_id']=0;
-                $result['pack_size_id']=0;
+                $result['variety_id']='';
+                $result['pack_size_id']='';
             }
 
             if(!(isset($stocks[$result['variety_id']][$result['pack_size_id']])))
@@ -385,8 +385,8 @@ class Report_stock_raw_details extends Root_Controller
         {
             if($packing_item==$this->config->item('system_common_foil'))
             {
-                $result['variety_id']=0;
-                $result['pack_size_id']=0;
+                $result['variety_id']='';
+                $result['pack_size_id']='';
             }
             $stocks[$result['variety_id']][$result['pack_size_id']]['opening_stock_pkt_pcs']-=$result['out_opening'];
             $stocks[$result['variety_id']][$result['pack_size_id']]['out_stock_damage_pkt_pcs']+=$result['out_stock_damage'];
@@ -515,7 +515,7 @@ class Report_stock_raw_details extends Root_Controller
         {
             $packing_item=$this->input->post('packing_item');
             $row[$key]=$info[$key];
-            if($packing_item==$this->config->item('system_master_foil') || $packing_item==$this->config->item('system_common_foil'))
+            if($packing_item==$this->config->item('system_master_foil'))
             {
                 if(substr($key,-7)=='pkt_pcs')
                 {
