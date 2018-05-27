@@ -71,12 +71,12 @@ class Report_stock_raw_details extends Root_Controller
         $data['crop_type_name']= 1;
         $data['variety_name']= 1;
         $data['pack_size']= 1;
-        $data['opening_stock_pkt_pcs']= 1;
-        $data['in_stock_in_pkt_pcs']= 1;
-        $data['in_stock_excess_pkt_pcs']= 1;
-        $data['in_purchase_pkt_pcs']= 1;
-        $data['out_stock_damage_pkt_pcs']= 1;
-        $data['end_stock_pkt_pcs']= 1;
+        $data['opening_stock_kg_pcs']= 1;
+        $data['in_stock_in_kg_pcs']= 1;
+        $data['in_stock_excess_kg_pcs']= 1;
+        $data['in_purchase_kg_pcs']= 1;
+        $data['out_stock_damage_kg_pcs']= 1;
+        $data['end_stock_kg_pcs']= 1;
         return $data;
     }
     private function get_preference()
@@ -260,13 +260,13 @@ class Report_stock_raw_details extends Root_Controller
                 }
 
             }
-            $stocks[$result['variety_id']][$result['pack_size_id']]['opening_stock_pkt_pcs']+=$result['in_opening'];
-            $stocks[$result['variety_id']][$result['pack_size_id']]['in_stock_in_pkt_pcs']+=$result['in_stock_in'];
-            $stocks[$result['variety_id']][$result['pack_size_id']]['in_stock_excess_pkt_pcs']+=$result['in_stock_excess'];
+            $stocks[$result['variety_id']][$result['pack_size_id']]['opening_stock_kg_pcs']+=$result['in_opening'];
+            $stocks[$result['variety_id']][$result['pack_size_id']]['in_stock_in_kg_pcs']+=$result['in_stock_in'];
+            $stocks[$result['variety_id']][$result['pack_size_id']]['in_stock_excess_kg_pcs']+=$result['in_stock_excess'];
 
-            $stocks[$result['variety_id']][$result['pack_size_id']]['end_stock_pkt_pcs']=$stocks[$result['variety_id']][$result['pack_size_id']]['opening_stock_pkt_pcs'];
-            $stocks[$result['variety_id']][$result['pack_size_id']]['end_stock_pkt_pcs']+=$stocks[$result['variety_id']][$result['pack_size_id']]['in_stock_in_pkt_pcs'];
-            $stocks[$result['variety_id']][$result['pack_size_id']]['end_stock_pkt_pcs']+=$stocks[$result['variety_id']][$result['pack_size_id']]['in_stock_excess_pkt_pcs'];
+            $stocks[$result['variety_id']][$result['pack_size_id']]['end_stock_kg_pcs']=$stocks[$result['variety_id']][$result['pack_size_id']]['opening_stock_kg_pcs'];
+            $stocks[$result['variety_id']][$result['pack_size_id']]['end_stock_kg_pcs']+=$stocks[$result['variety_id']][$result['pack_size_id']]['in_stock_in_kg_pcs'];
+            $stocks[$result['variety_id']][$result['pack_size_id']]['end_stock_kg_pcs']+=$stocks[$result['variety_id']][$result['pack_size_id']]['in_stock_excess_kg_pcs'];
         }
 
         //Purchase calculation
@@ -333,9 +333,9 @@ class Report_stock_raw_details extends Root_Controller
                     $stocks[$result['variety_id']][$result['pack_size_id']]=$this->initialize_row('','','',$pack_sizes[$result['pack_size_id']]);
                 }
             }
-            $stocks[$result['variety_id']][$result['pack_size_id']]['opening_stock_pkt_pcs']+=$result['in_opening'];
-            $stocks[$result['variety_id']][$result['pack_size_id']]['in_purchase_pkt_pcs']+=$result['in_purchase'];
-            $stocks[$result['variety_id']][$result['pack_size_id']]['end_stock_pkt_pcs']+=($result['in_opening']+$result['in_purchase']);
+            $stocks[$result['variety_id']][$result['pack_size_id']]['opening_stock_kg_pcs']+=$result['in_opening'];
+            $stocks[$result['variety_id']][$result['pack_size_id']]['in_purchase_kg_pcs']+=$result['in_purchase'];
+            $stocks[$result['variety_id']][$result['pack_size_id']]['end_stock_kg_pcs']+=($result['in_opening']+$result['in_purchase']);
         }
 
         //out stock damage
@@ -388,9 +388,9 @@ class Report_stock_raw_details extends Root_Controller
                 $result['variety_id']='';
                 $result['pack_size_id']='';
             }
-            $stocks[$result['variety_id']][$result['pack_size_id']]['opening_stock_pkt_pcs']-=$result['out_opening'];
-            $stocks[$result['variety_id']][$result['pack_size_id']]['out_stock_damage_pkt_pcs']+=$result['out_stock_damage'];
-            $stocks[$result['variety_id']][$result['pack_size_id']]['end_stock_pkt_pcs']-=($result['out_opening']+$result['out_stock_damage']);
+            $stocks[$result['variety_id']][$result['pack_size_id']]['opening_stock_kg_pcs']-=$result['out_opening'];
+            $stocks[$result['variety_id']][$result['pack_size_id']]['out_stock_damage_kg_pcs']+=$result['out_stock_damage'];
+            $stocks[$result['variety_id']][$result['pack_size_id']]['end_stock_kg_pcs']-=($result['out_opening']+$result['out_stock_damage']);
         }
 
         $type_total=$this->initialize_row('','','Total Type','');
@@ -476,7 +476,7 @@ class Report_stock_raw_details extends Root_Controller
                 {
                     foreach($item as $key=>$value)
                     {
-                        if(substr($key,-7)=='pkt_pcs')
+                        if(substr($key,-6)=='kg_pcs')
                         {
                             if($value==0)
                             {
@@ -541,7 +541,7 @@ class Report_stock_raw_details extends Root_Controller
         {
             $packing_item=$this->input->post('packing_item');
             $row[$key]=$info[$key];
-            if(substr($key,-7)=='pkt_pcs')
+            if(substr($key,-6)=='kg_pcs')
             {
                 if($info[$key]==0)
                 {
