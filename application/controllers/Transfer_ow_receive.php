@@ -816,9 +816,21 @@ class Transfer_ow_receive extends Root_Controller
             $data['items']=$this->db->get()->result_array();
 
             $variety_ids=array();
+            $status_empty_warehouse=false;
             foreach($data['items'] as $row)
             {
                 $variety_ids[$row['variety_id']]=$row['variety_id'];
+                if(!($row['warehouse_id']>0))
+                {
+                    $status_empty_warehouse=true;
+                }
+            }
+            /*warehouse empty checking*/
+            if($status_empty_warehouse)
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='At first edit outlet to HQ receive & provide required information';
+                $this->json_return($ajax);
             }
             $data['stocks']=Stock_helper::get_variety_stock($variety_ids);
 

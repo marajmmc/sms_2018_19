@@ -184,7 +184,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY_MIN'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
                         <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY_MAX'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
                         <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_STOCK_OUTLET'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
-                        <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY_TRANSFER_MAXIMUM'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
+                        <!--<th rowspan="2" class="text-right" style="width: 150px;"><?php /*echo $CI->lang->line('LABEL_QUANTITY_TRANSFER_MAXIMUM'); */?> (<?php /*echo $CI->lang->line('LABEL_KG');*/?>)</th>-->
                         <th colspan="2" class="text-center" style="width: 150px;"><?php echo $CI->lang->line('LABEL_STOCK_AVAILABLE'); ?></th>
                         <th colspan="2" class="text-center" style="width: 300px;"><?php echo $CI->lang->line('LABEL_QUANTITY_ORDER'); ?></th>
                         <th colspan="2" class="text-center" style="width: 300px;"><?php echo $CI->lang->line('LABEL_QUANTITY_APPROVE'); ?></th>
@@ -205,7 +205,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     $quantity_total_request_kg=0;
                     $quantity_total_approve=0;
                     $quantity_total_approve_kg=0;
-                    $class_quantity_exist_warning='';
+                    //$class_quantity_exist_warning='';
                     foreach($items as $index=>$value)
                     {
                         /*if($item['user_updated_approve'])
@@ -227,14 +227,14 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
                         $quantity_total_approve+=$quantity_approve;
                         $quantity_total_approve_kg+=$quantity_approve_kg;
-                        if($quantity_request_kg>$two_variety_info[$value['variety_id']][$value['pack_size_id']]['quantity_max_transferable'] || $quantity_request_kg>$two_variety_info[$value['variety_id']][$value['pack_size_id']]['stock_available'])
+                        /*if($quantity_request_kg>$two_variety_info[$value['variety_id']][$value['pack_size_id']]['quantity_max_transferable'] || $quantity_request_kg>$two_variety_info[$value['variety_id']][$value['pack_size_id']]['stock_available'])
                         {
                             $class_quantity_exist_warning='quantity_exist_warning';
                         }
                         else
                         {
                             $class_quantity_exist_warning='';
-                        }
+                        }*/
                         ?>
                         <tr>
                             <td>
@@ -270,22 +270,22 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                                     ?>
                                 </label>
                             </td>
-                            <td class="text-right">
+                            <!--<td class="text-right">
                                 <label class="control-label">
                                     <?php
-                                    echo isset($two_variety_info[$value['variety_id']][$value['pack_size_id']])?number_format($two_variety_info[$value['variety_id']][$value['pack_size_id']]['quantity_max_transferable'],3,'.',''):'0.000';
-                                    ?>
+/*                                    echo isset($two_variety_info[$value['variety_id']][$value['pack_size_id']])?number_format($two_variety_info[$value['variety_id']][$value['pack_size_id']]['quantity_max_transferable'],3,'.',''):'0.000';
+                                    */?>
                                 </label>
-                            </td>
+                            </td>-->
                             <td class="text-right">
-                                <label class="control-label <?php echo $class_quantity_exist_warning;?>" >
+                                <label class="control-label <?php //echo $class_quantity_exist_warning;?>" >
                                     <?php
                                     echo $two_variety_info[$value['variety_id']][$value['pack_size_id']]['stock_available_pkt'];
                                     ?>
                                 </label>
                             </td>
                             <td class="text-right">
-                                <label class="control-label <?php echo $class_quantity_exist_warning;?>" >
+                                <label class="control-label <?php //echo $class_quantity_exist_warning;?>" >
                                     <?php
                                     echo number_format($two_variety_info[$value['variety_id']][$value['pack_size_id']]['stock_available'],3,'.','');
                                     ?>
@@ -298,10 +298,10 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                                 <label id="quantity_request_kg_<?php echo $index+1;?>"> <?php echo number_format($quantity_request_kg,3,'.','');?> </label>
                             </td>
                             <td class="text-right">
-                                <label class=" <?php echo $class_quantity_exist_warning;?>"><?php echo $quantity_approve; ?></label>
+                                <label class=" <?php //echo $class_quantity_exist_warning;?>"><?php echo $quantity_approve; ?></label>
                             </td>
                             <td class="text-right">
-                                <label class=" <?php echo $class_quantity_exist_warning;?>" id="quantity_approve_kg_<?php echo $index+1;?>"> <?php echo number_format($quantity_approve_kg,3,'.','');?> </label>
+                                <label class=" <?php //echo $class_quantity_exist_warning;?>" id="quantity_approve_kg_<?php echo $index+1;?>"> <?php echo number_format($quantity_approve_kg,3,'.','');?> </label>
                             </td>
                         </tr>
                     <?php
@@ -310,7 +310,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     </tbody>
                     <tfoot>
                     <tr>
-                        <th colspan="10" class="text-right"><?php echo $CI->lang->line('LABEL_TOTAL');?></th>
+                        <th colspan="9" class="text-right"><?php echo $CI->lang->line('LABEL_TOTAL');?></th>
                         <th class="text-right"><label class="control-label" id="quantity_total_request"> <?php echo $quantity_total_request;?></label></th>
                         <th class="text-right"><label class="control-label" id="quantity_total_request_kg"> <?php echo number_format($quantity_total_request_kg,3,'.','');?></label></th>
                         <th class="text-right"><label class="control-label <?php if($quantity_total_approve_kg>$quantity_to_maximum_kg){echo 'quantity_exist_warning';}?>" id="quantity_total_approve"> <?php echo $quantity_total_approve;?></label></th>

@@ -122,7 +122,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY_MIN'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
                         <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY_MAX'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
                         <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_STOCK_OUTLET'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
-                        <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY_TRANSFER_MAXIMUM'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
+                        <!--<th rowspan="2" class="text-right" style="width: 150px;"><?php /*echo $CI->lang->line('LABEL_QUANTITY_TRANSFER_MAXIMUM'); */?> (<?php /*echo $CI->lang->line('LABEL_KG');*/?>)</th>-->
                         <th colspan="2" class="text-center" style="width: 150px;"><?php echo $CI->lang->line('LABEL_STOCK_AVAILABLE'); ?></th>
                         <th colspan="2" class="text-center" style="width: 300px;"><?php echo $CI->lang->line('LABEL_QUANTITY_ORDER'); ?></th>
                         <th colspan="2" class="text-center" style="width: 300px;"><?php echo $CI->lang->line('LABEL_QUANTITY_APPROVE'); ?></th>
@@ -211,13 +211,13 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                                         ?>
                                     </label>
                                 </td>
-                                <td class="text-right">
-                                    <label class="control-label quantity_max_transferable" id="quantity_max_transferable_<?php echo $index+1;?>">
+                                <!--<td class="text-right">
+                                    <label class="control-label quantity_max_transferable" id="quantity_max_transferable_<?php /*echo $index+1;*/?>">
                                         <?php
-                                        echo isset($two_variety_info[$value['variety_id']][$value['pack_size_id']])?number_format($two_variety_info[$value['variety_id']][$value['pack_size_id']]['quantity_max_transferable'],3,'.',''):'0.000';
-                                        ?>
+/*                                        echo isset($two_variety_info[$value['variety_id']][$value['pack_size_id']])?number_format($two_variety_info[$value['variety_id']][$value['pack_size_id']]['quantity_max_transferable'],3,'.',''):'0.000';
+                                        */?>
                                     </label>
-                                </td>
+                                </td>-->
                                 <td class="text-right">
                                     <label class="control-label stock_available_pkt <?php echo $class_quantity_exist_warning;?>" id="stock_available_pkt_<?php echo $index+1;?>">
                                         <?php
@@ -254,7 +254,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     </tbody>
                     <tfoot>
                     <tr>
-                        <th colspan="10" class="text-right"><?php echo $CI->lang->line('LABEL_TOTAL');?></th>
+                        <th colspan="9" class="text-right"><?php echo $CI->lang->line('LABEL_TOTAL');?></th>
                         <th class="text-right"><label class="control-label <?php if($quantity_total_request_kg>$quantity_to_maximum_kg){echo 'quantity_exist_warning';}?>" id="quantity_total_request"> <?php echo $quantity_total_request;?></label></th>
                         <th class="text-right"><label class="control-label <?php if($quantity_total_request_kg>$quantity_to_maximum_kg){echo 'quantity_exist_warning';}?>" id="quantity_total_request_kg"> <?php echo number_format($quantity_total_request_kg,3,'.','');?></label></th>
                         <th class="text-right"><label class="control-label <?php if($quantity_total_approve_kg>$quantity_to_maximum_kg){echo 'quantity_exist_warning';}?>" id="quantity_total_approve"> <?php echo $quantity_total_approve;?></label></th>
@@ -319,9 +319,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             <td class="text-right">
                 <label class="control-label stock_outlet"> </label>
             </td>
-            <td class="text-right">
+            <!--<td class="text-right">
                 <label class="control-label quantity_max_transferable"> </label>
-            </td>
+            </td>-->
             <td class="text-right">
                 <label class="control-label stock_available_pkt"> </label>
             </td>
@@ -553,8 +553,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             $(content_id+' .stock_outlet').attr('id','stock_outlet_'+current_id);
             $(content_id+' .stock_outlet').attr('data-current-id',current_id);
 
-            $(content_id+' .quantity_max_transferable').attr('id','quantity_max_transferable_'+current_id);
-            $(content_id+' .quantity_max_transferable').attr('data-current-id',current_id);
+            /*$(content_id+' .quantity_max_transferable').attr('id','quantity_max_transferable_'+current_id);
+            $(content_id+' .quantity_max_transferable').attr('data-current-id',current_id);*/
 
             $(content_id+' .stock_available_pkt').attr('id','stock_available_pkt_'+current_id);
             $(content_id+' .stock_available_pkt').attr('data-current-id',current_id);
@@ -602,7 +602,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             $("#quantity_min_"+current_id).html('');
             $("#quantity_max_"+current_id).html('');
             $("#stock_outlet_"+current_id).html('');
-            $("#quantity_max_transferable_"+current_id).html('');
+            //$("#quantity_max_transferable_"+current_id).html('');
             $("#stock_available_pkt_"+current_id).html('');
             $("#stock_available_kg_"+current_id).html('');
 
@@ -634,7 +634,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             $("#quantity_min_"+current_id).html('');
             $("#quantity_max_"+current_id).html('');
             $("#stock_outlet_"+current_id).html('');
-            $("#quantity_max_transferable_"+current_id).html('');
+            //$("#quantity_max_transferable_"+current_id).html('');
             $("#stock_available_pkt_"+current_id).html('');
             $("#stock_available_kg_"+current_id).html('');
 
@@ -657,7 +657,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             $("#quantity_min_"+current_id).html('');
             $("#quantity_max_"+current_id).html('');
             $("#stock_outlet_"+current_id).html('');
-            $("#quantity_max_transferable_"+current_id).html('');
+            //$("#quantity_max_transferable_"+current_id).html('');
             $("#stock_available_pkt_"+current_id).html('');
             $("#stock_available_kg_"+current_id).html('');
 
@@ -701,7 +701,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             $("#quantity_min_"+current_id).html('');
             $("#quantity_max_"+current_id).html('');
             $("#stock_outlet_"+current_id).html('');
-            $("#quantity_max_transferable_"+current_id).html('');
+            //$("#quantity_max_transferable_"+current_id).html('');
             $("#stock_available_pkt_"+current_id).html('');
             $("#stock_available_kg_"+current_id).html('');
             $("#quantity_request_"+current_id).html('');
@@ -719,7 +719,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 $("#stock_available_pkt_"+current_id).html(two_variety_info[variety_id][pack_size_id]['stock_available_pkt']);
                 $("#stock_available_kg_"+current_id).html(number_format(two_variety_info[variety_id][pack_size_id]['stock_available'],3,'.',''));
                 $("#stock_outlet_"+current_id).html(number_format(two_variety_info[variety_id][pack_size_id]['stock_outlet'],3,'.',''));
-                $("#quantity_max_transferable_"+current_id).html(number_format(two_variety_info[variety_id][pack_size_id]['quantity_max_transferable'],3,'.',''));
+                //$("#quantity_max_transferable_"+current_id).html(number_format(two_variety_info[variety_id][pack_size_id]['quantity_max_transferable'],3,'.',''));
                 $("#quantity_approve_"+current_id).show();
             }
             calculate_total();
@@ -747,7 +747,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             {
                 quantity_approve_kg=parseFloat((pack_size*quantity_approve)/1000);
             }
-            var quantity_max_transferable=parseFloat($('#quantity_max_transferable_'+current_id).html().replace(/,/g,''));
+            /*var quantity_max_transferable=parseFloat($('#quantity_max_transferable_'+current_id).html().replace(/,/g,''));
             if(isNaN(quantity_max_transferable))
             {
                 quantity_max_transferable=0;
@@ -760,7 +760,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 $(this).addClass('quantity_exist_warning');
                 $("#quantity_approve_kg_"+current_id).addClass('quantity_exist_warning');
                 $("#quantity_max_transferable_"+current_id).addClass('quantity_exist_warning');
-            }
+            }*/
 
             $("#stock_available_kg_"+current_id).removeClass('quantity_exist_warning');
             $("#stock_available_pkt_"+current_id).removeClass('quantity_exist_warning');

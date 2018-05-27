@@ -113,7 +113,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY_MIN'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
                         <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY_MAX'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
                         <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_STOCK_OUTLET'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
-                        <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY_TRANSFER_MAXIMUM'); ?> (<?php echo $CI->lang->line('LABEL_KG');?>)</th>
+                        <!--<th rowspan="2" class="text-right" style="width: 150px;"><?php /*echo $CI->lang->line('LABEL_QUANTITY_TRANSFER_MAXIMUM'); */?> (<?php /*echo $CI->lang->line('LABEL_KG');*/?>)</th>-->
                         <?php
                         if(!($CI->locations['territory_id']>0))
                         {
@@ -182,13 +182,13 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                                     ?>
                                 </label>
                             </td>
-                            <td class="text-right">
-                                <label class="control-label quantity_max_transferable" id="quantity_max_transferable_<?php echo $index+1;?>">
+                            <!--<td class="text-right">
+                                <label class="control-label quantity_max_transferable" id="quantity_max_transferable_<?php /*echo $index+1;*/?>">
                                     <?php
-                                    echo isset($two_variety_info[$value['variety_id']][$value['pack_size_id']])?number_format($two_variety_info[$value['variety_id']][$value['pack_size_id']]['quantity_max_transferable'],3,'.',''):'0.000';
-                                    ?>
+/*                                    echo isset($two_variety_info[$value['variety_id']][$value['pack_size_id']])?number_format($two_variety_info[$value['variety_id']][$value['pack_size_id']]['quantity_max_transferable'],3,'.',''):'0.000';
+                                    */?>
                                 </label>
-                            </td>
+                            </td>-->
                             <?php
                             if(!($CI->locations['territory_id']>0))
                             {
@@ -222,10 +222,10 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <tfoot>
                     <tr>
                         <?php
-                        $quantity_total_colspan=9;
+                        $quantity_total_colspan=7;
                         if(!($CI->locations['territory_id']>0))
                         {
-                            $quantity_total_colspan+=1;
+                            $quantity_total_colspan+=2;
                         }
                         ?>
                         <th colspan="<?php echo $quantity_total_colspan?>" class="text-right"><?php echo $CI->lang->line('LABEL_TOTAL');?></th>

@@ -22,6 +22,7 @@ $config['system_status_rejected']='Rejected';
 
 $config['system_base_url_profile_picture']='http://50.116.76.180/login/';
 $config['system_base_url_picture_setup_print']='http://localhost/sms_2018_19/';
+$config['system_base_url_picture_transfer']='http://localhost/sms_2018_19/';
 
 //Stock
 $config['system_purpose_variety_stock_in']='Stock-In';

@@ -916,6 +916,29 @@ class Transfer_wo_delivery extends Root_Controller
                 $this->json_return($ajax);
             }
 
+            /*date validation*/
+            if(!strtotime(System_helper::display_date($data['item']['courier_date_delivery'])))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='At first edit HQ to outlet delivery & provide required information';
+                $this->json_return($ajax);
+            }
+            if(!($data['item']['courier_date_delivery']>=System_helper::get_time(System_helper::display_date($data['item']['date_approve']))))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='At first edit HQ to outlet delivery & provide required information';
+                $this->json_return($ajax);
+            }
+            if(strtotime(System_helper::display_date($data['item']['date_challan'])))
+            {
+                if(!(System_helper::get_time($data['item']['date_challan'])>=System_helper::get_time($data['item']['courier_date_delivery'])))
+                {
+                    $ajax['status']=false;
+                    $ajax['system_message']='At first edit HQ to outlet delivery & provide required information ';
+                    $this->json_return($ajax);
+                }
+            }
+
             $user_ids=array();
             $user_ids[$data['item']['user_created_request']]=$data['item']['user_created_request'];
             $user_ids[$data['item']['user_updated_request']]=$data['item']['user_updated_request'];
@@ -941,9 +964,21 @@ class Transfer_wo_delivery extends Root_Controller
             $data['items']=$this->db->get()->result_array();
 
             $variety_ids=array();
+            $status_empty_warehouse=false;
             foreach($data['items'] as $row)
             {
                 $variety_ids[$row['variety_id']]=$row['variety_id'];
+                if(!($row['warehouse_id']>0))
+                {
+                    $status_empty_warehouse=true;
+                }
+            }
+            /*warehouse empty checking*/
+            if($status_empty_warehouse)
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='At first edit HQ to outlet delivery & provide required information';
+                $this->json_return($ajax);
             }
             $data['stocks']=Stock_helper::get_variety_stock($variety_ids);
 

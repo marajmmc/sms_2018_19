@@ -305,6 +305,17 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <textarea name="item[remarks]" id="remarks" class="form-control"><?php echo $item['remarks'];?></textarea>
             </div>
         </div>
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right">Attachment <small class="text-success">(Only JPG|PNG allowed)</small></label>
+            </div>
+            <div class="col-xs-4">
+                <input type="file" class="browse_button" data-preview-container="#image_name" data-preview-width="300" name="image_name">
+            </div>
+            <div class="col-xs-4" id="image_name">
+                <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_picture_transfer').$item['image_location']; ?>" alt="">
+            </div>
+        </div>
     </div>
 </form>
 <style>

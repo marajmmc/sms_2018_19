@@ -263,6 +263,28 @@ class Transfer_wo_receive_solve extends Root_Controller
             $this->json_return($ajax);
         }
 
+        $path='images/transfer/wo_receive_solve/'.$id;
+        $dir=(FCPATH).$path;
+        if(!is_dir($dir))
+        {
+            mkdir($dir, 0777);
+        }
+        $uploaded_images = System_helper::upload_file($path);
+        if(array_key_exists('image_name',$uploaded_images))
+        {
+            if($uploaded_images['image_name']['status'])
+            {
+                $item['image_name']=$uploaded_images['image_name']['info']['file_name'];
+                $item['image_location']=$path.'/'.$uploaded_images['image_name']['info']['file_name'];
+            }
+            else
+            {
+                $ajax['status']=false;
+                $ajax['system_message']=$uploaded_images['image_name']['message'];
+                $this->json_return($ajax);
+            }
+        }
+
         $this->db->trans_start();  //DB Transaction Handle START
 
         $item['date_updated']=$time;
