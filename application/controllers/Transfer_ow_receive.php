@@ -1142,7 +1142,6 @@ class Transfer_ow_receive extends Root_Controller
         $data['status_receive_forward']= 1;
         $data['status_receive_approve']= 1;
         $data['status_system_delivery_receive']= 1;
-        $data['status']= 1;
         if($result)
         {
             if($result['preferences']!=null)
