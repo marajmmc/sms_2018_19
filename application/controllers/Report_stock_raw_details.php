@@ -480,11 +480,23 @@ class Report_stock_raw_details extends Root_Controller
                         {
                             $item[$key]=number_format($value,3,'.','');
                         }
+                        if(!(($key=='crop_name')||($key=='crop_type_name')||($key=='variety_name')||($key=='pack_size')))
+                        {
+                            $grand_total[$key]+=$value;
+                        }
                     }
 
                 }
             }
+            foreach($grand_total as $key=>$value)
+            {
+                if(!(($key=='crop_name')||($key=='crop_type_name')||($key=='variety_name')||($key=='pack_size')))
+                {
+                    $grand_total[$key]=number_format($value,3,'.','');
+                }
+            }
             $items[]=$item;
+            $items[]=$grand_total;
         }
         if($packing_item!=$this->config->item('system_common_foil'))
         {
