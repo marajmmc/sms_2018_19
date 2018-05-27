@@ -273,7 +273,7 @@ class Report_to_to extends Root_Controller
             }
         }
         $data['location']=$this->db->get()->result_array();
-
+        //echo $this->db->last_query();
         $outlet_ids=array();
         foreach($data['location'] as $result)
         {

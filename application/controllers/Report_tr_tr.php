@@ -226,6 +226,8 @@ class Report_tr_tr extends Root_Controller
         $status_receive_approve=$this->input->post('status_receive_approve');
         $status_system_delivery_receive=$this->input->post('status_system_delivery_receive');
 
+        $items=array();
+
         $this->db->from($this->config->item('table_login_csetup_cus_info').' outlet_info');
         $this->db->select('outlet_info.customer_id outlet_id, outlet_info.name outlet_name, outlet_info.customer_code outlet_code');
         $this->db->join($this->config->item('table_login_setup_location_districts').' districts','districts.id = outlet_info.district_id','INNER');
@@ -277,6 +279,7 @@ class Report_tr_tr extends Root_Controller
         }
 
         $data['location']=$this->db->get()->result_array();
+        //echo $this->db->last_query();
 
         $outlet_ids=array();
         foreach($data['location'] as $result)
@@ -390,7 +393,6 @@ class Report_tr_tr extends Root_Controller
                 $prev_district_name=$result['district_name'];
                 $first_row=false;
             }
-            $items=array();
             $items[]=$this->get_row_location($result);
             if(isset($all_to[$result['outlet_id']]))
             {
