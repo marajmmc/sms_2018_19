@@ -533,13 +533,13 @@ class Transfer_wo_request extends Root_Controller
 
                 $quantity_total_request=(($pack_sizes[$item['pack_size_id']]['text']*$item['quantity_request'])/1000);
                 $quantity_total_request_kg+=$quantity_total_request;
-                if($quantity_total_request>$two_variety_info[$item['variety_id']][$item['pack_size_id']]['quantity_max_transferable'])
+                /*if($quantity_total_request>$two_variety_info[$item['variety_id']][$item['pack_size_id']]['quantity_max_transferable'])
                 {
                     $quantity_max_transferable_excess=($quantity_total_request-$two_variety_info[$item['variety_id']][$item['pack_size_id']]['quantity_max_transferable']);
                     $ajax['status']=false;
                     $ajax['system_message']='Outlet maximum transferable quantity already exceed. ( Exceed order quantity: '.$quantity_max_transferable_excess.' kg.)';
                     $this->json_return($ajax);
-                }
+                }*/
             }
         }
 

@@ -114,6 +114,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         {
                             ?>
                             <label class="control-label"><?php echo $CI->locations['division_name'];?></label>
+                            <input type="hidden" id="division_id" name="report[division_id]" value="<?php echo $this->locations['division_id']?>" class="form-control" />
                         <?php
                         }
                         else
@@ -144,6 +145,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         {
                             ?>
                             <label class="control-label"><?php echo $CI->locations['zone_name'];?></label>
+                            <input type="hidden" id="zone_id" name="report[zone_id]" value="<?php echo $this->locations['zone_id']?>" class="form-control" />
                         <?php
                         }
                         else
@@ -154,7 +156,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                                 <?php
                                 foreach($zones as $zone)
                                 {?>
-                                    <option value="<?php echo $zone['value']?>" <?php if($zone['value']==$item['zone_id']){ echo "selected";}?>><?php echo $zone['text'];?></option>
+                                    <option value="<?php echo $zone['value']?>"><?php echo $zone['text'];?></option>
                                 <?php
                                 }
                                 ?>
@@ -174,6 +176,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         {
                             ?>
                             <label class="control-label"><?php echo $CI->locations['territory_name'];?></label>
+                            <input type="hidden" id="territory_id" name="report[territory_id]" value="<?php echo $this->locations['territory_id']?>" class="form-control" />
                         <?php
                         }
                         else
@@ -184,7 +187,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                                 <?php
                                 foreach($territories as $territory)
                                 {?>
-                                    <option value="<?php echo $territory['value']?>" <?php if($territory['value']==$item['territory_id']){ echo "selected";}?>><?php echo $territory['text'];?></option>
+                                    <option value="<?php echo $territory['value']?>"><?php echo $territory['text'];?></option>
                                 <?php
                                 }
                                 ?>
@@ -204,6 +207,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         {
                             ?>
                             <label class="control-label"><?php echo $CI->locations['district_name'];?></label>
+                            <input type="hidden" id="district_id" name="report[district_id]" value="<?php echo $this->locations['district_id']?>" class="form-control" />
                         <?php
                         }
                         else
@@ -214,7 +218,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                                 <?php
                                 foreach($districts as $district)
                                 {?>
-                                    <option value="<?php echo $district['value']?>" <?php if($district['value']==$item['district_id']){ echo "selected";}?>><?php echo $district['text'];?></option>
+                                    <option value="<?php echo $district['value']?>" ><?php echo $district['text'];?></option>
                                 <?php
                                 }
                                 ?>
@@ -234,7 +238,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                             <?php
                             foreach($outlets as $outlet)
                             {?>
-                                <option value="<?php echo $outlet['value']?>" <?php if($outlet['value']==$item['outlet_id']){ echo "selected";}?>><?php echo $outlet['text'];?></option>
+                                <option value="<?php echo $outlet['value']?>"><?php echo $outlet['text'];?></option>
                             <?php
                             }
                             ?>

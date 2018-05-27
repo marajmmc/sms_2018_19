@@ -533,13 +533,13 @@ class Transfer_wo_approve extends Root_Controller
             $quantity_approve=$item['quantity_approve'];
             $quantity_approve_kg=(($pack_sizes[$item['pack_size_id']]['text']*$quantity_approve)/1000);
             $quantity_total_approve_kg+=$quantity_approve_kg;
-            if($quantity_approve_kg>$two_variety_info[$item['variety_id']][$item['pack_size_id']]['quantity_max_transferable'])
+            /*if($quantity_approve_kg>$two_variety_info[$item['variety_id']][$item['pack_size_id']]['quantity_max_transferable'])
             {
                 $quantity_max_transferable_excess=($quantity_approve_kg-$two_variety_info[$item['variety_id']][$item['pack_size_id']]['quantity_max_transferable']);
                 $ajax['status']=false;
                 $ajax['system_message']='Outlet maximum transferable quantity exceed. ( Exceed quantity is: '.$quantity_max_transferable_excess.' kg.)';
                 $this->json_return($ajax);
-            }
+            }*/
             if($quantity_approve>$two_variety_info[$item['variety_id']][$item['pack_size_id']]['stock_available_pkt'])
             {
                 $stock_available_excess=($quantity_approve-$two_variety_info[$item['variety_id']][$item['pack_size_id']]['stock_available_pkt']);
@@ -1003,13 +1003,13 @@ class Transfer_wo_approve extends Root_Controller
             $quantity_approve=$item['quantity_approve'];
             $quantity_total_approve=(($item['pack_size']*$quantity_approve)/1000);
             $quantity_total_approve_kg+=$quantity_total_approve;
-            if($quantity_total_approve>$two_variety_info[$item['variety_id']][$item['pack_size_id']]['quantity_max_transferable'])
+            /*if($quantity_total_approve>$two_variety_info[$item['variety_id']][$item['pack_size_id']]['quantity_max_transferable'])
             {
                 $quantity_max_transferable_excess=($quantity_total_approve-$two_variety_info[$item['variety_id']][$item['pack_size_id']]['quantity_max_transferable']);
                 $ajax['status']=false;
                 $ajax['system_message']='Outlet maximum transferable quantity already exist. ( Excess order quantity: '.$quantity_max_transferable_excess.' kg.)';
                 $this->json_return($ajax);
-            }
+            }*/
             if($quantity_approve>$two_variety_info[$item['variety_id']][$item['pack_size_id']]['stock_available_pkt'])
             {
                 $stock_available_excess=($quantity_approve-$two_variety_info[$item['variety_id']][$item['pack_size_id']]['stock_available_pkt']);

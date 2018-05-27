@@ -226,8 +226,6 @@ class Report_tr_tr extends Root_Controller
         $status_receive_approve=$this->input->post('status_receive_approve');
         $status_system_delivery_receive=$this->input->post('status_system_delivery_receive');
 
-        $items=array();
-
         $this->db->from($this->config->item('table_login_csetup_cus_info').' outlet_info');
         $this->db->select('outlet_info.customer_id outlet_id, outlet_info.name outlet_name, outlet_info.customer_code outlet_code');
         $this->db->join($this->config->item('table_login_setup_location_districts').' districts','districts.id = outlet_info.district_id','INNER');
@@ -241,7 +239,7 @@ class Report_tr_tr extends Root_Controller
         $this->db->order_by('divisions.id, zones.id, territories.id, districts.id, outlet_info.customer_id');
         $this->db->where('outlet_info.revision',1);
 
-        if($this->locations['division_id']>0)
+        /*if($this->locations['division_id']>0)
         {
             $this->db->where('divisions.id',$this->locations['division_id']);
             if($this->locations['zone_id']>0)
@@ -256,26 +254,26 @@ class Report_tr_tr extends Root_Controller
                     }
                 }
             }
-        }
+        }*/
         if($division_id)
         {
             $this->db->where('divisions.id',$division_id);
-        }
-        if($zone_id)
-        {
-            $this->db->where('zones.id',$zone_id);
-        }
-        if($territory_id)
-        {
-            $this->db->where('territories.id',$territory_id);
-        }
-        if($district_id)
-        {
-            $this->db->where('districts.id',$district_id);
-        }
-        if($outlet_id)
-        {
-            $this->db->where('outlet_info.customer_id',$outlet_id);
+            if($zone_id)
+            {
+                $this->db->where('zones.id',$zone_id);
+                if($territory_id)
+                {
+                    $this->db->where('territories.id',$territory_id);
+                    if($district_id)
+                    {
+                        $this->db->where('districts.id',$district_id);
+                        if($outlet_id)
+                        {
+                            $this->db->where('outlet_info.customer_id',$outlet_id);
+                        }
+                    }
+                }
+            }
         }
 
         $data['location']=$this->db->get()->result_array();
@@ -392,6 +390,7 @@ class Report_tr_tr extends Root_Controller
                 $prev_district_name=$result['district_name'];
                 $first_row=false;
             }
+            $items=array();
             $items[]=$this->get_row_location($result);
             if(isset($all_to[$result['outlet_id']]))
             {
