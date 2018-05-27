@@ -478,7 +478,14 @@ class Report_stock_raw_details extends Root_Controller
                     {
                         if(substr($key,-7)=='pkt_pcs')
                         {
-                            $item[$key]=number_format($value,3,'.','');
+                            if($value==0)
+                            {
+                                $item[$key]='';
+                            }
+                            else
+                            {
+                                $item[$key]=number_format($value,3,'.','');
+                            }
                         }
                         if(!(($key=='crop_name')||($key=='crop_type_name')||($key=='variety_name')||($key=='pack_size')))
                         {
@@ -492,7 +499,14 @@ class Report_stock_raw_details extends Root_Controller
             {
                 if(!(($key=='crop_name')||($key=='crop_type_name')||($key=='variety_name')||($key=='pack_size')))
                 {
-                    $grand_total[$key]=number_format($value,3,'.','');
+                    if($value==0)
+                    {
+                        $grand_total[$key]='';
+                    }
+                    else
+                    {
+                        $grand_total[$key]=number_format($value,3,'.','');
+                    }
                 }
             }
             $items[]=$item;
@@ -527,11 +541,18 @@ class Report_stock_raw_details extends Root_Controller
         {
             $packing_item=$this->input->post('packing_item');
             $row[$key]=$info[$key];
-            if($packing_item==$this->config->item('system_master_foil'))
+            if(substr($key,-7)=='pkt_pcs')
             {
-                if(substr($key,-7)=='pkt_pcs')
+                if($info[$key]==0)
                 {
-                    $row[$key]=number_format($info[$key],3,'.','');
+                    $row[$key]='';
+                }
+                else
+                {
+                    if($packing_item==$this->config->item('system_master_foil'))
+                    {
+                        $row[$key]=number_format($info[$key],3,'.','');
+                    }
                 }
             }
         }
