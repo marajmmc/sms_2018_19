@@ -9,8 +9,10 @@ class Report_stock_raw_summary extends Root_Controller
     {
         parent::__construct();
         $this->message="";
-        $this->permissions=User_helper::get_permission('Report_stock_raw_summary');
-        $this->controller_url='report_stock_raw_summary';
+        $this->permissions = User_helper::get_permission(get_class($this));
+        $this->controller_url = strtolower(get_class($this));
+        $this->lang->load('report_stock_variety_details');
+        $this->lang->load('report_stock_raw');
     }
     public function index($action="search")
     {
@@ -61,6 +63,45 @@ class Report_stock_raw_summary extends Root_Controller
             $this->json_return($ajax);
         }
     }
+    private function get_preference_headers()
+    {
+        $data['crop_name']= 1;
+        $data['crop_type_name']= 1;
+        $data['variety_name']= 1;
+        $data['pack_size']= 1;
+        $data['in_stock_in_kg_pcs']= 1;
+        $data['in_stock_excess_kg_pcs']= 1;
+        $data['in_purchase_kg_pcs']= 1;
+        $data['out_stock_damage_kg_pcs']= 1;
+        $data['current_stock_kg_pcs']= 1;
+        $data['current_stock_cal_kg_pcs']= 1;
+        return $data;
+    }
+    private function get_preference()
+    {
+        $user = User_helper::get_user();
+        $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="search"'),1);
+        $data=$this->get_preference_headers();
+        if($result)
+        {
+            if($result['preferences']!=null)
+            {
+                $preferences=json_decode($result['preferences'],true);
+                foreach($data as $key=>$value)
+                {
+                    if(isset($preferences[$key]))
+                    {
+                        $data[$key]=$value;
+                    }
+                    else
+                    {
+                        $data[$key]=0;
+                    }
+                }
+            }
+        }
+        return $data;
+    }
     private function system_list()
     {
         if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
@@ -69,7 +110,7 @@ class Report_stock_raw_summary extends Root_Controller
             if(!$reports['packing_item'])
             {
                 $ajax['status']=false;
-                $ajax['system_message']='This packing item field is required';
+                $ajax['system_message']='Packing item selection mandatory';
                 $this->json_return($ajax);
             }
             $data['options']=$reports;
@@ -93,159 +134,195 @@ class Report_stock_raw_summary extends Root_Controller
     }
     private function system_get_items()
     {
+        $packing_item=$this->input->post('packing_item');
         $crop_id=$this->input->post('crop_id');
         $crop_type_id=$this->input->post('crop_type_id');
         $variety_id=$this->input->post('variety_id');
         $pack_size_id=$this->input->post('pack_size_id');
-        $packing_item=$this->input->post('packing_item');
         $items=array();
-        $this->db->from($this->config->item('table_sms_stock_summary_raw').' stock_summary_raw');
-        $this->db->select('stock_summary_raw.*');
-        $this->db->join($this->config->item('table_login_setup_classification_varieties').' v','v.id=stock_summary_raw.variety_id','LEFT');
-        $this->db->select('v.name variety_name');
-        $this->db->join($this->config->item('table_login_setup_classification_crop_types').' croptype','croptype.id=v.crop_type_id','LEFT');
-        $this->db->select('croptype.id crop_type_id, croptype.name crop_type_name');
-        $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id=croptype.crop_id','LEFT');
-        $this->db->select('crop.id crop_id, crop.name crop_name');
-        $this->db->join($this->config->item('table_login_setup_classification_pack_size').' pack','pack.id=stock_summary_raw.pack_size_id','LEFT');
-        $this->db->select('pack.name pack_size');
-        $this->db->order_by('crop.id, croptype.id, v.id, pack.id');
-        $this->db->where('stock_summary_raw.packing_item',$packing_item);
-        if($variety_id>0 && is_numeric($variety_id))
-        {
-            $this->db->where('stock_summary_raw.variety_id',$variety_id);
-        }
-        if($crop_type_id>0 && is_numeric($crop_type_id))
-        {
-            $this->db->where('v.crop_type_id',$crop_type_id);
-        }
 
+        $this->db->from($this->config->item('table_sms_stock_summary_raw').' stock_summary_raw');
+        $this->db->select('SUM(stock_summary_raw.in_stock) in_stock_in',false);
+        $this->db->select('SUM(stock_summary_raw.in_excess) in_stock_excess',false);
+        $this->db->select('SUM(stock_summary_raw.in_purchase) in_purchase',false);
+        $this->db->select('SUM(stock_summary_raw.out_stock_damage) out_stock_damage',false);
+        $this->db->select('SUM(stock_summary_raw.current_stock) current_stock',false);
+        if($packing_item!=$this->config->item('system_common_foil'))
+        {
+            $this->db->join($this->config->item('table_login_setup_classification_varieties').' v','v.id=stock_summary_raw.variety_id','INNER');
+            $this->db->select('v.name variety_name');
+            $this->db->join($this->config->item('table_login_setup_classification_crop_types').' crop_type','crop_type.id=v.crop_type_id','INNER');
+            $this->db->select('crop_type.id crop_type_id, crop_type.name crop_type_name');
+            $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id=crop_type.crop_id','INNER');
+            $this->db->select('crop.id crop_id, crop.name crop_name');
+            $this->db->join($this->config->item('table_login_setup_classification_pack_size').' pack','pack.id=stock_summary_raw.pack_size_id','LEFT');
+            $this->db->select('pack.name pack_size,pack.id pack_size_id');
+            $this->db->order_by('crop.id, crop_type.id, v.id, pack.id');
+        }
+        $this->db->where('stock_summary_raw.packing_item',$packing_item);
         if($crop_id>0 && is_numeric($crop_id))
         {
-            $this->db->where('croptype.crop_id',$crop_id);
+            $this->db->where('crop_type.crop_id',$crop_id);
+            if($crop_type_id>0 && is_numeric($crop_type_id))
+            {
+                $this->db->where('v.crop_type_id',$crop_type_id);
+                if($variety_id>0 && is_numeric($variety_id))
+                {
+                    $this->db->where('stock_summary_raw.variety_id',$variety_id);
+                }
+            }
         }
         if($pack_size_id>0 && is_numeric($pack_size_id))
         {
             $this->db->where('stock_summary_raw.pack_size_id',$pack_size_id);
         }
-        $results=$this->db->get()->result_array();
         if($packing_item!=$this->config->item('system_common_foil'))
         {
-            $varieties=array();
-            foreach($results as $result)
-            {
-                $varieties[$result['variety_id']][$result['pack_size_id']]['packing_item']=$result['packing_item'];
-                $varieties[$result['variety_id']][$result['pack_size_id']]['crop_name']=$result['crop_name'];
-                $varieties[$result['variety_id']][$result['pack_size_id']]['crop_type_name']=$result['crop_type_name'];
-                $varieties[$result['variety_id']][$result['pack_size_id']]['variety_name']=$result['variety_name'];
-                $varieties[$result['variety_id']][$result['pack_size_id']]['pack_size']=$result['pack_size'];
-                $varieties[$result['variety_id']][$result['pack_size_id']]['current_stock_pcs_kg']=$result['current_stock'];
-            }
-            $type_total=array();
-            $crop_total=array();
-            $grand_total=array();
-            $type_total['crop_name']='';
-            $type_total['crop_type_name']='';
-            $type_total['variety_name']='Total Type';
-            $crop_total['crop_name']='';
-            $crop_total['crop_type_name']='Total Crop';
-            $crop_total['variety_name']='';
-            $grand_total['crop_name']='Grand Total';
-            $grand_total['crop_type_name']='';
-            $grand_total['variety_name']='';
-            $grand_total['pack_size']=$crop_total['pack_size']=$type_total['pack_size']='';
-            $grand_total['packing_item']=$crop_total['packing_item']=$type_total['packing_item']=$packing_item;
-            $grand_total['current_stock_pcs_kg']=$crop_total['current_stock_pcs_kg']=$type_total['current_stock_pcs_kg']=0;
-            $prev_crop_name='';
-            $prev_type_name='';
-            $first_row=true;
-
-            foreach($varieties as $variety)
-            {
-                foreach($variety as $pack)
-                {
-                    if(!$first_row)
-                    {
-                        if($prev_crop_name!=$pack['crop_name'])
-                        {
-                            $items[]=$this->get_row($type_total);
-                            $items[]=$this->get_row($crop_total);
-
-                            $prev_crop_name=$pack['crop_name'];
-                            $prev_type_name=$pack['crop_type_name'];
-                            $type_total['current_stock_pcs_kg']=0;
-                            $crop_total['current_stock_pcs_kg']=0;
-                        }
-                        elseif($prev_type_name!=$pack['crop_type_name'])
-                        {
-                            $items[]=$this->get_row($type_total);
-                            $pack['crop_name']='';
-                            $prev_type_name=$pack['crop_type_name'];
-                            $type_total['current_stock_pcs_kg']=0;
-                        }
-                        else
-                        {
-                            $pack['crop_name']='';
-                            $pack['crop_type_name']='';
-                        }
-                    }
-                    else
-                    {
-                        $prev_crop_name=$pack['crop_name'];
-                        $prev_type_name=$pack['crop_type_name'];
-                        $first_row=false;
-                    }
-                    $type_total['current_stock_pcs_kg']+=$pack['current_stock_pcs_kg'];
-                    $crop_total['current_stock_pcs_kg']+=$pack['current_stock_pcs_kg'];
-                    $grand_total['current_stock_pcs_kg']+=$pack['current_stock_pcs_kg'];
-                    $items[]=$this->get_row($pack);
-                }
-            }
-            $items[]=$this->get_row($type_total);
-            $items[]=$this->get_row($crop_total);
-            $items[]=$this->get_row($grand_total);
+            $this->db->group_by('v.id');
+            $this->db->group_by('pack.id');
         }
-        else
+        $results=$this->db->get()->result_array();
+
+        $type_total=$this->initialize_row('','','Total Type','');
+        $crop_total=$this->initialize_row('','Total Crop','','');
+        $grand_total=$this->initialize_row('Grand Total','','','');
+        $prev_crop_name='';
+        $prev_type_name='';
+        $first_row=true;
+
+        $headers=$this->get_preference_headers();
+        unset($headers['crop_name']);
+        unset($headers['crop_type_name']);
+        unset($headers['variety_name']);
+        unset($headers['pack_size']);
+
+        foreach($results as $result)
         {
-            $grand_total['crop_name']='Grand Total';
-            $grand_total['crop_type_name']='';
-            $grand_total['variety_name']='';
-            $grand_total['pack_size']='';
-            $grand_total['current_stock_pcs_kg']=0;
-            if($results)
+            if($packing_item==$this->config->item('system_common_foil'))
             {
-                foreach($results as $result)
+                $result['crop_name']='';
+                $result['crop_type_name']='';
+                $result['variety_name']='';
+                $result['pack_size']='';
+            }
+            $info=$this->initialize_row($result['crop_name'],$result['crop_type_name'],$result['variety_name'],$result['pack_size']);
+            if(!$first_row)
+            {
+                if($prev_crop_name!=$result['crop_name'])
                 {
-                    $result['current_stock_pcs_kg']=number_format($result['current_stock'],3,'.','');
-                    $items[]=$result;
-                    $grand_total['current_stock_pcs_kg']=number_format($result['current_stock'],3,'.','');
-                    $items[]=$grand_total;
+                    $items[]=$this->get_row($type_total);
+                    $items[]=$this->get_row($crop_total);
+                    $type_total=$this->reset_row($type_total);
+                    $crop_total=$this->reset_row($crop_total);
+                    $prev_crop_name=$result['crop_name'];
+                    $prev_type_name=$result['crop_type_name'];
+                }
+                elseif($prev_type_name!=$result['crop_type_name'])
+                {
+                    $items[]=$this->get_row($type_total);
+                    $type_total=$this->reset_row($type_total);
+                    $info['crop_name']='';
+                    $prev_type_name=$result['crop_type_name'];
+                }
+                else
+                {
+                    $info['crop_name']='';
+                    $info['crop_type_name']='';
                 }
             }
             else
             {
-                $items[]=$grand_total;
+                $prev_crop_name=$result['crop_name'];
+                $prev_type_name=$result['crop_type_name'];
+                $first_row=false;
             }
+
+            unset($headers['current_stock_cal_kg_pcs']);
+
+            foreach($headers  as $key=>$r)
+            {
+                $info[$key]=$result[substr($key, 0, -7)];
+            }
+            $info['current_stock_cal_kg_pcs']=0;
+            foreach($headers  as $key=>$r)
+            {
+                if(substr($key,0,2)=='in')
+                {
+                    $info['current_stock_cal_kg_pcs']+=$info[$key];
+                }
+                elseif(substr($key,0,3)=='out')
+                {
+                    $info['current_stock_cal_kg_pcs']-=$info[$key];
+                }
+            }
+            $headers['current_stock_cal_kg_pcs']=1;
+            foreach($headers  as $key=>$r)
+            {
+                if(!(($key=='crop_name')||($key=='crop_type_name')||($key=='variety_name')||($key=='pack_size')))
+                {
+                    $type_total[$key]+=$info[$key];
+                    $crop_total[$key]+=$info[$key];
+                    $grand_total[$key]+=$info[$key];
+                }
+            }
+            $items[]=$this->get_row($info);
         }
+        if($packing_item!=$this->config->item('system_common_foil'))
+        {
+            $items[]=$this->get_row($type_total);
+            $items[]=$this->get_row($crop_total);
+        }
+        $items[]=$this->get_row($grand_total);
         $this->json_return($items);
         die();
+    }
+    private function initialize_row($crop_name,$crop_type_name,$variety_name,$pack_size)
+    {
+        $row=$this->get_preference_headers();
+        foreach($row  as $key=>$r)
+        {
+            $row[$key]=0;
+        }
+        $row['crop_name']=$crop_name;
+        $row['crop_type_name']=$crop_type_name;
+        $row['variety_name']=$variety_name;
+        $row['pack_size']=$pack_size;
+        return $row;
     }
     private function get_row($info)
     {
         $row=array();
-        $row['crop_name']=$info['crop_name'];
-        $row['crop_type_name']=$info['crop_type_name'];
-        $row['variety_name']=$info['variety_name'];
-        $row['pack_size']=$info['pack_size'];
-        if($info['packing_item']==$this->config->item('system_master_foil'))
+        $packing_item=$this->input->post('packing_item');
+        foreach($info  as $key=>$r)
         {
-            $row['current_stock_pcs_kg']=number_format($info['current_stock_pcs_kg'],3,'.','');
-        }
-        else
-        {
-            $row['current_stock_pcs_kg']=$info['current_stock_pcs_kg'];
+            $row[$key]=$info[$key];
+            if(substr($key,-6)=='kg_pcs')
+            {
+                if($info[$key]==0)
+                {
+                    $row[$key]='';
+                }
+                else
+                {
+                    if($packing_item==$this->config->item('system_master_foil') || $packing_item==$this->config->item('system_common_foil'))
+                    {
+                        $row[$key]=number_format($info[$key],3,'.','');
+                    }
+                }
+            }
         }
         return $row;
+    }
+    private function reset_row($info)
+    {
+        foreach($info  as $key=>$r)
+        {
+            if(!(($key=='crop_name')||($key=='crop_type_name')||($key=='variety_name')||($key=='pack_size')))
+            {
+                $info[$key]=0;
+            }
+        }
+        return $info;
     }
     private function system_set_preference()
     {
@@ -264,34 +341,5 @@ class Report_stock_raw_summary extends Root_Controller
             $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
             $this->json_return($ajax);
         }
-    }
-    private function get_preference()
-    {
-        $user = User_helper::get_user();
-        $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="search"'),1);
-        $data['crop_name']= 1;
-        $data['crop_type_name']= 1;
-        $data['variety_name']= 1;
-        $data['pack_size']= 1;
-        $data['current_stock_pcs_kg']= 1;
-        if($result)
-        {
-            if($result['preferences']!=null)
-            {
-                $preferences=json_decode($result['preferences'],true);
-                foreach($data as $key=>$value)
-                {
-                    if(isset($preferences[$key]))
-                    {
-                        $data[$key]=$value;
-                    }
-                    else
-                    {
-                        $data[$key]=0;
-                    }
-                }
-            }
-        }
-        return $data;
     }
 }

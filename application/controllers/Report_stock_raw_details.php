@@ -537,9 +537,9 @@ class Report_stock_raw_details extends Root_Controller
     private function get_row($info)
     {
         $row=array();
+        $packing_item=$this->input->post('packing_item');
         foreach($info  as $key=>$r)
         {
-            $packing_item=$this->input->post('packing_item');
             $row[$key]=$info[$key];
             if(substr($key,-6)=='kg_pcs')
             {

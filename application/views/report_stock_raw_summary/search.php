@@ -105,14 +105,30 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
     jQuery(document).ready(function()
     {
+        $(document).off('change','#packing_item');
         $(document).off('change','#crop_id');
         $(document).off('change','#crop_type_id');
         $(document).off('change','#variety_id');
         $(document).off('change','#pack_size_id');
-        $(document).off('change','#packing_item');
-
+        $(document).on("change","#packing_item",function()
+        {
+            $('#system_report_container').html('');
+            $('#pack_size_id_container').hide();
+            $('#crop_id_container').hide();
+            $('#crop_type_id_container').hide();
+            $('#variety_id_container').hide();
+            $('#crop_id').val("");
+            $('#crop_type_id').val("");
+            $('#variety_id').val("");
+            $('#pack_size_id').val("");
+            var packing_item=$('#packing_item').val();
+            if(packing_item=='<?php echo $CI->config->item('system_master_foil')?>' || packing_item=='<?php echo $CI->config->item('system_sticker')?>')
+            {
+                $('#pack_size_id_container').show();
+                $('#crop_id_container').show();
+            }
+        });
         $('#crop_id').html(get_dropdown_with_select(system_crops));
-
         $(document).on("change","#crop_id",function()
         {
             $('#system_report_container').html('');
@@ -154,24 +170,5 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 }
             }
         });
-        $(document).on("change","#packing_item",function()
-        {
-            $('#system_report_container').html('');
-            $('#pack_size_id_container').hide();
-            $('#crop_id_container').hide();
-            $('#crop_type_id_container').hide();
-            $('#variety_id_container').hide();
-            $('#crop_id').val("");
-            $('#crop_type_id').val("");
-            $('#variety_id').val("");
-            $('#pack_size_id').val("");
-            var packing_item=$('#packing_item').val();
-            if(packing_item=='<?php echo $CI->config->item('system_master_foil')?>' || packing_item=='<?php echo $CI->config->item('system_sticker')?>')
-            {
-                $('#pack_size_id_container').show();
-                $('#crop_id_container').show();
-            }
-        });
-
     });
 </script>
