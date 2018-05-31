@@ -3,8 +3,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $CI=& get_instance();
 $action_buttons=array();
 $action_buttons[]=array(
-    'label'=>$CI->lang->line("ACTION_BACK"),
+    'label'=>$CI->lang->line("ACTION_BACK").' to Pending List',
     'href'=>site_url($CI->controller_url)
+);
+$action_buttons[]=array(
+    'label'=>$CI->lang->line("ACTION_BACK").' to All list',
+    'href'=>site_url($CI->controller_url.'/index/list_all')
 );
 if(isset($CI->permissions['action4']) && ($CI->permissions['action4']==1))
 {
