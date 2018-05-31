@@ -3,8 +3,9 @@
 $lang['MSG_USERNAME_PASSWORD_INVALID'] = 'Username and Password did not match or Invalid';
 $lang['MSG_LOGIN_SUCCESS'] = 'Successfully Logged In';
 $lang['MSG_LOGOUT_SUCCESS'] = 'Successfully Logged out';
-$lang['MSG_SITE_OFFLINE'] = 'Site is Currently Offline.Please contact with admin(01777709208).';
-$lang['MSG_LOCATION_NOT_ASSIGNED_OR_INVALID'] = 'No Location assigned.Please contact with admin(01777709208).';
+$lang['MSG_SITE_OFFLINE'] = 'Site is Currently Offline.Please contact with admin(01713090961).';
+$lang['MSG_NOT_ASSIGNED_GROUP'] = 'User Group Not Assigned.Please contact with admin(01713090961).';
+$lang['MSG_LOCATION_NOT_ASSIGNED_OR_INVALID'] = 'No Location assigned.Please contact with admin(01713090961).';
 $lang['MSG_CONFIRM_SAVE'] = 'Are You Sure to save?';
 $lang['MSG_SAVED_SUCCESS'] = 'Successfully Saved';
 $lang['MSG_SAVED_FAIL'] = 'Failed to Save!';
