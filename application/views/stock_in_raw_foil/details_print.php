@@ -55,7 +55,7 @@ $num_pages=ceil($total_records/$row_per_page);
                             <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_BARCODE');?>:</label>
                         </div>
                         <div class="col-xs-6">
-                            <img src="<?php echo site_url('barcode/index/stock_in/'.$item['id']);  ?>">
+                            <img src="<?php echo site_url('barcode/index/raw_foil_stock_in/'.$item['id']);  ?>">
                         </div>
                     </div>
                 </div>

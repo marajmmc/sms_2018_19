@@ -49,7 +49,7 @@ if($result)
                         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_BARCODE');?>:</label>
                     </div>
                     <div class="col-xs-6">
-                        <img src="<?php echo site_url('barcode/index/raw_master_purchase/'.$item['id']);  ?>">
+                        <img src="<?php echo site_url('barcode/index/convert_bulk_to_packet/'.$item['id']);  ?>">
                     </div>
                 </div>
             </div>

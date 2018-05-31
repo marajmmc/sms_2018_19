@@ -49,7 +49,7 @@ $num_pages=ceil($total_records/$row_per_page);
                             <label class="control-label pull-right">Challan No:</label>
                         </div>
                         <div class="col-xs-6">
-                            <?php echo Barcode_helper::get_barcode_transfer_warehouse_to_outlet($item['id']);?>
+                            <?php echo Barcode_helper::get_barcode_transfer_outlet_to_warehouse($item['id']);?>
                         </div>
                     </div>
                     <div class="row show-grid">
@@ -57,7 +57,7 @@ $num_pages=ceil($total_records/$row_per_page);
                             <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_BARCODE');?>:</label>
                         </div>
                         <div class="col-xs-6">
-                            <img src="<?php echo site_url('barcode/index/stock_out/'.$item['id']);  ?>">
+                            <img src="<?php echo site_url('barcode/index/transfer_outlet_to_warehouse/'.$item['id']);  ?>">
                         </div>
                     </div>
                 </div>
