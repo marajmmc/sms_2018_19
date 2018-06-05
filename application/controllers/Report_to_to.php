@@ -235,6 +235,7 @@ class Report_to_to extends Root_Controller
         $this->db->select('divisions.id division_id, divisions.name division_name');
         $this->db->order_by('divisions.id, zones.id, territories.id, districts.id, outlet_info.customer_id');
         $this->db->where('outlet_info.revision',1);
+        $this->db->where('outlet_info.type',$this->config->item('system_customer_type_outlet_id'));
 
         /*if($this->locations['division_id']>0)
         {
