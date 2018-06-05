@@ -355,10 +355,20 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         </div>
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_DELIVERY');?><span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_DELIVERY');?></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <input type="text" name="courier[date_delivery]" id="date_delivery" class="form-control datepicker" value="<?php echo System_helper::display_date($courier['date_delivery']);?>" readonly="readonly" />
+                <?php
+                if($courier['date_delivery']>0)
+                {
+                    $date_courier_delivery=System_helper::display_date($courier['date_delivery']);
+                }
+                else
+                {
+                    $date_courier_delivery='';
+                }
+                ?>
+                <input type="text" name="courier[date_delivery]" id="date_delivery" class="form-control datepicker" value="<?php echo $date_courier_delivery;?>" readonly="readonly" />
             </div>
         </div>
         <div class="row show-grid">

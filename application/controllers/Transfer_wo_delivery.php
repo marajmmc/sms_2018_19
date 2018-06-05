@@ -440,19 +440,22 @@ class Transfer_wo_delivery extends Root_Controller
             $this->json_return($ajax);
         }*/
         /*date validation*/
-        if(!isset($courier['date_delivery']) || !strtotime($courier['date_delivery']))
+        /*if(!isset($courier['date_delivery']) || !strtotime($courier['date_delivery']))
         {
             $ajax['status']=false;
             $ajax['system_message']=$this->lang->line('LABEL_DATE_DELIVERY'). ' field is required.';
             $this->json_return($ajax);
-        }
-        if(!(System_helper::get_time($courier['date_delivery'])>=System_helper::get_time(System_helper::display_date($data['item']['date_approve']))))
+        }*/
+        if(System_helper::get_time($courier['date_delivery'])>0)
         {
-            $ajax['status']=false;
-            $ajax['system_message']='Delivery date should be is greater than approval date.';
-            $this->json_return($ajax);
+            if(!(System_helper::get_time($courier['date_delivery'])>=System_helper::get_time(System_helper::display_date($data['item']['date_approve']))))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='Delivery date should be is greater than approval date.';
+                $this->json_return($ajax);
+            }
         }
-        if(strtotime($courier['date_challan']))
+        if(System_helper::get_time($courier['date_challan'])>0)
         {
             if(!(System_helper::get_time($courier['date_challan'])>=System_helper::get_time($courier['date_delivery'])))
             {
