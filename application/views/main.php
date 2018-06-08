@@ -177,14 +177,8 @@ if($result)
                 </div>
             </div>
         </div>
-        <footer class="hidden-print navbar-fixed-bottom">
-            <div>
-                All Rights Reserved & &copy; Copyright 2017 by A.R. Malik Seeds (Pvt.) Ltd.
-            </div>
-            <div class="clearfix"></div>
-        </footer>
         <div id="system_loading"><img src="<?php echo base_url('images/spinner.gif'); ?>"></div>
-        <div id="system_message"></div>
+        <div id="system_message" class="hidden-print"></div>
         <div id="popup_window">
             <div id="popup_window_title">Details</div>
             <div id="popup_content" style="overflow: auto;">

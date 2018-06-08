@@ -63,21 +63,14 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         {
             dataType: "json",
             dataFields: [
-                { name: 'crop_name', type: 'string' },
-                { name: 'crop_type_name', type: 'string' },
-                { name: 'variety_name', type: 'string' },
-                { name: 'pack_size', type: 'string' },
                 <?php
-                foreach($warehouses as $warehouse)
-                {
-                ?>
-                { name: 'warehouse_<?php echo $warehouse['value'];?>_pkt', type: 'string' },
-                { name: 'warehouse_<?php echo $warehouse['value'];?>_kg', type: 'string' },
-            <?php
-                }
-                ?>
-                { name: 'current_stock_pkt', type: 'string' },
-                { name: 'current_stock_kg', type: 'string' }
+                 foreach($system_preference_items as $key=>$item)
+                 {
+                    ?>
+                { name: '<?php echo $key ?>', type: 'string' },
+                <?php
+             }
+            ?>
             ],
             id: 'id',
             type: 'POST',
@@ -155,6 +148,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     { text: '<?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?>', dataField: 'crop_type_name',pinned:true,width:'100',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['crop_type_name']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?>', dataField: 'variety_name',pinned:true,width:'100',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['variety_name']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?>', dataField: 'pack_size',pinned:true,width:'100',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['pack_size']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_AMOUNT_PRICE_UNIT'); ?>', dataField: 'amount_price_unit',pinned:true,width:'100',cellsrenderer: cellsrenderer,cellsalign: 'right',hidden: <?php echo $system_preference_items['amount_price_unit']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
                     <?php
                 foreach($warehouses as $warehouse)
                 {
@@ -165,7 +159,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         }
                         ?>
                     { text: '<?php echo $CI->lang->line('LABEL_CURRENT_STOCK_PKT'); ?>', dataField: 'current_stock_pkt',width:'100',cellsalign: 'right',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['current_stock_pkt']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
-                    { text: '<?php echo $CI->lang->line('LABEL_CURRENT_STOCK_KG'); ?>', dataField: 'current_stock_kg',width:'100',cellsalign: 'right',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['current_stock_kg']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer}
+                    { text: '<?php echo $CI->lang->line('LABEL_CURRENT_STOCK_KG'); ?>', dataField: 'current_stock_kg',width:'100',cellsalign: 'right',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['current_stock_kg']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_AMOUNT_PRICE_TOTAL'); ?>', dataField: 'amount_price_total',cellsrenderer: cellsrenderer,width:'130',cellsalign: 'right',hidden: <?php echo $system_preference_items['amount_price_total']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer}
                 ]
             });
     });

@@ -69,3 +69,5 @@ $lang['LABEL_IN_OW_KG']='Return(kg)';
 $lang['LABEL_OUT_WO']='Transferred to Outlet';
 $lang['LABEL_OUT_WO_PKT']='TO(pkt)';
 $lang['LABEL_OUT_WO_KG']='TO(kg)';
+$lang['LABEL_AMOUNT_PRICE_UNIT']="Unit Price";
+$lang['LABEL_AMOUNT_PRICE_TOTAL']="Total Price";
