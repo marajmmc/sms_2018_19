@@ -113,7 +113,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 columns:
                 [
                     { text: 'Purpose', dataField: 'purpose'},
-                    { text: 'Controller', dataField: 'controller', width:100},
+                    { text: 'Controller', dataField: 'controller', width:250},
                     { text: 'Method', dataField: 'method', width:100},
                     { text: 'Width', dataField: 'width', width:100},
                     { text: 'Height', dataField: 'height', width:100},
