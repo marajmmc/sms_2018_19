@@ -294,6 +294,7 @@ class Report_stock_variety_details extends Root_Controller
         $this->db->select('SUM(CASE WHEN ow.date_receive>='.$date_start.' and ow.date_receive<='.$date_end.' then details.quantity_receive ELSE 0 END) in_ow',false);
         $this->db->join($this->config->item('table_sms_transfer_ow').' ow','ow.id=details.transfer_ow_id','INNER');
         $this->db->where('ow.status !=',$this->config->item('system_status_delete'));
+        $this->db->where('details.status !=',$this->config->item('system_status_delete'));
         $this->db->where('ow.status_receive',$this->config->item('system_status_received'));
         $this->db->where('details.variety_id',$variety_id);
         if($pack_size_id>-1)
@@ -325,6 +326,7 @@ class Report_stock_variety_details extends Root_Controller
 
         $this->db->join($this->config->item('table_sms_transfer_wo').' wo','wo.id=details.transfer_wo_id','INNER');
         $this->db->where('wo.status !=',$this->config->item('system_status_delete'));
+        $this->db->where('details.status !=',$this->config->item('system_status_delete'));
         $this->db->where('wo.status_delivery',$this->config->item('system_status_delivered'));
         $this->db->where('details.variety_id',$variety_id);
         if($pack_size_id>-1)
