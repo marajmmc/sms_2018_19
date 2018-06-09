@@ -189,6 +189,7 @@ class Lc_receive extends Root_Controller
         $this->db->join($this->config->item('table_login_setup_currency').' currency','currency.id = lc.currency_id','INNER');
         $this->db->join($this->config->item('table_login_basic_setup_principal').' principal','principal.id = lc.principal_id','INNER');
         $this->db->where('lc.status_open !=',$this->config->item('system_status_delete'));
+        $this->db->where('lc.status_release',$this->config->item('system_status_complete'));
         $this->db->order_by('lc.id','DESC');
         $this->db->limit($pagesize,$current_records);
         $results=$this->db->get()->result_array();

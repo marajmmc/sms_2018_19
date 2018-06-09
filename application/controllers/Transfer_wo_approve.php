@@ -207,7 +207,7 @@ class Transfer_wo_approve extends Root_Controller
         $this->db->select('divisions.name division_name');
         $this->db->where('transfer_wo.status !=',$this->config->item('system_status_delete'));
         $this->db->where('outlet_info.revision',1);
-        //$this->db->where('transfer_wo.status_request',$this->config->item('system_status_forwarded'));
+        $this->db->where('transfer_wo.status_request',$this->config->item('system_status_forwarded'));
         $this->db->order_by('transfer_wo.id','DESC');
         if($this->locations['division_id']>0)
         {

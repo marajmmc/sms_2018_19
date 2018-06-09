@@ -184,6 +184,8 @@ class Transfer_wo_delivery extends Root_Controller
         $this->db->join($this->config->item('table_login_setup_location_divisions').' divisions','divisions.id = zones.division_id','INNER');
         $this->db->select('divisions.name division_name');
         $this->db->where('transfer_wo.status !=',$this->config->item('system_status_delete'));
+        $this->db->where('transfer_wo.status_request',$this->config->item('system_status_forwarded'));
+        $this->db->where('transfer_wo.status_approve',$this->config->item('system_status_approved'));
         $this->db->where('outlet_info.revision',1);
         $this->db->order_by('transfer_wo.id','DESC');
         $results=$this->db->get()->result_array();

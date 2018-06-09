@@ -184,6 +184,7 @@ class Transfer_ow_receive extends Root_Controller
         $this->db->join($this->config->item('table_login_setup_location_divisions').' divisions','divisions.id = zones.division_id','INNER');
         $this->db->select('divisions.name division_name');
         $this->db->where('transfer_ow.status !=',$this->config->item('system_status_delete'));
+        $this->db->where('transfer_ow.status_delivery',$this->config->item('system_status_delivered'));
         $this->db->where('outlet_info.revision',1);
         $this->db->order_by('transfer_ow.id','DESC');
 
