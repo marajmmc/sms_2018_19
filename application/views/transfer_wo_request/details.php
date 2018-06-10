@@ -415,9 +415,10 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
     <div class="col-md-12">
 
     </div>
+
     <div class="clearfix"></div>
     <div class="row show-grid">
-        <div style="overflow-x: auto;" class="row show-grid">
+        <div style="overflow-x: auto;" class="col-xs-12">
             <table class="table table-bordered">
                 <thead>
                 <tr>
@@ -461,7 +462,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <?php
                     if($item['status_approve']==$this->config->item('system_status_approved'))
                     {
-                    ?>
+                        ?>
                         <th style="width: 150px;" class="text-right bg-warning"><?php echo $CI->lang->line('LABEL_PACK');?></th>
                         <th style="width: 150px;" class="text-right bg-warning"><?php echo $CI->lang->line('LABEL_KG');?></th>
                     <?php
@@ -470,7 +471,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <?php
                     if(($item['status_receive']==$this->config->item('system_status_received') && $item['status_system_delivery_receive']==$this->config->item('system_status_yes')) || $item['status_system_delivery_receive']==$this->config->item('system_status_no'))
                     {
-                    ?>
+                        ?>
                         <th style="width: 150px;" class="text-right bg-success"><?php echo $CI->lang->line('LABEL_PACK');?></th>
                         <th style="width: 150px;" class="text-right bg-success"><?php echo $CI->lang->line('LABEL_KG');?></th>
                     <?php
@@ -615,6 +616,136 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 </tr>
                 </tfoot>
             </table>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div class="row show-grid">
+        <div class="col-xs-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <label class=""><a class="external text-danger" data-toggle="collapse" data-target="#collapse_histories" href="#">+ Revision History</a></label>
+                    </h4>
+                </div>
+                <div id="collapse_histories" class="panel-collapse collapse">
+                    <div class="row show-grid">
+                        <div class="clearfix"></div>
+                        <div class="col-xs-12">
+                            <?php
+                            $index=0;
+                            $maximum_history = sizeof($histories);
+                            foreach($histories as $revision=>$details)
+                            {
+                                $index++;
+                                ?>
+                                <div class="panel panel-success">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">
+                                            <label class="">
+                                                <a class="external text-danger" data-toggle="collapse" data-target="#collapse_<?php echo $index; ?>" href="#">
+                                                    + Revision : <?php echo ($maximum_history-$revision+1)?> <?php if($index==1){echo '(Latest Revision)';}?>
+                                                </a>
+                                            </label>
+                                        </h4>
+                                    </div>
+                                    <div id="collapse_<?php echo $index; ?>" class="panel-collapse collapse">
+                                        <table class="table table-bordered table-responsive system_table_details_view">
+                                            <thead>
+                                            <tr>
+                                                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CREATED_BY');?></label></th>
+                                                <th class=" header_value"><label class="control-label"><?php echo $users[$details['user_created']]['name'];?></label></th>
+                                                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_CREATED_TIME');?></label></th>
+                                                <th class=""><label class="control-label"><?php echo System_helper::display_date_time($details['date_created']);?></label></th>
+                                            </tr>
+                                            <?php
+                                            if($details['date_updated'])
+                                            {
+                                                ?>
+                                                <tr>
+                                                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_UPDATED_BY');?></label></th>
+                                                    <th class=" header_value"><label class="control-label"><?php echo $users[$details['user_updated']]['name'];?></label></th>
+                                                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_UPDATED_TIME');?></label></th>
+                                                    <th class=""><label class="control-label"><?php echo System_helper::display_date_time($details['date_updated']);?></label></th>
+                                                </tr>
+                                            <?php
+                                            }
+                                            ?>
+                                            </thead>
+                                        </table>
+                                        <div style="overflow-x: auto;">
+                                            <table class="table table-bordered">
+                                                <thead>
+                                                <tr>
+                                                    <th rowspan="2" style="width: 10px;"><?php echo $CI->lang->line('LABEL_SL_NO'); ?></th>
+                                                    <th rowspan="2" style="width: 200px;"><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></th>
+                                                    <th rowspan="2" style="width: 150px;"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?></th>
+                                                    <th rowspan="2" style="width: 150px;"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
+                                                    <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
+                                                    <th colspan="2" class="text-center " style="width: 300px;"><?php echo $CI->lang->line('LABEL_QUANTITY'); ?></th>
+                                                </tr>
+                                                <tr>
+                                                    <th style="width: 150px;" class="text-right "><?php echo $CI->lang->line('LABEL_PACK');?></th>
+                                                    <th style="width: 150px;" class="text-right "><?php echo $CI->lang->line('LABEL_KG');?></th>
+                                                </tr>
+                                                </thead>
+                                                <tbody id="items_container">
+                                                <?php
+
+                                                $quantity_total=0;
+                                                $quantity_total_kg=0;
+                                                $serial=0;
+                                                for($i=0; $i<sizeof($details['info']); $i++)
+                                                {
+                                                    ++$serial;
+                                                    $info=$details['info'][$i];
+                                                    $quantity_kg=(($info['quantity']*$info['pack_size'])/1000);
+                                                    $quantity_total+=$info['quantity'];
+                                                    $quantity_total_kg+=$quantity_kg;
+
+                                                    ?>
+                                                    <tr>
+                                                        <td class="text-right"><?php echo $serial;?></td>
+                                                        <td>
+                                                            <label><?php echo $info['crop_name']; ?></label>
+                                                        </td>
+                                                        <td>
+                                                            <label><?php echo $info['crop_type_name']; ?></label>
+                                                        </td>
+                                                        <td>
+                                                            <label><?php echo $info['variety_name']; ?></label>
+                                                        </td>
+                                                        <td class="text-right">
+                                                            <label><?php echo $info['pack_size']; ?></label>
+                                                        </td>
+                                                        <td class="text-right">
+                                                            <label ><?php echo $info['quantity']; ?></label>
+                                                        </td>
+                                                        <td class="text-right">
+                                                            <label id="quantity_kg_<?php echo $index+1;?>"> <?php echo number_format($quantity_kg,3,'.','');?> </label>
+                                                        </td>
+                                                    </tr>
+                                                <?php
+                                                }
+                                                ?>
+                                                </tbody>
+                                                <tfoot>
+                                                <tr>
+                                                    <th colspan="5" class="text-right"><?php echo $CI->lang->line('LABEL_TOTAL');?></th>
+                                                    <th class="text-right"><label class="control-label"> <?php echo $quantity_total;?></label></th>
+                                                    <th class="text-right"><label class="control-label"> <?php echo number_format($quantity_total_kg,3,'.','');?></label></th>
+                                                </tr>
+                                                </tfoot>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php
+                            }
+                            ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

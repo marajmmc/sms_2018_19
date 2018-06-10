@@ -732,7 +732,7 @@ class Transfer_wo_request extends Root_Controller
                 $this->json_return($ajax);
             }
 
-            $user_ids=array();
+            /*$user_ids=array();
             $user_ids[$data['item']['user_created_request']]=$data['item']['user_created_request'];
             $user_ids[$data['item']['user_updated_request']]=$data['item']['user_updated_request'];
             $user_ids[$data['item']['user_updated_forward']]=$data['item']['user_updated_forward'];
@@ -741,7 +741,7 @@ class Transfer_wo_request extends Root_Controller
             $user_ids[$data['item']['user_updated_delivery']]=$data['item']['user_updated_delivery'];
             $user_ids[$data['item']['user_updated_delivery_forward']]=$data['item']['user_updated_delivery_forward'];
             $user_ids[$data['item']['user_updated_receive_approve']]=$data['item']['user_updated_receive_approve'];
-            $data['users']=System_helper::get_users_info($user_ids);
+            $data['users']=System_helper::get_users_info($user_ids);*/
 
             $this->db->from($this->config->item('table_sms_transfer_wo_details').' transfer_wo_details');
             $this->db->select('transfer_wo_details.*');
@@ -756,6 +756,46 @@ class Transfer_wo_request extends Root_Controller
             $this->db->order_by('transfer_wo_details.id');
             $data['items']=$this->db->get()->result_array();
 
+            /*revision history*/
+            $this->db->from($this->config->item('table_sms_transfer_wo_details_histories').' histories');
+            $this->db->select('histories.*');
+            $this->db->join($this->config->item('table_login_setup_classification_varieties').' v','v.id=histories.variety_id','INNER');
+            $this->db->select('v.name variety_name');
+            $this->db->join($this->config->item('table_login_setup_classification_crop_types').' crop_type','crop_type.id=v.crop_type_id','INNER');
+            $this->db->select('crop_type.id crop_type_id, crop_type.name crop_type_name');
+            $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id=crop_type.crop_id','INNER');
+            $this->db->select('crop.id crop_id, crop.name crop_name');
+            $this->db->where('histories.transfer_wo_id',$item_id);
+            /*$this->db->where('histories.warehouse_id',null);
+            $this->db->order_by('histories.revision', 'DESC');
+            $this->db->order_by('histories.id', 'ASC');*/
+            $this->db->order_by('histories.revision', 'ASC');
+            $this->db->order_by('histories.id', 'ASC');
+            $results=$this->db->get()->result_array();
+
+            $user_ids=array();
+            $histories=array();
+            foreach($results as $result)
+            {
+                $histories[$result['revision']]['date_created']=$result['date_created'];
+                $histories[$result['revision']]['user_created']=$result['user_created'];
+                $histories[$result['revision']]['date_updated']=$result['date_updated'];
+                $histories[$result['revision']]['user_updated']=$result['user_updated'];
+                $histories[$result['revision']]['info'][]=$result;
+                $user_ids[$result['user_created']]=$result['user_created'];
+                $user_ids[$result['user_updated']]=$result['user_updated'];
+            }
+            $data['histories']=$histories;
+
+            $user_ids[$data['item']['user_created_request']]=$data['item']['user_created_request'];
+            $user_ids[$data['item']['user_updated_request']]=$data['item']['user_updated_request'];
+            $user_ids[$data['item']['user_updated_forward']]=$data['item']['user_updated_forward'];
+            $user_ids[$data['item']['user_updated_approve']]=$data['item']['user_updated_approve'];
+            $user_ids[$data['item']['user_updated_approve_forward']]=$data['item']['user_updated_approve_forward'];
+            $user_ids[$data['item']['user_updated_delivery']]=$data['item']['user_updated_delivery'];
+            $user_ids[$data['item']['user_updated_delivery_forward']]=$data['item']['user_updated_delivery_forward'];
+            $user_ids[$data['item']['user_updated_receive_approve']]=$data['item']['user_updated_receive_approve'];
+            $data['users']=System_helper::get_users_info($user_ids);
             /*$result=Query_helper::get_info($this->config->item('table_login_setup_system_configures'),array('*'),array('purpose="'.$this->config->item('system_purpose_sms_quantity_order_max').'"', 'status ="'.$this->config->item('system_status_active').'"'),1);
             $data['quantity_to_maximum_kg']=$result['config_value'];
             $data['crops']=Query_helper::get_info($this->config->item('table_login_setup_classification_crops'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
