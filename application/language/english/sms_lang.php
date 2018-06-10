@@ -404,11 +404,13 @@ $lang['LABEL_LC_NUMBER']='LC Number';
 $lang['LABEL_CONSIGNMENT_NAME']='Consignment File Number';
 $lang['LABEL_LC_FORWARD']='Forward LC';
 $lang['LABEL_QUANTITY_OPEN_KG']='LC Open Total (KG)';
-$lang['LABEL_PRICE_OPEN_OTHER_CURRENCY']='LC Open Other Cost (Currency)';
+//$lang['LABEL_PRICE_OPEN_OTHER_CURRENCY']='LC Open Other Cost (Currency)';
+$lang['LABEL_PRICE_OPEN_OTHER_CURRENCY']='Air Freight & Docs (Currency)';
 $lang['LABEL_PRICE_OPEN_VARIETY_CURRENCY']='LC Open Variety (Currency)';
 /*LC release*/
 $lang['LABEL_PRICE_RELEASE_OTHER_VARIETY_TAKA']='LC Release Total (Taka)';
-$lang['LABEL_PRICE_RELEASE_OTHER_CURRENCY']='LC Release Other Cost (Currency)';
+//$lang['LABEL_PRICE_RELEASE_OTHER_CURRENCY']='LC Release Other Cost (Currency)';
+$lang['LABEL_PRICE_RELEASE_OTHER_CURRENCY']='LC Release Air Freight & Docs (Currency)';
 $lang['LABEL_QUANTITY_RELEASE_KG']='Release Total (KG)';
 $lang['LABEL_PRICE_RELEASE_VARIETY_CURRENCY']='Release Total Variety (Currency)';
 /*LC receive*/
