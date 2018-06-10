@@ -1207,7 +1207,7 @@ class Transfer_wo_approve extends Root_Controller
         $data['quantity_total_request']= 1;
         $data['quantity_total_approve']= 1;
         $data['quantity_total_receive']= 1;
-        $data['status_request']= 1;
+        //$data['status_request']= 1;
         $data['status_approve']= 1;
         $data['status_delivery']= 1;
         $data['status_receive']= 1;
