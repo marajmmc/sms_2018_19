@@ -606,6 +606,7 @@ class Transfer_wo_delivery extends Root_Controller
                 $data['pack_size_id']=$item['pack_size_id'];
                 $data['pack_size']=$old_items[$item['variety_id']][$item['pack_size_id']]['pack_size'];
                 $data['quantity']=$old_items[$item['variety_id']][$item['pack_size_id']]['quantity_approve'];
+                $data['warehouse_id']=$item['warehouse_id'];
                 $data['revision']=1;
                 $data['date_created']=$time;
                 $data['user_created']=$user->user_id;
