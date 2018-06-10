@@ -766,8 +766,8 @@ class Transfer_wo_request extends Root_Controller
             $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id=crop_type.crop_id','INNER');
             $this->db->select('crop.id crop_id, crop.name crop_name');
             $this->db->where('histories.transfer_wo_id',$item_id);
-            /*$this->db->where('histories.warehouse_id',null);
-            $this->db->order_by('histories.revision', 'DESC');
+            $this->db->where('histories.warehouse_id',null);
+            /*$this->db->order_by('histories.revision', 'DESC');
             $this->db->order_by('histories.id', 'ASC');*/
             $this->db->order_by('histories.revision', 'ASC');
             $this->db->order_by('histories.id', 'ASC');
@@ -779,11 +779,11 @@ class Transfer_wo_request extends Root_Controller
             {
                 $histories[$result['revision']]['date_created']=$result['date_created'];
                 $histories[$result['revision']]['user_created']=$result['user_created'];
-                $histories[$result['revision']]['date_updated']=$result['date_updated'];
-                $histories[$result['revision']]['user_updated']=$result['user_updated'];
+                //$histories[$result['revision']]['date_updated']=$result['date_updated'];
+                //$histories[$result['revision']]['user_updated']=$result['user_updated'];
                 $histories[$result['revision']]['info'][]=$result;
                 $user_ids[$result['user_created']]=$result['user_created'];
-                $user_ids[$result['user_updated']]=$result['user_updated'];
+                //$user_ids[$result['user_updated']]=$result['user_updated'];
             }
             $data['histories']=$histories;
 

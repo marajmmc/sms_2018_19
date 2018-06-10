@@ -634,7 +634,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                             <?php
                             $index=0;
                             $maximum_history = sizeof($histories);
-                            foreach($histories as $revision=>$details)
+                            foreach($histories as $details)
                             {
                                 $index++;
                                 ?>
@@ -643,7 +643,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                                         <h4 class="panel-title">
                                             <label class="">
                                                 <a class="external text-danger" data-toggle="collapse" data-target="#collapse_<?php echo $index; ?>" href="#">
-                                                    + Revision : <?php echo ($maximum_history-$revision+1)?> <?php if($index==1){echo '(Latest Revision)';}?>
+                                                    + Revision : <?php echo ($maximum_history-$index+1)?> <?php if($index==1){echo '(Latest Revision)';}?>
                                                 </a>
                                             </label>
                                         </h4>
@@ -657,19 +657,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                                                 <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_CREATED_TIME');?></label></th>
                                                 <th class=""><label class="control-label"><?php echo System_helper::display_date_time($details['date_created']);?></label></th>
                                             </tr>
-                                            <?php
-                                            if($details['date_updated'])
-                                            {
-                                                ?>
-                                                <tr>
-                                                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_UPDATED_BY');?></label></th>
-                                                    <th class=" header_value"><label class="control-label"><?php echo $users[$details['user_updated']]['name'];?></label></th>
-                                                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_UPDATED_TIME');?></label></th>
-                                                    <th class=""><label class="control-label"><?php echo System_helper::display_date_time($details['date_updated']);?></label></th>
-                                                </tr>
-                                            <?php
-                                            }
-                                            ?>
                                             </thead>
                                         </table>
                                         <div style="overflow-x: auto;">
