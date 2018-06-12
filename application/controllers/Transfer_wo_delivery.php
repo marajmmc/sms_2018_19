@@ -457,7 +457,7 @@ class Transfer_wo_delivery extends Root_Controller
                 $this->json_return($ajax);
             }
         }
-        if(System_helper::get_time($courier['date_challan'])>0)
+        /*if(System_helper::get_time($courier['date_challan'])>0)
         {
             if(!(System_helper::get_time($courier['date_challan'])>=System_helper::get_time($courier['date_delivery'])))
             {
@@ -465,7 +465,7 @@ class Transfer_wo_delivery extends Root_Controller
                 $ajax['system_message']='Challan date should be is greater than delivery date.';
                 $this->json_return($ajax);
             }
-        }
+        }*/
 
         $result=Query_helper::get_info($this->config->item('table_login_setup_system_configures'),array('*'),array('purpose="'.$this->config->item('system_purpose_sms_quantity_order_max').'"', 'status ="'.$this->config->item('system_status_active').'"'),1);
         $quantity_to_maximum_kg=$result['config_value'];
@@ -923,7 +923,7 @@ class Transfer_wo_delivery extends Root_Controller
             }
 
             /*date validation*/
-            if(!strtotime(System_helper::display_date($data['item']['courier_date_delivery'])))
+            if(!($data['item']['courier_date_delivery']>0))
             {
                 $ajax['status']=false;
                 $ajax['system_message']='At first edit HQ to outlet delivery & provide required information';
@@ -935,7 +935,7 @@ class Transfer_wo_delivery extends Root_Controller
                 $ajax['system_message']='At first edit HQ to outlet delivery & provide required information';
                 $this->json_return($ajax);
             }
-            if(strtotime(System_helper::display_date($data['item']['date_challan'])))
+            /*if(strtotime(System_helper::display_date($data['item']['date_challan'])))
             {
                 if(!(System_helper::get_time($data['item']['date_challan'])>=System_helper::get_time($data['item']['courier_date_delivery'])))
                 {
@@ -943,7 +943,7 @@ class Transfer_wo_delivery extends Root_Controller
                     $ajax['system_message']='At first edit HQ to outlet delivery & provide required information ';
                     $this->json_return($ajax);
                 }
-            }
+            }*/
 
             $user_ids=array();
             $user_ids[$data['item']['user_created_request']]=$data['item']['user_created_request'];
