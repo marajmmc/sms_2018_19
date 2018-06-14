@@ -186,7 +186,14 @@ class Report_stock_variety_summary_analysis extends Root_Controller
         $this->db->select('crop.id crop_id, crop.name crop_name');
         $this->db->join($this->config->item('table_login_setup_classification_pack_size').' pack','pack.id=stock_summary_variety.pack_size_id','LEFT');
         $this->db->select('pack.name pack_size,pack.id pack_size_id');
-        $this->db->order_by('crop.id, crop_type.id, v.id, pack.id');
+
+        $this->db->order_by('crop.ordering','ASC');
+        $this->db->order_by('crop.id','ASC');
+        $this->db->order_by('crop_type.ordering','ASC');
+        $this->db->order_by('crop_type.id','ASC');
+        $this->db->order_by('v.ordering','ASC');
+        $this->db->order_by('v.id','ASC');
+        $this->db->order_by('pack.id');
         if($crop_id>0 && is_numeric($crop_id))
         {
             $this->db->where('crop_type.crop_id',$crop_id);

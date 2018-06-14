@@ -171,13 +171,19 @@ class Report_stock_variety_summary extends Root_Controller
         $this->db->select('stock_summary_variety.*');
         $this->db->join($this->config->item('table_login_setup_classification_varieties').' v','v.id=stock_summary_variety.variety_id','INNER');
         $this->db->select('v.name variety_name');
-        $this->db->join($this->config->item('table_login_setup_classification_crop_types').' croptype','croptype.id=v.crop_type_id','INNER');
-        $this->db->select('croptype.id crop_type_id, croptype.name crop_type_name');
-        $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id=croptype.crop_id','INNER');
+        $this->db->join($this->config->item('table_login_setup_classification_crop_types').' crop_type','crop_type.id=v.crop_type_id','INNER');
+        $this->db->select('crop_type.id crop_type_id, crop_type.name crop_type_name');
+        $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id=crop_type.crop_id','INNER');
         $this->db->select('crop.id crop_id, crop.name crop_name');
         $this->db->join($this->config->item('table_login_setup_classification_pack_size').' pack','pack.id=stock_summary_variety.pack_size_id','LEFT');
         $this->db->select('pack.name pack_size');
-        $this->db->order_by('crop.id, croptype.id, v.id, pack.id');
+        $this->db->order_by('crop.ordering','ASC');
+        $this->db->order_by('crop.id','ASC');
+        $this->db->order_by('crop_type.ordering','ASC');
+        $this->db->order_by('crop_type.id','ASC');
+        $this->db->order_by('v.ordering','ASC');
+        $this->db->order_by('v.id','ASC');
+        $this->db->order_by('pack.id');
 
         if($variety_id>0 && is_numeric($variety_id))
         {
@@ -190,7 +196,7 @@ class Report_stock_variety_summary extends Root_Controller
 
         if($crop_id>0 && is_numeric($crop_id))
         {
-            $this->db->where('croptype.crop_id',$crop_id);
+            $this->db->where('crop_type.crop_id',$crop_id);
         }
         if($pack_size_id>=0 && is_numeric($pack_size_id))
         {

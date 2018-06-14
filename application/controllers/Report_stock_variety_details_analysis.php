@@ -195,8 +195,11 @@ class Report_stock_variety_details_analysis extends Root_Controller
                 }
             }
         }
+        $this->db->order_by('crop.ordering','ASC');
         $this->db->order_by('crop.id','ASC');
+        $this->db->order_by('crop_type.ordering','ASC');
         $this->db->order_by('crop_type.id','ASC');
+        $this->db->order_by('v.ordering','ASC');
         $this->db->order_by('v.id','ASC');
 
         $varieties=$this->db->get()->result_array();

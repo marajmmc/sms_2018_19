@@ -331,7 +331,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             {
                 $('#pack_size_id_container').show();
                 $.ajax({
-                    url: base_url+"<?php echo $CI->controller_url?>/get_pack_size/",
+                    url: '<?php echo site_url($CI->controller_url."/get_pack_size/");?>',
                     type: 'POST',
                     datatype: "JSON",
                     data:{variety_id:variety_id},
@@ -374,7 +374,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 $('#quantity_transfer_id_container').hide();
                 $('#remarks_id_container').hide();
                 $.ajax({
-                    url: base_url+"<?php echo $CI->controller_url?>/get_warehouse_source/",
+                    url: '<?php echo site_url($CI->controller_url."/get_warehouse_source/");?>',
                     type: 'POST',
                     datatype: "JSON",
                     data:{variety_id:variety_id,pack_size_id:pack_size_id},
@@ -410,7 +410,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 $('#warehouse_id_destination_container').show();
 
                 $.ajax({
-                    url: base_url+"common_controller/get_current_stock/",
+                    url: '<?php echo site_url("common_controller/get_current_stock/");?>',
                     type: 'POST',
                     datatype: "JSON",
                     data:{

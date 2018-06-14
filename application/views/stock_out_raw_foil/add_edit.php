@@ -116,7 +116,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             {
                 $('#current_stock_container').show();
                 $.ajax({
-                    url: base_url+"common_controller/get_raw_current_stock/",
+                    url: '<?php echo site_url("common_controller/get_raw_current_stock/");?>',
                     type: 'POST',
                     datatype: "JSON",
                     data:{
