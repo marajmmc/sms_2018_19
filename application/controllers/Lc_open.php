@@ -1098,11 +1098,14 @@ class Lc_open extends Root_Controller
         $this->form_validation->set_rules('item[lc_number]',$this->lang->line('LABEL_LC_NUMBER'),'required');
         $this->form_validation->set_rules('item[bank_account_id]',$this->lang->line('LABEL_BANK_ACCOUNT_NUMBER'),'required');
         $this->form_validation->set_rules('item[currency_id]',$this->lang->line('LABEL_CURRENCY_NAME'),'required');
-        if(!$item['price_open_other_currency']>0)
+        $this->form_validation->set_rules('item[price_open_other_currency]',$this->lang->line('LABEL_PRICE_OPEN_OTHER_CURRENCY'),'required');
+        //validation condition wrong
+        /*
+        if(!$item['price_open_other_currency']>=0)
         {
             $this->message=$this->lang->line('LABEL_PRICE_OPEN_OTHER_CURRENCY').' field is required.';
             return false;
-        }
+        }*/
         $this->form_validation->set_rules('item[consignment_name]',$this->lang->line('LABEL_CONSIGNMENT_NAME'),'required');
         if($this->form_validation->run() == FALSE)
         {
