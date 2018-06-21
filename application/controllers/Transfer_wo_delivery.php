@@ -96,7 +96,7 @@ class Transfer_wo_delivery extends Root_Controller
     private function system_get_items()
     {
         $this->db->from($this->config->item('table_sms_transfer_wo').' transfer_wo');
-        $this->db->select('transfer_wo.id, transfer_wo.date_request, transfer_wo.quantity_total_request_kg quantity_total_request, transfer_wo.quantity_total_approve_kg quantity_total_approve');
+        $this->db->select('transfer_wo.id, transfer_wo.date_request,transfer_wo.date_approve, transfer_wo.quantity_total_request_kg quantity_total_request, transfer_wo.quantity_total_approve_kg quantity_total_approve');
         $this->db->join($this->config->item('table_login_csetup_cus_info').' outlet_info','outlet_info.customer_id=transfer_wo.outlet_id AND outlet_info.type="'.$this->config->item('system_customer_type_outlet_id').'"','INNER');
         $this->db->select('outlet_info.name outlet_name, outlet_info.customer_code outlet_code');
         $this->db->join($this->config->item('table_login_setup_location_districts').' districts','districts.id = outlet_info.district_id','INNER');
@@ -112,7 +112,8 @@ class Transfer_wo_delivery extends Root_Controller
         $this->db->where('transfer_wo.status_approve',$this->config->item('system_status_approved'));
         $this->db->where('transfer_wo.status_delivery',$this->config->item('system_status_pending'));
         $this->db->where('outlet_info.revision',1);
-        $this->db->order_by('transfer_wo.id','DESC');
+        //$this->db->order_by('transfer_wo.id','DESC');
+        $this->db->order_by('transfer_wo.date_approve','DESC');
 
         $results=$this->db->get()->result_array();
         $items=array();
@@ -123,6 +124,7 @@ class Transfer_wo_delivery extends Root_Controller
             $item['barcode']=Barcode_helper::get_barcode_transfer_warehouse_to_outlet($result['id']);
             $item['outlet_name']=$result['outlet_name'];
             $item['date_request']=System_helper::display_date($result['date_request']);
+            $item['date_approve']=System_helper::display_date_time($result['date_approve']);
             $item['outlet_code']=$result['outlet_code'];
             $item['division_name']=$result['division_name'];
             $item['zone_name']=$result['zone_name'];
@@ -162,6 +164,7 @@ class Transfer_wo_delivery extends Root_Controller
             '
             transfer_wo.id,
             transfer_wo.date_request,
+            transfer_wo.date_approve,
             transfer_wo.quantity_total_request_kg quantity_total_request,
             transfer_wo.quantity_total_approve_kg quantity_total_approve,
             transfer_wo.quantity_total_receive_kg quantity_total_receive,
@@ -197,6 +200,7 @@ class Transfer_wo_delivery extends Root_Controller
             $item['barcode']=Barcode_helper::get_barcode_transfer_warehouse_to_outlet($result['id']);
             $item['outlet_name']=$result['outlet_name'];
             $item['date_request']=System_helper::display_date($result['date_request']);
+            $item['date_approve']=System_helper::display_date_time($result['date_approve']);
             $item['outlet_code']=$result['outlet_code'];
             $item['division_name']=$result['division_name'];
             $item['zone_name']=$result['zone_name'];
@@ -1241,6 +1245,7 @@ class Transfer_wo_delivery extends Root_Controller
         $data['barcode']= 1;
         $data['outlet_name']= 1;
         $data['date_request']= 1;
+        $data['date_approve']= 1;
         $data['outlet_code']= 1;
         $data['division_name']= 1;
         $data['zone_name']= 1;
@@ -1294,6 +1299,7 @@ class Transfer_wo_delivery extends Root_Controller
         $data['barcode']= 1;
         $data['outlet_name']= 1;
         $data['date_request']= 1;
+        $data['date_approve']= 1;
         $data['outlet_code']= 1;
         $data['division_name']= 1;
         $data['zone_name']= 1;
