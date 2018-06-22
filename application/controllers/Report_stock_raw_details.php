@@ -76,6 +76,7 @@ class Report_stock_raw_details extends Root_Controller
         $data['in_stock_excess_kg_pcs']= 1;
         $data['in_purchase_kg_pcs']= 1;
         $data['out_stock_damage_kg_pcs']= 1;
+        $data['out_convert_kg_pcs']= 1;
         $data['end_stock_kg_pcs']= 1;
         return $data;
     }
