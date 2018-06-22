@@ -73,6 +73,7 @@ class Report_stock_raw_summary extends Root_Controller
         $data['in_stock_excess_kg_pcs']= 1;
         $data['in_purchase_kg_pcs']= 1;
         $data['out_stock_damage_kg_pcs']= 1;
+        $data['out_convert_kg_pcs']= 1;
         $data['current_stock_kg_pcs']= 1;
         $data['current_stock_cal_kg_pcs']= 1;
         return $data;
@@ -146,6 +147,7 @@ class Report_stock_raw_summary extends Root_Controller
         $this->db->select('SUM(stock_summary_raw.in_excess) in_stock_excess',false);
         $this->db->select('SUM(stock_summary_raw.in_purchase) in_purchase',false);
         $this->db->select('SUM(stock_summary_raw.out_stock_damage) out_stock_damage',false);
+        $this->db->select('SUM(stock_summary_raw.out_convert) out_convert',false);
         $this->db->select('SUM(stock_summary_raw.current_stock) current_stock',false);
         if($packing_item!=$this->config->item('system_common_foil'))
         {
