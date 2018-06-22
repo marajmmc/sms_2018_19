@@ -48,6 +48,7 @@ $lang['ACTION_LOGOUT'] = 'Logout';
 $lang['ACTION_ASSIGN_GROUP_ROLE'] = 'Assign Group Role';
 $lang['ACTION_ASSIGN_USER_GROUP'] = 'Assign User Group';
 $lang['ACTION_SET_PACKING_COST'] = 'Set Packing Cost';
+$lang['ACTION_REPORT'] = 'View Report';
 $lang['ACTION_REPORT_VIEW'] = 'Report View';
 
 /*System Action Massage*/
