@@ -68,18 +68,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         </select>
                     </div>
                 </div>
-                <!--<div class="row show-grid">
-                    <div class="col-xs-6">
-                        <label class="control-label pull-right"><?php /*echo $CI->lang->line('LABEL_STATUS_RECEIVE_FORWARD');*/?><span style="color:#FF0000">*</span></label>
-                    </div>
-                    <div class="col-xs-6">
-                        <select id="status_receive_forward" name="report[status_receive_forward]" class="form-control">
-                            <option value=""><?php /*echo $CI->lang->line('LABEL_SELECT_ALL');*/?></option>
-                            <option value="<?php /*echo $this->config->item('system_status_forwarded')*/?>"><?php /*echo $this->config->item('system_status_forwarded')*/?></option>
-                            <option value="<?php /*echo $this->config->item('system_status_pending')*/?>"><?php /*echo $this->config->item('system_status_pending')*/?></option>
-                        </select>
-                    </div>
-                </div>-->
                 <div class="row show-grid">
                     <div class="col-xs-6">
                         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_STATUS_RECEIVE_APPROVE');?><span style="color:#FF0000">*</span></label>
@@ -94,7 +82,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 </div>
                 <div class="row show-grid">
                     <div class="col-xs-6">
-                        <label class="control-label pull-right">Auto Receive<span style="color:#FF0000">*</span></label>
+                        <label class="control-label pull-right">Direct Receive<span style="color:#FF0000">*</span></label>
                     </div>
                     <div class="col-xs-6">
                         <select id="status_system_delivery_receive" name="report[status_system_delivery_receive]" class="form-control">
@@ -268,7 +256,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 </div>
                 <div class="row show-grid">
                     <div class="col-xs-6">
-                        <input type="text" id="date_start" name="report[date_start]" class="form-control date_large" value="<?php echo System_helper::display_date(time()); ?>">
+                        <input type="text" id="date_start" name="report[date_start]" class="form-control date_large" value="">
                     </div>
                     <div class="col-xs-6">
                         <label class="control-label"><?php echo $CI->lang->line('LABEL_DATE_START');?> <span style="color:#FF0000">*</span></label>
@@ -291,7 +279,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                             <option value="date_delivery">TR Delivery Date</option>
                             <option value="date_updated_delivery_forward">TR Delivery Time</option>
                             <option value="date_receive">TR Receive Date</option>
-                            <option value="date_updated_receive_approve">TR Receive Approval Time</option>
+                            <option value="date_updated_receive_approve">Indirect Receive Approval Time</option>
                         </select>
                     </div>
                     <div class="col-xs-6">

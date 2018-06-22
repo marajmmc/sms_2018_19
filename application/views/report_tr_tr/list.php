@@ -25,7 +25,7 @@ if(isset($CI->permissions['action6']) && ($CI->permissions['action6']==1))
     $action_buttons[]=array
     (
         'label'=>'Preference',
-        'href'=>site_url($CI->controller_url.'/index/set_preference_transfer')
+        'href'=>site_url($CI->controller_url.'/index/set_preference')
     );
 }
 $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
@@ -79,8 +79,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 { name: 'status_receive', type: 'string' },
                 { name: 'status_receive_forward', type: 'string' },
                 { name: 'status_receive_approve', type: 'string' },
-                { name: 'status_system_delivery_receive', type: 'string' },
-                { name: 'status', type: 'string' }
+                { name: 'status_system_delivery_receive', type: 'string' }
             ],
             id: 'id',
             type: 'POST',
@@ -129,10 +128,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 rowsheight: 45,
                 columns:
                     [
-                        { text: '<?php echo $CI->lang->line('LABEL_DIVISION_NAME'); ?>', dataField: 'division_name',pinned:true,width:'100',hidden: <?php echo $system_preference_items['division_name']?0:1;?>},
-                        { text: '<?php echo $CI->lang->line('LABEL_ZONE_NAME'); ?>', dataField: 'zone_name',pinned:true,width:'100',hidden: <?php echo $system_preference_items['zone_name']?0:1;?>},
-                        { text: '<?php echo $CI->lang->line('LABEL_TERRITORY_NAME'); ?>', dataField: 'territory_name',pinned:true,width:'100',hidden: <?php echo $system_preference_items['territory_name']?0:1;?>},
-                        { text: '<?php echo $CI->lang->line('LABEL_DISTRICT_NAME'); ?>', dataField: 'district_name',pinned:true,width:'100',hidden: <?php echo $system_preference_items['district_name']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_OUTLET_NAME'); ?>', dataField: 'outlet_name',pinned:true,width:'200',hidden: <?php echo $system_preference_items['outlet_name']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_BARCODE'); ?>', dataField: 'barcode',width:'100',hidden: <?php echo $system_preference_items['barcode']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_DATE_REQUEST'); ?>', dataField: 'date_request',width:'100',hidden: <?php echo $system_preference_items['date_request']?0:1;?>},
@@ -149,7 +144,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         { text: '<?php echo $CI->lang->line('LABEL_STATUS_RECEIVE_FORWARD'); ?>', dataField: 'status_receive_forward',width:'100',hidden: <?php echo $system_preference_items['status_receive_forward']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_STATUS_RECEIVE_APPROVE'); ?>', dataField: 'status_receive_approve',width:'100',hidden: <?php echo $system_preference_items['status_receive_approve']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_STATUS_SYSTEM_DELIVERY_RECEIVE'); ?>', dataField: 'status_system_delivery_receive',width:'100',hidden: <?php echo $system_preference_items['status_system_delivery_receive']?0:1;?>},
-                        { text: '<?php echo $CI->lang->line('LABEL_STATUS'); ?>', dataField: 'status',width:'100',hidden: <?php echo $system_preference_items['status']?0:1;?>},
                         { text: 'Details', dataField: 'details_button',width: '120',cellsrenderer: cellsrenderer}
                     ]
             });
