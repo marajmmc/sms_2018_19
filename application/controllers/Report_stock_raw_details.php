@@ -392,6 +392,17 @@ class Report_stock_raw_details extends Root_Controller
                 $result['variety_id']='';
                 $result['pack_size_id']='';
             }
+            if(!(isset($stocks[$result['variety_id']][$result['pack_size_id']])))
+            {
+                if($packing_item==$this->config->item('system_common_foil'))
+                {
+                    $stocks[$result['variety_id']][$result['pack_size_id']]=$this->initialize_row('','','',$result['pack_size_id']);
+                }
+                else
+                {
+                    $stocks[$result['variety_id']][$result['pack_size_id']]=$this->initialize_row('','','',$pack_sizes[$result['pack_size_id']]);
+                }
+            }
             $stocks[$result['variety_id']][$result['pack_size_id']]['opening_stock_kg_pcs']-=$result['out_opening'];
             $stocks[$result['variety_id']][$result['pack_size_id']]['out_stock_damage_kg_pcs']+=$result['out_stock_damage'];
             $stocks[$result['variety_id']][$result['pack_size_id']]['end_stock_kg_pcs']-=($result['out_opening']+$result['out_stock_damage']);
