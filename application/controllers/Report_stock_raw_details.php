@@ -397,6 +397,57 @@ class Report_stock_raw_details extends Root_Controller
             $stocks[$result['variety_id']][$result['pack_size_id']]['end_stock_kg_pcs']-=($result['out_opening']+$result['out_stock_damage']);
         }
 
+        //out stock convert
+        $this->db->from($this->config->item('table_sms_convert_bulk_to_pack').' bulk_to_pack');
+        $this->db->select('bulk_to_pack.variety_id,bulk_to_pack.pack_size_id');
+        if($packing_item==$this->config->item('system_master_foil'))
+        {
+            $this->db->select('SUM(CASE WHEN bulk_to_pack.date_convert<'.$date_start.' then bulk_to_pack.quantity_master_foil_actual ELSE 0 END) out_opening',false);
+            $this->db->select('SUM(CASE WHEN bulk_to_pack.date_convert>='.$date_start.' and bulk_to_pack.date_convert<='.$date_end.' then bulk_to_pack.quantity_master_foil_actual ELSE 0 END) out_convert',false);
+        }
+        elseif($packing_item==$this->config->item('system_sticker'))
+        {
+            $this->db->select('SUM(CASE WHEN bulk_to_pack.date_convert<'.$date_start.' then bulk_to_pack.quantity_sticker_actual ELSE 0 END) out_opening',false);
+            $this->db->select('SUM(CASE WHEN bulk_to_pack.date_convert>='.$date_start.' and bulk_to_pack.date_convert<='.$date_end.' then bulk_to_pack.quantity_sticker_actual ELSE 0 END) out_convert',false);
+        }
+        elseif($packing_item==$this->config->item('system_common_foil'))
+        {
+            $this->db->select('SUM(CASE WHEN bulk_to_pack.date_convert<'.$date_start.' then bulk_to_pack.quantity_foil_actual ELSE 0 END) out_opening',false);
+            $this->db->select('SUM(CASE WHEN bulk_to_pack.date_convert>='.$date_start.' and bulk_to_pack.date_convert<='.$date_end.' then bulk_to_pack.quantity_foil_actual ELSE 0 END) out_convert',false);
+        }
+        $this->db->where('bulk_to_pack.status !=',$this->config->item('system_status_delete'));
+        $this->db->where_in('bulk_to_pack.variety_id',$variety_ids);
+        if($pack_size_id>0)
+        {
+            $this->db->where('bulk_to_pack.pack_size_id',$pack_size_id);
+        }
+        $this->db->group_by('bulk_to_pack.variety_id');
+        $this->db->group_by('bulk_to_pack.pack_size_id');
+        $results=$this->db->get()->result_array();
+
+        foreach($results as $result)
+        {
+            if($packing_item==$this->config->item('system_common_foil'))
+            {
+                $result['variety_id']='';
+                $result['pack_size_id']='';
+            }
+            if(!(isset($stocks[$result['variety_id']][$result['pack_size_id']])))
+            {
+                if($packing_item==$this->config->item('system_common_foil'))
+                {
+                    $stocks[$result['variety_id']][$result['pack_size_id']]=$this->initialize_row('','','',$result['pack_size_id']);
+                }
+                else
+                {
+                    $stocks[$result['variety_id']][$result['pack_size_id']]=$this->initialize_row('','','',$pack_sizes[$result['pack_size_id']]);
+                }
+            }
+            $stocks[$result['variety_id']][$result['pack_size_id']]['opening_stock_kg_pcs']-=$result['out_opening'];
+            $stocks[$result['variety_id']][$result['pack_size_id']]['out_convert_kg_pcs']+=$result['out_convert'];
+            $stocks[$result['variety_id']][$result['pack_size_id']]['end_stock_kg_pcs']-=($result['out_opening']+$result['out_convert']);
+        }
+
         $type_total=$this->initialize_row('','','Total Type','');
         $crop_total=$this->initialize_row('','Total Crop','','');
         $grand_total=$this->initialize_row('Grand Total','','','');
@@ -468,7 +519,6 @@ class Report_stock_raw_details extends Root_Controller
                         $items[]=$this->get_row($info);
                     }
                 }
-
             }
         }
         else
