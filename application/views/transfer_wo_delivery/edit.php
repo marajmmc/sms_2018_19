@@ -247,9 +247,15 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
                         <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_WAREHOUSE_NAME'); ?></th>
                         <th colspan="2" class="text-center" style="width: 300px;"><?php echo $CI->lang->line('LABEL_QUANTITY_APPROVE'); ?></th>
-                        <th colspan="2" class="text-center" style="width: 150px;"><?php echo $CI->lang->line('LABEL_CURRENT_STOCK_KG'); ?></th>
+                        <th colspan="2" class="text-center" style="width: 150px;"><?php echo $CI->lang->line('LABEL_CURRENT_STOCK'); ?></th>
+                        <th colspan="2" class="text-center" style="width: 150px;">Available Packing Stock</th>
+                        <th colspan="2" class="text-center" style="width: 150px;">After Packing Stock</th>
                     </tr>
                     <tr>
+                        <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_PACK');?></th>
+                        <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_KG');?></th>
+                        <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_PACK');?></th>
+                        <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_KG');?></th>
                         <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_PACK');?></th>
                         <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_KG');?></th>
                         <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_PACK');?></th>
@@ -262,6 +268,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     $quantity_total_approve=0;
                     $quantity_total_approve_kg=0;
                     $stock_current_kg=0;
+                    $stock_variety_available_packing_kg=0;
                     foreach($items as $index=>$value)
                     {
                         $quantity_approve=$value['quantity_approve'];
@@ -278,6 +285,20 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                             $stock_current=0;
                         }
                         $stock_current_kg=(($stock_current*$value['pack_size'])/1000);
+
+                        if(isset($stock_available_packing[$value['variety_id']][$value['pack_size_id']][$value['warehouse_id']]))
+                        {
+                            $stock_variety_available_packing_pkt=$stock_available_packing[$value['variety_id']][$value['pack_size_id']][$value['warehouse_id']]['stock_available_packing_pkt'];
+
+                        }
+                        else
+                        {
+                            $stock_variety_available_packing_pkt=0;
+                        }
+                        $stock_variety_available_packing_kg=(($stock_variety_available_packing_pkt*$value['pack_size'])/1000);
+
+                        $stock_variety_after_packing_pkt=($stock_variety_available_packing_pkt-$quantity_approve);
+                        $stock_variety_after_packing_kg=(($stock_variety_after_packing_pkt*$value['pack_size'])/1000);
                         ?>
                         <tr>
                             <td>
@@ -315,12 +336,32 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                             </td>
                             <td class="text-right">
                                 <label class="control-label stock_current_pkt " id="stock_current_pkt_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>">
-                                    <?php echo number_format($stock_current,3,'.',''); ?>
+                                    <?php echo $stock_current; ?>
                                 </label>
                             </td>
                             <td class="text-right">
                                 <label class="control-label stock_current_kg " id="stock_current_kg_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>">
                                     <?php echo number_format($stock_current_kg,3,'.',''); ?>
+                                </label>
+                            </td>
+                            <td class="text-right">
+                                <label class="control-label stock_available_packing_pkt " id="stock_available_packing_pkt_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>">
+                                    <?php echo $stock_variety_available_packing_pkt; ?>
+                                </label>
+                            </td>
+                            <td class="text-right">
+                                <label class="control-label stock_available_packing_kg " id="stock_available_packing_kg_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>">
+                                    <?php echo number_format($stock_variety_available_packing_kg,3,'.',''); ?>
+                                </label>
+                            </td>
+                            <td class="text-right">
+                                <label class="control-label stock_after_packing_pkt " id="stock_after_packing_pkt_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>">
+                                    <?php echo $stock_variety_after_packing_pkt; ?>
+                                </label>
+                            </td>
+                            <td class="text-right">
+                                <label class="control-label stock_after_packing_kg " id="stock_after_packing_kg_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>">
+                                    <?php echo number_format($stock_variety_after_packing_kg,3,'.',''); ?>
                                 </label>
                             </td>
                         </tr>
@@ -333,7 +374,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <th colspan="5" class="text-right"><?php echo $CI->lang->line('LABEL_TOTAL');?></th>
                         <th class="text-right"><label class="control-label" id="quantity_total_approve"> <?php echo $quantity_total_approve;?></label></th>
                         <th class="text-right"><label class="control-label" id="quantity_total_approve_kg"> <?php echo number_format($quantity_total_approve_kg,3,'.','');?></label></th>
-                        <th colspan="5">&nbsp;</th>
+                        <th colspan="6">&nbsp;</th>
                     </tr>
                     </tfoot>
                 </table>
@@ -461,18 +502,20 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         {
         ?>
         var hq_variety_stocks=JSON.parse('<?php echo json_encode($stocks);?>');
+        var hq_variety_stock_available_packing=JSON.parse('<?php echo json_encode($stock_available_packing);?>');
         <?php
         }
         else
         {
             ?>
             var hq_variety_stocks={};
+            var hq_variety_stock_available_packing={};
             <?php
         }
     ?>
     $(document).ready(function()
     {
-        //console.log(hq_variety_stocks)
+        //console.log(hq_variety_stock_available_packing[39][1][3]['stock_available_packing_pkt'])
         system_preset({controller:'<?php echo $CI->router->class; ?>'});
         //$(".date_large").datepicker({dateFormat : display_date_format,changeMonth: true,changeYear: true,yearRange: "2015:+2"});
         $(".datepicker").datepicker({dateFormat : display_date_format});
@@ -495,6 +538,10 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             var quantity_approve=parseFloat($('#quantity_approve_'+current_id).html().replace(/,/g,''));
             var current_stock_pkt=0;
             var current_stock_kg=0;
+            var stock_available_packing_pkt=0;
+            var stock_available_packing_kg=0;
+            var stock_after_packing_pkt=0;
+            var stock_after_packing_kg=0;
             if(variety_id>0 && pack_size_id>0 && warehouse_id>0)
             {
                 if(hq_variety_stocks[variety_id][pack_size_id][warehouse_id]!=undefined)
@@ -504,6 +551,21 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 }
                 $('#stock_current_pkt_'+current_id).html(current_stock_pkt);
                 $('#stock_current_kg_'+current_id).html(number_format(current_stock_kg,'3','.',''));
+
+                if(hq_variety_stock_available_packing[variety_id][pack_size_id][warehouse_id]!=undefined)
+                {
+                    stock_available_packing_pkt=hq_variety_stock_available_packing[variety_id][pack_size_id][warehouse_id]['stock_available_packing_pkt'];
+                    stock_available_packing_kg=((stock_available_packing_pkt*pack_size)/1000);
+                }
+                $('#stock_available_packing_pkt_'+current_id).html(stock_available_packing_pkt);
+                $('#stock_available_packing_kg_'+current_id).html(number_format(stock_available_packing_kg,'3','.',''));
+
+                stock_after_packing_pkt=(stock_available_packing_pkt-quantity_approve);
+                stock_after_packing_kg=((stock_after_packing_pkt*pack_size)/1000);
+                $('#stock_after_packing_pkt_'+current_id).html(stock_after_packing_pkt);
+                $('#stock_after_packing_kg_'+current_id).html(number_format(stock_after_packing_kg,'3','.',''));
+
+
                 if(quantity_approve>current_stock_pkt)
                 {
                     $('#quantity_approve_'+current_id).addClass('quantity_exist_warning');

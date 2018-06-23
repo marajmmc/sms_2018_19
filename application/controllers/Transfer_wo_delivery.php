@@ -324,6 +324,7 @@ class Transfer_wo_delivery extends Root_Controller
                 $variety_ids[$row['variety_id']]=$row['variety_id'];
             }
             $data['stocks']=Stock_helper::get_variety_stock($variety_ids);
+            $data['stock_available_packing']=$this->get_available_packing_stocks($variety_ids, $item_id);
 
             $data['warehouses']=Query_helper::get_info($this->config->item('table_login_basic_setup_warehouse'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $data['couriers']=Query_helper::get_info($this->config->item('table_login_basic_setup_couriers'),array('id, name'),array('status="'.$this->config->item('system_status_active').'"'), '','',array('ordering'));
@@ -357,6 +358,40 @@ class Transfer_wo_delivery extends Root_Controller
             $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
             $this->json_return($ajax);
         }
+    }
+    private function get_available_packing_stocks($variety_ids, $id)
+    {
+        /*current stock */
+        $this->db->from($this->config->item('table_sms_stock_summary_variety'));
+        if(sizeof($variety_ids)>0)
+        {
+            $this->db->where_in('variety_id',$variety_ids);
+        }
+        $results=$this->db->get()->result_array();
+        $stock_available_packing=array();
+        foreach($results as $result)
+        {
+            $stock_available_packing[$result['variety_id']][$result['pack_size_id']][$result['warehouse_id']]=$result;
+            $stock_available_packing[$result['variety_id']][$result['pack_size_id']][$result['warehouse_id']]['stock_available_packing_pkt']=$result['current_stock'];
+        }
+        /*all TO */
+        $this->db->from($this->config->item('table_sms_transfer_wo').' transfer_wo');
+        $this->db->join($this->config->item('table_sms_transfer_wo_details').' transfer_wo_details','transfer_wo_details.transfer_wo_id=transfer_wo.id AND transfer_wo_details.status="'.$this->config->item('system_status_active').'"','INNER');
+        $this->db->select('SUM(transfer_wo_details.quantity_approve) quantity_approve, transfer_wo_details.variety_id, transfer_wo_details.pack_size_id, transfer_wo_details.pack_size, transfer_wo_details.warehouse_id');
+        $this->db->where('transfer_wo.status',$this->config->item('system_status_active'));
+        $this->db->where('transfer_wo.status_approve',$this->config->item('system_status_approved'));
+        $this->db->where('transfer_wo.status_delivery',$this->config->item('system_status_pending'));
+        $this->db->group_by('transfer_wo_details.variety_id, transfer_wo_details.pack_size_id');
+        $this->db->where_in('transfer_wo_details.variety_id',$variety_ids);
+        $this->db->where('transfer_wo_details.warehouse_id IS NOT NULL');
+        $this->db->where('transfer_wo_details.transfer_wo_id !='.$id);
+        $results=$this->db->get()->result_array();
+
+        foreach($results as $result)
+        {
+            $stock_available_packing[$result['variety_id']][$result['pack_size_id']][$result['warehouse_id']]['stock_available_packing_pkt']=($stock_available_packing[$result['variety_id']][$result['pack_size_id']][$result['warehouse_id']]['current_stock']-$result['quantity_approve']);
+        }
+        return $stock_available_packing;
     }
     private function system_save()
     {
