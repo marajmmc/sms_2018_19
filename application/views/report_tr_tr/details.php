@@ -189,8 +189,7 @@ $CI=& get_instance();
                     <tr>
                         <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_STATUS_DELIVERY');?></label></th>
                         <th class="warning header_value"><label class="control-label"><?php echo $item['status_delivery'];?></label></th>
-                        <th class="widget-header header_caption"><label class="control-label pull-right">`TO` (Delivery) Number of Edit</label></th>
-                        <th class="warning"><label class="control-label"><?php echo $item['revision_count_delivery'];?></label></th>
+                        <th colspan="2">&nbsp;</th>
                     </tr>
                     <?php
                     if($item['date_delivery'])
@@ -406,9 +405,9 @@ $CI=& get_instance();
                     <th colspan="21" class="text-center text-danger danger"><?php echo $CI->lang->line('LABEL_ORDER_ITEMS');?></th>
                 </tr>
                 <tr>
-                    <th rowspan="2" style="width: 10px;"><?php echo $CI->lang->line('LABEL_SL_NO'); ?></th>
-                    <th rowspan="2" style="width: 200px;"><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></th>
-                    <th rowspan="2" style="width: 150px;"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?></th>
+                    <!--<th rowspan="2" style="width: 10px;"><?php /*echo $CI->lang->line('LABEL_SL_NO'); */?></th>
+                    <th rowspan="2" style="width: 200px;"><?php /*echo $CI->lang->line('LABEL_CROP_NAME'); */?></th>
+                    <th rowspan="2" style="width: 150px;"><?php /*echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); */?></th>-->
                     <th rowspan="2" style="width: 150px;"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
                     <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
                     <?php
@@ -519,13 +518,13 @@ $CI=& get_instance();
 
                     ?>
                     <tr>
-                        <td class="text-right"><?php echo $index+1;?></td>
+                        <!--<td class="text-right"><?php /*echo $index+1;*/?></td>
                         <td>
-                            <label><?php echo $value['crop_name']; ?></label>
+                            <label><?php /*echo $value['crop_name']; */?></label>
                         </td>
                         <td>
-                            <label><?php echo $value['crop_type_name']; ?></label>
-                        </td>
+                            <label><?php /*echo $value['crop_type_name']; */?></label>
+                        </td>-->
                         <td>
                             <label><?php echo $value['variety_name']; ?></label>
                         </td>
@@ -583,7 +582,7 @@ $CI=& get_instance();
                 <tfoot>
                 <tr>
                     <?php
-                    $footer_colspan=5;
+                    $footer_colspan=2;
                     if($item['status_delivery']==$this->config->item('system_status_delivered'))
                     {
                         $footer_colspan+=1;
