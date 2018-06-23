@@ -97,6 +97,9 @@ class Transfer_ow_receive extends Root_Controller
     {
         $this->db->from($this->config->item('table_sms_transfer_ow').' transfer_ow');
         $this->db->select('transfer_ow.id, transfer_ow.date_request, transfer_ow.quantity_total_request_kg quantity_total_request, transfer_ow.quantity_total_approve_kg quantity_total_approve');
+        $this->db->select('transfer_ow.date_updated_approve_forward time_approved');
+        $this->db->select('transfer_ow.date_delivery');
+        $this->db->select('transfer_ow.date_updated_delivery_forward time_delivery');
         $this->db->join($this->config->item('table_login_csetup_cus_info').' outlet_info','outlet_info.customer_id=transfer_ow.outlet_id AND outlet_info.type="'.$this->config->item('system_customer_type_outlet_id').'"','INNER');
         $this->db->select('outlet_info.name outlet_name, outlet_info.customer_code outlet_code');
         $this->db->join($this->config->item('table_login_setup_location_districts').' districts','districts.id = outlet_info.district_id','INNER');
@@ -112,6 +115,7 @@ class Transfer_ow_receive extends Root_Controller
         $this->db->where('transfer_ow.status_receive',$this->config->item('system_status_pending'));
         $this->db->where('transfer_ow.status_receive_forward',$this->config->item('system_status_pending'));
         $this->db->where('outlet_info.revision',1);
+        $this->db->order_by('transfer_ow.date_updated_delivery_forward','DESC');
         $this->db->order_by('transfer_ow.id','DESC');
 
         $results=$this->db->get()->result_array();
@@ -123,6 +127,9 @@ class Transfer_ow_receive extends Root_Controller
             $item['barcode']=Barcode_helper::get_barcode_transfer_outlet_to_warehouse($result['id']);
             $item['outlet_name']=$result['outlet_name'];
             $item['date_request']=System_helper::display_date($result['date_request']);
+            $item['time_approved']=System_helper::display_date_time($result['time_approved']);
+            $item['date_delivery']=System_helper::display_date($result['date_delivery']);
+            $item['time_delivery']=System_helper::display_date_time($result['time_delivery']);
             $item['outlet_code']=$result['outlet_code'];
             $item['division_name']=$result['division_name'];
             $item['zone_name']=$result['zone_name'];
@@ -162,6 +169,9 @@ class Transfer_ow_receive extends Root_Controller
             '
             transfer_ow.id,
             transfer_ow.date_request,
+            transfer_ow.date_updated_approve_forward time_approved,
+            transfer_ow.date_delivery,
+            transfer_ow.date_updated_delivery_forward time_delivery,
             transfer_ow.quantity_total_request_kg quantity_total_request,
             transfer_ow.quantity_total_approve_kg quantity_total_approve,
             transfer_ow.quantity_total_receive_kg quantity_total_receive,
@@ -197,6 +207,9 @@ class Transfer_ow_receive extends Root_Controller
             $item['barcode']=Barcode_helper::get_barcode_transfer_outlet_to_warehouse($result['id']);
             $item['outlet_name']=$result['outlet_name'];
             $item['date_request']=System_helper::display_date($result['date_request']);
+            $item['time_approved']=System_helper::display_date_time($result['time_approved']);
+            $item['date_delivery']=System_helper::display_date($result['date_delivery']);
+            $item['time_delivery']=System_helper::display_date_time($result['time_delivery']);
             $item['outlet_code']=$result['outlet_code'];
             $item['division_name']=$result['division_name'];
             $item['zone_name']=$result['zone_name'];
@@ -1088,6 +1101,9 @@ class Transfer_ow_receive extends Root_Controller
         $data['barcode']= 1;
         $data['outlet_name']= 1;
         $data['date_request']= 1;
+        $data['time_approved']= 1;
+        $data['date_delivery']= 1;
+        $data['time_delivery']= 1;
         $data['outlet_code']= 1;
         $data['division_name']= 1;
         $data['zone_name']= 1;
@@ -1141,6 +1157,9 @@ class Transfer_ow_receive extends Root_Controller
         $data['barcode']= 1;
         $data['outlet_name']= 1;
         $data['date_request']= 1;
+        $data['time_approved']= 1;
+        $data['date_delivery']= 1;
+        $data['time_delivery']= 1;
         $data['outlet_code']= 1;
         $data['division_name']= 1;
         $data['zone_name']= 1;
