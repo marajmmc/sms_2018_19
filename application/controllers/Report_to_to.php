@@ -5,6 +5,8 @@ class Report_to_to extends Root_Controller
     public $message;
     public $permissions;
     public $controller_url;
+    public $locations;
+
     public function __construct()
     {
         parent::__construct();
