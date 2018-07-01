@@ -41,6 +41,20 @@ function number_format(number, decimals, dec_point, thousands_sep)
     return s.join(dec);
 }
 
+/*get string format*/
+function get_string_kg(number)
+{
+    return number_format(number,'3','.','');
+}
+function get_string_quantity(number)
+{
+    return number;
+}
+function get_string_amount(number)
+{
+    return number_format(number,'2','.',',');
+}
+
 $(document).ready(function()
 {
 
