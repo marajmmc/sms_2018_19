@@ -1000,7 +1000,6 @@ class Lc_release extends Root_Controller
         $data['currency_name']= 1;
         $data['lc_number']= 1;
         $data['quantity_open_kg']= 1;
-        $data['status_open_forward']= 1;
         $data['status_release']= 1;
         $data['status_received']= 1;
         $data['status_open']= 1;

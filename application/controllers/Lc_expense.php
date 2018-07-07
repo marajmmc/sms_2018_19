@@ -104,6 +104,7 @@ class Lc_expense extends Root_Controller
         $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.id = lco.fiscal_year_id','INNER');
         $this->db->join($this->config->item('table_login_setup_currency').' currency','currency.id = lco.currency_id','INNER');
         $this->db->join($this->config->item('table_login_basic_setup_principal').' principal','principal.id = lco.principal_id','INNER');
+        $this->db->where('lco.status_open_forward',$this->config->item('system_status_yes'));
         $this->db->where('lco.status_open =',$this->config->item('system_status_active'));
         $this->db->order_by('lco.fiscal_year_id','DESC');
         $this->db->order_by('lco.id','DESC');
@@ -171,6 +172,7 @@ class Lc_expense extends Root_Controller
         $this->db->join($this->config->item('table_login_setup_currency').' currency','currency.id = lc.currency_id','INNER');
         $this->db->join($this->config->item('table_login_basic_setup_principal').' principal','principal.id = lc.principal_id','INNER');
         $this->db->where('lc.status_open !=',$this->config->item('system_status_delete'));
+        $this->db->where('lc.status_open_forward',$this->config->item('system_status_yes'));
         $this->db->order_by('lc.id','DESC');
         $this->db->limit($pagesize,$current_records);
         $results=$this->db->get()->result_array();
@@ -823,7 +825,6 @@ class Lc_expense extends Root_Controller
         $data['currency_name']= 1;
         $data['lc_number']= 1;
         $data['quantity_open_kg']= 1;
-        $data['status_open_forward']= 1;
         $data['status_release']= 1;
         $data['status_received']= 1;
         $data['status_open']= 1;
