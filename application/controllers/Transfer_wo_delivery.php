@@ -159,6 +159,20 @@ class Transfer_wo_delivery extends Root_Controller
     }
     private function system_get_items_all()
     {
+        $current_records = $this->input->post('total_records');
+        if(!$current_records)
+        {
+            $current_records=0;
+        }
+        $pagesize = $this->input->post('pagesize');
+        if(!$pagesize)
+        {
+            $pagesize=100;
+        }
+        else
+        {
+            $pagesize=$pagesize*2;
+        }
         $this->db->from($this->config->item('table_sms_transfer_wo').' transfer_wo');
         $this->db->select(
             '
@@ -191,6 +205,7 @@ class Transfer_wo_delivery extends Root_Controller
         $this->db->where('transfer_wo.status_approve',$this->config->item('system_status_approved'));
         $this->db->where('outlet_info.revision',1);
         $this->db->order_by('transfer_wo.id','DESC');
+        $this->db->limit($pagesize,$current_records);
         $results=$this->db->get()->result_array();
         $items=array();
         foreach($results as $result)
