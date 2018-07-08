@@ -133,6 +133,8 @@ $lang['LABEL_SHORT_NAME'] = 'Short Name';
 $lang['LABEL_FULL_NAME'] = 'Full Name';
 $lang['LABEL_CUSTOMER_NAME'] = 'Customer Name';
 $lang['LABEL_SUPPLIER_NAME']='Supplier Name';
+$lang['LABEL_OUTLET_NAME_SOURCE'] = 'Source Outlet Name';
+$lang['LABEL_OUTLET_NAME_DESTINATION'] = 'Destination Outlet Name';
 $lang['LABEL_OUTLET_NAME'] = 'Outlet';
 $lang['LABEL_OUTLET_CODE'] = 'Outlet Code';
 $lang['LABEL_SHOWROOM_NAME'] = 'Showroom Name';
@@ -441,3 +443,5 @@ $lang['LABEL_RETURN_ITEMS']='Return Items (Variety Information)';
 $lang['LABEL_STATUS_RECEIVE_FORWARD']='Indirect Receive Forward Status';
 $lang['LABEL_STATUS_RECEIVE_APPROVE']='Indirect Receive Approve Status';
 $lang['LABEL_STATUS_SYSTEM_DELIVERY_RECEIVE']='Direct Receive';
+$lang['LABEL_STATUS_SOLVE']='Solve Status';
+

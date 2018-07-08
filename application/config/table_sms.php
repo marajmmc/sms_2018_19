@@ -34,6 +34,12 @@ $config['table_sms_transfer_ow_details'] = 'arm_sms_2018_19.sms_transfer_ow_deta
 $config['table_sms_transfer_ow_details_histories'] = 'arm_sms_2018_19.sms_transfer_ow_details_histories';
 $config['table_sms_transfer_ow_courier_details'] = 'arm_sms_2018_19.sms_transfer_ow_courier_details';
 $config['table_sms_transfer_ow_receive_solves'] = 'arm_sms_2018_19.sms_transfer_ow_receive_solves';
+/* Outlet to Outlet office (OO) */
+$config['table_sms_transfer_oo'] = 'arm_sms_2018_19.sms_transfer_oo';
+$config['table_sms_transfer_oo_details'] = 'arm_sms_2018_19.sms_transfer_oo_details';
+$config['table_sms_transfer_oo_details_histories'] = 'arm_sms_2018_19.sms_transfer_oo_details_histories';
+$config['table_sms_transfer_oo_courier_details'] = 'arm_sms_2018_19.sms_transfer_oo_courier_details';
+$config['table_sms_transfer_oo_receive_solves'] = 'arm_sms_2018_19.sms_transfer_oo_receive_solves';
 
 //Raw Materials
 

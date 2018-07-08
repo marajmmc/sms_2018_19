@@ -22,6 +22,14 @@ class Transfer_ow_receive_solve extends Root_Controller
         {
             $this->system_get_items();
         }
+        elseif($action=="list_all")
+        {
+            $this->system_list_all();
+        }
+        elseif($action=="get_items_all")
+        {
+            $this->system_get_items_all();
+        }
         elseif($action=="edit")
         {
             $this->system_edit($id);
@@ -29,6 +37,10 @@ class Transfer_ow_receive_solve extends Root_Controller
         elseif($action=="save")
         {
             $this->system_save();
+        }
+        elseif($action=="details")
+        {
+            $this->system_details($id);
         }
         elseif($action=="set_preference")
         {
@@ -43,11 +55,52 @@ class Transfer_ow_receive_solve extends Root_Controller
             $this->system_list();
         }
     }
+    private function get_preference_headers($method)
+    {
+        $data['id']= 1;
+        $data['barcode']= 1;
+        $data['outlet_name']= 1;
+        $data['date_request']= 1;
+        $data['outlet_code']= 1;
+        $data['division_name']= 1;
+        $data['zone_name']= 1;
+        $data['territory_name']= 1;
+        $data['district_name']= 1;
+        $data['quantity_total_approve']= 1;
+        $data['quantity_total_receive']= 1;
+        $data['quantity_total_difference']= 1;
+        if($method=='list_all')
+        {
+            $data['status_solve']= 1;
+        }
+        return $data;
+    }
+    private function system_set_preference($method='list')
+    {
+        $user = User_helper::get_user();
+        if(isset($this->permissions['action6']) && ($this->permissions['action6']==1))
+        {
+            $data['system_preference_items']=System_helper::get_preference($user->user_id,$this->controller_url,$method,$this->get_preference_headers($method));
+            $data['preference_method_name']=$method;
+            $ajax['status']=true;
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("preference_add_edit",$data,true));
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/set_preference');
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+    }
     private function system_list()
     {
+        $user = User_helper::get_user();
+        $method='list';
         if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
         {
-            $data['system_preference_items']= $this->get_preference();
+            $data['system_preference_items']= System_helper::get_preference($user->user_id,$this->controller_url,$method,$this->get_preference_headers($method));
             $data['title']="Outlet to HQ Receive Approve Solve List";
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/list",$data,true));
@@ -101,7 +154,7 @@ class Transfer_ow_receive_solve extends Root_Controller
         {
             $item=array();
             $item['id']=$result['id'];
-            $item['barcode']=Barcode_helper::get_barcode_transfer_warehouse_to_outlet($result['transfer_ow_id']);
+            $item['barcode']=Barcode_helper::get_barcode_transfer_outlet_to_warehouse($result['transfer_ow_id']);
             $item['outlet_name']=$result['outlet_name'];
             $item['date_request']=System_helper::display_date($result['date_request']);
             $item['outlet_code']=$result['outlet_code'];
@@ -112,6 +165,82 @@ class Transfer_ow_receive_solve extends Root_Controller
             $item['quantity_total_approve']=number_format($result['quantity_total_approve'],3,'.','');
             $item['quantity_total_receive']=number_format($result['quantity_total_receive'],3,'.','');
             $item['quantity_total_difference']=number_format(($result['quantity_total_receive']-$result['quantity_total_approve']),3,'.','');
+            $items[]=$item;
+        }
+        $this->json_return($items);
+    }
+    private function system_list_all()
+    {
+        $user = User_helper::get_user();
+        $method='list_all';
+        if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
+        {
+            $data['system_preference_items']= System_helper::get_preference($user->user_id,$this->controller_url,$method,$this->get_preference_headers($method));
+            $data['title']="Outlet to HQ Receive Approve Solve List";
+            $ajax['status']=true;
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/list_all",$data,true));
+            if($this->message)
+            {
+                $ajax['system_message']=$this->message;
+            }
+            $ajax['system_page_url']=site_url($this->controller_url);
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+    }
+    private function system_get_items_all()
+    {
+        $this->db->from($this->config->item('table_sms_transfer_ow_receive_solves').' transfer_ow_receive_solves');
+        $this->db->select('transfer_ow_receive_solves.*, transfer_ow_receive_solves.id id');
+        $this->db->join($this->config->item('table_sms_transfer_ow').' transfer_ow','transfer_ow.id=transfer_ow_receive_solves.transfer_ow_id','INNER');
+        $this->db->select(
+            'transfer_ow.id transfer_ow_id,
+            transfer_ow.date_request,
+            transfer_ow.quantity_total_request_kg quantity_total_request,
+            transfer_ow.quantity_total_approve_kg quantity_total_approve,
+            transfer_ow.quantity_total_receive_kg quantity_total_receive
+            ');
+        $this->db->join($this->config->item('table_login_csetup_cus_info').' outlet_info','outlet_info.customer_id=transfer_ow.outlet_id AND outlet_info.type="'.$this->config->item('system_customer_type_outlet_id').'"','INNER');
+        $this->db->select('outlet_info.name outlet_name, outlet_info.customer_code outlet_code');
+        $this->db->join($this->config->item('table_login_setup_location_districts').' districts','districts.id = outlet_info.district_id','INNER');
+        $this->db->select('districts.name district_name');
+        $this->db->join($this->config->item('table_login_setup_location_territories').' territories','territories.id = districts.territory_id','INNER');
+        $this->db->select('territories.name territory_name');
+        $this->db->join($this->config->item('table_login_setup_location_zones').' zones','zones.id = territories.zone_id','INNER');
+        $this->db->select('zones.name zone_name');
+        $this->db->join($this->config->item('table_login_setup_location_divisions').' divisions','divisions.id = zones.division_id','INNER');
+        $this->db->select('divisions.name division_name');
+        $this->db->where('transfer_ow.status_receive',$this->config->item('system_status_received'));
+        $this->db->where('transfer_ow.status_receive_forward',$this->config->item('system_status_forwarded'));
+        $this->db->where('transfer_ow.status_receive_approve',$this->config->item('system_status_approved'));
+        $this->db->where('transfer_ow.status_system_delivery_receive',$this->config->item('system_status_no'));
+        //$this->db->where('transfer_ow_receive_solves.status_solve',$this->config->item('system_status_no'));
+        $this->db->where('outlet_info.revision',1);
+        $this->db->order_by('transfer_ow.id','DESC');
+
+        $results=$this->db->get()->result_array();
+        $items=array();
+        foreach($results as $result)
+        {
+            $item=array();
+            $item['id']=$result['id'];
+            $item['barcode']=Barcode_helper::get_barcode_transfer_outlet_to_warehouse($result['transfer_ow_id']);
+            $item['outlet_name']=$result['outlet_name'];
+            $item['date_request']=System_helper::display_date($result['date_request']);
+            $item['outlet_code']=$result['outlet_code'];
+            $item['division_name']=$result['division_name'];
+            $item['zone_name']=$result['zone_name'];
+            $item['territory_name']=$result['territory_name'];
+            $item['district_name']=$result['district_name'];
+            $item['quantity_total_approve']=number_format($result['quantity_total_approve'],3,'.','');
+            $item['quantity_total_receive']=number_format($result['quantity_total_receive'],3,'.','');
+            $item['quantity_total_difference']=number_format(($result['quantity_total_receive']-$result['quantity_total_approve']),3,'.','');
+            $item['status_solve']=$result['status_solve'];
             $items[]=$item;
         }
         $this->json_return($items);
@@ -209,7 +338,7 @@ class Transfer_ow_receive_solve extends Root_Controller
             }
             $data['stocks']=Stock_helper::get_variety_stock_outlet($data['item']['outlet_id'],$variety_ids);
 
-            $data['title']="HQ to Outlet Receive Approve Solve:: ". Barcode_helper::get_barcode_transfer_warehouse_to_outlet($data['item']['transfer_ow_id']);
+            $data['title']="HQ to Outlet Receive Approve Solve:: ". Barcode_helper::get_barcode_transfer_outlet_to_warehouse($data['item']['transfer_ow_id']);
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/add_edit",$data,true));
             if($this->message)
@@ -304,8 +433,115 @@ class Transfer_ow_receive_solve extends Root_Controller
             $this->json_return($ajax);
         }
     }
+    private function system_details($id)
+    {
+        if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
+        {
+            if($id>0)
+            {
+                $item_id=$id;
+            }
+            else
+            {
+                $item_id=$this->input->post('id');
+            }
+            $this->db->from($this->config->item('table_sms_transfer_ow').' transfer_ow');
+            $this->db->select('transfer_ow.*');
+            $this->db->join($this->config->item('table_login_csetup_cus_info').' outlet_info','outlet_info.customer_id=transfer_ow.outlet_id AND outlet_info.type="'.$this->config->item('system_customer_type_outlet_id').'"','INNER');
+            $this->db->select('outlet_info.customer_id outlet_id, outlet_info.name outlet_name, outlet_info.customer_code outlet_code');
+            $this->db->join($this->config->item('table_login_setup_location_districts').' districts','districts.id = outlet_info.district_id','INNER');
+            $this->db->select('districts.id district_id, districts.name district_name');
+            $this->db->join($this->config->item('table_login_setup_location_territories').' territories','territories.id = districts.territory_id','INNER');
+            $this->db->select('territories.id territory_id, territories.name territory_name');
+            $this->db->join($this->config->item('table_login_setup_location_zones').' zones','zones.id = territories.zone_id','INNER');
+            $this->db->select('zones.id zone_id, zones.name zone_name');
+            $this->db->join($this->config->item('table_login_setup_location_divisions').' divisions','divisions.id = zones.division_id','INNER');
+            $this->db->select('divisions.id division_id, divisions.name division_name');
+            $this->db->join($this->config->item('table_pos_setup_user_info').' pos_setup_user_info','pos_setup_user_info.user_id=transfer_ow.user_updated_delivery','LEFT');
+            $this->db->select('pos_setup_user_info.name full_name_delivery_edit');
+            $this->db->join($this->config->item('table_pos_setup_user_info').' pos_setup_user_info_forward','pos_setup_user_info_forward.user_id=transfer_ow.user_updated_delivery_forward','LEFT');
+            $this->db->select('pos_setup_user_info_forward.name full_name_delivery_forward');
+            $this->db->join($this->config->item('table_sms_transfer_ow_courier_details').' wo_courier_details','wo_courier_details.transfer_ow_id=transfer_ow.id','LEFT');
+            $this->db->select('
+                                wo_courier_details.date_delivery courier_date_delivery,
+                                wo_courier_details.date_challan,
+                                wo_courier_details.challan_no,
+                                wo_courier_details.courier_tracing_no,
+                                wo_courier_details.place_booking_source,
+                                wo_courier_details.place_destination,
+                                wo_courier_details.date_booking,
+                                wo_courier_details.remarks remarks_couriers
+                                ');
+            $this->db->join($this->config->item('table_login_basic_setup_couriers').' courier','courier.id=wo_courier_details.courier_id','LEFT');
+            $this->db->select('courier.name courier_name');
+            $this->db->where('transfer_ow.status !=',$this->config->item('system_status_delete'));
+            $this->db->where('transfer_ow.id',$item_id);
+            $this->db->where('outlet_info.revision',1);
+            $this->db->order_by('transfer_ow.id','DESC');
+            $data['item']=$this->db->get()->row_array();
+            if(!$data['item'])
+            {
+                System_helper::invalid_try('details',$item_id,'View Non Exists');
+                $ajax['status']=false;
+                $ajax['system_message']='Invalid Try.';
+                $this->json_return($ajax);
+            }
+            /*if(!$this->check_my_editable($data['item']))
+            {
+                System_helper::invalid_try('details',$item_id,'User location Not Assign.');
+                $ajax['status']=false;
+                $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+                $this->json_return($ajax);
+            }*/
 
-    private function system_set_preference()
+            $user_ids=array();
+            $user_ids[$data['item']['user_created_request']]=$data['item']['user_created_request'];
+            $user_ids[$data['item']['user_updated_request']]=$data['item']['user_updated_request'];
+            $user_ids[$data['item']['user_updated_forward']]=$data['item']['user_updated_forward'];
+            $user_ids[$data['item']['user_updated_approve']]=$data['item']['user_updated_approve'];
+            $user_ids[$data['item']['user_updated_approve_forward']]=$data['item']['user_updated_approve_forward'];
+            $user_ids[$data['item']['user_updated_receive']]=$data['item']['user_updated_receive'];
+            $user_ids[$data['item']['user_updated_receive_forward']]=$data['item']['user_updated_receive_forward'];
+            $data['users']=System_helper::get_users_info($user_ids);
+
+            $this->db->from($this->config->item('table_sms_transfer_ow_details').' transfer_ow_details');
+            $this->db->select('transfer_ow_details.*');
+            $this->db->join($this->config->item('table_login_setup_classification_varieties').' v','v.id=transfer_ow_details.variety_id','INNER');
+            $this->db->select('v.name variety_name');
+            $this->db->join($this->config->item('table_login_setup_classification_crop_types').' crop_type','crop_type.id=v.crop_type_id','INNER');
+            $this->db->select('crop_type.id crop_type_id, crop_type.name crop_type_name');
+            $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id=crop_type.crop_id','INNER');
+            $this->db->select('crop.id crop_id, crop.name crop_name');
+            $this->db->where('transfer_ow_details.transfer_ow_id',$item_id);
+            $this->db->where('transfer_ow_details.status',$this->config->item('system_status_active'));
+            $this->db->order_by('transfer_ow_details.id');
+            $data['items']=$this->db->get()->result_array();
+
+            $data['solve_info']=Query_helper::get_info($this->config->item('table_sms_transfer_ow_receive_solves'),array('*'),array('status !="'.$this->config->item('system_status_deleted').'"','id ='.$item_id),1);
+
+            $user_ids=array();
+            $user_ids[$data['solve_info']['user_created']]=$data['solve_info']['user_created'];
+            $user_ids[$data['solve_info']['user_updated']]=$data['solve_info']['user_updated'];
+            $data['users_solve']=System_helper::get_users_info($user_ids);
+
+            $data['title']="Outlet to HQ Transfer Details :: ". Barcode_helper::get_barcode_transfer_outlet_to_warehouse($data['item']['id']);
+            $ajax['status']=true;
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/details",$data,true));
+            if($this->message)
+            {
+                $ajax['system_message']=$this->message;
+            }
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/details/'.$item_id);
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+    }
+    /*private function system_set_preference()
     {
         if(isset($this->permissions['action6']) && ($this->permissions['action6']==1))
         {
@@ -359,5 +595,5 @@ class Transfer_ow_receive_solve extends Root_Controller
             }
         }
         return $data;
-    }
+    }*/
 }

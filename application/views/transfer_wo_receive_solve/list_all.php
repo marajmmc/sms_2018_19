@@ -5,18 +5,8 @@ $action_buttons=array();
 if(isset($CI->permissions['action0']) && ($CI->permissions['action0']==1))
 {
     $action_buttons[]=array(
-        'label'=>'All List',
-        'href'=>site_url($CI->controller_url.'/index/list_all')
-    );
-}
-if(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1))
-{
-    $action_buttons[]=array
-    (
-        'type'=>'button',
-        'label'=>'Solve',
-        'class'=>'button_jqx_action',
-        'data-action-link'=>site_url($CI->controller_url.'/index/edit')
+        'label'=>'Pending List',
+        'href'=>site_url($CI->controller_url.'/index/list')
     );
 }
 if(isset($CI->permissions['action0']) && ($CI->permissions['action0']==1))
@@ -86,7 +76,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
     $(document).ready(function ()
     {
         system_preset({controller:'<?php echo $CI->router->class; ?>'});
-        var url = "<?php echo site_url($CI->controller_url.'/index/get_items');?>";
+        var url = "<?php echo site_url($CI->controller_url.'/index/get_items_all');?>";
 
         // prepare the data
         var source =
@@ -147,7 +137,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         { text: '<?php echo $CI->lang->line('LABEL_DISTRICT_NAME'); ?>', dataField: 'district_name',width:'100',hidden: <?php echo $system_preference_items['district_name']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL_APPROVE'); ?>', dataField: 'quantity_total_approve', width:'100', cellsAlign:'right', hidden: <?php echo $system_preference_items['quantity_total_approve']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL_RECEIVE'); ?>', dataField: 'quantity_total_receive', width:'100', cellsAlign:'right', hidden: <?php echo $system_preference_items['quantity_total_receive']?0:1;?>},
-                        { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL_DIFFERENCE'); ?>', dataField: 'quantity_total_difference', width:'100', cellsAlign:'right', hidden: <?php echo $system_preference_items['quantity_total_difference']?0:1;?>}
+                        { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL_DIFFERENCE'); ?>', dataField: 'quantity_total_difference', width:'100', cellsAlign:'right', hidden: <?php echo $system_preference_items['quantity_total_difference']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_STATUS_SOLVE'); ?>', dataField: 'status_solve', width:'100', cellsAlign:'right', hidden: <?php echo $system_preference_items['status_solve']?0:1;?>}
                     ]
             });
     });

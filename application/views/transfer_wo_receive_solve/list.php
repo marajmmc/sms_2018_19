@@ -2,6 +2,13 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 $CI=& get_instance();
 $action_buttons=array();
+if(isset($CI->permissions['action0']) && ($CI->permissions['action0']==1))
+{
+    $action_buttons[]=array(
+        'label'=>'All List',
+        'href'=>site_url($CI->controller_url.'/index/list_all')
+    );
+}
 if(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1))
 {
     $action_buttons[]=array
@@ -10,6 +17,16 @@ if(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1))
         'label'=>'Solve',
         'class'=>'button_jqx_action',
         'data-action-link'=>site_url($CI->controller_url.'/index/edit')
+    );
+}
+if(isset($CI->permissions['action0']) && ($CI->permissions['action0']==1))
+{
+    $action_buttons[]=array
+    (
+        'type'=>'button',
+        'label'=>$CI->lang->line('ACTION_DETAILS'),
+        'class'=>'button_jqx_action',
+        'data-action-link'=>site_url($CI->controller_url.'/index/details')
     );
 }
 if(isset($CI->permissions['action4']) && ($CI->permissions['action4']==1))
@@ -76,18 +93,23 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         {
             dataType: "json",
             dataFields: [
-                { name: 'id', type: 'int' },
-                { name: 'barcode', type: 'string' },
-                { name: 'outlet_name', type: 'string'},
-                { name: 'date_request', type: 'string'},
-                { name: 'outlet_code', type: 'string'},
-                { name: 'division_name', type: 'string'},
-                { name: 'zone_name', type: 'string'},
-                { name: 'territory_name', type: 'string'},
-                { name: 'district_name', type: 'string'},
-                { name: 'quantity_total_approve', type: 'string'},
-                { name: 'quantity_total_receive', type: 'string'},
-                { name: 'quantity_total_difference', type: 'string'}
+                <?php
+                 foreach($system_preference_items as $key=>$item)
+                 {
+                 if($key=='id' || $key=='quantity_total_request' )
+                 {
+                 ?>
+                { name: '<?php echo $key ?>', type: 'number' },
+                <?php
+                 }
+                 else
+                 {
+                 ?>
+                { name: '<?php echo $key ?>', type: 'string' },
+                <?php
+                 }
+             }
+            ?>
             ],
             id: 'id',
             type: 'POST',
