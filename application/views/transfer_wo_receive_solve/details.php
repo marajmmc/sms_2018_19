@@ -409,33 +409,31 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 }
                 ?>
                 <!-- Receive Solve Information-->
+                <tr><th colspan="21" class="bg-info">Receive Solve Information</th></tr>
+                <tr>
+                    <th class="widget-header header_caption"><label class="control-label pull-right">Solve Status (Receive) </label></th>
+                    <th class="warning header_value"><label class="control-label"><?php echo $solve_info['status_solve'];?></label></th>
+                    <th colspan="2">&nbsp;</th>
+                </tr>
                 <?php
-                if($solve_info['status_solve']==$this->config->item('system_status_yes'))
+                if($solve_info['user_updated'])
                 {
                     ?>
-                    <tr><th colspan="21" class="bg-info">Receive Solve Information</th></tr>
-                    <tr>
-                        <th class="widget-header header_caption"><label class="control-label pull-right">Solve Status (Receive) </label></th>
-                        <th class="warning header_value"><label class="control-label"><?php echo $solve_info['status_solve'];?></label></th>
-                        <th colspan="2">&nbsp;</th>
-                    </tr>
                     <tr>
                         <th class="widget-header header_caption"><label class="control-label pull-right">Solved By</label></th>
                         <th class=" header_value"><label class="control-label"><?php echo $users_solve[$solve_info['user_updated']]['name'];?></label></th>
                         <th class="widget-header header_caption"><label class="control-label pull-right">Solved Time</label></th>
                         <th class=""><label class="control-label"><?php echo System_helper::display_date_time($solve_info['date_updated']);?></label></th>
                     </tr>
-                    <?php
-                    if($solve_info['remarks'])
-                    {
-                        ?>
-                        <tr>
-                            <th class="widget-header header_caption" style="vertical-align: top"><label class="control-label pull-right">Remarks for Solve</label></th>
-                            <th class=" header_value" colspan="3"><label class="control-label"><?php echo nl2br($solve_info['remarks']);?></label></th>
-                        </tr>
-                    <?php
-                    }
+                <?php
+                }
+                if($solve_info['remarks'])
+                {
                     ?>
+                    <tr>
+                        <th class="widget-header header_caption" style="vertical-align: top"><label class="control-label pull-right">Remarks for Solve</label></th>
+                        <th class=" header_value" colspan="3"><label class="control-label"><?php echo nl2br($solve_info['remarks']);?></label></th>
+                    </tr>
                 <?php
                 }
                 ?>
