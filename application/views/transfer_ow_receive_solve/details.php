@@ -308,7 +308,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 ?>
                     <tr><th colspan="21" class="bg-info">Receive Information </th></tr>
                     <tr>
-                        <th class="widget-header header_caption"><label class="control-label pull-right">Manually Product Receive</label></th>
+                        <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_STATUS_SYSTEM_DELIVERY_RECEIVE');?></label></th>
                         <th class="warning header_value"><label class="control-label"><?php echo $item['status_system_delivery_receive'];?></label></th>
                         <th colspan="2">&nbsp;</th>
                     </tr>
@@ -350,7 +350,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 ?>
                     <tr><th colspan="21" class="bg-info">Receive Information</th></tr>
                     <tr>
-                        <th class="widget-header header_caption"><label class="control-label pull-right">Manually Product Receive</label></th>
+                        <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_STATUS_SYSTEM_DELIVERY_RECEIVE');?></label></th>
                         <th class="warning header_value"><label class="control-label"><?php echo $item['status_system_delivery_receive'];?></label></th>
                         <th colspan="2">&nbsp;</th>
                     </tr>
@@ -411,27 +411,40 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <tr><th colspan="21" class="bg-info">Receive Solve Information</th></tr>
                 <tr>
                     <th class="widget-header header_caption"><label class="control-label pull-right">Solve Status (Receive) </label></th>
-                    <th class="warning header_value"><label class="control-label"><?php echo $solve_info['status_solve'];?></label></th>
+                    <th class="warning header_value"><label class="control-label"><?php echo $item['status_solve'];?></label></th>
                     <th colspan="2">&nbsp;</th>
                 </tr>
                 <?php
-                if($solve_info['user_updated'])
+                if($item['user_updated'])
                 {
                     ?>
                     <tr>
                         <th class="widget-header header_caption"><label class="control-label pull-right">Solved By</label></th>
-                        <th class=" header_value"><label class="control-label"><?php echo $users_solve[$solve_info['user_updated']]['name'];?></label></th>
+                        <th class=" header_value"><label class="control-label"><?php echo $users[$item['user_updated']]['name'];?></label></th>
                         <th class="widget-header header_caption"><label class="control-label pull-right">Solved Time</label></th>
-                        <th class=""><label class="control-label"><?php echo System_helper::display_date_time($solve_info['date_updated']);?></label></th>
+                        <th class=""><label class="control-label"><?php echo System_helper::display_date_time($item['date_updated']);?></label></th>
                     </tr>
                 <?php
                 }
-                if($solve_info['remarks'])
+                if($item['remarks'])
                 {
                     ?>
                     <tr>
                         <th class="widget-header header_caption" style="vertical-align: top"><label class="control-label pull-right">Remarks for Solve</label></th>
-                        <th class=" header_value" colspan="3"><label class="control-label"><?php echo nl2br($solve_info['remarks']);?></label></th>
+                        <th class=" header_value" colspan="3"><label class="control-label"><?php echo nl2br($item['remarks']);?></label></th>
+                    </tr>
+                <?php
+                }
+                if($item['image_location'])
+                {
+                    ?>
+                    <tr>
+                        <th class="widget-header header_caption" style="vertical-align: top"><label class="control-label pull-right">Attachment</label></th>
+                        <th class=" header_value" colspan="3">
+                            <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_picture_transfer').$item['image_location']; ?>" alt="">
+                            <br/>
+                            <label for=""><a href="<?php echo $CI->config->item('system_base_url_picture_transfer').$item['image_location']; ?>" target="_blank" class="external">Download</a></label>
+                        </th>
                     </tr>
                 <?php
                 }

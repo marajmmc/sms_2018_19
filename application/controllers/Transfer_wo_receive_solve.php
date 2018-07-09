@@ -447,8 +447,11 @@ class Transfer_wo_receive_solve extends Root_Controller
             {
                 $item_id=$this->input->post('id');
             }
-            $this->db->from($this->config->item('table_sms_transfer_wo').' transfer_wo');
-            $this->db->select('transfer_wo.*');
+
+            $this->db->from($this->config->item('table_sms_transfer_wo_receive_solves').' transfer_wo_receive_solves');
+            $this->db->select('transfer_wo_receive_solves.*,transfer_wo_receive_solves.id id');
+            $this->db->join($this->config->item('table_sms_transfer_wo').' transfer_wo','transfer_wo.id=transfer_wo_receive_solves.transfer_wo_id','INNER');
+            $this->db->select('transfer_wo.*, transfer_wo.id transfer_wo_id');
             $this->db->join($this->config->item('table_login_csetup_cus_info').' outlet_info','outlet_info.customer_id=transfer_wo.outlet_id AND outlet_info.type="'.$this->config->item('system_customer_type_outlet_id').'"','INNER');
             $this->db->select('outlet_info.customer_id outlet_id, outlet_info.name outlet_name, outlet_info.customer_code outlet_code');
             $this->db->join($this->config->item('table_login_setup_location_districts').' districts','districts.id = outlet_info.district_id','INNER');
@@ -459,8 +462,6 @@ class Transfer_wo_receive_solve extends Root_Controller
             $this->db->select('zones.id zone_id, zones.name zone_name');
             $this->db->join($this->config->item('table_login_setup_location_divisions').' divisions','divisions.id = zones.division_id','INNER');
             $this->db->select('divisions.id division_id, divisions.name division_name');
-            $this->db->join($this->config->item('table_pos_setup_user_info').' pos_setup_user_info','pos_setup_user_info.user_id=transfer_wo.user_updated_receive_forward','LEFT');
-            $this->db->select('pos_setup_user_info.name full_name_receive_forward');
             $this->db->join($this->config->item('table_sms_transfer_wo_courier_details').' wo_courier_details','wo_courier_details.transfer_wo_id=transfer_wo.id','LEFT');
             $this->db->select('
                                 wo_courier_details.date_delivery courier_date_delivery,
@@ -474,11 +475,14 @@ class Transfer_wo_receive_solve extends Root_Controller
                                 ');
             $this->db->join($this->config->item('table_login_basic_setup_couriers').' courier','courier.id=wo_courier_details.courier_id','LEFT');
             $this->db->select('courier.name courier_name');
+            $this->db->join($this->config->item('table_pos_setup_user_info').' pos_setup_user_info','pos_setup_user_info.user_id=transfer_wo.user_updated_receive_forward','LEFT');
+            $this->db->select('pos_setup_user_info.name full_name_receive_forward');
             $this->db->where('transfer_wo.status !=',$this->config->item('system_status_delete'));
-            $this->db->where('transfer_wo.id',$item_id);
+            $this->db->where('transfer_wo_receive_solves.id',$item_id);
             $this->db->where('outlet_info.revision',1);
             $this->db->order_by('transfer_wo.id','DESC');
             $data['item']=$this->db->get()->row_array();
+
             if(!$data['item'])
             {
                 System_helper::invalid_try('details',$item_id,'View Non Exists');
@@ -486,17 +490,6 @@ class Transfer_wo_receive_solve extends Root_Controller
                 $ajax['system_message']='Invalid Try.';
                 $this->json_return($ajax);
             }
-
-            /*$user_ids=array();
-            $user_ids[$data['item']['user_created_request']]=$data['item']['user_created_request'];
-            $user_ids[$data['item']['user_updated_request']]=$data['item']['user_updated_request'];
-            $user_ids[$data['item']['user_updated_forward']]=$data['item']['user_updated_forward'];
-            $user_ids[$data['item']['user_updated_approve']]=$data['item']['user_updated_approve'];
-            $user_ids[$data['item']['user_updated_approve_forward']]=$data['item']['user_updated_approve_forward'];
-            $user_ids[$data['item']['user_updated_delivery']]=$data['item']['user_updated_delivery'];
-            $user_ids[$data['item']['user_updated_delivery_forward']]=$data['item']['user_updated_delivery_forward'];
-            $user_ids[$data['item']['user_updated_receive_approve']]=$data['item']['user_updated_receive_approve'];
-            $data['users']=System_helper::get_users_info($user_ids);*/
 
             $this->db->from($this->config->item('table_sms_transfer_wo_details').' transfer_wo_details');
             $this->db->select('transfer_wo_details.*');
@@ -506,7 +499,7 @@ class Transfer_wo_receive_solve extends Root_Controller
             $this->db->select('crop_type.id crop_type_id, crop_type.name crop_type_name');
             $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id=crop_type.crop_id','INNER');
             $this->db->select('crop.id crop_id, crop.name crop_name');
-            $this->db->where('transfer_wo_details.transfer_wo_id',$item_id);
+            $this->db->where('transfer_wo_details.transfer_wo_id',$data['item']['transfer_wo_id']);
             $this->db->where('transfer_wo_details.status',$this->config->item('system_status_active'));
             $this->db->order_by('transfer_wo_details.id');
             $data['items']=$this->db->get()->result_array();
@@ -520,7 +513,7 @@ class Transfer_wo_receive_solve extends Root_Controller
             $this->db->select('crop_type.id crop_type_id, crop_type.name crop_type_name');
             $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id=crop_type.crop_id','INNER');
             $this->db->select('crop.id crop_id, crop.name crop_name');
-            $this->db->where('histories.transfer_wo_id',$item_id);
+            $this->db->where('histories.transfer_wo_id',$data['item']['transfer_wo_id']);
             $this->db->where('histories.warehouse_id',null);
             /*$this->db->order_by('histories.revision', 'DESC');
             $this->db->order_by('histories.id', 'ASC');*/
@@ -556,12 +549,12 @@ class Transfer_wo_receive_solve extends Root_Controller
             $data['crops']=Query_helper::get_info($this->config->item('table_login_setup_classification_crops'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $data['two_variety_info']=Stock_helper::transfer_wo_variety_stock_info($data['item']['outlet_id']);*/
 
-            $data['solve_info']=Query_helper::get_info($this->config->item('table_sms_transfer_wo_receive_solves'),array('*'),array('status !="'.$this->config->item('system_status_deleted').'"','id ='.$item_id),1);
+            /*$data['solve_info']=Query_helper::get_info($this->config->item('table_sms_transfer_wo_receive_solves'),array('*'),array('status !="'.$this->config->item('system_status_deleted').'"','id ='.$item_id),1);
 
             $user_ids=array();
             $user_ids[$data['solve_info']['user_created']]=$data['solve_info']['user_created'];
             $user_ids[$data['solve_info']['user_updated']]=$data['solve_info']['user_updated'];
-            $data['users_solve']=System_helper::get_users_info($user_ids);
+            $data['users_solve']=System_helper::get_users_info($user_ids);*/
 
 
 

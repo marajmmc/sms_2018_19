@@ -142,7 +142,7 @@ class Transfer_ow_receive_approve extends Root_Controller
         {
             $item=array();
             $item['id']=$result['id'];
-            $item['barcode']=Barcode_helper::get_barcode_transfer_warehouse_to_outlet($result['id']);
+            $item['barcode']=Barcode_helper::get_barcode_transfer_outlet_to_warehouse($result['id']);
             $item['outlet_name']=$result['outlet_name'];
             $item['date_request']=System_helper::display_date($result['date_request']);
             $item['outlet_code']=$result['outlet_code'];
@@ -390,7 +390,7 @@ class Transfer_ow_receive_approve extends Root_Controller
             }
             $data['stocks']=Stock_helper::get_variety_stock($variety_ids);
 
-            $data['title']="Outlet to HQ Transfer Receive Approve :: ". Barcode_helper::get_barcode_transfer_warehouse_to_outlet($data['item']['id']);
+            $data['title']="Outlet to HQ Transfer Receive Approve :: ". Barcode_helper::get_barcode_transfer_outlet_to_warehouse($data['item']['id']);
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/edit",$data,true));
             if($this->message)
@@ -783,7 +783,7 @@ class Transfer_ow_receive_approve extends Root_Controller
             }
             $data['stocks']='';//Stock_helper::get_variety_stock($variety_ids);
 
-            $data['title']="Outlet to HQ Transfer Receive Approve Print View :: ". Barcode_helper::get_barcode_transfer_warehouse_to_outlet($data['item']['id']);
+            $data['title']="Outlet to HQ Transfer Receive Approve Print View :: ". Barcode_helper::get_barcode_transfer_outlet_to_warehouse($data['item']['id']);
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/challan_print",$data,true));
             if($this->message)

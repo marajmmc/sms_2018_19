@@ -291,7 +291,7 @@ $CI=& get_instance();
                 ?>
                     <tr><th colspan="21" class="bg-info">Receive Information</th></tr>
                     <tr>
-                        <th class="widget-header header_caption"><label class="control-label pull-right">Manually Product Receive</label></th>
+                        <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_STATUS_SYSTEM_DELIVERY_RECEIVE');?></label></th>
                         <th class="warning header_value"><label class="control-label"><?php echo $item['status_system_delivery_receive'];?></label></th>
                         <th colspan="2">&nbsp;</th>
                     </tr>
@@ -333,7 +333,7 @@ $CI=& get_instance();
                 ?>
                     <tr><th colspan="21" class="bg-info">Receive Information</th></tr>
                     <tr>
-                        <th class="widget-header header_caption"><label class="control-label pull-right">Manually Product Receive</label></th>
+                        <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_STATUS_SYSTEM_DELIVERY_RECEIVE');?></label></th>
                         <th class="warning header_value"><label class="control-label"><?php echo $item['status_system_delivery_receive'];?></label></th>
                         <th colspan="2">&nbsp;</th>
                     </tr>
