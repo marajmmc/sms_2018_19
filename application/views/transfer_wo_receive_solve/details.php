@@ -436,6 +436,19 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     </tr>
                 <?php
                 }
+                if($item['image_location'])
+                {
+                    ?>
+                    <tr>
+                        <th class="widget-header header_caption" style="vertical-align: top"><label class="control-label pull-right">Attachment</label></th>
+                        <th class=" header_value" colspan="3">
+                            <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_picture_transfer').$item['image_location']; ?>" alt="">
+                            <br/>
+                            <label for=""><a href="<?php echo $CI->config->item('system_base_url_picture_transfer').$item['image_location']; ?>" target="_blank" class="external">Download</a></label>
+                        </th>
+                    </tr>
+                <?php
+                }
                 ?>
                 </thead>
             </table>

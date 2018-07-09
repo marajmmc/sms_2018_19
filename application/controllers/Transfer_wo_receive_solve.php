@@ -544,19 +544,6 @@ class Transfer_wo_receive_solve extends Root_Controller
             $user_ids[$data['item']['user_updated_delivery_forward']]=$data['item']['user_updated_delivery_forward'];
             $user_ids[$data['item']['user_updated_receive_approve']]=$data['item']['user_updated_receive_approve'];
             $data['users']=System_helper::get_users_info($user_ids);
-            /*$result=Query_helper::get_info($this->config->item('table_login_setup_system_configures'),array('*'),array('purpose="'.$this->config->item('system_purpose_sms_quantity_order_max').'"', 'status ="'.$this->config->item('system_status_active').'"'),1);
-            $data['quantity_to_maximum_kg']=$result['config_value'];
-            $data['crops']=Query_helper::get_info($this->config->item('table_login_setup_classification_crops'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
-            $data['two_variety_info']=Stock_helper::transfer_wo_variety_stock_info($data['item']['outlet_id']);*/
-
-            /*$data['solve_info']=Query_helper::get_info($this->config->item('table_sms_transfer_wo_receive_solves'),array('*'),array('status !="'.$this->config->item('system_status_deleted').'"','id ='.$item_id),1);
-
-            $user_ids=array();
-            $user_ids[$data['solve_info']['user_created']]=$data['solve_info']['user_created'];
-            $user_ids[$data['solve_info']['user_updated']]=$data['solve_info']['user_updated'];
-            $data['users_solve']=System_helper::get_users_info($user_ids);*/
-
-
 
             $data['title']="HQ to Outlet Transfer Details :: ". Barcode_helper::get_barcode_transfer_warehouse_to_outlet($data['item']['id']);
             $ajax['status']=true;

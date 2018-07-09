@@ -523,13 +523,6 @@ class Transfer_ow_receive_solve extends Root_Controller
             $this->db->order_by('transfer_ow_details.id');
             $data['items']=$this->db->get()->result_array();
 
-            /*$data['solve_info']=Query_helper::get_info($this->config->item('table_sms_transfer_ow_receive_solves'),array('*'),array('status !="'.$this->config->item('system_status_deleted').'"','id ='.$item_id),1);
-
-            $user_ids=array();
-            $user_ids[$data['solve_info']['user_created']]=$data['solve_info']['user_created'];
-            $user_ids[$data['solve_info']['user_updated']]=$data['solve_info']['user_updated'];
-            $data['users_solve']=System_helper::get_users_info($user_ids);*/
-
             $data['title']="Outlet to HQ Transfer Details :: ". Barcode_helper::get_barcode_transfer_outlet_to_warehouse($data['item']['id']);
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/details",$data,true));
