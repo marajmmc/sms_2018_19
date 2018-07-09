@@ -806,127 +806,127 @@ class Transfer_ow_approve extends Root_Controller
         $user = User_helper::get_user();
         $time=time();
         $item_head=$this->input->post('item');
-        if($id>0)
-        {
-            if(!((isset($this->permissions['action7']) && ($this->permissions['action7']==1))))
-            {
-                $ajax['status']=false;
-                $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
-                $this->json_return($ajax);
-            }
-            if($item_head['status_approve']!=$this->config->item('system_status_approved') && $item_head['status_approve']!=$this->config->item('system_status_rejected'))
-            {
-                $ajax['status']=false;
-                $ajax['system_message']='Approved/Rejected is required.';
-                $this->json_return($ajax);
-            }
-            if($item_head['status_approve']==$this->config->item('system_status_rejected'))
-            {
-                if(!$item_head['remarks_approve'])
-                {
-                    $ajax['status']=false;
-                    $ajax['system_message']='Rejected remarks is required.';
-                    $this->json_return($ajax);
-                }
-            }
-
-            $this->db->from($this->config->item('table_sms_transfer_ow').' transfer_ow');
-            $this->db->select(
-                '
-                transfer_ow.id,
-                transfer_ow.date_request,
-                transfer_ow.quantity_total_request_kg,
-                transfer_ow.status_request,
-                transfer_ow.remarks_request,
-                transfer_ow.status_approve
-                ');
-            $this->db->join($this->config->item('table_login_csetup_cus_info').' outlet_info','outlet_info.customer_id=transfer_ow.outlet_id AND outlet_info.type="'.$this->config->item('system_customer_type_outlet_id').'"','INNER');
-            $this->db->select('outlet_info.customer_id outlet_id, outlet_info.name outlet_name, outlet_info.customer_code outlet_code');
-            $this->db->join($this->config->item('table_login_setup_location_districts').' districts','districts.id = outlet_info.district_id','INNER');
-            $this->db->select('districts.id district_id, districts.name district_name');
-            $this->db->join($this->config->item('table_login_setup_location_territories').' territories','territories.id = districts.territory_id','INNER');
-            $this->db->select('territories.id territory_id, territories.name territory_name');
-            $this->db->join($this->config->item('table_login_setup_location_zones').' zones','zones.id = territories.zone_id','INNER');
-            $this->db->select('zones.id zone_id, zones.name zone_name');
-            $this->db->join($this->config->item('table_login_setup_location_divisions').' divisions','divisions.id = zones.division_id','INNER');
-            $this->db->select('divisions.id division_id, divisions.name division_name');
-            $this->db->where('transfer_ow.status !=',$this->config->item('system_status_delete'));
-            $this->db->where('transfer_ow.id',$id);
-            $this->db->where('outlet_info.revision',1);
-            $this->db->order_by('transfer_ow.id','DESC');
-
-            $data['item']=$this->db->get()->row_array();
-            if(!$data['item'])
-            {
-                System_helper::invalid_try('save_forward',$id,'Update Forward Approved Non Exists');
-                $ajax['status']=false;
-                $ajax['system_message']='Invalid Try.';
-                $this->json_return($ajax);
-            }
-            if($data['item']['status_request']!=$this->config->item('system_status_forwarded'))
-            {
-                $ajax['status']=false;
-                $ajax['system_message']='TR is not forwarded from (request).';
-                $this->json_return($ajax);
-            }
-            if($data['item']['status_approve']==$this->config->item('system_status_approved'))
-            {
-                $ajax['status']=false;
-                $ajax['system_message']='TR already approved.';
-                $this->json_return($ajax);
-            }
-            if($data['item']['status_approve']==$this->config->item('system_status_rejected'))
-            {
-                $ajax['status']=false;
-                $ajax['system_message']='TR already rejected.';
-                $this->json_return($ajax);
-            }
-            if(!$this->check_my_editable($data['item']))
-            {
-                System_helper::invalid_try('save_forward',$id,'User location not assign');
-                $ajax['status']=false;
-                $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
-                $this->json_return($ajax);
-            }
-            $tow_variety_info=Stock_helper::transfer_ow_variety_stock_info($data['item']['outlet_id']);
-        }
-        else
+        if(!($id>0))
         {
             $ajax['status']=false;
             $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
             $this->json_return($ajax);
         }
 
-        $this->db->from($this->config->item('table_sms_transfer_ow_details').' transfer_ow_details');
-        $this->db->select('transfer_ow_details.*');
-        $this->db->join($this->config->item('table_login_setup_classification_varieties').' v','v.id=transfer_ow_details.variety_id','INNER');
-        $this->db->select('v.name variety_name');
-        $this->db->join($this->config->item('table_login_setup_classification_crop_types').' crop_type','crop_type.id=v.crop_type_id','INNER');
-        $this->db->select('crop_type.id crop_type_id, crop_type.name crop_type_name');
-        $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id=crop_type.crop_id','INNER');
-        $this->db->select('crop.id crop_id, crop.name crop_name');
-        $this->db->where('transfer_ow_details.transfer_ow_id',$id);
-        $this->db->where('transfer_ow_details.status',$this->config->item('system_status_active'));
-        $data['items']=$this->db->get()->result_array();
-
-        $quantity_total_approve_kg=0;
-        foreach($data['items'] as $item)
+        if(!((isset($this->permissions['action7']) && ($this->permissions['action7']==1))))
         {
-            if(!isset($tow_variety_info[$item['variety_id']][$item['pack_size_id']]))
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+        if($item_head['status_approve']!=$this->config->item('system_status_approved') && $item_head['status_approve']!=$this->config->item('system_status_rejected'))
+        {
+            $ajax['status']=false;
+            $ajax['system_message']='Approved/Rejected is required.';
+            $this->json_return($ajax);
+        }
+        if($item_head['status_approve']==$this->config->item('system_status_rejected'))
+        {
+            if(!$item_head['remarks_approve'])
             {
                 $ajax['status']=false;
-                $ajax['system_message']='Invalid variety information :: ( Variety ID: '.$item['variety_id'].' )';
+                $ajax['system_message']='Rejected remarks is required.';
                 $this->json_return($ajax);
             }
+        }
+        $this->db->from($this->config->item('table_sms_transfer_ow').' transfer_ow');
+        $this->db->select(
+            '
+            transfer_ow.id,
+            transfer_ow.date_request,
+            transfer_ow.quantity_total_request_kg,
+            transfer_ow.status_request,
+            transfer_ow.remarks_request,
+            transfer_ow.status_approve
+            ');
+        $this->db->join($this->config->item('table_login_csetup_cus_info').' outlet_info','outlet_info.customer_id=transfer_ow.outlet_id AND outlet_info.type="'.$this->config->item('system_customer_type_outlet_id').'"','INNER');
+        $this->db->select('outlet_info.customer_id outlet_id, outlet_info.name outlet_name, outlet_info.customer_code outlet_code');
+        $this->db->join($this->config->item('table_login_setup_location_districts').' districts','districts.id = outlet_info.district_id','INNER');
+        $this->db->select('districts.id district_id, districts.name district_name');
+        $this->db->join($this->config->item('table_login_setup_location_territories').' territories','territories.id = districts.territory_id','INNER');
+        $this->db->select('territories.id territory_id, territories.name territory_name');
+        $this->db->join($this->config->item('table_login_setup_location_zones').' zones','zones.id = territories.zone_id','INNER');
+        $this->db->select('zones.id zone_id, zones.name zone_name');
+        $this->db->join($this->config->item('table_login_setup_location_divisions').' divisions','divisions.id = zones.division_id','INNER');
+        $this->db->select('divisions.id division_id, divisions.name division_name');
+        $this->db->where('transfer_ow.status !=',$this->config->item('system_status_delete'));
+        $this->db->where('transfer_ow.id',$id);
+        $this->db->where('outlet_info.revision',1);
+        $this->db->order_by('transfer_ow.id','DESC');
 
-            $quantity_total_approve=(($item['pack_size']*$item['quantity_approve'])/1000);
-            $quantity_total_approve_kg+=$quantity_total_approve;
-            if($quantity_total_approve>$tow_variety_info[$item['variety_id']][$item['pack_size_id']]['stock_available'])
+        $data['item']=$this->db->get()->row_array();
+        if(!$data['item'])
+        {
+            System_helper::invalid_try('save_forward',$id,'Update Forward Approved Non Exists');
+            $ajax['status']=false;
+            $ajax['system_message']='Invalid Try.';
+            $this->json_return($ajax);
+        }
+        if($data['item']['status_request']!=$this->config->item('system_status_forwarded'))
+        {
+            $ajax['status']=false;
+            $ajax['system_message']='TR is not forwarded from (request).';
+            $this->json_return($ajax);
+        }
+        if($data['item']['status_approve']==$this->config->item('system_status_approved'))
+        {
+            $ajax['status']=false;
+            $ajax['system_message']='TR already approved.';
+            $this->json_return($ajax);
+        }
+        if($data['item']['status_approve']==$this->config->item('system_status_rejected'))
+        {
+            $ajax['status']=false;
+            $ajax['system_message']='TR already rejected.';
+            $this->json_return($ajax);
+        }
+        if(!$this->check_my_editable($data['item']))
+        {
+            System_helper::invalid_try('save_forward',$id,'User location not assign');
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+        if($item_head['status_approve']==$this->config->item('system_status_approved'))
+        {
+            $tow_variety_info=Stock_helper::transfer_ow_variety_stock_info($data['item']['outlet_id']);
+
+            $this->db->from($this->config->item('table_sms_transfer_ow_details').' transfer_ow_details');
+            $this->db->select('transfer_ow_details.*');
+            $this->db->join($this->config->item('table_login_setup_classification_varieties').' v','v.id=transfer_ow_details.variety_id','INNER');
+            $this->db->select('v.name variety_name');
+            $this->db->join($this->config->item('table_login_setup_classification_crop_types').' crop_type','crop_type.id=v.crop_type_id','INNER');
+            $this->db->select('crop_type.id crop_type_id, crop_type.name crop_type_name');
+            $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id=crop_type.crop_id','INNER');
+            $this->db->select('crop.id crop_id, crop.name crop_name');
+            $this->db->where('transfer_ow_details.transfer_ow_id',$id);
+            $this->db->where('transfer_ow_details.status',$this->config->item('system_status_active'));
+            $data['items']=$this->db->get()->result_array();
+
+            $quantity_total_approve_kg=0;
+            foreach($data['items'] as $item)
             {
-                $stock_available_excess=($quantity_total_approve-$tow_variety_info[$item['variety_id']][$item['pack_size_id']]['stock_available']);
-                $ajax['status']=false;
-                $ajax['system_message']='Available quantity already exist. ( Excess approve quantity: '.$stock_available_excess.' kg.)';
-                $this->json_return($ajax);
+                if(!isset($tow_variety_info[$item['variety_id']][$item['pack_size_id']]))
+                {
+                    $ajax['status']=false;
+                    $ajax['system_message']='Invalid variety information :: ( Variety ID: '.$item['variety_id'].' )';
+                    $this->json_return($ajax);
+                }
+
+                $quantity_total_approve=(($item['pack_size']*$item['quantity_approve'])/1000);
+                $quantity_total_approve_kg+=$quantity_total_approve;
+                if($quantity_total_approve>$tow_variety_info[$item['variety_id']][$item['pack_size_id']]['stock_available'])
+                {
+                    $stock_available_excess=($quantity_total_approve-$tow_variety_info[$item['variety_id']][$item['pack_size_id']]['stock_available']);
+                    $ajax['status']=false;
+                    $ajax['system_message']='Available quantity already exist. ( Excess approve quantity: '.$stock_available_excess.' kg.)';
+                    $this->json_return($ajax);
+                }
             }
         }
 
