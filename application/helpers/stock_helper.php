@@ -182,8 +182,8 @@ class Stock_helper
         foreach($results as $result)
         {
             $too_variety_info[$result['variety_id']][$result['pack_size_id']]['pack_size']=$result['pack_size'];
-            $too_variety_info[$result['variety_id']][$result['pack_size_id']]['stock_available']=(($result['current_stock']*$result['pack_size'])/1000);
             $too_variety_info[$result['variety_id']][$result['pack_size_id']]['stock_available_pkt']=$result['current_stock'];
+            $too_variety_info[$result['variety_id']][$result['pack_size_id']]['stock_available_kg']=(($result['current_stock']*$result['pack_size'])/1000);
         }
 
         /* calculate available stock */
@@ -198,8 +198,8 @@ class Stock_helper
         $results=$CI->db->get()->result_array();
         foreach($results as $result)
         {
-            $too_variety_info[$result['variety_id']][$result['pack_size_id']]['stock_available']=($too_variety_info[$result['variety_id']][$result['pack_size_id']]['stock_available']-(($result['quantity_approve']*$too_variety_info[$result['variety_id']][$result['pack_size_id']]['pack_size'])/1000));
             $too_variety_info[$result['variety_id']][$result['pack_size_id']]['stock_available_pkt']=($too_variety_info[$result['variety_id']][$result['pack_size_id']]['stock_available_pkt']-$result['quantity_approve']);
+            $too_variety_info[$result['variety_id']][$result['pack_size_id']]['stock_available_kg']=($too_variety_info[$result['variety_id']][$result['pack_size_id']]['stock_available_kg']-(($result['quantity_approve']*$too_variety_info[$result['variety_id']][$result['pack_size_id']]['pack_size'])/1000));
         }
         return $too_variety_info;
     }

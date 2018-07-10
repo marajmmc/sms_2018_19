@@ -190,4 +190,25 @@ class System_helper
         }
         return $users;
     }
+    /*get string format*/
+    public static function get_string_kg($number)
+    {
+        if(is_numeric($number))
+        {
+            $number = number_format($number,3,'.','');
+        }
+        return $number;
+    }
+    public static function get_string_quantity($number)
+    {
+        return $number;
+    }
+    public static function get_string_amount($number)
+    {
+        if(is_numeric($number))
+        {
+            $number = number_format($number,2,'.',',');
+        }
+        return $number;
+    }
 }
