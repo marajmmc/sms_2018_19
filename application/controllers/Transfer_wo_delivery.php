@@ -46,6 +46,10 @@ class Transfer_wo_delivery extends Root_Controller
         {
             $this->system_challan_print($id);
         }
+        elseif($action=="print_courier")
+        {
+            $this->system_print_courier($id);
+        }
         elseif($action=="delivery")
         {
             $this->system_delivery($id);
@@ -892,6 +896,84 @@ class Transfer_wo_delivery extends Root_Controller
                 $ajax['system_message']=$this->message;
             }
             $ajax['system_page_url']=site_url($this->controller_url.'/index/challan_print/'.$item_id);
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+    }
+    private function system_print_courier($id)
+    {
+        if(isset($this->permissions['action4'])&&($this->permissions['action4']==1))
+        {
+            if($id>0)
+            {
+                $item_id=$id;
+            }
+            else
+            {
+                $item_id=$this->input->post('id');
+            }
+            $this->db->from($this->config->item('table_sms_transfer_wo').' transfer_wo');
+            $this->db->select('transfer_wo.*');
+            $this->db->join($this->config->item('table_login_csetup_cus_info').' outlet_info','outlet_info.customer_id=transfer_wo.outlet_id AND outlet_info.type="'.$this->config->item('system_customer_type_outlet_id').'"','INNER');
+            $this->db->select(
+                '
+                outlet_info.customer_id outlet_id,
+                outlet_info.name outlet_name, outlet_info.customer_code outlet_code,
+                outlet_info.address outlet_address,
+                outlet_info.phone outlet_phone
+                ');
+            $this->db->join($this->config->item('table_login_setup_location_districts').' districts','districts.id = outlet_info.district_id','INNER');
+            $this->db->select('districts.id district_id, districts.name district_name');
+            $this->db->join($this->config->item('table_login_setup_location_territories').' territories','territories.id = districts.territory_id','INNER');
+            $this->db->select('territories.id territory_id, territories.name territory_name');
+            $this->db->join($this->config->item('table_login_setup_location_zones').' zones','zones.id = territories.zone_id','INNER');
+            $this->db->select('zones.id zone_id, zones.name zone_name');
+            $this->db->join($this->config->item('table_login_setup_location_divisions').' divisions','divisions.id = zones.division_id','INNER');
+            $this->db->select('divisions.id division_id, divisions.name division_name');
+            $this->db->join($this->config->item('table_sms_transfer_wo_courier_details').' wo_courier_details','wo_courier_details.transfer_wo_id=transfer_wo.id','LEFT');
+            $this->db->select('
+                                wo_courier_details.date_delivery courier_date_delivery,
+                                wo_courier_details.date_challan,
+                                wo_courier_details.challan_no,
+                                wo_courier_details.courier_tracing_no,
+                                wo_courier_details.place_booking_source,
+                                wo_courier_details.place_destination,
+                                wo_courier_details.date_booking,
+                                wo_courier_details.remarks remarks_couriers
+                                ');
+            $this->db->join($this->config->item('table_login_basic_setup_couriers').' courier','courier.id=wo_courier_details.courier_id','LEFT');
+            $this->db->select('courier.name courier_name');
+            $this->db->join($this->config->item('table_login_setup_user_info').' ui_created','ui_created.user_id = transfer_wo.user_created_request','LEFT');
+            $this->db->select('ui_created.name user_created_full_name');
+            $this->db->join($this->config->item('table_login_setup_user_info').' ui_updated','ui_updated.user_id = transfer_wo.user_updated_request','LEFT');
+            $this->db->select('ui_updated.name user_updated_full_name');
+            $this->db->join($this->config->item('table_login_setup_user_info').' ui_updated_approve','ui_updated_approve.user_id = transfer_wo.user_updated_approve','LEFT');
+            $this->db->select('ui_updated_approve.name user_updated_approve_full_name');
+            $this->db->where('transfer_wo.status !=',$this->config->item('system_status_delete'));
+            $this->db->where('transfer_wo.id',$item_id);
+            $this->db->where('outlet_info.revision',1);
+            $this->db->order_by('transfer_wo.id','DESC');
+            $data['item']=$this->db->get()->row_array();
+            if(!$data['item'])
+            {
+                System_helper::invalid_try('Courier_print',$item_id,'Print View Non Exists');
+                $ajax['status']=false;
+                $ajax['system_message']='Invalid Try.';
+                $this->json_return($ajax);
+            }
+            $data['title']="HQ to Outlet Courier Print :: ". Barcode_helper::get_barcode_transfer_warehouse_to_outlet($data['item']['id']);
+            $ajax['status']=true;
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/print_courier",$data,true));
+            if($this->message)
+            {
+                $ajax['system_message']=$this->message;
+            }
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/print_courier/'.$item_id);
             $this->json_return($ajax);
         }
         else
