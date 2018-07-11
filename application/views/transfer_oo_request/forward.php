@@ -30,7 +30,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <thead>
                     <tr>
                         <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ID');?></label></th>
-                        <th class=""><label class="control-label"><?php echo Barcode_helper::get_barcode_transfer_outlet_to_warehouse($item['id']);?></label></th>
+                        <th class=""><label class="control-label"><?php echo Barcode_helper::get_barcode_transfer_outlet_to_outlet($item['id']);?></label></th>
                         <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DIVISION_NAME');?></label></th>
                         <th class=" header_value"><label class="control-label"><?php echo $item['division_name'];?></label></th>
                     </tr>
@@ -52,8 +52,13 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     </tr>
                     <tr>
                         <th colspan="2">&nbsp;</th>
-                        <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_OUTLET_NAME');?></label></th>
-                        <th class=" header_value"><label class="control-label"><?php echo $item['outlet_name'];?></label></th>
+                        <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_OUTLET_NAME_SOURCE');?></label></th>
+                        <th class=" header_value"><label class="control-label"><?php echo $item['outlet_name_source'];?></label></th>
+                    </tr>
+                    <tr>
+                        <th colspan="2">&nbsp;</th>
+                        <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_OUTLET_NAME_DESTINATION');?></label></th>
+                        <th class=" header_value"><label class="control-label"><?php echo $item['outlet_name_destination'];?></label></th>
                     </tr>
                     <tr>
                         <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CREATED_BY');?></label></th>
@@ -117,12 +122,14 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     $quantity_total_request=0;
                     $quantity_total_request_kg=0;
                     $stock_available_pkt=0;
+                    $stock_available_kg=0;
                     foreach($items as $index=>$value)
                     {
                         $quantity_request_kg=(($value['quantity_request']*$value['pack_size'])/1000);
                         $quantity_total_request+=$value['quantity_request'];
                         $quantity_total_request_kg+=$quantity_request_kg;
-                        $stock_available_pkt=isset($tow_variety_info[$value['variety_id']][$value['pack_size_id']])?$tow_variety_info[$value['variety_id']][$value['pack_size_id']]['stock_available_pkt']:'0.000';
+                        $stock_available_pkt=isset($tow_variety_info[$value['variety_id']][$value['pack_size_id']])?$tow_variety_info[$value['variety_id']][$value['pack_size_id']]['stock_available_pkt']:'0';
+                        $stock_available_kg=isset($tow_variety_info[$value['variety_id']][$value['pack_size_id']])?$tow_variety_info[$value['variety_id']][$value['pack_size_id']]['stock_available_kg']:'0.000';
                         ?>
                         <tr style="<?php if($value['quantity_request']>$stock_available_pkt){echo 'background-color: red;';}?>">
                             <td>
@@ -139,19 +146,19 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                             </td>
                             <td class="text-right">
                                 <label class="control-label stock_available_pkt" id="stock_available_pkt_<?php echo $index+1;?>">
-                                    <?php echo $stock_available_pkt; ?>
+                                    <?php echo System_helper::get_string_quantity($stock_available_pkt); ?>
                                 </label>
                             </td>
                             <td class="text-right">
-                                <label class="control-label stock_available" id="stock_available_<?php echo $index+1;?>">
-                                    <?php echo isset($tow_variety_info[$value['variety_id']][$value['pack_size_id']])?number_format($tow_variety_info[$value['variety_id']][$value['pack_size_id']]['stock_available'],3,'.',''):'0.000'; ?>
+                                <label class="control-label stock_available_kg" id="stock_available_kg_<?php echo $index+1;?>">
+                                    <?php echo System_helper::get_string_kg($stock_available_kg); ?>
                                 </label>
                             </td>
                             <td class="text-right">
                                 <label ><?php echo $value['quantity_request']; ?></label>
                             </td>
                             <td class="text-right">
-                                <label id="quantity_request_kg_<?php echo $index+1;?>"> <?php echo number_format($quantity_request_kg,3,'.','');?> </label>
+                                <label id="quantity_request_kg_<?php echo $index+1;?>"> <?php echo System_helper::get_string_kg($quantity_request_kg);?> </label>
                             </td>
                         </tr>
                     <?php
@@ -185,7 +192,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             </div>
             <div class="col-sm-4 col-xs-4">
                 <div class="action_button pull-right">
-                    <button id="button_action_save" type="button" class="btn" data-form="#save_form" data-message-confirm="Are You Sure Outlet to HQ Forward TO?">Save</button>
+                    <button id="button_action_save" type="button" class="btn" data-form="#save_form" data-message-confirm="Are You Sure Outlet to Outlet Transfer Forward Request?">Save</button>
                 </div>
             </div>
             <div class="col-sm-4 col-xs-4">

@@ -50,6 +50,11 @@ $action_buttons[]=array(
     'label'=>$CI->lang->line("ACTION_REFRESH"),
     'href'=>site_url($CI->controller_url.'/index/list_all')
 );
+$action_buttons[]=array(
+    'type'=>'button',
+    'label'=>$CI->lang->line("ACTION_LOAD_MORE"),
+    'id'=>'button_jqx_load_more'
+);
 $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
 ?>
@@ -83,23 +88,25 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         {
             dataType: "json",
             dataFields: [
-                <?php
-                 foreach($system_preference_items as $key=>$item)
-                 {
-                 if($key=='id')
-                 {
-                 ?>
-                { name: '<?php echo $key ?>', type: 'number' },
-                <?php
-                 }
-                 else
-                 {
-                 ?>
-                { name: '<?php echo $key ?>', type: 'string' },
-                <?php
-                 }
-             }
-            ?>
+                { name: 'id', type: 'int' },
+                { name: 'barcode', type: 'string' },
+                { name: 'outlet_name_source', type: 'string'},
+                { name: 'outlet_name_destination', type: 'string'},
+                { name: 'date_request', type: 'string'},
+                { name: 'division_name', type: 'string'},
+                { name: 'zone_name', type: 'string'},
+                { name: 'territory_name', type: 'string'},
+                { name: 'district_name', type: 'string'},
+                { name: 'quantity_total_request', type: 'string'},
+                { name: 'quantity_total_approve', type: 'string'},
+                { name: 'quantity_total_receive', type: 'string'},
+                { name: 'status_approve', type: 'string'},
+                { name: 'status_delivery', type: 'string'},
+                { name: 'status_receive', type: 'string'},
+                { name: 'status_receive_forward', type: 'string'},
+                { name: 'status_receive_approve', type: 'string'},
+                { name: 'status_system_delivery_receive', type: 'string'},
+                { name: 'status', type: 'string'}
             ],
             id: 'id',
             type: 'POST',
@@ -160,13 +167,12 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 { text: '<?php echo $CI->lang->line('LABEL_OUTLET_NAME_DESTINATION'); ?>', dataField: 'outlet_name_destination',pinned:true,filtertype: 'list', width:'100',hidden: <?php echo $system_preference_items['outlet_name_destination']?0:1;?>},
                 { text: '<?php echo $CI->lang->line('LABEL_DATE_REQUEST'); ?>', dataField: 'date_request', width:'100',hidden: <?php echo $system_preference_items['date_request']?0:1;?>},
                 { text: '<?php echo $CI->lang->line('LABEL_DIVISION_NAME'); ?>', dataField: 'division_name', width:'100',filtertype: 'list',hidden: <?php echo $system_preference_items['division_name']?0:1;?>},
-                { text: '<?php echo $CI->lang->line('LABEL_ZONE_NAME'); ?>', dataField: 'zone_name', width:'60',hidden: <?php echo $system_preference_items['zone_name']?0:1;?>},
-                { text: '<?php echo $CI->lang->line('LABEL_TERRITORY_NAME'); ?>', dataField: 'territory_name', width:'60',hidden: <?php echo $system_preference_items['territory_name']?0:1;?>},
-                { text: '<?php echo $CI->lang->line('LABEL_DISTRICT_NAME'); ?>', dataField: 'district_name', width:'70',hidden: <?php echo $system_preference_items['district_name']?0:1;?>},
+                { text: '<?php echo $CI->lang->line('LABEL_ZONE_NAME'); ?>', dataField: 'zone_name', width:'100',hidden: <?php echo $system_preference_items['zone_name']?0:1;?>},
+                { text: '<?php echo $CI->lang->line('LABEL_TERRITORY_NAME'); ?>', dataField: 'territory_name', width:'100',hidden: <?php echo $system_preference_items['territory_name']?0:1;?>},
+                { text: '<?php echo $CI->lang->line('LABEL_DISTRICT_NAME'); ?>', dataField: 'district_name', width:'100',hidden: <?php echo $system_preference_items['district_name']?0:1;?>},
                 { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL_REQUEST'); ?>', dataField: 'quantity_total_request', width:'100', cellsAlign:'right', hidden: <?php echo $system_preference_items['quantity_total_request']?0:1;?>},
                 { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL_APPROVE'); ?>', dataField: 'quantity_total_approve', width:'100', cellsAlign:'right', hidden: <?php echo $system_preference_items['quantity_total_approve']?0:1;?>,cellsrenderer: cellsrenderer},
                 { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL_RECEIVE'); ?>', dataField: 'quantity_total_receive', width:'100', cellsAlign:'right', hidden: <?php echo $system_preference_items['quantity_total_receive']?0:1;?>,cellsrenderer: cellsrenderer},
-                { text: '<?php echo $CI->lang->line('LABEL_STATUS_REQUEST'); ?>', dataField: 'status_request',filtertype: 'list', width:'70', hidden: <?php echo $system_preference_items['status_request']?0:1;?>},
                 { text: '<?php echo $CI->lang->line('LABEL_STATUS_APPROVE'); ?>', dataField: 'status_approve',filtertype: 'list', width:'70', hidden: <?php echo $system_preference_items['status_approve']?0:1;?>},
                 { text: '<?php echo $CI->lang->line('LABEL_STATUS_DELIVERY'); ?>', dataField: 'status_delivery',filtertype: 'list', width:'70', hidden: <?php echo $system_preference_items['status_delivery']?0:1;?>},
                 { text: '<?php echo $CI->lang->line('LABEL_STATUS_RECEIVE'); ?>', dataField: 'status_receive',filtertype: 'list', width:'70', hidden: <?php echo $system_preference_items['status_receive']?0:1;?>},
