@@ -84,7 +84,7 @@ class Transfer_oo_approve extends Root_Controller
         if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
         {
             $data['system_preference_items']= $this->get_preference();
-            $data['title']="Outlet to Outlet Transfer Approval Pending List";
+            $data['title']="Showroom to showroom Transfer Approval Pending List";
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/list",$data,true));
             if($this->message)
@@ -165,7 +165,7 @@ class Transfer_oo_approve extends Root_Controller
         if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
         {
             $data['system_preference_items']= $this->get_preference_all();
-            $data['title']="Outlet to Outlet Transfer Request Forwarded & Approved All List";
+            $data['title']="Showroom to showroom Transfer Request Forwarded & Approved All List";
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/list_all",$data,true));
             if($this->message)
@@ -350,19 +350,19 @@ class Transfer_oo_approve extends Root_Controller
             if($data['item']['status_request']!=$this->config->item('system_status_forwarded'))
             {
                 $ajax['status']=false;
-                $ajax['system_message']='Outlet to outlet transfer request not forwarded. Invalid try.';
+                $ajax['system_message']='Showroom to showroom transfer request not forwarded. Invalid try.';
                 $this->json_return($ajax);
             }
             if($data['item']['status_approve']==$this->config->item('system_status_approved'))
             {
                 $ajax['status']=false;
-                $ajax['system_message']='Outlet to outlet transfer already approve & forwarded. Invalid try.';
+                $ajax['system_message']='Showroom to showroom transfer already approve & forwarded. Invalid try.';
                 $this->json_return($ajax);
             }
             if($data['item']['status_approve']==$this->config->item('system_status_rejected'))
             {
                 $ajax['status']=false;
-                $ajax['system_message']='Outlet to outlet transfer already rejected. Invalid try.';
+                $ajax['system_message']='Showroom to showroom transfer already rejected. Invalid try.';
                 $this->json_return($ajax);
             }
             if(!$this->check_my_editable($data['item']))
@@ -470,19 +470,19 @@ class Transfer_oo_approve extends Root_Controller
         if($data['item']['status_request']!=$this->config->item('system_status_forwarded'))
         {
             $ajax['status']=false;
-            $ajax['system_message']='Outlet to outlet transfer is not forwarded from request.';
+            $ajax['system_message']='Showroom to showroom transfer is not forwarded from request.';
             $this->json_return($ajax);
         }
         if($data['item']['status_approve']==$this->config->item('system_status_approved'))
         {
             $ajax['status']=false;
-            $ajax['system_message']='Outlet to outlet transfer already approved & forwarded.';
+            $ajax['system_message']='Showroom to showroom transfer already approved & forwarded.';
             $this->json_return($ajax);
         }
         if($data['item']['status_approve']==$this->config->item('system_status_rejected'))
         {
             $ajax['status']=false;
-            $ajax['system_message']='Outlet to outlet transfer already rejected.';
+            $ajax['system_message']='Showroom to showroom transfer already rejected.';
             $this->json_return($ajax);
         }
 
@@ -835,19 +835,19 @@ class Transfer_oo_approve extends Root_Controller
             if($data['item']['status_request']!=$this->config->item('system_status_forwarded'))
             {
                 $ajax['status']=false;
-                $ajax['system_message']='Outlet to outlet transfer is not forwarded (request).';
+                $ajax['system_message']='Showroom to showroom transfer is not forwarded (request).';
                 $this->json_return($ajax);
             }
             if($data['item']['status_approve']==$this->config->item('system_status_approved'))
             {
                 $ajax['status']=false;
-                $ajax['system_message']='Outlet to outlet transfer  already approved & forwarded.';
+                $ajax['system_message']='Showroom to showroom transfer  already approved & forwarded.';
                 $this->json_return($ajax);
             }
             if($data['item']['status_approve']==$this->config->item('system_status_rejected'))
             {
                 $ajax['status']=false;
-                $ajax['system_message']='Outlet to outlet transfer  already rejected.';
+                $ajax['system_message']='Showroom to showroom transfer  already rejected.';
                 $this->json_return($ajax);
             }
             if(!$this->check_my_editable($data['item']))
@@ -969,19 +969,19 @@ class Transfer_oo_approve extends Root_Controller
         if($data['item']['status_request']!=$this->config->item('system_status_forwarded'))
         {
             $ajax['status']=false;
-            $ajax['system_message']='Outlet to outlet transfer is not forwarded from (request).';
+            $ajax['system_message']='Showroom to showroom transfer is not forwarded from (request).';
             $this->json_return($ajax);
         }
         if($data['item']['status_approve']==$this->config->item('system_status_approved'))
         {
             $ajax['status']=false;
-            $ajax['system_message']='Outlet to outlet transfer already approved.';
+            $ajax['system_message']='Showroom to showroom transfer already approved.';
             $this->json_return($ajax);
         }
         if($data['item']['status_approve']==$this->config->item('system_status_rejected'))
         {
             $ajax['status']=false;
-            $ajax['system_message']='Outlet to outlet transfer already rejected.';
+            $ajax['system_message']='Showroom to showroom transfer already rejected.';
             $this->json_return($ajax);
         }
 
