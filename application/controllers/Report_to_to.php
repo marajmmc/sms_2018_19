@@ -310,7 +310,7 @@ class Report_to_to extends Root_Controller
                 {
                     $item=array();
                     $item['transfer_wo_id']=$to_id;
-                    if($first_row)
+                    /*if($first_row)
                     {
                         $first_row=false;
                         $item['outlet_name']=$result['outlet_name'];
@@ -318,7 +318,8 @@ class Report_to_to extends Root_Controller
                     else
                     {
                         $item['outlet_name']='';
-                    }
+                    }*/
+                    $item['outlet_name']=$result['outlet_name'];
                     $item['barcode']=Barcode_helper::get_barcode_transfer_warehouse_to_outlet($to_id);
                     $item['date_request']=System_helper::display_date($to['date_request']);
                     $item['quantity_total_request']=number_format($to['quantity_total_request_kg'],3,'.','');

@@ -321,7 +321,7 @@ class Report_tr_tr extends Root_Controller
                     {
                         $item=array();
                         $item['transfer_ow_id']=$tr_id;
-                        if($first_row)
+                        /*if($first_row)
                         {
                             $first_row=false;
                             $item['outlet_name']=$result['outlet_name'];
@@ -329,7 +329,8 @@ class Report_tr_tr extends Root_Controller
                         else
                         {
                             $item['outlet_name']='';
-                        }
+                        }*/
+                        $item['outlet_name']=$result['outlet_name'];
                         $item['barcode']=Barcode_helper::get_barcode_transfer_outlet_to_warehouse($tr_id);
                         $item['date_request']=System_helper::display_date($tr['date_request']);
                         $item['quantity_total_request']=number_format($tr['quantity_total_request_kg'],3,'.','');
