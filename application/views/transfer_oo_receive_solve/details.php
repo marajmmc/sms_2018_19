@@ -39,15 +39,35 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <thead>
                 <tr>
                     <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ID');?></label></th>
-                    <th class=""><label class="control-label"><?php echo Barcode_helper::get_barcode_transfer_outlet_to_outlet($item['id']);?></label></th>
-                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_OUTLET_NAME_SOURCE');?></label></th>
-                    <th class=" header_value"><label class="control-label"><?php echo $CI->outlets[$item['outlet_id_source']]['name'];?></label></th>
+                    <th class=""><label class="control-label"><?php echo Barcode_helper::get_barcode_transfer_outlet_to_warehouse($item['id']);?></label></th>
+                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DIVISION_NAME');?></label></th>
+                    <th class=" header_value"><label class="control-label"><?php echo $item['division_name'];?></label></th>
                 </tr>
                 <tr>
                     <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_REQUEST');?></label></th>
                     <th class=" header_value"><label class="control-label"><?php echo System_helper::display_date($item['date_request']);?></label></th>
+                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ZONE_NAME');?></label></th>
+                    <th class=" header_value"><label class="control-label"><?php echo $item['zone_name'];?></label></th>
+                </tr>
+                <tr>
+                    <th colspan="2">&nbsp;</th>
+                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TERRITORY_NAME');?></label></th>
+                    <th class=" header_value"><label class="control-label"><?php echo $item['territory_name'];?></label></th>
+                </tr>
+                <tr>
+                    <th colspan="2">&nbsp;</th>
+                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DISTRICT_NAME');?></label></th>
+                    <th class=" header_value"><label class="control-label"><?php echo $item['district_name'];?></label></th>
+                </tr>
+                <tr>
+                    <th colspan="2">&nbsp;</th>
                     <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_OUTLET_NAME_DESTINATION');?></label></th>
-                    <th class=" header_value"><label class="control-label"><?php echo $CI->outlets[$item['outlet_id_destination']]['name'];?></label></th>
+                    <th class=" header_value"><label class="control-label"><?php echo $item['outlet_name_destination'];?></label></th>
+                </tr>
+                <tr>
+                    <th colspan="2">&nbsp;</th>
+                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_OUTLET_NAME_SOURCE');?></label></th>
+                    <th class=" header_value"><label class="control-label"><?php echo $item['outlet_name_source'];?></label></th>
                 </tr>
                 <?php
                 if($item['remarks_request'])
@@ -392,6 +412,48 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <?php
                 }
                 ?>
+                <!-- Receive Solve Information-->
+                <tr><th colspan="21" class="bg-info">Receive Solve Information</th></tr>
+                <tr>
+                    <th class="widget-header header_caption"><label class="control-label pull-right">Solve Status (Receive) </label></th>
+                    <th class="warning header_value"><label class="control-label"><?php echo $item['status_solve'];?></label></th>
+                    <th colspan="2">&nbsp;</th>
+                </tr>
+                <?php
+                if($item['user_updated'])
+                {
+                    ?>
+                    <tr>
+                        <th class="widget-header header_caption"><label class="control-label pull-right">Solved By</label></th>
+                        <th class=" header_value"><label class="control-label"><?php echo $users[$item['user_updated']]['name'];?></label></th>
+                        <th class="widget-header header_caption"><label class="control-label pull-right">Solved Time</label></th>
+                        <th class=""><label class="control-label"><?php echo System_helper::display_date_time($item['date_updated']);?></label></th>
+                    </tr>
+                <?php
+                }
+                if($item['remarks'])
+                {
+                    ?>
+                    <tr>
+                        <th class="widget-header header_caption" style="vertical-align: top"><label class="control-label pull-right">Remarks for Solve</label></th>
+                        <th class=" header_value" colspan="3"><label class="control-label"><?php echo nl2br($item['remarks']);?></label></th>
+                    </tr>
+                <?php
+                }
+                if($item['image_location'])
+                {
+                    ?>
+                    <tr>
+                        <th class="widget-header header_caption" style="vertical-align: top"><label class="control-label pull-right">Attachment</label></th>
+                        <th class=" header_value" colspan="3">
+                            <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_picture_transfer').$item['image_location']; ?>" alt="">
+                            <br/>
+                            <label for=""><a href="<?php echo $CI->config->item('system_base_url_picture_transfer').$item['image_location']; ?>" target="_blank" class="external">Download</a></label>
+                        </th>
+                    </tr>
+                <?php
+                }
+                ?>
                 </thead>
             </table>
         </div>
@@ -471,7 +533,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     ?>
                 </tr>
                 </thead>
-                <tbody id="items_container">
+                <tbody>
                 <?php
 
                 $quantity_total_request=0;
@@ -530,7 +592,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                             <label ><?php echo System_helper::get_string_quantity($value['quantity_request']); ?></label>
                         </td>
                         <td class="text-right">
-                            <label id="quantity_request_kg_<?php echo $index+1;?>"> <?php echo System_helper::get_string_kg($quantity_request_kg);?> </label>
+                            <label> <?php echo System_helper::get_string_kg($quantity_request_kg);?> </label>
                         </td>
                         <?php
                         if($item['status_approve']==$this->config->item('system_status_approved'))
@@ -567,14 +629,14 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <tfoot>
                 <tr>
                     <th colspan="5" class="text-right"><?php echo $CI->lang->line('LABEL_TOTAL');?></th>
-                    <th class="text-right"><label class="control-label" id="quantity_total_request"> <?php echo System_helper::get_string_quantity($quantity_total_request);?></label></th>
-                    <th class="text-right"><label class="control-label" id="quantity_total_request_kg"> <?php echo System_helper::get_string_kg($quantity_total_request_kg);?></label></th>
+                    <th class="text-right"><label class="control-label"> <?php echo System_helper::get_string_quantity($quantity_total_request);?></label></th>
+                    <th class="text-right"><label class="control-label"> <?php echo System_helper::get_string_kg($quantity_total_request_kg);?></label></th>
                     <?php
                     if($item['status_approve']==$this->config->item('system_status_approved'))
                     {
                         ?>
-                        <th class="text-right"><label class="control-label" id="quantity_total_request"> <?php echo System_helper::get_string_quantity($quantity_total_approve);?></label></th>
-                        <th class="text-right"><label class="control-label" id="quantity_total_request_kg"> <?php echo System_helper::get_string_kg($quantity_total_approve_kg);?></label></th>
+                        <th class="text-right"><label class="control-label"> <?php echo System_helper::get_string_quantity($quantity_total_approve);?></label></th>
+                        <th class="text-right"><label class="control-label"> <?php echo System_helper::get_string_kg($quantity_total_approve_kg);?></label></th>
                     <?php
                     }
                     ?>
@@ -582,8 +644,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     if(($item['status_receive']==$this->config->item('system_status_received') && $item['status_system_delivery_receive']==$this->config->item('system_status_yes')) || $item['status_system_delivery_receive']==$this->config->item('system_status_no'))
                     {
                         ?>
-                        <th class="text-right"><label class="control-label" id="quantity_total_request"> <?php echo System_helper::get_string_quantity($quantity_total_receive);?></label></th>
-                        <th class="text-right"><label class="control-label" id="quantity_total_request_kg"> <?php echo System_helper::get_string_kg($quantity_total_receive_kg);?></label></th>
+                        <th class="text-right"><label class="control-label"> <?php echo System_helper::get_string_quantity($quantity_total_receive);?></label></th>
+                        <th class="text-right"><label class="control-label"> <?php echo System_helper::get_string_kg($quantity_total_receive_kg);?></label></th>
                     <?php
                     }
                     ?>
@@ -591,8 +653,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     if($item['status_system_delivery_receive']==$this->config->item('system_status_no'))
                     {
                         ?>
-                        <th class="text-right"><label class="control-label" id="quantity_total_request"> <?php echo System_helper::get_string_quantity($quantity_total_difference);?></label></th>
-                        <th class="text-right"><label class="control-label" id="quantity_total_request_kg"> <?php echo System_helper::get_string_kg($quantity_total_difference_kg);?></label></th>
+                        <th class="text-right"><label class="control-label"> <?php echo System_helper::get_string_quantity($quantity_total_difference);?></label></th>
+                        <th class="text-right"><label class="control-label"> <?php echo System_helper::get_string_kg($quantity_total_difference_kg);?></label></th>
                     <?php
                     }
                     ?>

@@ -211,4 +211,41 @@ class System_helper
         }
         return $number;
     }
+    public static function get_outlets_by_location($division_id=0, $zone_id=0, $territory_id=0, $district_id=0)
+    {
+        $CI =& get_instance();
+        $CI->db->from($CI->config->item('table_login_csetup_customer').' customer');
+        $CI->db->join($CI->config->item('table_login_csetup_cus_info').' cus_info','cus_info.customer_id = customer.id','INNER');
+        $CI->db->select('cus_info.*');
+        $CI->db->join($CI->config->item('table_login_setup_location_districts').' districts','districts.id = cus_info.district_id','INNER');
+        $CI->db->join($CI->config->item('table_login_setup_location_territories').' territories','territories.id = districts.territory_id','INNER');
+        $CI->db->join($CI->config->item('table_login_setup_location_zones').' zones','zones.id = territories.zone_id','INNER');
+        $CI->db->join($CI->config->item('table_login_setup_location_divisions').' divisions','divisions.id = zones.division_id','INNER');
+        $CI->db->where('customer.status',$CI->config->item('system_status_active'));
+        $CI->db->where('cus_info.type',$CI->config->item('system_customer_type_outlet_id'));
+        $CI->db->where('cus_info.revision',1);
+        if($CI->locations['division_id']>0)
+        {
+            $CI->db->where('divisions.id',$CI->locations['division_id']);
+            if($CI->locations['zone_id']>0)
+            {
+                $CI->db->where('zones.id',$CI->locations['zone_id']);
+                if($CI->locations['territory_id']>0)
+                {
+                    $CI->db->where('territories.id',$CI->locations['territory_id']);
+                    if($CI->locations['district_id']>0)
+                    {
+                        $CI->db->where('districts.id',$CI->locations['district_id']);
+                    }
+                }
+            }
+        }
+        $results=$CI->db->get()->result_array();
+        $outlets=array();
+        foreach($results as $result)
+        {
+            $outlets[$result['customer_id']]=$result;
+        }
+        return $outlets;
+    }
 }

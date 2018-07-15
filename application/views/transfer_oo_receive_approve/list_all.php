@@ -23,6 +23,12 @@ if(isset($CI->permissions['action4']) && ($CI->permissions['action4']==1))
 {
     $action_buttons[]=array(
         'type'=>'button',
+        'label'=>'Challan '.$CI->lang->line("ACTION_PRINT"),
+        'class'=>'button_jqx_action',
+        'data-action-link'=>site_url($CI->controller_url.'/index/challan_print')
+    );
+    $action_buttons[]=array(
+        'type'=>'button',
         'label'=>$CI->lang->line("ACTION_PRINT"),
         'class'=>'button_action_download',
         'data-title'=>"Print",
@@ -88,23 +94,23 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         {
             dataType: "json",
             dataFields: [
-                <?php
-                 foreach($system_preference_items as $key=>$item)
-                 {
-                 if($key=='id')
-                 {
-                 ?>
-                { name: '<?php echo $key ?>', type: 'number' },
-                <?php
-                 }
-                 else
-                 {
-                 ?>
-                { name: '<?php echo $key ?>', type: 'string' },
-                <?php
-                 }
-             }
-            ?>
+                { name: 'id', type: 'int' },
+                { name: 'barcode', type: 'string' },
+                { name: 'outlet_name_destination', type: 'string'},
+                { name: 'outlet_name_source', type: 'string'},
+                { name: 'date_request', type: 'string'},
+                { name: 'division_name', type: 'string'},
+                { name: 'zone_name', type: 'string'},
+                { name: 'territory_name', type: 'string'},
+                { name: 'district_name', type: 'string'},
+                { name: 'quantity_total_request', type: 'string'},
+                { name: 'quantity_total_approve', type: 'string'},
+                { name: 'quantity_total_receive', type: 'string'},
+                { name: 'status_receive', type: 'string'},
+                { name: 'status_receive_forward', type: 'string'},
+                { name: 'status_receive_approve', type: 'string'},
+                { name: 'status_system_delivery_receive', type: 'string'},
+                { name: 'status', type: 'string'}
             ],
             id: 'id',
             type: 'POST',
@@ -129,43 +135,15 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             }
             if(column=='quantity_total_approve')
             {
-                if(record.status_approve=='<?php echo $this->config->item('system_status_approved')?>')
+                if(record.quantity_total_request!=record.quantity_total_approve)
                 {
-                    if(record.quantity_total_request!=record.quantity_total_approve)
-                    {
-                        element.html('<div class="bg-warning">'+record.quantity_total_approve+'</div>');
-                    }
-                    else
-                    {
-                        element.html(record.quantity_total_approve);
-                    }
+                    element.html('<div class="bg-warning">'+record.quantity_total_approve+'</div>');
                 }
                 else
                 {
-                    element.html('');
+                    element.html(record.quantity_total_approve);
                 }
-
             }
-            if(column=='quantity_total_receive')
-            {
-                if(record.status_receive=='<?php echo $this->config->item('system_status_received')?>')
-                {
-                    if(record.quantity_total_approve!=record.quantity_total_receive)
-                    {
-                        element.html('<div class="bg-warning">'+record.quantity_total_receive+'</div>');
-                    }
-                    else
-                    {
-                        element.html(record.quantity_total_receive);
-                    }
-                }
-                else
-                {
-                    element.html('');
-                }
-
-            }
-
             return element[0].outerHTML;
 
         };
@@ -189,14 +167,16 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             columns:
             [
                 { text: '<?php echo $CI->lang->line('LABEL_BARCODE'); ?>', dataField: 'barcode',pinned:true, width:'80',hidden: <?php echo $system_preference_items['barcode']?0:1;?>},
-                { text: '<?php echo $CI->lang->line('LABEL_OUTLET_NAME_SOURCE'); ?>', dataField: 'outlet_name_source',pinned:true,filtertype: 'list', width:'250',hidden: <?php echo $system_preference_items['outlet_name_source']?0:1;?>},
-                { text: '<?php echo $CI->lang->line('LABEL_OUTLET_NAME_DESTINATION'); ?>', dataField: 'outlet_name_destination',pinned:true,filtertype: 'list', width:'250',hidden: <?php echo $system_preference_items['outlet_name_destination']?0:1;?>},
+                { text: '<?php echo $CI->lang->line('LABEL_OUTLET_NAME_SOURCE'); ?>', dataField: 'outlet_name_source',pinned:true,filtertype: 'list', width:'100',hidden: <?php echo $system_preference_items['outlet_name_source']?0:1;?>},
+                { text: '<?php echo $CI->lang->line('LABEL_OUTLET_NAME_DESTINATION'); ?>', dataField: 'outlet_name_destination',pinned:true,filtertype: 'list', width:'100',hidden: <?php echo $system_preference_items['outlet_name_destination']?0:1;?>},
                 { text: '<?php echo $CI->lang->line('LABEL_DATE_REQUEST'); ?>', dataField: 'date_request', width:'100',hidden: <?php echo $system_preference_items['date_request']?0:1;?>},
+                { text: '<?php echo $CI->lang->line('LABEL_DIVISION_NAME'); ?>', dataField: 'division_name', width:'100',filtertype: 'list',hidden: <?php echo $system_preference_items['division_name']?0:1;?>},
+                { text: '<?php echo $CI->lang->line('LABEL_ZONE_NAME'); ?>', dataField: 'zone_name', width:'100',hidden: <?php echo $system_preference_items['zone_name']?0:1;?>},
+                { text: '<?php echo $CI->lang->line('LABEL_TERRITORY_NAME'); ?>', dataField: 'territory_name', width:'100',hidden: <?php echo $system_preference_items['territory_name']?0:1;?>},
+                { text: '<?php echo $CI->lang->line('LABEL_DISTRICT_NAME'); ?>', dataField: 'district_name', width:'100',hidden: <?php echo $system_preference_items['district_name']?0:1;?>},
                 { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL_REQUEST'); ?>', dataField: 'quantity_total_request', width:'100', cellsAlign:'right', hidden: <?php echo $system_preference_items['quantity_total_request']?0:1;?>},
                 { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL_APPROVE'); ?>', dataField: 'quantity_total_approve', width:'100', cellsAlign:'right', hidden: <?php echo $system_preference_items['quantity_total_approve']?0:1;?>,cellsrenderer: cellsrenderer},
                 { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL_RECEIVE'); ?>', dataField: 'quantity_total_receive', width:'100', cellsAlign:'right', hidden: <?php echo $system_preference_items['quantity_total_receive']?0:1;?>,cellsrenderer: cellsrenderer},
-                { text: '<?php echo $CI->lang->line('LABEL_STATUS_APPROVE'); ?>', dataField: 'status_approve',filtertype: 'list', width:'70', hidden: <?php echo $system_preference_items['status_approve']?0:1;?>},
-                { text: '<?php echo $CI->lang->line('LABEL_STATUS_DELIVERY'); ?>', dataField: 'status_delivery',filtertype: 'list', width:'70', hidden: <?php echo $system_preference_items['status_delivery']?0:1;?>},
                 { text: '<?php echo $CI->lang->line('LABEL_STATUS_RECEIVE'); ?>', dataField: 'status_receive',filtertype: 'list', width:'70', hidden: <?php echo $system_preference_items['status_receive']?0:1;?>},
                 { text: '<?php echo $CI->lang->line('LABEL_STATUS_RECEIVE_FORWARD'); ?>', dataField: 'status_receive_forward',filtertype: 'list', width:'70', hidden: <?php echo $system_preference_items['status_receive_forward']?0:1;?>},
                 { text: '<?php echo $CI->lang->line('LABEL_STATUS_RECEIVE_APPROVE'); ?>', dataField: 'status_receive_approve',filtertype: 'list', width:'70', hidden: <?php echo $system_preference_items['status_receive_approve']?0:1;?>},

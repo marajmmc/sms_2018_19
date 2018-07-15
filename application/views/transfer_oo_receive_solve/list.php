@@ -9,19 +9,12 @@ if(isset($CI->permissions['action0']) && ($CI->permissions['action0']==1))
         'href'=>site_url($CI->controller_url.'/index/list_all')
     );
 }
-if(isset($CI->permissions['action1']) && ($CI->permissions['action1']==1))
-{
-    $action_buttons[]=array(
-        'label'=>$CI->lang->line("ACTION_NEW"),
-        'href'=>site_url($CI->controller_url.'/index/add')
-    );
-}
 if(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1))
 {
     $action_buttons[]=array
     (
         'type'=>'button',
-        'label'=>$CI->lang->line('ACTION_EDIT'),
+        'label'=>'Solve',
         'class'=>'button_jqx_action',
         'data-action-link'=>site_url($CI->controller_url.'/index/edit')
     );
@@ -61,16 +54,6 @@ if(isset($CI->permissions['action6']) && ($CI->permissions['action6']==1))
     (
         'label'=>'Preference',
         'href'=>site_url($CI->controller_url.'/index/set_preference')
-    );
-}
-if((isset($CI->permissions['action7']) && ($CI->permissions['action7']==1)))
-{
-    $action_buttons[]=array
-    (
-        'type'=>'button',
-        'label'=>'Forward',
-        'class'=>'button_jqx_action',
-        'data-action-link'=>site_url($CI->controller_url.'/index/forward')
     );
 }
 $action_buttons[]=array(
@@ -113,7 +96,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <?php
                  foreach($system_preference_items as $key=>$item)
                  {
-                 if($key=='id')
+                 if($key=='id' || $key=='quantity_total_request' )
                  {
                  ?>
                 { name: '<?php echo $key ?>', type: 'number' },
@@ -132,23 +115,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             type: 'POST',
             url: url
         };
+
         var dataAdapter = new $.jqx.dataAdapter(source);
-        var cellsrenderer = function(row, column, value, defaultHtml, columnSettings, record)
-        {
-            var element = $(defaultHtml);
-            if(column=='quantity_total_request')
-            {
-                if(value==0)
-                {
-                    element.html('');
-                }
-                else
-                {
-                    element.html(get_string_kg(value));
-                }
-            }
-            return element[0].outerHTML;
-        };
         // create jqxgrid.
         $("#system_jqx_container").jqxGrid(
             {
@@ -167,14 +135,20 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 columnsreorder: true,
                 enablebrowserselection: true,
                 columns:
-                [
-                    { text: '<?php echo $CI->lang->line('LABEL_BARCODE'); ?>', dataField: 'barcode',pinned:true, width:'80',hidden: <?php echo $system_preference_items['barcode']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_OUTLET_NAME_SOURCE'); ?>', dataField: 'outlet_name_source',pinned:true,filtertype: 'list', width:'250',hidden: <?php echo $system_preference_items['outlet_name_source']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_OUTLET_NAME_DESTINATION'); ?>', dataField: 'outlet_name_destination',pinned:true,filtertype: 'list', width:'250',hidden: <?php echo $system_preference_items['outlet_name_destination']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_DATE_REQUEST'); ?>', dataField: 'date_request', width:'100',hidden: <?php echo $system_preference_items['date_request']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_REMARKS_REQUEST'); ?>', dataField: 'remarks_request',hidden: <?php echo $system_preference_items['remarks_request']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL_REQUEST'); ?>', dataField: 'quantity_total_request', width:'100', cellsAlign:'right',cellsrenderer: cellsrenderer, hidden: <?php echo $system_preference_items['quantity_total_request']?0:1;?>}
-                ]
+                    [
+                        { text: '<?php echo $CI->lang->line('LABEL_ID'); ?>', dataField: 'id',pinned:true, width:'30',hidden: <?php echo $system_preference_items['id']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_BARCODE'); ?>', dataField: 'barcode',pinned:true, width:'80',hidden: <?php echo $system_preference_items['barcode']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_OUTLET_NAME_DESTINATION'); ?>', dataField: 'outlet_name_destination',pinned:true,filtertype: 'list', width:'100',hidden: <?php echo $system_preference_items['outlet_name_destination']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_OUTLET_NAME_SOURCE'); ?>', dataField: 'outlet_name_source',pinned:true,filtertype: 'list', width:'100',hidden: <?php echo $system_preference_items['outlet_name_source']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_DATE_REQUEST'); ?>', dataField: 'date_request', width:'100',hidden: <?php echo $system_preference_items['date_request']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_DIVISION_NAME'); ?>', dataField: 'division_name',width:'100',filtertype: 'list',hidden: <?php echo $system_preference_items['division_name']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_ZONE_NAME'); ?>', dataField: 'zone_name',width:'100',hidden: <?php echo $system_preference_items['zone_name']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_TERRITORY_NAME'); ?>', dataField: 'territory_name',width:'100',hidden: <?php echo $system_preference_items['territory_name']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_DISTRICT_NAME'); ?>', dataField: 'district_name',width:'100',hidden: <?php echo $system_preference_items['district_name']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL_APPROVE'); ?>', dataField: 'quantity_total_approve', width:'100', cellsAlign:'right', hidden: <?php echo $system_preference_items['quantity_total_approve']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL_RECEIVE'); ?>', dataField: 'quantity_total_receive', width:'100', cellsAlign:'right', hidden: <?php echo $system_preference_items['quantity_total_receive']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL_DIFFERENCE'); ?>', dataField: 'quantity_total_difference', width:'100', cellsAlign:'right', hidden: <?php echo $system_preference_items['quantity_total_difference']?0:1;?>}
+                    ]
             });
     });
 </script>

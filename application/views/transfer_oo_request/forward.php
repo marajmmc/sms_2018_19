@@ -31,34 +31,14 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <tr>
                         <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ID');?></label></th>
                         <th class=""><label class="control-label"><?php echo Barcode_helper::get_barcode_transfer_outlet_to_outlet($item['id']);?></label></th>
-                        <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DIVISION_NAME');?></label></th>
-                        <th class=" header_value"><label class="control-label"><?php echo $item['division_name'];?></label></th>
+                        <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_OUTLET_NAME_SOURCE');?></label></th>
+                        <th class=" header_value"><label class="control-label"><?php echo $CI->outlets[$item['outlet_id_source']]['name'];?></label></th>
                     </tr>
                     <tr>
                         <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_REQUEST');?></label></th>
                         <th class=" header_value"><label class="control-label"><?php echo System_helper::display_date($item['date_request']);?></label></th>
-                        <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ZONE_NAME');?></label></th>
-                        <th class=" header_value"><label class="control-label"><?php echo $item['zone_name'];?></label></th>
-                    </tr>
-                    <tr>
-                        <th colspan="2">&nbsp;</th>
-                        <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TERRITORY_NAME');?></label></th>
-                        <th class=" header_value"><label class="control-label"><?php echo $item['territory_name'];?></label></th>
-                    </tr>
-                    <tr>
-                        <th colspan="2">&nbsp;</th>
-                        <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DISTRICT_NAME');?></label></th>
-                        <th class=" header_value"><label class="control-label"><?php echo $item['district_name'];?></label></th>
-                    </tr>
-                    <tr>
-                        <th colspan="2">&nbsp;</th>
-                        <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_OUTLET_NAME_SOURCE');?></label></th>
-                        <th class=" header_value"><label class="control-label"><?php echo $item['outlet_name_source'];?></label></th>
-                    </tr>
-                    <tr>
-                        <th colspan="2">&nbsp;</th>
                         <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_OUTLET_NAME_DESTINATION');?></label></th>
-                        <th class=" header_value"><label class="control-label"><?php echo $item['outlet_name_destination'];?></label></th>
+                        <th class=" header_value"><label class="control-label"><?php echo $CI->outlets[$item['outlet_id_destination']]['name'];?></label></th>
                     </tr>
                     <tr>
                         <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CREATED_BY');?></label></th>
@@ -168,8 +148,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <tfoot>
                     <tr>
                         <th colspan="6" class="text-right"><?php echo $CI->lang->line('LABEL_TOTAL');?></th>
-                        <th class="text-right"><label class="control-label" id="quantity_total_request"> <?php echo $quantity_total_request;?></label></th>
-                        <th class="text-right"><label class="control-label" id="quantity_total_request_kg"> <?php echo number_format($quantity_total_request_kg,3,'.','');?></label></th>
+                        <th class="text-right"><label class="control-label" id="quantity_total_request"> <?php echo System_helper::get_string_quantity($quantity_total_request);?></label></th>
+                        <th class="text-right"><label class="control-label" id="quantity_total_request_kg"> <?php echo System_helper::get_string_kg($quantity_total_request_kg);?></label></th>
                     </tr>
                     </tfoot>
                 </table>
@@ -192,7 +172,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             </div>
             <div class="col-sm-4 col-xs-4">
                 <div class="action_button pull-right">
-                    <button id="button_action_save" type="button" class="btn" data-form="#save_form" data-message-confirm="Are You Sure Outlet to Outlet Transfer Forward Request?">Save</button>
+                    <button id="button_action_save" type="button" class="btn" data-form="#save_form" data-message-confirm="Are You Want to Showroom to Showroom Transfer Request Forward?">Save</button>
                 </div>
             </div>
             <div class="col-sm-4 col-xs-4">

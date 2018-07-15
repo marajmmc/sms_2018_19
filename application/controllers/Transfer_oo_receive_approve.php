@@ -1,16 +1,17 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Transfer_ow_receive_approve extends Root_Controller
+class Transfer_oo_receive_approve extends Root_Controller
 {
     public $message;
     public $permissions;
     public $controller_url;
+    public $locations;
     public function __construct()
     {
         parent::__construct();
         $this->message="";
-        $this->permissions=User_helper::get_permission('Transfer_ow_receive_approve');
-        $this->controller_url='transfer_ow_receive_approve';
+        $this->permissions=User_helper::get_permission(get_class());
+        $this->controller_url=strtolower(get_class());
         $this->locations=User_helper::get_locations();
         if(!($this->locations))
         {
@@ -75,7 +76,7 @@ class Transfer_ow_receive_approve extends Root_Controller
         if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
         {
             $data['system_preference_items']= $this->get_preference();
-            $data['title']="Outlet to HQ Receive Approve List";
+            $data['title']="Showroom to Showroom Transfer Receive Approve List";
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/list",$data,true));
             if($this->message)
@@ -94,18 +95,22 @@ class Transfer_ow_receive_approve extends Root_Controller
     }
     private function system_get_items()
     {
-        $this->db->from($this->config->item('table_sms_transfer_ow').' transfer_ow');
+        $this->db->from($this->config->item('table_sms_transfer_oo').' transfer_oo');
         $this->db->select(
             '
-            transfer_ow.id,
-            transfer_ow.date_request,
-            transfer_ow.quantity_total_request_kg quantity_total_request,
-            transfer_ow.quantity_total_approve_kg quantity_total_approve,
-            transfer_ow.quantity_total_receive_kg quantity_total_receive
+            transfer_oo.id,
+            transfer_oo.date_request,
+            transfer_oo.quantity_total_request_kg quantity_total_request,
+            transfer_oo.quantity_total_approve_kg quantity_total_approve,
+            transfer_oo.quantity_total_receive_kg quantity_total_receive
             ');
-        $this->db->join($this->config->item('table_login_csetup_cus_info').' outlet_info','outlet_info.customer_id=transfer_ow.outlet_id AND outlet_info.type="'.$this->config->item('system_customer_type_outlet_id').'"','INNER');
-        $this->db->select('outlet_info.name outlet_name, outlet_info.customer_code outlet_code');
-        $this->db->join($this->config->item('table_login_setup_location_districts').' districts','districts.id = outlet_info.district_id','INNER');
+        $this->db->join($this->config->item('table_login_csetup_cus_info').' source_outlet_info','source_outlet_info.customer_id=transfer_oo.outlet_id_source AND source_outlet_info.revision=1 AND source_outlet_info.type="'.$this->config->item('system_customer_type_outlet_id').'"','INNER');
+        $this->db->select('source_outlet_info.customer_id outlet_id_source, source_outlet_info.name outlet_name_source, source_outlet_info.customer_code outlet_code_source');
+
+        $this->db->join($this->config->item('table_login_csetup_cus_info').' destination_outlet_info','destination_outlet_info.customer_id=transfer_oo.outlet_id_destination AND destination_outlet_info.revision=1 AND destination_outlet_info.type="'.$this->config->item('system_customer_type_outlet_id').'"','INNER');
+        $this->db->select('source_outlet_info.customer_id outlet_id_destination, destination_outlet_info.name outlet_name_destination, destination_outlet_info.customer_code outlet_code_destination');
+
+        $this->db->join($this->config->item('table_login_setup_location_districts').' districts','districts.id = destination_outlet_info.district_id','INNER');
         $this->db->select('districts.name district_name');
         $this->db->join($this->config->item('table_login_setup_location_territories').' territories','territories.id = districts.territory_id','INNER');
         $this->db->select('territories.name territory_name');
@@ -113,13 +118,12 @@ class Transfer_ow_receive_approve extends Root_Controller
         $this->db->select('zones.name zone_name');
         $this->db->join($this->config->item('table_login_setup_location_divisions').' divisions','divisions.id = zones.division_id','INNER');
         $this->db->select('divisions.name division_name');
-        $this->db->where('transfer_ow.status !=',$this->config->item('system_status_delete'));
-        $this->db->where('transfer_ow.status_delivery',$this->config->item('system_status_delivered'));
-        $this->db->where('transfer_ow.status_receive',$this->config->item('system_status_pending'));
-        $this->db->where('transfer_ow.status_receive_forward',$this->config->item('system_status_forwarded'));
-        $this->db->where('transfer_ow.status_system_delivery_receive',$this->config->item('system_status_no'));
-        $this->db->where('outlet_info.revision',1);
-        $this->db->order_by('transfer_ow.id','DESC');
+        $this->db->where('transfer_oo.status !=',$this->config->item('system_status_delete'));
+        $this->db->where('transfer_oo.status_delivery',$this->config->item('system_status_delivered'));
+        $this->db->where('transfer_oo.status_receive',$this->config->item('system_status_pending'));
+        $this->db->where('transfer_oo.status_receive_forward',$this->config->item('system_status_forwarded'));
+        $this->db->where('transfer_oo.status_system_delivery_receive',$this->config->item('system_status_no'));
+        $this->db->order_by('transfer_oo.id','DESC');
         if($this->locations['division_id']>0)
         {
             $this->db->where('divisions.id',$this->locations['division_id']);
@@ -142,10 +146,10 @@ class Transfer_ow_receive_approve extends Root_Controller
         {
             $item=array();
             $item['id']=$result['id'];
-            $item['barcode']=Barcode_helper::get_barcode_transfer_outlet_to_warehouse($result['id']);
-            $item['outlet_name']=$result['outlet_name'];
+            $item['barcode']=Barcode_helper::get_barcode_transfer_outlet_to_outlet($result['id']);
+            $item['outlet_name_destination']=$result['outlet_name_destination'];
+            $item['outlet_name_source']=$result['outlet_name_source'];
             $item['date_request']=System_helper::display_date($result['date_request']);
-            $item['outlet_code']=$result['outlet_code'];
             $item['division_name']=$result['division_name'];
             $item['zone_name']=$result['zone_name'];
             $item['territory_name']=$result['territory_name'];
@@ -162,7 +166,7 @@ class Transfer_ow_receive_approve extends Root_Controller
         if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
         {
             $data['system_preference_items']= $this->get_preference_all();
-            $data['title']="Outlet to HQ Transfer All List";
+            $data['title']="Showroom to Showroom Transfer Receive Approved All List";
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/list_all",$data,true));
             if($this->message)
@@ -196,25 +200,29 @@ class Transfer_ow_receive_approve extends Root_Controller
             $pagesize=$pagesize*2;
         }
 
-        $this->db->from($this->config->item('table_sms_transfer_ow').' transfer_ow');
+        $this->db->from($this->config->item('table_sms_transfer_oo').' transfer_oo');
         $this->db->select(
             '
-            transfer_ow.id,
-            transfer_ow.date_request,
-            transfer_ow.quantity_total_request_kg quantity_total_request,
-            transfer_ow.quantity_total_approve_kg quantity_total_approve,
-            transfer_ow.quantity_total_receive_kg quantity_total_receive,
-            transfer_ow.status, transfer_ow.status_request,
-            transfer_ow.status_approve,
-            transfer_ow.status_delivery,
-            transfer_ow.status_receive,
-            transfer_ow.status_receive_forward,
-            transfer_ow.status_receive_approve,
-            transfer_ow.status_system_delivery_receive
+            transfer_oo.id,
+            transfer_oo.date_request,
+            transfer_oo.quantity_total_request_kg quantity_total_request,
+            transfer_oo.quantity_total_approve_kg quantity_total_approve,
+            transfer_oo.quantity_total_receive_kg quantity_total_receive,
+            transfer_oo.status, transfer_oo.status_request,
+            transfer_oo.status_approve,
+            transfer_oo.status_delivery,
+            transfer_oo.status_receive,
+            transfer_oo.status_receive_forward,
+            transfer_oo.status_receive_approve,
+            transfer_oo.status_system_delivery_receive
             ');
-        $this->db->join($this->config->item('table_login_csetup_cus_info').' outlet_info','outlet_info.customer_id=transfer_ow.outlet_id AND outlet_info.type="'.$this->config->item('system_customer_type_outlet_id').'"','INNER');
-        $this->db->select('outlet_info.name outlet_name, outlet_info.customer_code outlet_code');
-        $this->db->join($this->config->item('table_login_setup_location_districts').' districts','districts.id = outlet_info.district_id','INNER');
+        $this->db->join($this->config->item('table_login_csetup_cus_info').' source_outlet_info','source_outlet_info.customer_id=transfer_oo.outlet_id_source AND source_outlet_info.revision=1 AND source_outlet_info.type="'.$this->config->item('system_customer_type_outlet_id').'"','INNER');
+        $this->db->select('source_outlet_info.customer_id outlet_id_source, source_outlet_info.name outlet_name_source, source_outlet_info.customer_code outlet_code_source');
+
+        $this->db->join($this->config->item('table_login_csetup_cus_info').' destination_outlet_info','destination_outlet_info.customer_id=transfer_oo.outlet_id_destination AND destination_outlet_info.revision=1 AND destination_outlet_info.type="'.$this->config->item('system_customer_type_outlet_id').'"','INNER');
+        $this->db->select('source_outlet_info.customer_id outlet_id_destination, destination_outlet_info.name outlet_name_destination, destination_outlet_info.customer_code outlet_code_destination');
+
+        $this->db->join($this->config->item('table_login_setup_location_districts').' districts','districts.id = destination_outlet_info.district_id','INNER');
         $this->db->select('districts.name district_name');
         $this->db->join($this->config->item('table_login_setup_location_territories').' territories','territories.id = districts.territory_id','INNER');
         $this->db->select('territories.name territory_name');
@@ -222,12 +230,11 @@ class Transfer_ow_receive_approve extends Root_Controller
         $this->db->select('zones.name zone_name');
         $this->db->join($this->config->item('table_login_setup_location_divisions').' divisions','divisions.id = zones.division_id','INNER');
         $this->db->select('divisions.name division_name');
-        $this->db->where('transfer_ow.status !=',$this->config->item('system_status_delete'));
-        $this->db->where('transfer_ow.status_delivery',$this->config->item('system_status_delivered'));
-        $this->db->where('transfer_ow.status_receive_forward',$this->config->item('system_status_forwarded'));
-        $this->db->where('transfer_ow.status_system_delivery_receive',$this->config->item('system_status_no'));
-        $this->db->where('outlet_info.revision',1);
-        $this->db->order_by('transfer_ow.id','DESC');
+        $this->db->where('transfer_oo.status !=',$this->config->item('system_status_delete'));
+        $this->db->where('transfer_oo.status_delivery',$this->config->item('system_status_delivered'));
+        $this->db->where('transfer_oo.status_receive_forward',$this->config->item('system_status_forwarded'));
+        $this->db->where('transfer_oo.status_system_delivery_receive',$this->config->item('system_status_no'));
+        $this->db->order_by('transfer_oo.id','DESC');
         if($this->locations['division_id']>0)
         {
             $this->db->where('divisions.id',$this->locations['division_id']);
@@ -251,10 +258,10 @@ class Transfer_ow_receive_approve extends Root_Controller
         {
             $item=array();
             $item['id']=$result['id'];
-            $item['barcode']=Barcode_helper::get_barcode_transfer_outlet_to_warehouse($result['id']);
-            $item['outlet_name']=$result['outlet_name'];
+            $item['barcode']=Barcode_helper::get_barcode_transfer_outlet_to_outlet($result['id']);
+            $item['outlet_name_destination']=$result['outlet_name_destination'];
+            $item['outlet_name_source']=$result['outlet_name_source'];
             $item['date_request']=System_helper::display_date($result['date_request']);
-            $item['outlet_code']=$result['outlet_code'];
             $item['division_name']=$result['division_name'];
             $item['zone_name']=$result['zone_name'];
             $item['territory_name']=$result['territory_name'];
@@ -300,11 +307,15 @@ class Transfer_ow_receive_approve extends Root_Controller
                 $item_id=$this->input->post('id');
             }
 
-            $this->db->from($this->config->item('table_sms_transfer_ow').' transfer_ow');
-            $this->db->select('transfer_ow.*');
-            $this->db->join($this->config->item('table_login_csetup_cus_info').' outlet_info','outlet_info.customer_id=transfer_ow.outlet_id AND outlet_info.type="'.$this->config->item('system_customer_type_outlet_id').'"','INNER');
-            $this->db->select('outlet_info.customer_id outlet_id, outlet_info.name outlet_name, outlet_info.customer_code outlet_code');
-            $this->db->join($this->config->item('table_login_setup_location_districts').' districts','districts.id = outlet_info.district_id','INNER');
+            $this->db->from($this->config->item('table_sms_transfer_oo').' transfer_oo');
+            $this->db->select('transfer_oo.*');
+            $this->db->join($this->config->item('table_login_csetup_cus_info').' source_outlet_info','source_outlet_info.customer_id=transfer_oo.outlet_id_source AND source_outlet_info.revision=1 AND source_outlet_info.type="'.$this->config->item('system_customer_type_outlet_id').'"','INNER');
+            $this->db->select('source_outlet_info.customer_id outlet_id_source, source_outlet_info.name outlet_name_source, source_outlet_info.customer_code outlet_code_source');
+
+            $this->db->join($this->config->item('table_login_csetup_cus_info').' destination_outlet_info','destination_outlet_info.customer_id=transfer_oo.outlet_id_destination AND destination_outlet_info.revision=1 AND destination_outlet_info.type="'.$this->config->item('system_customer_type_outlet_id').'"','INNER');
+            $this->db->select('source_outlet_info.customer_id outlet_id_destination, destination_outlet_info.name outlet_name_destination, destination_outlet_info.customer_code outlet_code_destination');
+
+            $this->db->join($this->config->item('table_login_setup_location_districts').' districts','districts.id = destination_outlet_info.district_id','INNER');
             $this->db->select('districts.id district_id, districts.name district_name');
             $this->db->join($this->config->item('table_login_setup_location_territories').' territories','territories.id = districts.territory_id','INNER');
             $this->db->select('territories.id territory_id, territories.name territory_name');
@@ -312,11 +323,11 @@ class Transfer_ow_receive_approve extends Root_Controller
             $this->db->select('zones.id zone_id, zones.name zone_name');
             $this->db->join($this->config->item('table_login_setup_location_divisions').' divisions','divisions.id = zones.division_id','INNER');
             $this->db->select('divisions.id division_id, divisions.name division_name');
-            $this->db->join($this->config->item('table_pos_setup_user_info').' pos_setup_user_info','pos_setup_user_info.user_id=transfer_ow.user_updated_delivery','LEFT');
+            $this->db->join($this->config->item('table_pos_setup_user_info').' pos_setup_user_info','pos_setup_user_info.user_id=transfer_oo.user_updated_delivery','LEFT');
             $this->db->select('pos_setup_user_info.name full_name_delivery_edit');
-            $this->db->join($this->config->item('table_pos_setup_user_info').' pos_setup_user_info_forward','pos_setup_user_info_forward.user_id=transfer_ow.user_updated_delivery_forward','LEFT');
+            $this->db->join($this->config->item('table_pos_setup_user_info').' pos_setup_user_info_forward','pos_setup_user_info_forward.user_id=transfer_oo.user_updated_delivery_forward','LEFT');
             $this->db->select('pos_setup_user_info.name full_name_delivery_forward');
-            $this->db->join($this->config->item('table_sms_transfer_ow_courier_details').' wo_courier_details','wo_courier_details.transfer_ow_id=transfer_ow.id','LEFT');
+            $this->db->join($this->config->item('table_sms_transfer_oo_courier_details').' wo_courier_details','wo_courier_details.transfer_oo_id=transfer_oo.id','LEFT');
             $this->db->select('
                                 wo_courier_details.date_delivery courier_date_delivery,
                                 wo_courier_details.date_challan,
@@ -329,10 +340,9 @@ class Transfer_ow_receive_approve extends Root_Controller
                                 ');
             $this->db->join($this->config->item('table_login_basic_setup_couriers').' courier','courier.id=wo_courier_details.courier_id','LEFT');
             $this->db->select('courier.name courier_name');
-            $this->db->where('transfer_ow.status !=',$this->config->item('system_status_delete'));
-            $this->db->where('transfer_ow.id',$item_id);
-            $this->db->where('outlet_info.revision',1);
-            $this->db->order_by('transfer_ow.id','DESC');
+            $this->db->where('transfer_oo.status !=',$this->config->item('system_status_delete'));
+            $this->db->where('transfer_oo.id',$item_id);
+            $this->db->order_by('transfer_oo.id','DESC');
 
             $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
@@ -345,19 +355,19 @@ class Transfer_ow_receive_approve extends Root_Controller
             if($data['item']['status_receive']==$this->config->item('system_status_received'))
             {
                 $ajax['status']=false;
-                $ajax['system_message']='TO already received.';
+                $ajax['system_message']='Showroom to showroom transfer already received.';
                 $this->json_return($ajax);
             }
             if($data['item']['status_receive_forward']!=$this->config->item('system_status_forwarded'))
             {
                 $ajax['status']=false;
-                $ajax['system_message']='TO is not forwarded.';
+                $ajax['system_message']='Showroom to showroom transfer is not forwarded.';
                 $this->json_return($ajax);
             }
             if($data['item']['status_receive_approve']==$this->config->item('system_status_approved'))
             {
                 $ajax['status']=false;
-                $ajax['system_message']='TO already approved.';
+                $ajax['system_message']='Showroom to showroom transfer already approved.';
                 $this->json_return($ajax);
             }
 
@@ -371,16 +381,16 @@ class Transfer_ow_receive_approve extends Root_Controller
             $user_ids[$data['item']['user_updated_receive_forward']]=$data['item']['user_updated_receive_forward'];
             $data['users']=System_helper::get_users_info($user_ids);
 
-            $this->db->from($this->config->item('table_sms_transfer_ow_details').' transfer_ow_details');
-            $this->db->select('transfer_ow_details.*');
-            $this->db->join($this->config->item('table_login_setup_classification_varieties').' v','v.id=transfer_ow_details.variety_id','INNER');
+            $this->db->from($this->config->item('table_sms_transfer_oo_details').' details');
+            $this->db->select('details.*');
+            $this->db->join($this->config->item('table_login_setup_classification_varieties').' v','v.id=details.variety_id','INNER');
             $this->db->select('v.name variety_name');
             $this->db->join($this->config->item('table_login_setup_classification_crop_types').' crop_type','crop_type.id=v.crop_type_id','INNER');
             $this->db->select('crop_type.id crop_type_id, crop_type.name crop_type_name');
             $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id=crop_type.crop_id','INNER');
             $this->db->select('crop.id crop_id, crop.name crop_name');
-            $this->db->where('transfer_ow_details.transfer_ow_id',$item_id);
-            $this->db->where('transfer_ow_details.status',$this->config->item('system_status_active'));
+            $this->db->where('details.transfer_oo_id',$item_id);
+            $this->db->where('details.status',$this->config->item('system_status_active'));
             $data['items']=$this->db->get()->result_array();
 
             $variety_ids=array();
@@ -388,9 +398,10 @@ class Transfer_ow_receive_approve extends Root_Controller
             {
                 $variety_ids[$row['variety_id']]=$row['variety_id'];
             }
-            $data['stocks']=Stock_helper::get_variety_stock($variety_ids);
+            //$data['stocks']=Stock_helper::get_variety_stock($variety_ids);
+            $data['stocks']=Stock_helper::get_variety_stock_outlet($data['item']['outlet_id_destination'],$variety_ids);
 
-            $data['title']="Outlet to HQ Transfer Receive Approve :: ". Barcode_helper::get_barcode_transfer_outlet_to_warehouse($data['item']['id']);
+            $data['title']=$data['item']['outlet_name_source']." to ".$data['item']['outlet_name_destination']." Transfer Receive Approve :: ". Barcode_helper::get_barcode_transfer_outlet_to_outlet($data['item']['id']);
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/edit",$data,true));
             if($this->message)
@@ -413,106 +424,143 @@ class Transfer_ow_receive_approve extends Root_Controller
         $user = User_helper::get_user();
         $time=time();
         $item_head=$this->input->post('item');
-        if($id>0)
-        {
-            if(!(isset($this->permissions['action2']) && ($this->permissions['action2']==1)))
-            {
-                $ajax['status']=false;
-                $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
-                $this->json_return($ajax);
-            }
-            if($item_head['status_receive_approve']!=$this->config->item('system_status_approved'))
-            {
-                $ajax['status']=false;
-                $ajax['system_message']='Approve field is required.';
-                $this->json_return($ajax);
-            }
-            $this->db->from($this->config->item('table_sms_transfer_ow').' transfer_ow');
-            $this->db->select('transfer_ow.*');
-            $this->db->join($this->config->item('table_login_csetup_cus_info').' outlet_info','outlet_info.customer_id=transfer_ow.outlet_id AND outlet_info.type="'.$this->config->item('system_customer_type_outlet_id').'"','INNER');
-            $this->db->select('outlet_info.customer_id outlet_id, outlet_info.name outlet_name, outlet_info.customer_code outlet_code');
-            $this->db->join($this->config->item('table_login_setup_location_districts').' districts','districts.id = outlet_info.district_id','INNER');
-            $this->db->select('districts.id district_id, districts.name district_name');
-            $this->db->join($this->config->item('table_login_setup_location_territories').' territories','territories.id = districts.territory_id','INNER');
-            $this->db->select('territories.id territory_id, territories.name territory_name');
-            $this->db->join($this->config->item('table_login_setup_location_zones').' zones','zones.id = territories.zone_id','INNER');
-            $this->db->select('zones.id zone_id, zones.name zone_name');
-            $this->db->join($this->config->item('table_login_setup_location_divisions').' divisions','divisions.id = zones.division_id','INNER');
-            $this->db->select('divisions.id division_id, divisions.name division_name');
-            $this->db->join($this->config->item('table_sms_transfer_ow_courier_details').' wo_courier_details','wo_courier_details.transfer_ow_id=transfer_ow.id','LEFT');
-            $this->db->select('
-                                wo_courier_details.date_delivery courier_date_delivery,
-                                wo_courier_details.date_challan,
-                                wo_courier_details.challan_no,
-                                wo_courier_details.courier_tracing_no,
-                                wo_courier_details.place_booking_source,
-                                wo_courier_details.place_destination,
-                                wo_courier_details.date_booking,
-                                wo_courier_details.remarks remarks_couriers
-                                ');
-            $this->db->join($this->config->item('table_login_basic_setup_couriers').' courier','courier.id=wo_courier_details.courier_id','LEFT');
-            $this->db->select('courier.name courier_name');
-            $this->db->where('transfer_ow.status !=',$this->config->item('system_status_delete'));
-            $this->db->where('transfer_ow.id',$id);
-            $this->db->where('outlet_info.revision',1);
-            $this->db->order_by('transfer_ow.id','DESC');
-            $result['item']=$this->db->get()->row_array();
-            if(!$result['item'])
-            {
-                System_helper::invalid_try('save',$id,'Update Non Exists');
-                $ajax['status']=false;
-                $ajax['system_message']='Invalid Try.';
-                $this->json_return($ajax);
-            }
-            if($result['item']['status_delivery']!=$this->config->item('system_status_delivered'))
-            {
-                $ajax['status']=false;
-                $ajax['system_message']='TO is not delivered.';
-                $this->json_return($ajax);
-            }
-            if($result['item']['status_receive']==$this->config->item('system_status_received'))
-            {
-                $ajax['status']=false;
-                $ajax['system_message']='TO already received.';
-                $this->json_return($ajax);
-            }
-            if($result['item']['status_receive_forward']!=$this->config->item('system_status_forwarded'))
-            {
-                $ajax['status']=false;
-                $ajax['system_message']='TO is not forwarded.';
-                $this->json_return($ajax);
-            }
-            if($result['item']['status_receive_approve']==$this->config->item('system_status_approved'))
-            {
-                $ajax['status']=false;
-                $ajax['system_message']='TO already approved.';
-                $this->json_return($ajax);
-            }
-            if(!$this->check_my_editable($result['item']))
-            {
-                System_helper::invalid_try('save',$id,'User location Not Assign.');
-                $ajax['status']=false;
-                $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
-                $this->json_return($ajax);
-            }
-        }
-        else
+        if(!($id>0))
         {
             $ajax['status']=false;
             $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
             $this->json_return($ajax);
         }
+        if(!(isset($this->permissions['action2']) && ($this->permissions['action2']==1)))
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+        if($item_head['status_receive_approve']!=$this->config->item('system_status_approved'))
+        {
+            $ajax['status']=false;
+            $ajax['system_message']='Approve field is required.';
+            $this->json_return($ajax);
+        }
 
-        $this->db->from($this->config->item('table_sms_transfer_ow_details').' transfer_ow_details');
-        $this->db->select('transfer_ow_details.*');
-        $this->db->join($this->config->item('table_login_setup_classification_varieties').' v','v.id=transfer_ow_details.variety_id','INNER');
+        $result['item']=Query_helper::get_info($this->config->item('table_sms_transfer_oo'),array('*'),array('status !="'.$this->config->item('system_status_delete').'"', 'id ='.$id),1);
+        if(!$result['item'])
+        {
+            System_helper::invalid_try('save',$id,'Update Non Exists');
+            $ajax['status']=false;
+            $ajax['system_message']='Invalid Try.';
+            $this->json_return($ajax);
+        }
+        if($result['item']['status_delivery']!=$this->config->item('system_status_delivered'))
+        {
+            $ajax['status']=false;
+            $ajax['system_message']='Showroom to showroom transfer is not delivered.';
+            $this->json_return($ajax);
+        }
+        if($result['item']['status_receive']==$this->config->item('system_status_received'))
+        {
+            $ajax['status']=false;
+            $ajax['system_message']='Showroom to showroom transfer already received.';
+            $this->json_return($ajax);
+        }
+        if($result['item']['status_receive_forward']!=$this->config->item('system_status_forwarded'))
+        {
+            $ajax['status']=false;
+            $ajax['system_message']='Showroom to showroom transfer is not forwarded.';
+            $this->json_return($ajax);
+        }
+        if($result['item']['status_receive_approve']==$this->config->item('system_status_approved'))
+        {
+            $ajax['status']=false;
+            $ajax['system_message']='Showroom to showroom transfer already approved.';
+            $this->json_return($ajax);
+        }
+        /* Source & Destination outlet checking assign permission*/
+        $outlet_id_source=$result['item']['outlet_id_source'];
+        $outlet_id_destination=$result['item']['outlet_id_destination'];
+
+        $this->db->from($this->config->item('table_login_csetup_customer').' customer');
+        $this->db->join($this->config->item('table_login_csetup_cus_info').' cus_info','cus_info.customer_id = customer.id','INNER');
+        $this->db->select('customer.id');
+        $this->db->join($this->config->item('table_login_setup_location_districts').' districts','districts.id = cus_info.district_id','INNER');
+        $this->db->join($this->config->item('table_login_setup_location_territories').' territories','territories.id = districts.territory_id','INNER');
+        $this->db->join($this->config->item('table_login_setup_location_zones').' zones','zones.id = territories.zone_id','INNER');
+        $this->db->join($this->config->item('table_login_setup_location_divisions').' divisions','divisions.id = zones.division_id','INNER');
+        $this->db->where('customer.status',$this->config->item('system_status_active'));
+        $this->db->where('cus_info.type',$this->config->item('system_customer_type_outlet_id'));
+        $this->db->where('cus_info.revision',1);
+        $this->db->where('customer.id',$outlet_id_source);
+        if($this->locations['division_id']>0)
+        {
+            $this->db->where('divisions.id',$this->locations['division_id']);
+            if($this->locations['zone_id']>0)
+            {
+                $this->db->where('zones.id',$this->locations['zone_id']);
+                if($this->locations['territory_id']>0)
+                {
+                    $this->db->where('territories.id',$this->locations['territory_id']);
+                    if($this->locations['district_id']>0)
+                    {
+                        $this->db->where('districts.id',$this->locations['district_id']);
+                    }
+                }
+            }
+        }
+        $outlet_source=$this->db->get()->row_array();
+        if(!$outlet_source)
+        {
+            System_helper::invalid_try('save_forward',$id,'User Outlet Not Assign (Source)');
+            $ajax['status']=false;
+            $ajax['system_message']='Invalid Try. Source outlet not assign.';
+            $this->json_return($ajax);
+        }
+
+        $this->db->from($this->config->item('table_login_csetup_customer').' customer');
+        $this->db->join($this->config->item('table_login_csetup_cus_info').' cus_info','cus_info.customer_id = customer.id','INNER');
+        $this->db->select('customer.id');
+        $this->db->join($this->config->item('table_login_setup_location_districts').' districts','districts.id = cus_info.district_id','INNER');
+        $this->db->join($this->config->item('table_login_setup_location_territories').' territories','territories.id = districts.territory_id','INNER');
+        $this->db->join($this->config->item('table_login_setup_location_zones').' zones','zones.id = territories.zone_id','INNER');
+        $this->db->join($this->config->item('table_login_setup_location_divisions').' divisions','divisions.id = zones.division_id','INNER');
+        $this->db->where('customer.status',$this->config->item('system_status_active'));
+        $this->db->where('cus_info.type',$this->config->item('system_customer_type_outlet_id'));
+        $this->db->where('cus_info.revision',1);
+        $this->db->where('customer.id',$outlet_id_destination);
+        if($this->locations['division_id']>0)
+        {
+            $this->db->where('divisions.id',$this->locations['division_id']);
+            if($this->locations['zone_id']>0)
+            {
+                $this->db->where('zones.id',$this->locations['zone_id']);
+                if($this->locations['territory_id']>0)
+                {
+                    $this->db->where('territories.id',$this->locations['territory_id']);
+                    if($this->locations['district_id']>0)
+                    {
+                        $this->db->where('districts.id',$this->locations['district_id']);
+                    }
+                }
+            }
+        }
+        $outlet_destination=$this->db->get()->row_array();
+        if(!$outlet_destination)
+        {
+            System_helper::invalid_try('save_forward',$id,'User Outlet Not Assign (Destination)');
+            $ajax['status']=false;
+            $ajax['system_message']='Invalid Try. Destination outlet not assign.';
+            $this->json_return($ajax);
+        }
+
+        $this->db->from($this->config->item('table_sms_transfer_oo_details').' details');
+        $this->db->select('details.*');
+        $this->db->join($this->config->item('table_login_setup_classification_varieties').' v','v.id=details.variety_id','INNER');
         $this->db->select('v.name variety_name');
         $this->db->join($this->config->item('table_login_setup_classification_crop_types').' crop_type','crop_type.id=v.crop_type_id','INNER');
         $this->db->select('crop_type.id crop_type_id, crop_type.name crop_type_name');
         $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id=crop_type.crop_id','INNER');
         $this->db->select('crop.id crop_id, crop.name crop_name');
-        $this->db->where('transfer_ow_details.transfer_ow_id',$id);
-        $this->db->where('transfer_ow_details.status',$this->config->item('system_status_active'));
+        $this->db->where('details.transfer_oo_id',$id);
+        $this->db->where('details.status',$this->config->item('system_status_active'));
         $result['items']=$this->db->get()->result_array();
         $old_items=array();
         $variety_ids=array();
@@ -522,7 +570,7 @@ class Transfer_ow_receive_approve extends Root_Controller
             $variety_ids[$item['variety_id']]=$item['variety_id'];
         }
 
-        $current_stocks=Stock_helper::get_variety_stock($variety_ids);
+        $current_stocks=Stock_helper::get_variety_stock_outlet($result['item']['outlet_id_destination'],$variety_ids);
 
         $this->db->trans_start();
 
@@ -532,39 +580,39 @@ class Transfer_ow_receive_approve extends Root_Controller
         $data['remarks_receive_approve']=$item_head['remarks_receive_approve'];
         $data['date_updated_receive_approve']=$time;
         $data['user_updated_receive_approve']=$user->user_id;
-        Query_helper::update($this->config->item('table_sms_transfer_ow'),$data, array('id='.$id));
+        Query_helper::update($this->config->item('table_sms_transfer_oo'),$data, array('id='.$id));
         foreach($result['items'] as $item)
         {
-            if(isset($current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]))
+            if(isset($current_stocks[$item['variety_id']][$item['pack_size_id']]))
             {
-                $current_stock=$current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]['current_stock'];
+                $current_stock=$current_stocks[$item['variety_id']][$item['pack_size_id']]['current_stock'];
                 $data=array();
                 $data['current_stock']=($current_stock+$item['quantity_receive']);
-                $data['in_ow']=($current_stocks[$item['variety_id']][$item['pack_size_id']][$item['warehouse_id']]['in_ow']+$item['quantity_receive']);
+                $data['in_oo']=($current_stocks[$item['variety_id']][$item['pack_size_id']]['in_oo']+$item['quantity_receive']);
                 $data['date_updated'] = $time;
                 $data['user_updated'] = $user->user_id;
-                Query_helper::update($this->config->item('table_sms_stock_summary_variety'),$data,array('variety_id='.$item['variety_id'],'pack_size_id='.$item['pack_size_id'],'warehouse_id='.$item['warehouse_id']));
+                Query_helper::update($this->config->item('table_pos_stock_summary_variety'),$data,array('variety_id='.$item['variety_id'],'pack_size_id='.$item['pack_size_id'],'outlet_id='.$result['item']['outlet_id_destination']));
             }
             else
             {
                 $data=array();
                 $data['variety_id']=$item['variety_id'];
                 $data['pack_size_id']=$item['pack_size_id'];
-                $data['warehouse_id']=$item['warehouse_id'];
-                $data['in_ow']=$item['quantity_receive'];
+                $data['outlet_id']=$result['item']['outlet_id_destination'];
+                $data['in_oo']=$item['quantity_receive'];
                 $data['current_stock']=$item['quantity_receive'];
                 $data['date_updated'] = $time;
                 $data['user_updated'] = $user->user_id;
-                Query_helper::add($this->config->item('table_sms_stock_summary_variety'),$data);
+                Query_helper::add($this->config->item('table_pos_stock_summary_variety'),$data);
             }
         }
 
         $data=array();
-        $data['transfer_ow_id']=$id;
+        $data['transfer_oo_id']=$id;
         $data['status_solve']=$this->config->item('system_status_no');
         $data['date_created'] = $time;
         $data['user_created'] = $user->user_id;
-        Query_helper::add($this->config->item('table_sms_transfer_ow_receive_solves'),$data);
+        Query_helper::add($this->config->item('table_sms_transfer_oo_receive_solves'),$data);
 
         $this->db->trans_complete();   //DB Transaction Handle END
         if ($this->db->trans_status() === TRUE)
@@ -591,11 +639,16 @@ class Transfer_ow_receive_approve extends Root_Controller
             {
                 $item_id=$this->input->post('id');
             }
-            $this->db->from($this->config->item('table_sms_transfer_ow').' transfer_ow');
-            $this->db->select('transfer_ow.*');
-            $this->db->join($this->config->item('table_login_csetup_cus_info').' outlet_info','outlet_info.customer_id=transfer_ow.outlet_id AND outlet_info.type="'.$this->config->item('system_customer_type_outlet_id').'"','INNER');
-            $this->db->select('outlet_info.customer_id outlet_id, outlet_info.name outlet_name, outlet_info.customer_code outlet_code');
-            $this->db->join($this->config->item('table_login_setup_location_districts').' districts','districts.id = outlet_info.district_id','INNER');
+            $this->db->from($this->config->item('table_sms_transfer_oo').' transfer_oo');
+            $this->db->select('transfer_oo.*');
+
+            $this->db->join($this->config->item('table_login_csetup_cus_info').' source_outlet_info','source_outlet_info.customer_id=transfer_oo.outlet_id_source AND source_outlet_info.revision=1 AND source_outlet_info.type="'.$this->config->item('system_customer_type_outlet_id').'"','INNER');
+            $this->db->select('source_outlet_info.customer_id outlet_id_source, source_outlet_info.name outlet_name_source, source_outlet_info.customer_code outlet_code_source');
+
+            $this->db->join($this->config->item('table_login_csetup_cus_info').' destination_outlet_info','destination_outlet_info.customer_id=transfer_oo.outlet_id_destination AND destination_outlet_info.revision=1 AND destination_outlet_info.type="'.$this->config->item('system_customer_type_outlet_id').'"','INNER');
+            $this->db->select('source_outlet_info.customer_id outlet_id_destination, destination_outlet_info.name outlet_name_destination, destination_outlet_info.customer_code outlet_code_destination');
+
+            $this->db->join($this->config->item('table_login_setup_location_districts').' districts','districts.id = source_outlet_info.district_id','INNER');
             $this->db->select('districts.id district_id, districts.name district_name');
             $this->db->join($this->config->item('table_login_setup_location_territories').' territories','territories.id = districts.territory_id','INNER');
             $this->db->select('territories.id territory_id, territories.name territory_name');
@@ -603,11 +656,11 @@ class Transfer_ow_receive_approve extends Root_Controller
             $this->db->select('zones.id zone_id, zones.name zone_name');
             $this->db->join($this->config->item('table_login_setup_location_divisions').' divisions','divisions.id = zones.division_id','INNER');
             $this->db->select('divisions.id division_id, divisions.name division_name');
-            $this->db->join($this->config->item('table_pos_setup_user_info').' pos_setup_user_info','pos_setup_user_info.user_id=transfer_ow.user_updated_delivery','LEFT');
+            $this->db->join($this->config->item('table_pos_setup_user_info').' pos_setup_user_info','pos_setup_user_info.user_id=transfer_oo.user_updated_delivery','LEFT');
             $this->db->select('pos_setup_user_info.name full_name_delivery_edit');
-            $this->db->join($this->config->item('table_pos_setup_user_info').' pos_setup_user_info_forward','pos_setup_user_info_forward.user_id=transfer_ow.user_updated_delivery_forward','LEFT');
+            $this->db->join($this->config->item('table_pos_setup_user_info').' pos_setup_user_info_forward','pos_setup_user_info_forward.user_id=transfer_oo.user_updated_delivery_forward','LEFT');
             $this->db->select('pos_setup_user_info_forward.name full_name_delivery_forward');
-            $this->db->join($this->config->item('table_sms_transfer_ow_courier_details').' wo_courier_details','wo_courier_details.transfer_ow_id=transfer_ow.id','LEFT');
+            $this->db->join($this->config->item('table_sms_transfer_oo_courier_details').' wo_courier_details','wo_courier_details.transfer_oo_id=transfer_oo.id','LEFT');
             $this->db->select('
                                 wo_courier_details.date_delivery courier_date_delivery,
                                 wo_courier_details.date_challan,
@@ -620,10 +673,9 @@ class Transfer_ow_receive_approve extends Root_Controller
                                 ');
             $this->db->join($this->config->item('table_login_basic_setup_couriers').' courier','courier.id=wo_courier_details.courier_id','LEFT');
             $this->db->select('courier.name courier_name');
-            $this->db->where('transfer_ow.status !=',$this->config->item('system_status_delete'));
-            $this->db->where('transfer_ow.id',$item_id);
-            $this->db->where('outlet_info.revision',1);
-            $this->db->order_by('transfer_ow.id','DESC');
+            $this->db->where('transfer_oo.status !=',$this->config->item('system_status_delete'));
+            $this->db->where('transfer_oo.id',$item_id);
+            $this->db->order_by('transfer_oo.id','DESC');
             $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
             {
@@ -650,22 +702,20 @@ class Transfer_ow_receive_approve extends Root_Controller
             $user_ids[$data['item']['user_updated_receive_forward']]=$data['item']['user_updated_receive_forward'];
             $data['users']=System_helper::get_users_info($user_ids);
 
-            $this->db->from($this->config->item('table_sms_transfer_ow_details').' transfer_ow_details');
-            $this->db->select('transfer_ow_details.*');
-            $this->db->join($this->config->item('table_login_setup_classification_varieties').' v','v.id=transfer_ow_details.variety_id','INNER');
+            $this->db->from($this->config->item('table_sms_transfer_oo_details').' details');
+            $this->db->select('details.*');
+            $this->db->join($this->config->item('table_login_setup_classification_varieties').' v','v.id=details.variety_id','INNER');
             $this->db->select('v.name variety_name');
             $this->db->join($this->config->item('table_login_setup_classification_crop_types').' crop_type','crop_type.id=v.crop_type_id','INNER');
             $this->db->select('crop_type.id crop_type_id, crop_type.name crop_type_name');
             $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id=crop_type.crop_id','INNER');
             $this->db->select('crop.id crop_id, crop.name crop_name');
-            $this->db->join($this->config->item('table_login_basic_setup_warehouse').' warehouse','warehouse.id=transfer_ow_details.warehouse_id','LEFT');
-            $this->db->select('warehouse.name warehouse_name');
-            $this->db->where('transfer_ow_details.transfer_ow_id',$item_id);
-            $this->db->where('transfer_ow_details.status',$this->config->item('system_status_active'));
-            $this->db->order_by('transfer_ow_details.id');
+            $this->db->where('details.transfer_oo_id',$item_id);
+            $this->db->where('details.status',$this->config->item('system_status_active'));
+            $this->db->order_by('details.id');
             $data['items']=$this->db->get()->result_array();
 
-            $data['title']="Outlet to HQ Transfer Details :: ". Barcode_helper::get_barcode_transfer_outlet_to_warehouse($data['item']['id']);
+            $data['title']=$data['item']['outlet_name_source']." to ".$data['item']['outlet_name_destination']." Transfer Details :: ". Barcode_helper::get_barcode_transfer_outlet_to_outlet($data['item']['id']);
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/details",$data,true));
             if($this->message)
@@ -694,9 +744,9 @@ class Transfer_ow_receive_approve extends Root_Controller
             {
                 $item_id=$this->input->post('id');
             }
-            $this->db->from($this->config->item('table_sms_transfer_ow').' transfer_ow');
-            $this->db->select('transfer_ow.*');
-            $this->db->join($this->config->item('table_login_csetup_cus_info').' outlet_info','outlet_info.customer_id=transfer_ow.outlet_id AND outlet_info.type="'.$this->config->item('system_customer_type_outlet_id').'"','INNER');
+            $this->db->from($this->config->item('table_sms_transfer_oo').' transfer_oo');
+            $this->db->select('transfer_oo.*');
+            $this->db->join($this->config->item('table_login_csetup_cus_info').' outlet_info','outlet_info.customer_id=transfer_oo.outlet_id AND outlet_info.type="'.$this->config->item('system_customer_type_outlet_id').'"','INNER');
             $this->db->select(
                 '
                 outlet_info.customer_id outlet_id,
@@ -712,7 +762,7 @@ class Transfer_ow_receive_approve extends Root_Controller
             $this->db->select('zones.id zone_id, zones.name zone_name');
             $this->db->join($this->config->item('table_login_setup_location_divisions').' divisions','divisions.id = zones.division_id','INNER');
             $this->db->select('divisions.id division_id, divisions.name division_name');
-            $this->db->join($this->config->item('table_sms_transfer_ow_courier_details').' wo_courier_details','wo_courier_details.transfer_ow_id=transfer_ow.id','LEFT');
+            $this->db->join($this->config->item('table_sms_transfer_oo_courier_details').' wo_courier_details','wo_courier_details.transfer_oo_id=transfer_oo.id','LEFT');
             $this->db->select('
                                 wo_courier_details.date_delivery courier_date_delivery,
                                 wo_courier_details.date_challan,
@@ -725,16 +775,16 @@ class Transfer_ow_receive_approve extends Root_Controller
                                 ');
             $this->db->join($this->config->item('table_login_basic_setup_couriers').' courier','courier.id=wo_courier_details.courier_id','LEFT');
             $this->db->select('courier.name courier_name');
-            $this->db->join($this->config->item('table_login_setup_user_info').' ui_created','ui_created.user_id = transfer_ow.user_created_request','LEFT');
+            $this->db->join($this->config->item('table_login_setup_user_info').' ui_created','ui_created.user_id = transfer_oo.user_created_request','LEFT');
             $this->db->select('ui_created.name user_created_full_name');
-            $this->db->join($this->config->item('table_login_setup_user_info').' ui_updated','ui_updated.user_id = transfer_ow.user_updated_request','LEFT');
+            $this->db->join($this->config->item('table_login_setup_user_info').' ui_updated','ui_updated.user_id = transfer_oo.user_updated_request','LEFT');
             $this->db->select('ui_updated.name user_updated_full_name');
-            $this->db->join($this->config->item('table_login_setup_user_info').' ui_updated_approve','ui_updated_approve.user_id = transfer_ow.user_updated_approve','LEFT');
+            $this->db->join($this->config->item('table_login_setup_user_info').' ui_updated_approve','ui_updated_approve.user_id = transfer_oo.user_updated_approve','LEFT');
             $this->db->select('ui_updated_approve.name user_updated_approve_full_name');
-            $this->db->where('transfer_ow.status !=',$this->config->item('system_status_delete'));
-            $this->db->where('transfer_ow.id',$item_id);
+            $this->db->where('transfer_oo.status !=',$this->config->item('system_status_delete'));
+            $this->db->where('transfer_oo.id',$item_id);
             $this->db->where('outlet_info.revision',1);
-            $this->db->order_by('transfer_ow.id','DESC');
+            $this->db->order_by('transfer_oo.id','DESC');
             $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
             {
@@ -762,18 +812,18 @@ class Transfer_ow_receive_approve extends Root_Controller
                 $this->json_return($ajax);
             }
 
-            $this->db->from($this->config->item('table_sms_transfer_ow_details').' transfer_ow_details');
-            $this->db->select('transfer_ow_details.*');
-            $this->db->join($this->config->item('table_login_setup_classification_varieties').' v','v.id=transfer_ow_details.variety_id','INNER');
+            $this->db->from($this->config->item('table_sms_transfer_oo_details').' details');
+            $this->db->select('details.*');
+            $this->db->join($this->config->item('table_login_setup_classification_varieties').' v','v.id=details.variety_id','INNER');
             $this->db->select('v.name variety_name');
             $this->db->join($this->config->item('table_login_setup_classification_crop_types').' crop_type','crop_type.id=v.crop_type_id','INNER');
             $this->db->select('crop_type.id crop_type_id, crop_type.name crop_type_name');
             $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id=crop_type.crop_id','INNER');
             $this->db->select('crop.id crop_id, crop.name crop_name');
-            $this->db->join($this->config->item('table_login_basic_setup_warehouse').' warehouse','warehouse.id=transfer_ow_details.warehouse_id','LEFT');
+            $this->db->join($this->config->item('table_login_basic_setup_warehouse').' warehouse','warehouse.id=details.warehouse_id','LEFT');
             $this->db->select('warehouse.name warehouse_name');
-            $this->db->where('transfer_ow_details.transfer_ow_id',$item_id);
-            $this->db->where('transfer_ow_details.status',$this->config->item('system_status_active'));
+            $this->db->where('details.transfer_oo_id',$item_id);
+            $this->db->where('details.status',$this->config->item('system_status_active'));
             $data['items']=$this->db->get()->result_array();
 
             $variety_ids=array();
@@ -783,7 +833,7 @@ class Transfer_ow_receive_approve extends Root_Controller
             }
             $data['stocks']='';//Stock_helper::get_variety_stock($variety_ids);
 
-            $data['title']="Outlet to HQ Transfer Receive Approve Print View :: ". Barcode_helper::get_barcode_transfer_outlet_to_warehouse($data['item']['id']);
+            $data['title']="Outlet to HQ Transfer Receive Approve Print View :: ". Barcode_helper::get_barcode_transfer_outlet_to_outlet($data['item']['id']);
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/challan_print",$data,true));
             if($this->message)
@@ -856,9 +906,9 @@ class Transfer_ow_receive_approve extends Root_Controller
         $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
         //$data['id']= 1;
         $data['barcode']= 1;
-        $data['outlet_name']= 1;
+        $data['outlet_name_destination']= 1;
+        $data['outlet_name_source']= 1;
         $data['date_request']= 1;
-        $data['outlet_code']= 1;
         $data['division_name']= 1;
         $data['zone_name']= 1;
         $data['territory_name']= 1;
@@ -911,9 +961,9 @@ class Transfer_ow_receive_approve extends Root_Controller
         $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list_all"'),1);
         //$data['id']= 1;
         $data['barcode']= 1;
-        $data['outlet_name']= 1;
+        $data['outlet_name_destination']= 1;
+        $data['outlet_name_source']= 1;
         $data['date_request']= 1;
-        $data['outlet_code']= 1;
         $data['division_name']= 1;
         $data['zone_name']= 1;
         $data['territory_name']= 1;

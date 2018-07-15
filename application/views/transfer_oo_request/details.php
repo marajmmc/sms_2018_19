@@ -40,34 +40,14 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <tr>
                     <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ID');?></label></th>
                     <th class=""><label class="control-label"><?php echo Barcode_helper::get_barcode_transfer_outlet_to_outlet($item['id']);?></label></th>
-                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DIVISION_NAME');?></label></th>
-                    <th class=" header_value"><label class="control-label"><?php echo $item['division_name'];?></label></th>
+                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_OUTLET_NAME_SOURCE');?></label></th>
+                    <th class=" header_value"><label class="control-label"><?php echo $CI->outlets[$item['outlet_id_source']]['name'];?></label></th>
                 </tr>
                 <tr>
                     <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_REQUEST');?></label></th>
                     <th class=" header_value"><label class="control-label"><?php echo System_helper::display_date($item['date_request']);?></label></th>
-                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ZONE_NAME');?></label></th>
-                    <th class=" header_value"><label class="control-label"><?php echo $item['zone_name'];?></label></th>
-                </tr>
-                <tr>
-                    <th colspan="2">&nbsp;</th>
-                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TERRITORY_NAME');?></label></th>
-                    <th class=" header_value"><label class="control-label"><?php echo $item['territory_name'];?></label></th>
-                </tr>
-                <tr>
-                    <th colspan="2">&nbsp;</th>
-                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DISTRICT_NAME');?></label></th>
-                    <th class=" header_value"><label class="control-label"><?php echo $item['district_name'];?></label></th>
-                </tr>
-                <tr>
-                    <th colspan="2">&nbsp;</th>
-                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_OUTLET_NAME_SOURCE');?></label></th>
-                    <th class=" header_value"><label class="control-label"><?php echo $item['outlet_name_source'];?></label></th>
-                </tr>
-                <tr>
-                    <th colspan="2">&nbsp;</th>
                     <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_OUTLET_NAME_DESTINATION');?></label></th>
-                    <th class=" header_value"><label class="control-label"><?php echo $item['outlet_name_destination'];?></label></th>
+                    <th class=" header_value"><label class="control-label"><?php echo $CI->outlets[$item['outlet_id_destination']]['name'];?></label></th>
                 </tr>
                 <?php
                 if($item['remarks_request'])
@@ -547,17 +527,17 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                             <label><?php echo $value['pack_size']; ?></label>
                         </td>
                         <td class="text-right">
-                            <label ><?php echo $value['quantity_request']; ?></label>
+                            <label ><?php echo System_helper::get_string_quantity($value['quantity_request']); ?></label>
                         </td>
                         <td class="text-right">
-                            <label> <?php echo number_format($quantity_request_kg,3,'.','');?> </label>
+                            <label> <?php echo System_helper::get_string_kg($quantity_request_kg);?> </label>
                         </td>
                         <?php
                         if($item['status_approve']==$this->config->item('system_status_approved'))
                         {
                             ?>
-                            <td class="text-right"><label><?php echo $quantity_approve; ?></label></td>
-                            <td class="text-right"><label> <?php echo number_format($quantity_approve_kg,3,'.','');?> </label></td>
+                            <td class="text-right"><label><?php echo System_helper::get_string_quantity($quantity_approve); ?></label></td>
+                            <td class="text-right"><label> <?php echo System_helper::get_string_kg($quantity_approve_kg);?> </label></td>
                         <?php
                         }
                         ?>
@@ -565,8 +545,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         if(($item['status_receive']==$this->config->item('system_status_received') && $item['status_system_delivery_receive']==$this->config->item('system_status_yes')) || $item['status_system_delivery_receive']==$this->config->item('system_status_no'))
                         {
                             ?>
-                            <td class="text-right"><label><?php echo $quantity_receive; ?></label></td>
-                            <td class="text-right"><label> <?php echo number_format($quantity_receive_kg,3,'.','');?> </label></td>
+                            <td class="text-right"><label><?php echo System_helper::get_string_quantity($quantity_receive); ?></label></td>
+                            <td class="text-right"><label> <?php echo System_helper::get_string_kg($quantity_receive_kg);?> </label></td>
                         <?php
                         }
                         ?>
@@ -574,8 +554,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         if($item['status_system_delivery_receive']==$this->config->item('system_status_no'))
                         {
                             ?>
-                            <td class="text-right"><label><?php echo $quantity_difference; ?></label></td>
-                            <td class="text-right"><label> <?php echo number_format($quantity_difference_kg,3,'.','');?> </label></td>
+                            <td class="text-right"><label><?php echo System_helper::get_string_quantity($quantity_difference); ?></label></td>
+                            <td class="text-right"><label> <?php echo System_helper::get_string_kg($quantity_difference_kg);?> </label></td>
                         <?php
                         }
                         ?>
@@ -587,14 +567,14 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <tfoot>
                 <tr>
                     <th colspan="5" class="text-right"><?php echo $CI->lang->line('LABEL_TOTAL');?></th>
-                    <th class="text-right"><label class="control-label"> <?php echo $quantity_total_request;?></label></th>
-                    <th class="text-right"><label class="control-label"> <?php echo number_format($quantity_total_request_kg,3,'.','');?></label></th>
+                    <th class="text-right"><label class="control-label"> <?php echo System_helper::get_string_quantity($quantity_total_request);?></label></th>
+                    <th class="text-right"><label class="control-label"> <?php echo System_helper::get_string_kg($quantity_total_request_kg);?></label></th>
                     <?php
                     if($item['status_approve']==$this->config->item('system_status_approved'))
                     {
                         ?>
-                        <th class="text-right"><label class="control-label"> <?php echo $quantity_total_approve;?></label></th>
-                        <th class="text-right"><label class="control-label"> <?php echo number_format($quantity_total_approve_kg,3,'.','');?></label></th>
+                        <th class="text-right"><label class="control-label"> <?php echo System_helper::get_string_quantity($quantity_total_approve);?></label></th>
+                        <th class="text-right"><label class="control-label"> <?php echo System_helper::get_string_kg($quantity_total_approve_kg);?></label></th>
                     <?php
                     }
                     ?>
@@ -602,8 +582,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     if(($item['status_receive']==$this->config->item('system_status_received') && $item['status_system_delivery_receive']==$this->config->item('system_status_yes')) || $item['status_system_delivery_receive']==$this->config->item('system_status_no'))
                     {
                         ?>
-                        <th class="text-right"><label class="control-label"> <?php echo $quantity_total_receive;?></label></th>
-                        <th class="text-right"><label class="control-label"> <?php echo number_format($quantity_total_receive_kg,3,'.','');?></label></th>
+                        <th class="text-right"><label class="control-label"> <?php echo System_helper::get_string_quantity($quantity_total_receive);?></label></th>
+                        <th class="text-right"><label class="control-label"> <?php echo System_helper::get_string_kg($quantity_total_receive_kg);?></label></th>
                     <?php
                     }
                     ?>
@@ -611,8 +591,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     if($item['status_system_delivery_receive']==$this->config->item('system_status_no'))
                     {
                         ?>
-                        <th class="text-right"><label class="control-label"> <?php echo $quantity_total_difference;?></label></th>
-                        <th class="text-right"><label class="control-label"> <?php echo number_format($quantity_total_difference_kg,3,'.','');?></label></th>
+                        <th class="text-right"><label class="control-label"> <?php echo System_helper::get_string_quantity($quantity_total_difference);?></label></th>
+                        <th class="text-right"><label class="control-label"> <?php echo System_helper::get_string_kg($quantity_total_difference_kg);?></label></th>
                     <?php
                     }
                     ?>

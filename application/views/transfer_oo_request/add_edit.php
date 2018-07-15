@@ -52,7 +52,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 if($item['id']>0)
                 {
                     ?>
-                    <label class="control-label"><?php echo $item['outlet_name_source'];?></label>
+                    <label class="control-label"><?php echo $CI->outlets[$item['outlet_id_source']]['name'];?></label>
                 <?php
                 }
                 else
@@ -61,9 +61,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <select id="outlet_id_source" name="item[outlet_id_source]" class="form-control">
                         <option value=""><?php echo $CI->lang->line('SELECT');?></option>
                         <?php
-                        foreach($outlet_sources as $outlet)
+                        foreach($CI->outlets as $outlet)
                         {?>
-                            <option value="<?php echo $outlet['value']?>" <?php if($outlet['value']==$item['outlet_id_source']){ echo "selected";}?>><?php echo $outlet['text'];?></option>
+                            <option value="<?php echo $outlet['customer_id']?>" <?php if($outlet['customer_id']==$item['outlet_id_source']){ echo "selected";}?>><?php echo $outlet['name'];?></option>
                         <?php
                         }
                         ?>
@@ -83,7 +83,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 if($item['id']>0)
                 {
                     ?>
-                    <label class="control-label"><?php echo $item['outlet_name_destination'];?></label>
+                    <label class="control-label"><?php echo $CI->outlets[$item['outlet_id_destination']]['name'];?></label>
                 <?php
                 }
                 else
@@ -92,9 +92,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <select id="outlet_id_destination" name="item[outlet_id_destination]" class="form-control">
                         <option value=""><?php echo $CI->lang->line('SELECT');?></option>
                         <?php
-                        foreach($outlet_destinations as $outlet)
+                        foreach($CI->outlets as $outlet)
                         {?>
-                            <option value="<?php echo $outlet['value']?>" <?php if($outlet['value']==$item['outlet_id_destination']){ echo "selected";}?>><?php echo $outlet['text'];?></option>
+                            <option value="<?php echo $outlet['customer_id']?>" <?php if($outlet['customer_id']==$item['outlet_id_source']){ echo "selected";}?>><?php echo $outlet['name'];?></option>
                         <?php
                         }
                         ?>
@@ -146,6 +146,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                             $quantity_request_kg=(($value['quantity_request']*$value['pack_size'])/1000);
                             $quantity_total_request+=$value['quantity_request'];
                             $quantity_total_request_kg+=$quantity_request_kg;
+                            $stock_available_pkt=isset($too_variety_info[$value['variety_id']][$value['pack_size_id']])?$too_variety_info[$value['variety_id']][$value['pack_size_id']]['stock_available_pkt']:'0.000';
+                            $stock_available_kg=isset($too_variety_info[$value['variety_id']][$value['pack_size_id']])?$too_variety_info[$value['variety_id']][$value['pack_size_id']]['stock_available_kg']:'0.000'
                             ?>
                             <tr>
                                 <td>
@@ -164,19 +166,19 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                                 </td>
                                 <td class="text-right">
                                     <label class="control-label stock_available_pkt" id="stock_available_pkt_<?php echo $index+1;?>">
-                                        <?php echo isset($too_variety_info[$value['variety_id']][$value['pack_size_id']])?$too_variety_info[$value['variety_id']][$value['pack_size_id']]['stock_available_pkt']:'0.000'; ?>
+                                        <?php echo System_helper::get_string_quantity($stock_available_pkt); ?>
                                     </label>
                                 </td>
                                 <td class="text-right">
                                     <label class="control-label stock_available_kg" id="stock_available_kg_<?php echo $index+1;?>">
-                                        <?php echo isset($too_variety_info[$value['variety_id']][$value['pack_size_id']])?number_format($too_variety_info[$value['variety_id']][$value['pack_size_id']]['stock_available_kg'],3,'.',''):'0.000'; ?>
+                                        <?php echo System_helper::get_string_kg($stock_available_kg); ?>
                                     </label>
                                 </td>
                                 <td>
-                                    <input type="text" value="<?php echo $value['quantity_request']; ?>" class="form-control float_type_positive quantity_request" id="quantity_request_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][quantity_request]">
+                                    <input type="text" value="<?php echo System_helper::get_string_quantity($value['quantity_request']); ?>" class="form-control float_type_positive quantity_request" id="quantity_request_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][quantity_request]">
                                 </td>
                                 <td class="text-right">
-                                    <label id="quantity_request_kg_<?php echo $index+1;?>"> <?php echo number_format($quantity_request_kg,3,'.','');?> </label>
+                                    <label id="quantity_request_kg_<?php echo $index+1;?>"> <?php echo System_helper::get_string_kg($quantity_request_kg);?> </label>
                                 </td>
                                 <td>
                                     <button type="button" class="btn btn-danger system_button_add_delete"><?php echo $CI->lang->line('DELETE'); ?></button>
@@ -189,8 +191,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <tfoot>
                     <tr>
                         <th colspan="6" class="text-right"><?php echo $CI->lang->line('LABEL_TOTAL');?></th>
-                        <th class="text-right"><label class="control-label" id="quantity_total_request"> <?php echo $quantity_total_request;?></label></th>
-                        <th class="text-right"><label class="control-label" id="quantity_total_request_kg"> <?php echo number_format($quantity_total_request_kg,3,'.','');?></label></th>
+                        <th class="text-right"><label class="control-label" id="quantity_total_request"> <?php echo System_helper::get_string_quantity($quantity_total_request);?></label></th>
+                        <th class="text-right"><label class="control-label" id="quantity_total_request_kg"> <?php echo System_helper::get_string_kg($quantity_total_request_kg);?></label></th>
                         <th>&nbsp;</th>
                     </tr>
                     </tfoot>
@@ -303,8 +305,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             }
             quantity_total_request_kg+=quantity_request_kg;
         });
-        $('#quantity_total_request').html(quantity_total_request);
-        $('#quantity_total_request_kg').html(number_format((quantity_total_request_kg),3,'.',''));
+        $('#quantity_total_request').html(get_string_quantity(quantity_total_request));
+        $('#quantity_total_request_kg').html(get_string_kg(quantity_total_request_kg));
     }
     $(document).ready(function()
     {
@@ -506,8 +508,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             if(too_variety_info[variety_id][pack_size_id]!==undefined)
             {
                 //console.log(too_variety_info[variety_id][pack_size_id])
-                $("#stock_available_pkt_"+current_id).html(too_variety_info[variety_id][pack_size_id]['stock_available_pkt']);
-                $("#stock_available_kg_"+current_id).html(number_format(too_variety_info[variety_id][pack_size_id]['stock_available_kg'],3,'.',''));
+                $("#stock_available_pkt_"+current_id).html(get_string_quantity(too_variety_info[variety_id][pack_size_id]['stock_available_pkt']));
+                $("#stock_available_kg_"+current_id).html(get_string_kg(too_variety_info[variety_id][pack_size_id]['stock_available_kg']));
                 $("#quantity_request_"+current_id).show();
             }
             calculate_total();
@@ -549,7 +551,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 $("#stock_available_kg"+current_id).addClass('quantity_exist_warning');
             }
 
-            $("#quantity_request_kg_"+current_id).html(number_format(quantity_request_kg,3,'.',''));
+            $("#quantity_request_kg_"+current_id).html(get_string_kg(quantity_request_kg));
             calculate_total();
         });
     });

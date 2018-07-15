@@ -31,35 +31,26 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <tr>
                         <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ID');?></label></th>
                         <th class=""><label class="control-label"><?php echo Barcode_helper::get_barcode_transfer_outlet_to_outlet($item['id']);?></label></th>
-                        <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DIVISION_NAME');?></label></th>
-                        <th class=" header_value"><label class="control-label"><?php echo $item['division_name'];?></label></th>
+                        <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_OUTLET_NAME_SOURCE');?></label></th>
+                        <th class=" header_value"><label class="control-label"><?php echo $CI->outlets[$item['outlet_id_source']]['name'];?></label></th>
                     </tr>
                     <tr>
                         <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_REQUEST');?></label></th>
                         <th class=" header_value"><label class="control-label"><?php echo System_helper::display_date($item['date_request']);?></label></th>
-                        <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ZONE_NAME');?></label></th>
-                        <th class=" header_value"><label class="control-label"><?php echo $item['zone_name'];?></label></th>
-                    </tr>
-                    <tr>
-                        <th colspan="2">&nbsp;</th>
-                        <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TERRITORY_NAME');?></label></th>
-                        <th class=" header_value"><label class="control-label"><?php echo $item['territory_name'];?></label></th>
-                    </tr>
-                    <tr>
-                        <th colspan="2">&nbsp;</th>
-                        <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DISTRICT_NAME');?></label></th>
-                        <th class=" header_value"><label class="control-label"><?php echo $item['district_name'];?></label></th>
-                    </tr>
-                    <tr>
-                        <th colspan="2">&nbsp;</th>
-                        <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_OUTLET_NAME_SOURCE');?></label></th>
-                        <th class=" header_value"><label class="control-label"><?php echo $item['outlet_name_source'];?></label></th>
-                    </tr>
-                    <tr>
-                        <th colspan="2">&nbsp;</th>
                         <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_OUTLET_NAME_DESTINATION');?></label></th>
-                        <th class=" header_value"><label class="control-label"><?php echo $item['outlet_name_destination'];?></label></th>
+                        <th class=" header_value"><label class="control-label"><?php echo $CI->outlets[$item['outlet_id_destination']]['name'];?></label></th>
                     </tr>
+                    <?php
+                    if($item['remarks_request'])
+                    {
+                        ?>
+                        <tr>
+                            <th class="widget-header header_caption" style="vertical-align: top"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS_REQUEST');?></label></th>
+                            <th class=" header_value" colspan="3"><label class="control-label"><?php echo nl2br($item['remarks_request']);?></label></th>
+                        </tr>
+                    <?php
+                    }
+                    ?>
                     <tr>
                         <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CREATED_BY');?> (Request)</label></th>
                         <th class=" header_value"><label class="control-label"><?php echo $users[$item['user_created_request']]['name'];?></label></th>
@@ -92,17 +83,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <?php
                     }
                     ?>
-                    <?php
-                    if($item['remarks_request'])
-                    {
-                        ?>
-                        <tr>
-                            <th class="widget-header header_caption" style="vertical-align: top"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS_REQUEST');?></label></th>
-                            <th class=" header_value" colspan="3"><label class="control-label"><?php echo nl2br($item['remarks_request']);?></label></th>
-                        </tr>
-                    <?php
-                    }
-                    ?>
+
                     <!-- Approval Information-->
                     <tr>
                         <th class="widget-header header_caption"><label class="control-label pull-right">Approve Status</label></th>
@@ -309,7 +290,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             </div>
             <div class="col-sm-4 col-xs-4">
                 <div class="action_button pull-right">
-                    <button id="button_action_save" type="button" class="btn" data-form="#save_form" data-message-confirm="Are You Sure Outlet to Outlet Transfer Approved or Reject?">Save</button>
+                    <button id="button_action_save" type="button" class="btn" data-form="#save_form" data-message-confirm="Are You Want to Showroom to Showroom Transfer Approved or Rejected?">Save</button>
                 </div>
             </div>
             <div class="col-sm-4 col-xs-4">

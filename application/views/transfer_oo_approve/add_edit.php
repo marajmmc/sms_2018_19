@@ -44,44 +44,12 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <label class="control-label"><?php echo System_helper::display_date($item['date_request']);?></label>
             </div>
         </div>
-        <div class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DIVISION_NAME');?></label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <label class="control-label"><?php echo $item['division_name'];?></label>
-            </div>
-        </div>
-        <div class="row show-grid" id="zone_id_container">
-            <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ZONE_NAME');?></label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <label class="control-label"><?php echo $item['zone_name'];?></label>
-            </div>
-        </div>
-        <div class="row show-grid" id="territory_id_container">
-            <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TERRITORY_NAME');?></label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <label class="control-label"><?php echo $item['territory_name'];?></label>
-            </div>
-        </div>
-        <div class="row show-grid" id="district_id_container">
-            <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DISTRICT_NAME');?></label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <label class="control-label"><?php echo $item['district_name'];?></label>
-            </div>
-        </div>
         <div class="row show-grid" id="outlet_id_container">
             <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_OUTLET_NAME_SOURCE');?></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <label class="control-label"><?php echo $item['outlet_name_source'];?></label>
+                <label class="control-label"><?php echo $CI->outlets[$item['outlet_id_source']]['name'];?></label>
             </div>
         </div>
         <div class="row show-grid" id="outlet_id_container">
@@ -89,7 +57,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_OUTLET_NAME_DESTINATION');?></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <label class="control-label"><?php echo $item['outlet_name_destination'];?></label>
+                <label class="control-label"><?php echo $CI->outlets[$item['outlet_id_destination']]['name'];?></label>
             </div>
         </div>
         <?php
