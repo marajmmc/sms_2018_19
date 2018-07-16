@@ -49,36 +49,24 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <tr>
                         <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ID');?></label></th>
                         <th class=""><label class="control-label"><?php echo Barcode_helper::get_barcode_transfer_outlet_to_outlet($item['transfer_oo_id']);?></label></th>
-                        <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DIVISION_NAME');?></label></th>
-                        <th class=" header_value"><label class="control-label"><?php echo $item['division_name'];?></label></th>
+                        <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_OUTLET_NAME_SOURCE');?></label></th>
+                        <th class=" header_value"><label class="control-label"><?php echo $CI->outlets[$item['outlet_id_source']]['name'];?></label></th>
                     </tr>
                     <tr>
                         <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_REQUEST');?></label></th>
                         <th class=" header_value"><label class="control-label"><?php echo System_helper::display_date($item['date_request']);?></label></th>
-                        <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ZONE_NAME');?></label></th>
-                        <th class=" header_value"><label class="control-label"><?php echo $item['zone_name'];?></label></th>
+                        <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_OUTLET_NAME_DESTINATION');?></label></th>
+                        <th class=" header_value"><label class="control-label"><?php echo $CI->outlets[$item['outlet_id_destination']]['name'];?></label></th>
                     </tr>
                     <tr>
                         <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_APPROVE');?></label></th>
                         <th class=" header_value"><label class="control-label"><?php echo System_helper::display_date($item['date_approve']);?></label></th>
-                        <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TERRITORY_NAME');?></label></th>
-                        <th class=" header_value"><label class="control-label"><?php echo $item['territory_name'];?></label></th>
+                        <th colspan="2">&nbsp;</th>
                     </tr>
                     <tr>
                         <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_DELIVERY');?></label></th>
                         <th class=" header_value"><label class="control-label"><?php echo $item['date_delivery']?System_helper::display_date($item['date_delivery']):System_helper::display_date(time());?></label></th>
-                        <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DISTRICT_NAME');?></label></th>
-                        <th class=" header_value"><label class="control-label"><?php echo $item['district_name'];?></label></th>
-                    </tr>
-                    <tr>
                         <th colspan="2">&nbsp;</th>
-                        <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_OUTLET_NAME_DESTINATION');?></label></th>
-                        <th class=" header_value"><label class="control-label"><?php echo $item['outlet_name_destination'];?></label></th>
-                    </tr>
-                    <tr>
-                        <th colspan="2">&nbsp;</th>
-                        <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_OUTLET_NAME_SOURCE');?></label></th>
-                        <th class=" header_value"><label class="control-label"><?php echo $item['outlet_name_source'];?></label></th>
                     </tr>
                     </thead>
                 </table>
@@ -144,7 +132,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <th rowspan="2" style="width: 150px;"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?></th>
                         <th rowspan="2" style="width: 150px;"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
                         <th rowspan="2" class="text-right" style="width: 150px;"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
-                        <th colspan="2" class="text-center" style="width: 300px;"><?php echo $CI->lang->line('LABEL_CURRENT_STOCK'); ?></th>
                         <th colspan="2" class="text-center" style="width: 300px;"><?php echo $CI->lang->line('LABEL_QUANTITY_APPROVE'); ?></th>
                         <th colspan="2" class="text-center" style="width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY_RECEIVE'); ?></th>
                         <th colspan="2" class="text-center" style="width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY_DIFFERENCE'); ?></th>
@@ -156,14 +143,10 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_KG');?></th>
                         <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_PACK');?></th>
                         <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_KG');?></th>
-                        <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_PACK');?></th>
-                        <th style="width: 150px;" class="text-right"><?php echo $CI->lang->line('LABEL_KG');?></th>
                     </tr>
                     </thead>
                     <tbody id="items_container">
                     <?php
-                    $stock_current_kg=0;
-
                     $quantity_approve=0;
                     $quantity_total_approve=0;
                     $quantity_total_approve_kg=0;
@@ -171,9 +154,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     $quantity_receive=0;
                     $quantity_total_receive=0;
                     $quantity_total_receive_kg=0;
-
-                    $stock_current_quantity_total=0;
-                    $stock_current_quantity_total_kg=0;
 
                     $quantity_difference=0;
                     $quantity_difference_kg=0;
@@ -191,19 +171,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         $quantity_receive_kg=(($quantity_receive*$value['pack_size'])/1000);
                         $quantity_total_receive+=$quantity_receive;
                         $quantity_total_receive_kg+=$quantity_receive_kg;
-
-                        if(isset($stocks[$value['variety_id']][$value['pack_size_id']]))
-                        {
-                            $stock_current=$stocks[$value['variety_id']][$value['pack_size_id']]['current_stock'];
-                        }
-                        else
-                        {
-                            $stock_current=0;
-                        }
-                        $stock_current_kg=(($stock_current*$value['pack_size'])/1000);
-
-                        $stock_current_quantity_total+=$stock_current;
-                        $stock_current_quantity_total_kg+=$stock_current_kg;
 
                         $quantity_difference=($quantity_receive-$quantity_approve);
                         $quantity_difference_kg=($quantity_receive_kg-$quantity_approve_kg);
@@ -223,12 +190,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                             </td>
                             <td class="text-right">
                                 <label><?php echo $value['pack_size']; ?></label>
-                            </td>
-                            <td class="text-right">
-                                <label><?php echo System_helper::get_string_quantity($stock_current); ?> </label>
-                            </td>
-                            <td class="text-right">
-                                <label><?php echo System_helper::get_string_kg($stock_current_kg); ?></label>
                             </td>
                             <td class="text-right">
                                 <label><?php echo System_helper::get_string_quantity($quantity_approve); ?></label>
@@ -256,8 +217,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <tfoot>
                     <tr>
                         <th colspan="4" class="text-right"><?php echo $CI->lang->line('LABEL_TOTAL');?></th>
-                        <th class="text-right"><label class="control-label" id="stock_current_quantity_total"> <?php echo System_helper::get_string_quantity($stock_current_quantity_total);?></label></th>
-                        <th class="text-right"><label class="control-label" id="stock_current_quantity_total_kg"> <?php echo System_helper::get_string_kg($stock_current_quantity_total_kg);?></label></th>
                         <th class="text-right"><label class="control-label" id="quantity_total_approve"> <?php echo System_helper::get_string_quantity($quantity_total_approve);?></label></th>
                         <th class="text-right"><label class="control-label" id="quantity_total_approve_kg"> <?php echo System_helper::get_string_kg($quantity_total_approve_kg);?></label></th>
                         <th class="text-right"><label class="control-label" id="quantity_total_receive"> <?php echo System_helper::get_string_quantity($quantity_total_receive);?></label></th>

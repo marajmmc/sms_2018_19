@@ -206,7 +206,7 @@ $lang['LABEL_DATE_CONVERT']='Convert Date';
 $lang['LABEL_DATE_REQUEST']='Date for Request';
 $lang['LABEL_DATE_APPROVE']='Date for Approve';
 $lang['LABEL_TIME_APPROVED']='Approved Time';
-$lang['LABEL_DATE_DELIVERY']='Delivery Date';
+$lang['LABEL_DATE_DELIVERY']='Date for Delivery';
 $lang['LABEL_TIME_DELIVERY']='Delivery Time';
 $lang['LABEL_DATE_CHALLAN']='Date for Challan';
 

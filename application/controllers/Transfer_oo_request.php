@@ -968,7 +968,6 @@ class Transfer_oo_request extends Root_Controller
             $status_duplicate_item=false;
             foreach($items as $item)
             {
-
                 /// empty checking
                 if(!(($item['variety_id']>0) && ($item['pack_size_id']>=0)))
                 {

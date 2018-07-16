@@ -12,8 +12,8 @@ class Transfer_oo_approve extends Root_Controller
     {
         parent::__construct();
         $this->message="";
-        $this->permissions=User_helper::get_permission('Transfer_oo_approve');
-        $this->controller_url='transfer_oo_approve';
+        $this->permissions=User_helper::get_permission(get_class());
+        $this->controller_url=strtolower(get_class());
         $this->locations=User_helper::get_locations();
         if(!($this->locations))
         {
