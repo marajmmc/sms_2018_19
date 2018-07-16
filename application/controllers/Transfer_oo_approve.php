@@ -155,42 +155,19 @@ class Transfer_oo_approve extends Root_Controller
     private function system_get_items()
     {
         $this->db->from($this->config->item('table_sms_transfer_oo').' transfer_oo');
-        $this->db->select('transfer_oo.id, transfer_oo.date_request, transfer_oo.quantity_total_request_kg quantity_total_request, transfer_oo.quantity_total_approve_kg quantity_total_approve');
-
-        $this->db->join($this->config->item('table_login_csetup_cus_info').' source_outlet_info','source_outlet_info.customer_id=transfer_oo.outlet_id_source AND source_outlet_info.revision=1 AND source_outlet_info.type="'.$this->config->item('system_customer_type_outlet_id').'"','INNER');
-        $this->db->select('source_outlet_info.name outlet_name_source, source_outlet_info.customer_code outlet_code_source');
-
-        $this->db->join($this->config->item('table_login_csetup_cus_info').' destination_outlet_info','destination_outlet_info.customer_id=transfer_oo.outlet_id_destination AND destination_outlet_info.revision=1 AND destination_outlet_info.type="'.$this->config->item('system_customer_type_outlet_id').'"','INNER');
-        $this->db->select('destination_outlet_info.name outlet_name_destination, destination_outlet_info.customer_code outlet_code_destination');
-
-        $this->db->join($this->config->item('table_login_setup_location_districts').' districts','districts.id = source_outlet_info.district_id','INNER');
-        $this->db->select('districts.name district_name');
-        $this->db->join($this->config->item('table_login_setup_location_territories').' territories','territories.id = districts.territory_id','INNER');
-        $this->db->select('territories.name territory_name');
-        $this->db->join($this->config->item('table_login_setup_location_zones').' zones','zones.id = territories.zone_id','INNER');
-        $this->db->select('zones.name zone_name');
-        $this->db->join($this->config->item('table_login_setup_location_divisions').' divisions','divisions.id = zones.division_id','INNER');
-        $this->db->select('divisions.name division_name');
+        $this->db->select('
+        transfer_oo.id,
+        transfer_oo.date_request,
+        transfer_oo.outlet_id_source,
+        transfer_oo.outlet_id_destination,
+        transfer_oo.quantity_total_request_kg quantity_total_request,
+        transfer_oo.quantity_total_approve_kg quantity_total_approve');
         $this->db->where('transfer_oo.status !=',$this->config->item('system_status_delete'));
         $this->db->where('transfer_oo.status_request',$this->config->item('system_status_forwarded'));
         $this->db->where('transfer_oo.status_approve',$this->config->item('system_status_pending'));
+        $this->db->where_in('transfer_oo.outlet_id_source',$this->outlet_ids);
+        $this->db->where_in('transfer_oo.outlet_id_destination',$this->outlet_ids);
         $this->db->order_by('transfer_oo.id','DESC');
-        if($this->locations['division_id']>0)
-        {
-            $this->db->where('divisions.id',$this->locations['division_id']);
-            if($this->locations['zone_id']>0)
-            {
-                $this->db->where('zones.id',$this->locations['zone_id']);
-                if($this->locations['territory_id']>0)
-                {
-                    $this->db->where('territories.id',$this->locations['territory_id']);
-                    if($this->locations['district_id']>0)
-                    {
-                        $this->db->where('districts.id',$this->locations['district_id']);
-                    }
-                }
-            }
-        }
         $results=$this->db->get()->result_array();
         $items=array();
         foreach($results as $result)
@@ -198,13 +175,9 @@ class Transfer_oo_approve extends Root_Controller
             $item=array();
             $item['id']=$result['id'];
             $item['barcode']=Barcode_helper::get_barcode_transfer_outlet_to_outlet($result['id']);
-            $item['outlet_name_source']=$result['outlet_name_source'].' - '.$result['outlet_code_source'];
-            $item['outlet_name_destination']=$result['outlet_name_destination'].' - '.$result['outlet_code_destination'];
+            $item['outlet_name_source']=$this->outlets[$result['outlet_id_source']]['name'].' ('.$this->outlets[$result['outlet_id_source']]['customer_code'].')';
+            $item['outlet_name_destination']=$this->outlets[$result['outlet_id_destination']]['name'].' ('.$this->outlets[$result['outlet_id_destination']]['customer_code'].')';
             $item['date_request']=System_helper::display_date($result['date_request']);
-            $item['division_name']=$result['division_name'];
-            $item['zone_name']=$result['zone_name'];
-            $item['territory_name']=$result['territory_name'];
-            $item['district_name']=$result['district_name'];
             $item['quantity_total_request']=System_helper::get_string_kg($result['quantity_total_request']);
             $item['quantity_total_approve']=System_helper::get_string_kg($result['quantity_total_approve']);
             $items[]=$item;
@@ -257,6 +230,8 @@ class Transfer_oo_approve extends Root_Controller
             '
             transfer_oo.id,
             transfer_oo.date_request,
+            transfer_oo.outlet_id_source,
+            transfer_oo.outlet_id_destination,
             transfer_oo.quantity_total_request_kg quantity_total_request,
             transfer_oo.quantity_total_approve_kg quantity_total_approve,
             transfer_oo.quantity_total_receive_kg quantity_total_receive,
@@ -268,40 +243,11 @@ class Transfer_oo_approve extends Root_Controller
             transfer_oo.status_receive_approve,
             transfer_oo.status_system_delivery_receive
             ');
-
-        $this->db->join($this->config->item('table_login_csetup_cus_info').' source_outlet_info','source_outlet_info.customer_id=transfer_oo.outlet_id_source AND source_outlet_info.revision=1 AND source_outlet_info.type="'.$this->config->item('system_customer_type_outlet_id').'"','INNER');
-        $this->db->select('source_outlet_info.name outlet_name_source, source_outlet_info.customer_code outlet_code_source');
-
-        $this->db->join($this->config->item('table_login_csetup_cus_info').' destination_outlet_info','destination_outlet_info.customer_id=transfer_oo.outlet_id_destination AND destination_outlet_info.revision=1 AND destination_outlet_info.type="'.$this->config->item('system_customer_type_outlet_id').'"','INNER');
-        $this->db->select('destination_outlet_info.name outlet_name_destination, destination_outlet_info.customer_code outlet_code_destination');
-
-        $this->db->join($this->config->item('table_login_setup_location_districts').' districts','districts.id = source_outlet_info.district_id','INNER');
-        $this->db->select('districts.name district_name');
-        $this->db->join($this->config->item('table_login_setup_location_territories').' territories','territories.id = districts.territory_id','INNER');
-        $this->db->select('territories.name territory_name');
-        $this->db->join($this->config->item('table_login_setup_location_zones').' zones','zones.id = territories.zone_id','INNER');
-        $this->db->select('zones.name zone_name');
-        $this->db->join($this->config->item('table_login_setup_location_divisions').' divisions','divisions.id = zones.division_id','INNER');
-        $this->db->select('divisions.name division_name');
         $this->db->where('transfer_oo.status !=',$this->config->item('system_status_delete'));
         $this->db->where('transfer_oo.status_request',$this->config->item('system_status_forwarded'));
+        $this->db->where_in('transfer_oo.outlet_id_source',$this->outlet_ids);
+        $this->db->where_in('transfer_oo.outlet_id_destination',$this->outlet_ids);
         $this->db->order_by('transfer_oo.id','DESC');
-        if($this->locations['division_id']>0)
-        {
-            $this->db->where('divisions.id',$this->locations['division_id']);
-            if($this->locations['zone_id']>0)
-            {
-                $this->db->where('zones.id',$this->locations['zone_id']);
-                if($this->locations['territory_id']>0)
-                {
-                    $this->db->where('territories.id',$this->locations['territory_id']);
-                    if($this->locations['district_id']>0)
-                    {
-                        $this->db->where('districts.id',$this->locations['district_id']);
-                    }
-                }
-            }
-        }
         $this->db->limit($pagesize,$current_records);
         $results=$this->db->get()->result_array();
         $items=array();
@@ -311,13 +257,9 @@ class Transfer_oo_approve extends Root_Controller
             $item['id']=$result['id'];
             $item['barcode']=Barcode_helper::get_barcode_transfer_outlet_to_outlet($result['id']);
 
-            $item['outlet_name_source']=$result['outlet_name_source'].' - '.$result['outlet_code_source'];
-            $item['outlet_name_destination']=$result['outlet_name_destination'].' - '.$result['outlet_code_destination'];
+            $item['outlet_name_source']=$this->outlets[$result['outlet_id_source']]['name'].' ('.$this->outlets[$result['outlet_id_source']]['customer_code'].')';
+            $item['outlet_name_destination']=$this->outlets[$result['outlet_id_destination']]['name'].' ('.$this->outlets[$result['outlet_id_destination']]['customer_code'].')';
             $item['date_request']=System_helper::display_date($result['date_request']);
-            $item['division_name']=$result['division_name'];
-            $item['zone_name']=$result['zone_name'];
-            $item['territory_name']=$result['territory_name'];
-            $item['district_name']=$result['district_name'];
             $item['quantity_total_request']=System_helper::get_string_kg($result['quantity_total_request']);
             $item['quantity_total_approve']=System_helper::get_string_kg($result['quantity_total_approve']);
             $item['quantity_total_receive']=System_helper::get_string_kg($result['quantity_total_receive']);

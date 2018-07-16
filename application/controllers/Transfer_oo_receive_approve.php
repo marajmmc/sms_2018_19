@@ -6,6 +6,8 @@ class Transfer_oo_receive_approve extends Root_Controller
     public $permissions;
     public $controller_url;
     public $locations;
+    public $outlets;
+    public $outlet_ids;
     public function __construct()
     {
         parent::__construct();
@@ -18,6 +20,12 @@ class Transfer_oo_receive_approve extends Root_Controller
             $ajax['status']=false;
             $ajax['system_message']=$this->lang->line('MSG_LOCATION_NOT_ASSIGNED_OR_INVALID');
             $this->json_return($ajax);
+        }
+        $this->outlets=System_helper::get_outlets_by_location($this->locations['division_id'],$this->locations['zone_id'],$this->locations['territory_id'],$this->locations['district_id']);
+        $this->outlet_ids[0]=0;
+        foreach($this->outlets as $result)
+        {
+            $this->outlet_ids[$result['id']]=$result['id'];
         }
     }
     public function index($action="list",$id=0)
@@ -71,11 +79,52 @@ class Transfer_oo_receive_approve extends Root_Controller
             $this->system_list();
         }
     }
+    private function get_preference_headers($method)
+    {
+        $data['id']= 1;
+        $data['barcode']= 1;
+        $data['outlet_name_destination']= 1;
+        $data['outlet_name_source']= 1;
+        $data['date_request']= 1;
+        $data['quantity_total_request']= 1;
+        $data['quantity_total_approve']= 1;
+        $data['quantity_total_receive']= 1;
+        $data['quantity_total_difference']= 1;
+        if($method=='list_all')
+        {
+            $data['status_receive']= 1;
+            $data['status_receive_forward']= 1;
+            $data['status_receive_approve']= 1;
+            $data['status_system_delivery_receive']= 1;
+        }
+        return $data;
+    }
+    private function system_set_preference($method='list')
+    {
+        $user = User_helper::get_user();
+        if(isset($this->permissions['action6']) && ($this->permissions['action6']==1))
+        {
+            $data['system_preference_items']=System_helper::get_preference($user->user_id,$this->controller_url,$method,$this->get_preference_headers($method));
+            $data['preference_method_name']=$method;
+            $ajax['status']=true;
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("preference_add_edit",$data,true));
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/set_preference');
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+    }
     private function system_list()
     {
+        $user = User_helper::get_user();
+        $method='list';
         if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
         {
-            $data['system_preference_items']= $this->get_preference();
+            $data['system_preference_items']= System_helper::get_preference($user->user_id,$this->controller_url,$method,$this->get_preference_headers($method));
             $data['title']="Showroom to Showroom Transfer Receive Approve List";
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/list",$data,true));
@@ -100,46 +149,20 @@ class Transfer_oo_receive_approve extends Root_Controller
             '
             transfer_oo.id,
             transfer_oo.date_request,
+            transfer_oo.outlet_id_source,
+            transfer_oo.outlet_id_destination,
             transfer_oo.quantity_total_request_kg quantity_total_request,
             transfer_oo.quantity_total_approve_kg quantity_total_approve,
             transfer_oo.quantity_total_receive_kg quantity_total_receive
             ');
-        $this->db->join($this->config->item('table_login_csetup_cus_info').' source_outlet_info','source_outlet_info.customer_id=transfer_oo.outlet_id_source AND source_outlet_info.revision=1 AND source_outlet_info.type="'.$this->config->item('system_customer_type_outlet_id').'"','INNER');
-        $this->db->select('source_outlet_info.customer_id outlet_id_source, source_outlet_info.name outlet_name_source, source_outlet_info.customer_code outlet_code_source');
-
-        $this->db->join($this->config->item('table_login_csetup_cus_info').' destination_outlet_info','destination_outlet_info.customer_id=transfer_oo.outlet_id_destination AND destination_outlet_info.revision=1 AND destination_outlet_info.type="'.$this->config->item('system_customer_type_outlet_id').'"','INNER');
-        $this->db->select('source_outlet_info.customer_id outlet_id_destination, destination_outlet_info.name outlet_name_destination, destination_outlet_info.customer_code outlet_code_destination');
-
-        $this->db->join($this->config->item('table_login_setup_location_districts').' districts','districts.id = destination_outlet_info.district_id','INNER');
-        $this->db->select('districts.name district_name');
-        $this->db->join($this->config->item('table_login_setup_location_territories').' territories','territories.id = districts.territory_id','INNER');
-        $this->db->select('territories.name territory_name');
-        $this->db->join($this->config->item('table_login_setup_location_zones').' zones','zones.id = territories.zone_id','INNER');
-        $this->db->select('zones.name zone_name');
-        $this->db->join($this->config->item('table_login_setup_location_divisions').' divisions','divisions.id = zones.division_id','INNER');
-        $this->db->select('divisions.name division_name');
         $this->db->where('transfer_oo.status !=',$this->config->item('system_status_delete'));
         $this->db->where('transfer_oo.status_delivery',$this->config->item('system_status_delivered'));
         $this->db->where('transfer_oo.status_receive',$this->config->item('system_status_pending'));
         $this->db->where('transfer_oo.status_receive_forward',$this->config->item('system_status_forwarded'));
         $this->db->where('transfer_oo.status_system_delivery_receive',$this->config->item('system_status_no'));
+        $this->db->where_in('transfer_oo.outlet_id_source',$this->outlet_ids);
+        $this->db->where_in('transfer_oo.outlet_id_destination',$this->outlet_ids);
         $this->db->order_by('transfer_oo.id','DESC');
-        if($this->locations['division_id']>0)
-        {
-            $this->db->where('divisions.id',$this->locations['division_id']);
-            if($this->locations['zone_id']>0)
-            {
-                $this->db->where('zones.id',$this->locations['zone_id']);
-                if($this->locations['territory_id']>0)
-                {
-                    $this->db->where('territories.id',$this->locations['territory_id']);
-                    if($this->locations['district_id']>0)
-                    {
-                        $this->db->where('districts.id',$this->locations['district_id']);
-                    }
-                }
-            }
-        }
         $results=$this->db->get()->result_array();
         $items=array();
         foreach($results as $result)
@@ -147,13 +170,9 @@ class Transfer_oo_receive_approve extends Root_Controller
             $item=array();
             $item['id']=$result['id'];
             $item['barcode']=Barcode_helper::get_barcode_transfer_outlet_to_outlet($result['id']);
-            $item['outlet_name_destination']=$result['outlet_name_destination'];
-            $item['outlet_name_source']=$result['outlet_name_source'];
+            $item['outlet_name_source']=$this->outlets[$result['outlet_id_source']]['name'].' ('.$this->outlets[$result['outlet_id_source']]['customer_code'].')';
+            $item['outlet_name_destination']=$this->outlets[$result['outlet_id_destination']]['name'].' ('.$this->outlets[$result['outlet_id_destination']]['customer_code'].')';
             $item['date_request']=System_helper::display_date($result['date_request']);
-            $item['division_name']=$result['division_name'];
-            $item['zone_name']=$result['zone_name'];
-            $item['territory_name']=$result['territory_name'];
-            $item['district_name']=$result['district_name'];
             $item['quantity_total_approve']=number_format($result['quantity_total_approve'],3,'.','');
             $item['quantity_total_receive']=number_format($result['quantity_total_receive'],3,'.','');
             $item['quantity_total_difference']=number_format(($result['quantity_total_receive']-$result['quantity_total_approve']),3,'.','');
@@ -163,9 +182,11 @@ class Transfer_oo_receive_approve extends Root_Controller
     }
     private function system_list_all()
     {
+        $user = User_helper::get_user();
+        $method='list_all';
         if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
         {
-            $data['system_preference_items']= $this->get_preference_all();
+            $data['system_preference_items']= System_helper::get_preference($user->user_id,$this->controller_url,$method,$this->get_preference_headers($method));
             $data['title']="Showroom to Showroom Transfer Receive Approved All List";
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/list_all",$data,true));
@@ -205,6 +226,8 @@ class Transfer_oo_receive_approve extends Root_Controller
             '
             transfer_oo.id,
             transfer_oo.date_request,
+            transfer_oo.outlet_id_source,
+            transfer_oo.outlet_id_destination,
             transfer_oo.quantity_total_request_kg quantity_total_request,
             transfer_oo.quantity_total_approve_kg quantity_total_approve,
             transfer_oo.quantity_total_receive_kg quantity_total_receive,
@@ -216,41 +239,13 @@ class Transfer_oo_receive_approve extends Root_Controller
             transfer_oo.status_receive_approve,
             transfer_oo.status_system_delivery_receive
             ');
-        $this->db->join($this->config->item('table_login_csetup_cus_info').' source_outlet_info','source_outlet_info.customer_id=transfer_oo.outlet_id_source AND source_outlet_info.revision=1 AND source_outlet_info.type="'.$this->config->item('system_customer_type_outlet_id').'"','INNER');
-        $this->db->select('source_outlet_info.customer_id outlet_id_source, source_outlet_info.name outlet_name_source, source_outlet_info.customer_code outlet_code_source');
-
-        $this->db->join($this->config->item('table_login_csetup_cus_info').' destination_outlet_info','destination_outlet_info.customer_id=transfer_oo.outlet_id_destination AND destination_outlet_info.revision=1 AND destination_outlet_info.type="'.$this->config->item('system_customer_type_outlet_id').'"','INNER');
-        $this->db->select('source_outlet_info.customer_id outlet_id_destination, destination_outlet_info.name outlet_name_destination, destination_outlet_info.customer_code outlet_code_destination');
-
-        $this->db->join($this->config->item('table_login_setup_location_districts').' districts','districts.id = destination_outlet_info.district_id','INNER');
-        $this->db->select('districts.name district_name');
-        $this->db->join($this->config->item('table_login_setup_location_territories').' territories','territories.id = districts.territory_id','INNER');
-        $this->db->select('territories.name territory_name');
-        $this->db->join($this->config->item('table_login_setup_location_zones').' zones','zones.id = territories.zone_id','INNER');
-        $this->db->select('zones.name zone_name');
-        $this->db->join($this->config->item('table_login_setup_location_divisions').' divisions','divisions.id = zones.division_id','INNER');
-        $this->db->select('divisions.name division_name');
         $this->db->where('transfer_oo.status !=',$this->config->item('system_status_delete'));
         $this->db->where('transfer_oo.status_delivery',$this->config->item('system_status_delivered'));
         $this->db->where('transfer_oo.status_receive_forward',$this->config->item('system_status_forwarded'));
         $this->db->where('transfer_oo.status_system_delivery_receive',$this->config->item('system_status_no'));
+        $this->db->where_in('transfer_oo.outlet_id_source',$this->outlet_ids);
+        $this->db->where_in('transfer_oo.outlet_id_destination',$this->outlet_ids);
         $this->db->order_by('transfer_oo.id','DESC');
-        if($this->locations['division_id']>0)
-        {
-            $this->db->where('divisions.id',$this->locations['division_id']);
-            if($this->locations['zone_id']>0)
-            {
-                $this->db->where('zones.id',$this->locations['zone_id']);
-                if($this->locations['territory_id']>0)
-                {
-                    $this->db->where('territories.id',$this->locations['territory_id']);
-                    if($this->locations['district_id']>0)
-                    {
-                        $this->db->where('districts.id',$this->locations['district_id']);
-                    }
-                }
-            }
-        }
         $this->db->limit($pagesize,$current_records);
         $results=$this->db->get()->result_array();
         $items=array();
@@ -259,13 +254,9 @@ class Transfer_oo_receive_approve extends Root_Controller
             $item=array();
             $item['id']=$result['id'];
             $item['barcode']=Barcode_helper::get_barcode_transfer_outlet_to_outlet($result['id']);
-            $item['outlet_name_destination']=$result['outlet_name_destination'];
-            $item['outlet_name_source']=$result['outlet_name_source'];
+            $item['outlet_name_source']=$this->outlets[$result['outlet_id_source']]['name'].' ('.$this->outlets[$result['outlet_id_source']]['customer_code'].')';
+            $item['outlet_name_destination']=$this->outlets[$result['outlet_id_destination']]['name'].' ('.$this->outlets[$result['outlet_id_destination']]['customer_code'].')';
             $item['date_request']=System_helper::display_date($result['date_request']);
-            $item['division_name']=$result['division_name'];
-            $item['zone_name']=$result['zone_name'];
-            $item['territory_name']=$result['territory_name'];
-            $item['district_name']=$result['district_name'];
             $item['quantity_total_request']=number_format($result['quantity_total_request'],3,'.','');
             $item['quantity_total_approve']=number_format($result['quantity_total_approve'],3,'.','');
             $item['quantity_total_receive']=number_format($result['quantity_total_receive'],3,'.','');
@@ -309,20 +300,6 @@ class Transfer_oo_receive_approve extends Root_Controller
 
             $this->db->from($this->config->item('table_sms_transfer_oo').' transfer_oo');
             $this->db->select('transfer_oo.*');
-            $this->db->join($this->config->item('table_login_csetup_cus_info').' source_outlet_info','source_outlet_info.customer_id=transfer_oo.outlet_id_source AND source_outlet_info.revision=1 AND source_outlet_info.type="'.$this->config->item('system_customer_type_outlet_id').'"','INNER');
-            $this->db->select('source_outlet_info.customer_id outlet_id_source, source_outlet_info.name outlet_name_source, source_outlet_info.customer_code outlet_code_source');
-
-            $this->db->join($this->config->item('table_login_csetup_cus_info').' destination_outlet_info','destination_outlet_info.customer_id=transfer_oo.outlet_id_destination AND destination_outlet_info.revision=1 AND destination_outlet_info.type="'.$this->config->item('system_customer_type_outlet_id').'"','INNER');
-            $this->db->select('source_outlet_info.customer_id outlet_id_destination, destination_outlet_info.name outlet_name_destination, destination_outlet_info.customer_code outlet_code_destination');
-
-            $this->db->join($this->config->item('table_login_setup_location_districts').' districts','districts.id = destination_outlet_info.district_id','INNER');
-            $this->db->select('districts.id district_id, districts.name district_name');
-            $this->db->join($this->config->item('table_login_setup_location_territories').' territories','territories.id = districts.territory_id','INNER');
-            $this->db->select('territories.id territory_id, territories.name territory_name');
-            $this->db->join($this->config->item('table_login_setup_location_zones').' zones','zones.id = territories.zone_id','INNER');
-            $this->db->select('zones.id zone_id, zones.name zone_name');
-            $this->db->join($this->config->item('table_login_setup_location_divisions').' divisions','divisions.id = zones.division_id','INNER');
-            $this->db->select('divisions.id division_id, divisions.name division_name');
             $this->db->join($this->config->item('table_pos_setup_user_info').' pos_setup_user_info','pos_setup_user_info.user_id=transfer_oo.user_updated_delivery','LEFT');
             $this->db->select('pos_setup_user_info.name full_name_delivery_edit');
             $this->db->join($this->config->item('table_pos_setup_user_info').' pos_setup_user_info_forward','pos_setup_user_info_forward.user_id=transfer_oo.user_updated_delivery_forward','LEFT');
@@ -343,13 +320,26 @@ class Transfer_oo_receive_approve extends Root_Controller
             $this->db->where('transfer_oo.status !=',$this->config->item('system_status_delete'));
             $this->db->where('transfer_oo.id',$item_id);
             $this->db->order_by('transfer_oo.id','DESC');
-
             $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
             {
                 System_helper::invalid_try('edit',$item_id,'Edit Non Exists');
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid Try.';
+                $this->json_return($ajax);
+            }
+            if(!in_array($data['item']['outlet_id_source'], $this->outlet_ids))
+            {
+                System_helper::invalid_try('edit',$id,'User Outlet Not Assign (Source)');
+                $ajax['status']=false;
+                $ajax['system_message']='Invalid Try. Source outlet not assign.';
+                $this->json_return($ajax);
+            }
+            if(!in_array($data['item']['outlet_id_destination'], $this->outlet_ids))
+            {
+                System_helper::invalid_try('edit',$id,'User Outlet Not Assign (Destination)');
+                $ajax['status']=false;
+                $ajax['system_message']='Invalid Try. Destination outlet not assign.';
                 $this->json_return($ajax);
             }
             if($data['item']['status_receive']==$this->config->item('system_status_received'))
@@ -398,10 +388,9 @@ class Transfer_oo_receive_approve extends Root_Controller
             {
                 $variety_ids[$row['variety_id']]=$row['variety_id'];
             }
-            //$data['stocks']=Stock_helper::get_variety_stock($variety_ids);
             $data['stocks']=Stock_helper::get_variety_stock_outlet($data['item']['outlet_id_destination'],$variety_ids);
 
-            $data['title']=$data['item']['outlet_name_source']." to ".$data['item']['outlet_name_destination']." Transfer Receive Approve :: ". Barcode_helper::get_barcode_transfer_outlet_to_outlet($data['item']['id']);
+            $data['title']=$this->outlets[$data['item']['outlet_id_source']]['name']." to ".$this->outlets[$data['item']['outlet_id_destination']]['name']." Transfer Receive Approve :: ". Barcode_helper::get_barcode_transfer_outlet_to_outlet($data['item']['id']);
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/edit",$data,true));
             if($this->message)
@@ -451,6 +440,20 @@ class Transfer_oo_receive_approve extends Root_Controller
             $ajax['system_message']='Invalid Try.';
             $this->json_return($ajax);
         }
+        if(!in_array($result['item']['outlet_id_source'], $this->outlet_ids))
+        {
+            System_helper::invalid_try('save',$id,'User Outlet Not Assign (Source)');
+            $ajax['status']=false;
+            $ajax['system_message']='Invalid Try. Source outlet not assign.';
+            $this->json_return($ajax);
+        }
+        if(!in_array($result['item']['outlet_id_destination'], $this->outlet_ids))
+        {
+            System_helper::invalid_try('save',$id,'User Outlet Not Assign (Destination)');
+            $ajax['status']=false;
+            $ajax['system_message']='Invalid Try. Destination outlet not assign.';
+            $this->json_return($ajax);
+        }
         if($result['item']['status_delivery']!=$this->config->item('system_status_delivered'))
         {
             $ajax['status']=false;
@@ -475,81 +478,7 @@ class Transfer_oo_receive_approve extends Root_Controller
             $ajax['system_message']='Showroom to showroom transfer already approved.';
             $this->json_return($ajax);
         }
-        /* Source & Destination outlet checking assign permission*/
-        $outlet_id_source=$result['item']['outlet_id_source'];
-        $outlet_id_destination=$result['item']['outlet_id_destination'];
 
-        $this->db->from($this->config->item('table_login_csetup_customer').' customer');
-        $this->db->join($this->config->item('table_login_csetup_cus_info').' cus_info','cus_info.customer_id = customer.id','INNER');
-        $this->db->select('customer.id');
-        $this->db->join($this->config->item('table_login_setup_location_districts').' districts','districts.id = cus_info.district_id','INNER');
-        $this->db->join($this->config->item('table_login_setup_location_territories').' territories','territories.id = districts.territory_id','INNER');
-        $this->db->join($this->config->item('table_login_setup_location_zones').' zones','zones.id = territories.zone_id','INNER');
-        $this->db->join($this->config->item('table_login_setup_location_divisions').' divisions','divisions.id = zones.division_id','INNER');
-        $this->db->where('customer.status',$this->config->item('system_status_active'));
-        $this->db->where('cus_info.type',$this->config->item('system_customer_type_outlet_id'));
-        $this->db->where('cus_info.revision',1);
-        $this->db->where('customer.id',$outlet_id_source);
-        if($this->locations['division_id']>0)
-        {
-            $this->db->where('divisions.id',$this->locations['division_id']);
-            if($this->locations['zone_id']>0)
-            {
-                $this->db->where('zones.id',$this->locations['zone_id']);
-                if($this->locations['territory_id']>0)
-                {
-                    $this->db->where('territories.id',$this->locations['territory_id']);
-                    if($this->locations['district_id']>0)
-                    {
-                        $this->db->where('districts.id',$this->locations['district_id']);
-                    }
-                }
-            }
-        }
-        $outlet_source=$this->db->get()->row_array();
-        if(!$outlet_source)
-        {
-            System_helper::invalid_try('save_forward',$id,'User Outlet Not Assign (Source)');
-            $ajax['status']=false;
-            $ajax['system_message']='Invalid Try. Source outlet not assign.';
-            $this->json_return($ajax);
-        }
-
-        $this->db->from($this->config->item('table_login_csetup_customer').' customer');
-        $this->db->join($this->config->item('table_login_csetup_cus_info').' cus_info','cus_info.customer_id = customer.id','INNER');
-        $this->db->select('customer.id');
-        $this->db->join($this->config->item('table_login_setup_location_districts').' districts','districts.id = cus_info.district_id','INNER');
-        $this->db->join($this->config->item('table_login_setup_location_territories').' territories','territories.id = districts.territory_id','INNER');
-        $this->db->join($this->config->item('table_login_setup_location_zones').' zones','zones.id = territories.zone_id','INNER');
-        $this->db->join($this->config->item('table_login_setup_location_divisions').' divisions','divisions.id = zones.division_id','INNER');
-        $this->db->where('customer.status',$this->config->item('system_status_active'));
-        $this->db->where('cus_info.type',$this->config->item('system_customer_type_outlet_id'));
-        $this->db->where('cus_info.revision',1);
-        $this->db->where('customer.id',$outlet_id_destination);
-        if($this->locations['division_id']>0)
-        {
-            $this->db->where('divisions.id',$this->locations['division_id']);
-            if($this->locations['zone_id']>0)
-            {
-                $this->db->where('zones.id',$this->locations['zone_id']);
-                if($this->locations['territory_id']>0)
-                {
-                    $this->db->where('territories.id',$this->locations['territory_id']);
-                    if($this->locations['district_id']>0)
-                    {
-                        $this->db->where('districts.id',$this->locations['district_id']);
-                    }
-                }
-            }
-        }
-        $outlet_destination=$this->db->get()->row_array();
-        if(!$outlet_destination)
-        {
-            System_helper::invalid_try('save_forward',$id,'User Outlet Not Assign (Destination)');
-            $ajax['status']=false;
-            $ajax['system_message']='Invalid Try. Destination outlet not assign.';
-            $this->json_return($ajax);
-        }
 
         $this->db->from($this->config->item('table_sms_transfer_oo_details').' details');
         $this->db->select('details.*');
@@ -641,21 +570,6 @@ class Transfer_oo_receive_approve extends Root_Controller
             }
             $this->db->from($this->config->item('table_sms_transfer_oo').' transfer_oo');
             $this->db->select('transfer_oo.*');
-
-            $this->db->join($this->config->item('table_login_csetup_cus_info').' source_outlet_info','source_outlet_info.customer_id=transfer_oo.outlet_id_source AND source_outlet_info.revision=1 AND source_outlet_info.type="'.$this->config->item('system_customer_type_outlet_id').'"','INNER');
-            $this->db->select('source_outlet_info.customer_id outlet_id_source, source_outlet_info.name outlet_name_source, source_outlet_info.customer_code outlet_code_source');
-
-            $this->db->join($this->config->item('table_login_csetup_cus_info').' destination_outlet_info','destination_outlet_info.customer_id=transfer_oo.outlet_id_destination AND destination_outlet_info.revision=1 AND destination_outlet_info.type="'.$this->config->item('system_customer_type_outlet_id').'"','INNER');
-            $this->db->select('source_outlet_info.customer_id outlet_id_destination, destination_outlet_info.name outlet_name_destination, destination_outlet_info.customer_code outlet_code_destination');
-
-            $this->db->join($this->config->item('table_login_setup_location_districts').' districts','districts.id = source_outlet_info.district_id','INNER');
-            $this->db->select('districts.id district_id, districts.name district_name');
-            $this->db->join($this->config->item('table_login_setup_location_territories').' territories','territories.id = districts.territory_id','INNER');
-            $this->db->select('territories.id territory_id, territories.name territory_name');
-            $this->db->join($this->config->item('table_login_setup_location_zones').' zones','zones.id = territories.zone_id','INNER');
-            $this->db->select('zones.id zone_id, zones.name zone_name');
-            $this->db->join($this->config->item('table_login_setup_location_divisions').' divisions','divisions.id = zones.division_id','INNER');
-            $this->db->select('divisions.id division_id, divisions.name division_name');
             $this->db->join($this->config->item('table_pos_setup_user_info').' pos_setup_user_info','pos_setup_user_info.user_id=transfer_oo.user_updated_delivery','LEFT');
             $this->db->select('pos_setup_user_info.name full_name_delivery_edit');
             $this->db->join($this->config->item('table_pos_setup_user_info').' pos_setup_user_info_forward','pos_setup_user_info_forward.user_id=transfer_oo.user_updated_delivery_forward','LEFT');
@@ -684,11 +598,18 @@ class Transfer_oo_receive_approve extends Root_Controller
                 $ajax['system_message']='Invalid Try.';
                 $this->json_return($ajax);
             }
-            if(!$this->check_my_editable($data['item']))
+            if(!in_array($data['item']['outlet_id_source'], $this->outlet_ids))
             {
-                System_helper::invalid_try('details',$item_id,'User location Not Assign.');
+                System_helper::invalid_try('save',$id,'User Outlet Not Assign (Source)');
                 $ajax['status']=false;
-                $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+                $ajax['system_message']='Invalid Try. Source outlet not assign.';
+                $this->json_return($ajax);
+            }
+            if(!in_array($data['item']['outlet_id_destination'], $this->outlet_ids))
+            {
+                System_helper::invalid_try('save',$id,'User Outlet Not Assign (Destination)');
+                $ajax['status']=false;
+                $ajax['system_message']='Invalid Try. Destination outlet not assign.';
                 $this->json_return($ajax);
             }
 
@@ -715,7 +636,7 @@ class Transfer_oo_receive_approve extends Root_Controller
             $this->db->order_by('details.id');
             $data['items']=$this->db->get()->result_array();
 
-            $data['title']=$data['item']['outlet_name_source']." to ".$data['item']['outlet_name_destination']." Transfer Details :: ". Barcode_helper::get_barcode_transfer_outlet_to_outlet($data['item']['id']);
+            $data['title']=$this->outlets[$data['item']['outlet_id_source']]['name']." to ".$this->outlets[$data['item']['outlet_id_destination']]['name']." Transfer Details :: ". Barcode_helper::get_barcode_transfer_outlet_to_outlet($data['item']['id']);
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/details",$data,true));
             if($this->message)
@@ -849,151 +770,5 @@ class Transfer_oo_receive_approve extends Root_Controller
             $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
             $this->json_return($ajax);
         }
-    }
-    /*private function check_validation()
-    {
-        $this->load->library('form_validation');
-        $this->form_validation->set_rules('item[status_delivery]',$this->lang->line('LABEL_STATUS_DELIVERY'),'required');
-        $this->form_validation->set_rules('id',$this->lang->line('LABEL_ID'),'required');
-        if($this->form_validation->run() == FALSE)
-        {
-            $this->message=validation_errors();
-            return false;
-        }
-        return true;
-    }*/
-    private function check_my_editable($outlet)
-    {
-        if(($this->locations['division_id']>0)&&($this->locations['division_id']!=$outlet['division_id']))
-        {
-            return false;
-        }
-        if(($this->locations['zone_id']>0)&&($this->locations['zone_id']!=$outlet['zone_id']))
-        {
-            return false;
-        }
-        if(($this->locations['territory_id']>0)&&($this->locations['territory_id']!=$outlet['territory_id']))
-        {
-            return false;
-        }
-        if(($this->locations['district_id']>0)&&($this->locations['district_id']!=$outlet['district_id']))
-        {
-            return false;
-        }
-        return true;
-    }
-    private function system_set_preference()
-    {
-        if(isset($this->permissions['action6']) && ($this->permissions['action6']==1))
-        {
-            $data['system_preference_items']=$this->get_preference();
-            $data['preference_method_name']='list';
-            $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("preference_add_edit",$data,true));
-            $ajax['system_page_url']=site_url($this->controller_url.'/index/set_preference');
-            $this->json_return($ajax);
-        }
-        else
-        {
-            $ajax['status']=false;
-            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
-            $this->json_return($ajax);
-        }
-    }
-    private function get_preference()
-    {
-        $user = User_helper::get_user();
-        $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
-        //$data['id']= 1;
-        $data['barcode']= 1;
-        $data['outlet_name_destination']= 1;
-        $data['outlet_name_source']= 1;
-        $data['date_request']= 1;
-        $data['division_name']= 1;
-        $data['zone_name']= 1;
-        $data['territory_name']= 1;
-        $data['district_name']= 1;
-        $data['quantity_total_approve']= 1;
-        $data['quantity_total_receive']= 1;
-        $data['quantity_total_difference']= 1;
-        if($result)
-        {
-            if($result['preferences']!=null)
-            {
-                $preferences=json_decode($result['preferences'],true);
-                foreach($data as $key=>$value)
-                {
-
-                    if(isset($preferences[$key]))
-                    {
-                        $data[$key]=$value;
-                    }
-                    else
-                    {
-                        $data[$key]=0;
-                    }
-                }
-            }
-        }
-        return $data;
-    }
-    private function system_set_preference_all()
-    {
-        if(isset($this->permissions['action6']) && ($this->permissions['action6']==1))
-        {
-            $data['system_preference_items']=$this->get_preference_all();
-            $data['preference_method_name']='list_all';
-            $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("preference_add_edit",$data,true));
-            $ajax['system_page_url']=site_url($this->controller_url.'/index/set_preference_all');
-            $this->json_return($ajax);
-        }
-        else
-        {
-            $ajax['status']=false;
-            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
-            $this->json_return($ajax);
-        }
-    }
-    private function get_preference_all()
-    {
-        $user = User_helper::get_user();
-        $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list_all"'),1);
-        //$data['id']= 1;
-        $data['barcode']= 1;
-        $data['outlet_name_destination']= 1;
-        $data['outlet_name_source']= 1;
-        $data['date_request']= 1;
-        $data['division_name']= 1;
-        $data['zone_name']= 1;
-        $data['territory_name']= 1;
-        $data['district_name']= 1;
-        $data['quantity_total_request']= 1;
-        $data['quantity_total_approve']= 1;
-        $data['quantity_total_receive']= 1;
-        $data['status_receive']= 1;
-        $data['status_receive_forward']= 1;
-        $data['status_receive_approve']= 1;
-        $data['status_system_delivery_receive']= 1;
-        if($result)
-        {
-            if($result['preferences']!=null)
-            {
-                $preferences=json_decode($result['preferences'],true);
-                foreach($data as $key=>$value)
-                {
-
-                    if(isset($preferences[$key]))
-                    {
-                        $data[$key]=$value;
-                    }
-                    else
-                    {
-                        $data[$key]=0;
-                    }
-                }
-            }
-        }
-        return $data;
     }
 }
