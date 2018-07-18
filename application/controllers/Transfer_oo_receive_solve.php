@@ -27,7 +27,7 @@ class Transfer_oo_receive_solve extends Root_Controller
         $this->outlet_ids[0]=0;
         foreach($this->outlets as $result)
         {
-            $this->outlet_ids[$result['id']]=$result['id'];
+            $this->outlet_ids[$result['customer_id']]=$result['customer_id'];
         }
     }
     public function index($action="list",$id=0)
