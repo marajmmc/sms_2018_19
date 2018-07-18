@@ -224,22 +224,24 @@ class System_helper
         $CI->db->where('customer.status',$CI->config->item('system_status_active'));
         $CI->db->where('cus_info.type',$CI->config->item('system_customer_type_outlet_id'));
         $CI->db->where('cus_info.revision',1);
-        if($CI->locations['division_id']>0)
+        if($division_id>0)
         {
-            $CI->db->where('divisions.id',$CI->locations['division_id']);
-            if($CI->locations['zone_id']>0)
+            $CI->db->where('divisions.id',$division_id);
+            if($zone_id>0)
             {
-                $CI->db->where('zones.id',$CI->locations['zone_id']);
-                if($CI->locations['territory_id']>0)
+                $CI->db->where('zones.id',$zone_id);
+                if($territory_id>0)
                 {
-                    $CI->db->where('territories.id',$CI->locations['territory_id']);
-                    if($CI->locations['district_id']>0)
+                    $CI->db->where('territories.id',$territory_id);
+                    if($district_id>0)
                     {
-                        $CI->db->where('districts.id',$CI->locations['district_id']);
+                        $CI->db->where('districts.id',$district_id);
                     }
                 }
             }
         }
+        $CI->db->order_by('cus_info.ordering','ASC');
+        $CI->db->order_by('customer.id','ASC');
         $results=$CI->db->get()->result_array();
         $outlets=array();
         foreach($results as $result)
