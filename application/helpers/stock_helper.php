@@ -150,7 +150,7 @@ class Stock_helper
             $tow_variety_info[$result['variety_id']][$result['pack_size_id']]['stock_available_pkt']=$result['current_stock'];
         }
 
-        /* calculate available stock */
+        /* outlet to HQ calculate available stock */
         $CI->db->from($CI->config->item('table_sms_transfer_ow').' transfer_ow');
         $CI->db->join($CI->config->item('table_sms_transfer_ow_details').' transfer_ow_details','transfer_ow_details.transfer_ow_id=transfer_ow.id AND transfer_ow_details.status="'.$CI->config->item('system_status_active').'"','INNER');
         $CI->db->select('SUM(transfer_ow_details.quantity_approve) quantity_approve, transfer_ow_details.variety_id, transfer_ow_details.pack_size_id');
@@ -164,6 +164,22 @@ class Stock_helper
         {
             $tow_variety_info[$result['variety_id']][$result['pack_size_id']]['stock_available']=($tow_variety_info[$result['variety_id']][$result['pack_size_id']]['stock_available']-(($result['quantity_approve']*$tow_variety_info[$result['variety_id']][$result['pack_size_id']]['pack_size'])/1000));
             $tow_variety_info[$result['variety_id']][$result['pack_size_id']]['stock_available_pkt']=($tow_variety_info[$result['variety_id']][$result['pack_size_id']]['stock_available_pkt']-$result['quantity_approve']);
+        }
+
+        /* outlet to outlet calculate available stock */
+        $CI->db->from($CI->config->item('table_sms_transfer_oo').' transfer_oo');
+        $CI->db->join($CI->config->item('table_sms_transfer_oo_details').' transfer_oo_details','transfer_oo_details.transfer_oo_id=transfer_oo.id AND transfer_oo_details.status="'.$CI->config->item('system_status_active').'"','INNER');
+        $CI->db->select('SUM(transfer_oo_details.quantity_approve) quantity_approve, transfer_oo_details.variety_id, transfer_oo_details.pack_size_id');
+        $CI->db->where('transfer_oo.outlet_id_source',$outlet_id);
+        $CI->db->where('transfer_oo.status',$CI->config->item('system_status_active'));
+        $CI->db->where('transfer_oo.status_approve',$CI->config->item('system_status_approved'));
+        $CI->db->where('transfer_oo.status_delivery',$CI->config->item('system_status_pending'));
+        $CI->db->group_by('transfer_oo_details.variety_id, transfer_oo_details.pack_size_id');
+        $results=$CI->db->get()->result_array();
+        foreach($results as $result)
+        {
+            $tow_variety_info[$result['variety_id']][$result['pack_size_id']]['stock_available_pkt']=($tow_variety_info[$result['variety_id']][$result['pack_size_id']]['stock_available_pkt']-$result['quantity_approve']);
+            $tow_variety_info[$result['variety_id']][$result['pack_size_id']]['stock_available']=($tow_variety_info[$result['variety_id']][$result['pack_size_id']]['stock_available']-(($result['quantity_approve']*$tow_variety_info[$result['variety_id']][$result['pack_size_id']]['pack_size'])/1000));
         }
         return $tow_variety_info;
     }
@@ -186,7 +202,23 @@ class Stock_helper
             $too_variety_info[$result['variety_id']][$result['pack_size_id']]['stock_available_kg']=(($result['current_stock']*$result['pack_size'])/1000);
         }
 
-        /* calculate available stock */
+        /* outlet to HQ calculate available stock */
+        $CI->db->from($CI->config->item('table_sms_transfer_ow').' transfer_ow');
+        $CI->db->join($CI->config->item('table_sms_transfer_ow_details').' transfer_ow_details','transfer_ow_details.transfer_ow_id=transfer_ow.id AND transfer_ow_details.status="'.$CI->config->item('system_status_active').'"','INNER');
+        $CI->db->select('SUM(transfer_ow_details.quantity_approve) quantity_approve, transfer_ow_details.variety_id, transfer_ow_details.pack_size_id');
+        $CI->db->where('transfer_ow.outlet_id',$outlet_id);
+        $CI->db->where('transfer_ow.status',$CI->config->item('system_status_active'));
+        $CI->db->where('transfer_ow.status_approve',$CI->config->item('system_status_approved'));
+        $CI->db->where('transfer_ow.status_delivery',$CI->config->item('system_status_pending'));
+        $CI->db->group_by('transfer_ow_details.variety_id, transfer_ow_details.pack_size_id');
+        $results=$CI->db->get()->result_array();
+        foreach($results as $result)
+        {
+            $too_variety_info[$result['variety_id']][$result['pack_size_id']]['stock_available_pkt']=($too_variety_info[$result['variety_id']][$result['pack_size_id']]['stock_available_pkt']-$result['quantity_approve']);
+            $too_variety_info[$result['variety_id']][$result['pack_size_id']]['stock_available_kg']=($too_variety_info[$result['variety_id']][$result['pack_size_id']]['stock_available_kg']-(($result['quantity_approve']*$too_variety_info[$result['variety_id']][$result['pack_size_id']]['pack_size'])/1000));
+        }
+
+        /* outlet to outlet calculate available stock */
         $CI->db->from($CI->config->item('table_sms_transfer_oo').' transfer_oo');
         $CI->db->join($CI->config->item('table_sms_transfer_oo_details').' transfer_oo_details','transfer_oo_details.transfer_oo_id=transfer_oo.id AND transfer_oo_details.status="'.$CI->config->item('system_status_active').'"','INNER');
         $CI->db->select('SUM(transfer_oo_details.quantity_approve) quantity_approve, transfer_oo_details.variety_id, transfer_oo_details.pack_size_id');
