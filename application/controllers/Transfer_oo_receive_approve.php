@@ -21,7 +21,7 @@ class Transfer_oo_receive_approve extends Root_Controller
             $ajax['system_message']=$this->lang->line('MSG_LOCATION_NOT_ASSIGNED_OR_INVALID');
             $this->json_return($ajax);
         }
-        $this->outlets=System_helper::get_outlets_by_location($this->locations['division_id'],$this->locations['zone_id'],$this->locations['territory_id'],$this->locations['district_id']);
+        $this->outlets=System_helper::get_outlets_by_location();
         $this->outlet_ids[0]=0;
         foreach($this->outlets as $result)
         {
