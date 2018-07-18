@@ -67,17 +67,13 @@ class Transfer_oo_approve extends Root_Controller
         {
             $this->system_save_forward();
         }
-        /*elseif($action=="ajax_transfer_oo_variety_info")
-        {
-            $this->system_ajax_transfer_oo_variety_info();
-        }*/
         elseif($action=="set_preference")
         {
-            $this->system_set_preference();
+            $this->system_set_preference('list');
         }
         elseif($action=="set_preference_all")
         {
-            $this->system_set_preference_all();
+            $this->system_set_preference('list_all');
         }
         elseif($action=="save_preference")
         {

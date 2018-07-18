@@ -62,7 +62,11 @@ class Transfer_oo_receive_solve extends Root_Controller
         }
         elseif($action=="set_preference")
         {
-            $this->system_set_preference();
+            $this->system_set_preference('list');
+        }
+        elseif($action=="set_preference_all")
+        {
+            $this->system_set_preference('list_all');
         }
         elseif($action=="save_preference")
         {
@@ -192,7 +196,7 @@ class Transfer_oo_receive_solve extends Root_Controller
             {
                 $ajax['system_message']=$this->message;
             }
-            $ajax['system_page_url']=site_url($this->controller_url);
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/list_all');
             $this->json_return($ajax);
         }
         else

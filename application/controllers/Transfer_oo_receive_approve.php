@@ -64,11 +64,11 @@ class Transfer_oo_receive_approve extends Root_Controller
         }
         elseif($action=="set_preference")
         {
-            $this->system_set_preference();
+            $this->system_set_preference('list');
         }
         elseif($action=="set_preference_all")
         {
-            $this->system_set_preference_all();
+            $this->system_set_preference('list_all');
         }
         elseif($action=="save_preference")
         {
