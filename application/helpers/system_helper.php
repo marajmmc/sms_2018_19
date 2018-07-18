@@ -211,7 +211,7 @@ class System_helper
         }
         return $number;
     }
-    public static function get_outlets_by_location()
+    public static function get_outlets_by_location($division_id=0, $zone_id=0, $territory_id=0, $district_id=0)
     {
         $CI =& get_instance();
         $CI->db->from($CI->config->item('table_login_csetup_customer').' customer');
