@@ -17,7 +17,7 @@ class Barcode_helper
     }
     public static function get_barcode_transfer_warehouse_to_outlet($increment_id)
     {
-        return 'TS'.str_pad($increment_id,6,0,STR_PAD_LEFT);
+        return 'TO'.str_pad($increment_id,6,0,STR_PAD_LEFT);
     }
     public static function get_barcode_transfer_outlet_to_warehouse($increment_id)
     {
@@ -25,7 +25,7 @@ class Barcode_helper
     }
     public static function get_barcode_transfer_outlet_to_outlet($increment_id)
     {
-        return 'TO'.str_pad($increment_id,6,0,STR_PAD_LEFT);
+        return 'TS'.str_pad($increment_id,6,0,STR_PAD_LEFT);
     }
 
     //LC
