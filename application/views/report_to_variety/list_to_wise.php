@@ -83,17 +83,47 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         var tooltiprenderer = function (element) {
             $(element).jqxTooltip({position: 'mouse', content: $(element).text() });
         };
-        /*var aggregates=function (total, column, element, record)
+        var aggregates=function (total, column, element, record)
         {
             //console.log(record);
             //console.log(record['warehouse_5_pkt']);
-            if(record.variety_name=="Grand Total")
+            if(record.crop_name=="Grand Total")
             {
                 return record[element];
 
             }
             return total;
-        };*/
+        };
+        var aggregatesrenderer_pkt=function (aggregates)
+        {
+            var text='';
+            if(!((aggregates['total']=='0')||(aggregates['total']=='')))
+            {
+                text=get_string_quantity(aggregates['total']);
+            }
+
+            return '<div style="position: relative; margin: 0px;padding: 5px;width: 100%;height: 100%; overflow: hidden;background-color:'+system_report_color_grand+';">' +text+'</div>';
+
+        };
+        var aggregatesrenderer_kg=function (aggregates)
+        {
+            var text='';
+            if(!((aggregates['total']=='0.000')||(aggregates['total']=='')))
+            {
+                text=get_string_kg(aggregates['total']);
+            }
+            return '<div style="position: relative; margin: 0px;padding: 5px;width: 100%;height: 100%; overflow: hidden;background-color:'+system_report_color_grand+';">' +text+'</div>';
+        };
+        var aggregatesrenderer=function (aggregates)
+        {
+            var text=aggregates['total'];
+            if(((aggregates['total']=='0.00')||(aggregates['total']=='')))
+            {
+                text='';
+            }
+            return '<div style="position: relative; margin: 0px;padding: 5px;width: 100%;height: 100%; overflow: hidden;background-color:'+system_report_color_grand+';">' +text+'</div>';
+
+        };
         var cellsrenderer = function(row, column, value, defaultHtml, columnSettings, record)
         {
             var element = $(defaultHtml);
@@ -191,21 +221,21 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 rowsheight: 45,
                 columns:
                     [
-                        { text: '<?php echo $CI->lang->line('LABEL_CROP_NAME'); ?>', dataField: 'crop_name',filtertype: 'list',pinned:true,width:'100',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['crop_name']?0:1;?>},
-                        { text: '<?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?>', dataField: 'crop_type_name',filtertype: 'list',pinned:true,width:'100',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['crop_type_name']?0:1;?>},
-                        { text: '<?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?>', dataField: 'variety_name',filtertype: 'list',pinned:true,width:'100',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['variety_name']?0:1;?>},
-                        { text: '<?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?>', dataField: 'pack_size',filtertype: 'list',pinned:true,width:'100',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['pack_size']?0:1;?>},
-                        { text: '<?php echo $CI->lang->line('LABEL_BARCODE'); ?>', dataField: 'barcode',width:'100',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['barcode']?0:1;?>},
-                        { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL_REQUEST_PKT'); ?>', dataField: 'quantity_total_request_pkt',width:'100',cellsAlign: 'right',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['quantity_total_request_pkt']?0:1;?>},
-                        { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL_REQUEST_KG'); ?>', dataField: 'quantity_total_request_kg',width:'100',cellsAlign: 'right',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['quantity_total_request_kg']?0:1;?>},
-                        { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL_APPROVE_PKT'); ?>', dataField: 'quantity_total_approve_pkt',width:'100',cellsAlign: 'right',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['quantity_total_approve_pkt']?0:1;?>},
-                        { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL_APPROVE_KG'); ?>', dataField: 'quantity_total_approve_kg',width:'100',cellsAlign: 'right',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['quantity_total_approve_kg']?0:1;?>},
-                        { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL_RECEIVE_PKT'); ?>', dataField: 'quantity_total_receive_pkt',width:'100',cellsAlign: 'right',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['quantity_total_receive_pkt']?0:1;?>},
-                        { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL_RECEIVE_KG'); ?>', dataField: 'quantity_total_receive_kg',width:'100',cellsAlign: 'right',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['quantity_total_receive_kg']?0:1;?>},
-                        { text: '<?php echo $CI->lang->line('LABEL_DATE_REQUEST'); ?>', dataField: 'date_request',width:'100',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['date_request']?0:1;?>},
-                        { text: '<?php echo $CI->lang->line('LABEL_DATE_APPROVE'); ?>', dataField: 'date_approve',width:'100',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['date_approve']?0:1;?>},
-                        { text: '<?php echo $CI->lang->line('LABEL_DATE_DELIVERY'); ?>', dataField: 'date_delivery',width:'100',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['date_delivery']?0:1;?>},
-                        { text: '<?php echo $CI->lang->line('LABEL_DATE_RECEIVE'); ?>', dataField: 'date_receive',width:'100',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['date_receive']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_CROP_NAME'); ?>', dataField: 'crop_name',filtertype: 'list',pinned:true,width:'100',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['crop_name']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                        { text: '<?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?>', dataField: 'crop_type_name',filtertype: 'list',pinned:true,width:'100',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['crop_type_name']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                        { text: '<?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?>', dataField: 'variety_name',filtertype: 'list',pinned:true,width:'100',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['variety_name']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                        { text: '<?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?>', dataField: 'pack_size',filtertype: 'list',pinned:true,width:'100',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['pack_size']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                        { text: '<?php echo $CI->lang->line('LABEL_BARCODE'); ?>', dataField: 'barcode',width:'100',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['barcode']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                        { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL_REQUEST_PKT'); ?>', dataField: 'quantity_total_request_pkt',width:'100',cellsAlign: 'right',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['quantity_total_request_pkt']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer_pkt},
+                        { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL_REQUEST_KG'); ?>', dataField: 'quantity_total_request_kg',width:'100',cellsAlign: 'right',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['quantity_total_request_kg']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer_kg},
+                        { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL_APPROVE_PKT'); ?>', dataField: 'quantity_total_approve_pkt',width:'100',cellsAlign: 'right',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['quantity_total_approve_pkt']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer_pkt},
+                        { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL_APPROVE_KG'); ?>', dataField: 'quantity_total_approve_kg',width:'100',cellsAlign: 'right',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['quantity_total_approve_kg']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer_kg},
+                        { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL_RECEIVE_PKT'); ?>', dataField: 'quantity_total_receive_pkt',width:'100',cellsAlign: 'right',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['quantity_total_receive_pkt']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer_pkt},
+                        { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL_RECEIVE_KG'); ?>', dataField: 'quantity_total_receive_kg',width:'100',cellsAlign: 'right',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['quantity_total_receive_kg']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer_kg},
+                        { text: '<?php echo $CI->lang->line('LABEL_DATE_REQUEST'); ?>', dataField: 'date_request',width:'100',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['date_request']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                        { text: '<?php echo $CI->lang->line('LABEL_DATE_APPROVE'); ?>', dataField: 'date_approve',width:'100',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['date_approve']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                        { text: '<?php echo $CI->lang->line('LABEL_DATE_DELIVERY'); ?>', dataField: 'date_delivery',width:'100',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['date_delivery']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                        { text: '<?php echo $CI->lang->line('LABEL_DATE_RECEIVE'); ?>', dataField: 'date_receive',width:'100',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['date_receive']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
                         { text: 'Details', dataField: 'details_button',width: '120',cellsrenderer: cellsrenderer}
                     ]
             });

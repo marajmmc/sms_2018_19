@@ -340,7 +340,8 @@ class Report_to_variety extends Root_Controller
         $this->db->select('details.quantity_approve');
         $this->db->select('details.quantity_receive');
 
-        $this->db->where('transfer_wo.status !=',$this->config->item('system_status_delete'));
+        $this->db->where('transfer_wo.status',$this->config->item('system_status_active'));
+        $this->db->where('details.status',$this->config->item('system_status_active'));
         $this->db->where_in('transfer_wo.outlet_id',$outlet_ids);
         $this->db->where('transfer_wo.'.$date_type.'>= ',$date_start);
         $this->db->where('transfer_wo.'.$date_type.'<= ',$date_end);
@@ -377,8 +378,6 @@ class Report_to_variety extends Root_Controller
         {
             $this->db->where('details.pack_size_id',$pack_size_id);
         }
-        /*$this->db->group_by('details.variety_id');
-        $this->db->group_by('details.pack_size_id');*/
         $this->db->order_by('transfer_wo.id','DESC');
         $results=$this->db->get()->result_array();
 
@@ -603,17 +602,14 @@ class Report_to_variety extends Root_Controller
         $this->db->select('details.variety_id,details.pack_size_id,details.pack_size, details.transfer_wo_id');
 
         $this->db->join($this->config->item('table_sms_transfer_wo').' transfer_wo','transfer_wo.id = details.transfer_wo_id','INNER');
-        $this->db->select('transfer_wo.date_request');
-        $this->db->select('transfer_wo.date_approve');
-        $this->db->select('transfer_wo.date_delivery');
-        $this->db->select('transfer_wo.date_receive');
-        $this->db->select('transfer_wo.status_approve');
-        $this->db->select('transfer_wo.status_delivery');
-        $this->db->select('transfer_wo.status_receive');
-        $this->db->select('SUM(details.quantity_request) quantity_request',false);
-        $this->db->select('SUM(details.quantity_approve) quantity_approve',false);
-        $this->db->select('SUM(details.quantity_receive) quantity_receive',false);
-        $this->db->where('transfer_wo.status !=',$this->config->item('system_status_delete'));
+
+        $this->db->select('SUM(CASE WHEN transfer_wo.status_request="'.$this->config->item('system_status_forwarded').'" then details.quantity_request ELSE 0 END) quantity_request',false);
+        $this->db->select('SUM(CASE WHEN transfer_wo.status_approve="'.$this->config->item('system_status_approved').'" then details.quantity_approve ELSE 0 END) quantity_approve',false);
+        $this->db->select('SUM(CASE WHEN transfer_wo.status_receive="'.$this->config->item('system_status_received').'" then details.quantity_receive ELSE 0 END) quantity_receive',false);
+
+        $this->db->where('transfer_wo.status',$this->config->item('system_status_active'));
+        $this->db->where('details.status',$this->config->item('system_status_active'));
+
         $this->db->where_in('transfer_wo.outlet_id',$outlet_ids);
         $this->db->where('transfer_wo.'.$date_type.'>= ',$date_start);
         $this->db->where('transfer_wo.'.$date_type.'<= ',$date_end);
@@ -676,10 +672,6 @@ class Report_to_variety extends Root_Controller
             {
                 foreach($varieties_to[$variety['variety_id']] as $details)
                 {
-                    /*foreach($invoice_details as $details)
-                    {
-
-                    }*/
                     $info=$this->initialize_row($variety['crop_name'],$variety['crop_type_name'],$variety['variety_name'],$details['pack_size'],$method);
                     if(!$first_row)
                     {
@@ -721,27 +713,15 @@ class Report_to_variety extends Root_Controller
 
                     $info['quantity_total_request_pkt']=$details['quantity_request'];
                     $info['quantity_total_request_kg']=(($details['pack_size']*$details['quantity_request'])/1000);
-                    $info['quantity_total_approve_pkt']='';
-                    $info['quantity_total_approve_kg']='';
-                    $info['quantity_total_receive_pkt']='';
-                    $info['quantity_total_receive_kg']='';
-                    $info['date_request']=System_helper::display_date($details['date_request']);
-                    if($details['status_approve']==$this->config->item('system_status_approved'))
-                    {
-                        $info['quantity_total_approve_pkt']=$details['quantity_approve'];
-                        $info['quantity_total_approve_kg']=(($details['pack_size']*$details['quantity_approve'])/1000);
-                        $info['date_approve']=System_helper::display_date($details['date_approve']);
-                    }
-                    if($details['status_delivery']==$this->config->item('system_status_delivered'))
-                    {
-                        $info['date_delivery']=System_helper::display_date($details['date_delivery']);
-                    }
-                    if($details['status_receive']==$this->config->item('system_status_received'))
-                    {
-                        $info['quantity_total_receive_pkt']=$details['quantity_receive'];
-                        $info['quantity_total_receive_kg']=(($details['pack_size']*$details['quantity_receive'])/1000);
-                        $info['date_receive']=System_helper::display_date($details['date_receive']);
-                    }
+
+
+
+                    $info['quantity_total_approve_pkt']=$details['quantity_approve'];
+                    $info['quantity_total_approve_kg']=(($details['pack_size']*$details['quantity_approve'])/1000);
+
+
+                    $info['quantity_total_receive_pkt']=$details['quantity_receive'];
+                    $info['quantity_total_receive_kg']=(($details['pack_size']*$details['quantity_receive'])/1000);
 
                     $type_total['quantity_total_request_pkt']+=$info['quantity_total_request_pkt'];
                     $type_total['quantity_total_request_kg']+=$info['quantity_total_request_kg'];
