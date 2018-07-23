@@ -168,7 +168,39 @@ class Report_stock_variety_details extends Root_Controller
             $packs[$result['pack_size_id']]['in_stock_delivery_short'][$result['warehouse_id']]=$result['in_stock_delivery_short'];
             $packs[$result['pack_size_id']]['stock_current'][$result['warehouse_id']]=$result['in_opening']+$result['in_stock_in']+$result['in_stock_excess']+$result['in_stock_delivery_short'];
         }
+        //lc calculation
+        $this->db->from($this->config->item('table_sms_lc_details').' details');
+        $this->db->select('details.variety_id,details.pack_size_id,details.receive_warehouse_id');
+        $this->db->select('SUM(CASE WHEN lco.date_receive<'.$date_start.' then details.quantity_receive ELSE 0 END) in_opening',false);
 
+        $this->db->select('SUM(CASE WHEN lco.date_receive>='.$date_start.' and lco.date_receive<='.$date_end.' then details.quantity_receive ELSE 0 END) in_lc',false);
+
+
+
+        $this->db->join($this->config->item('table_sms_lc_open').' lco','lco.id=details.lc_id','INNER');
+        $this->db->where('lco.status_open !=',$this->config->item('system_status_delete'));
+        $this->db->where('lco.status_receive',$this->config->item('system_status_complete'));
+        $this->db->where('details.variety_id',$variety_id);
+        $this->db->where('details.quantity_open >',0);
+        if($pack_size_id>-1)
+        {
+            $this->db->where('details.pack_size_id',$pack_size_id);
+        }
+        $this->db->group_by('details.variety_id');
+        $this->db->group_by('details.pack_size_id');
+        $this->db->group_by('details.receive_warehouse_id');
+        $results=$this->db->get()->result_array();
+
+        foreach($results as $result)
+        {
+            if(!(isset($packs[$result['pack_size_id']])))
+            {
+                $packs[$result['pack_size_id']]=$this->initialize_row($warehouses);
+            }
+            $packs[$result['pack_size_id']]['stock_opening'][$result['receive_warehouse_id']]+=$result['in_opening'];
+            $packs[$result['pack_size_id']]['in_lc'][$result['receive_warehouse_id']]+=$result['in_lc'];
+            $packs[$result['pack_size_id']]['stock_current'][$result['receive_warehouse_id']]+=($result['in_opening']+$result['in_lc']);
+        }
         //convert bulk to pack in out
         $this->db->from($this->config->item('table_sms_convert_bulk_to_pack').' details');
         $this->db->select('details.variety_id,details.pack_size_id,details.warehouse_id_source,details.warehouse_id_destination');
@@ -251,39 +283,7 @@ class Report_stock_variety_details extends Root_Controller
             $packs[$result['pack_size_id']]['stock_current'][$result['warehouse_id_destination']]+=($result['in_out_opening']+$result['in_out_quantity']);
         }
 
-        //lc calculation
-        $this->db->from($this->config->item('table_sms_lc_details').' details');
-        $this->db->select('details.variety_id,details.pack_size_id,details.receive_warehouse_id');
-        $this->db->select('SUM(CASE WHEN lco.date_receive<'.$date_start.' then details.quantity_receive ELSE 0 END) in_opening',false);
 
-        $this->db->select('SUM(CASE WHEN lco.date_receive>='.$date_start.' and lco.date_receive<='.$date_end.' then details.quantity_receive ELSE 0 END) in_lc',false);
-
-
-
-        $this->db->join($this->config->item('table_sms_lc_open').' lco','lco.id=details.lc_id','INNER');
-        $this->db->where('lco.status_open !=',$this->config->item('system_status_delete'));
-        $this->db->where('lco.status_receive',$this->config->item('system_status_complete'));
-        $this->db->where('details.variety_id',$variety_id);
-        $this->db->where('details.quantity_open >',0);
-        if($pack_size_id>-1)
-        {
-            $this->db->where('details.pack_size_id',$pack_size_id);
-        }
-        $this->db->group_by('details.variety_id');
-        $this->db->group_by('details.pack_size_id');
-        $this->db->group_by('details.receive_warehouse_id');
-        $results=$this->db->get()->result_array();
-
-        foreach($results as $result)
-        {
-            if(!(isset($packs[$result['pack_size_id']])))
-            {
-                $packs[$result['pack_size_id']]=$this->initialize_row($warehouses);
-            }
-            $packs[$result['pack_size_id']]['stock_opening'][$result['receive_warehouse_id']]+=$result['in_opening'];
-            $packs[$result['pack_size_id']]['in_lc'][$result['receive_warehouse_id']]+=$result['in_lc'];
-            $packs[$result['pack_size_id']]['stock_current'][$result['receive_warehouse_id']]+=($result['in_opening']+$result['in_lc']);
-        }
 
         //in transfer from outlet
         $this->db->from($this->config->item('table_sms_transfer_ow_details').' details');
