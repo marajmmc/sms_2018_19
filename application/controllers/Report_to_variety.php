@@ -379,7 +379,7 @@ class Report_to_variety extends Root_Controller
         }
         /*$this->db->group_by('details.variety_id');
         $this->db->group_by('details.pack_size_id');*/
-        $this->db->order_by('transfer_wo.id');
+        $this->db->order_by('transfer_wo.id','DESC');
         $results=$this->db->get()->result_array();
 
         $varieties_to=array();
@@ -403,6 +403,7 @@ class Report_to_variety extends Root_Controller
             {
                 foreach($varieties_to[$variety['variety_id']] as $invoice_details)
                 {
+                    $i=0;
                     foreach($invoice_details as $details)
                     {
                         $info=$this->initialize_row($variety['crop_name'],$variety['crop_type_name'],$variety['variety_name'],$details['pack_size'],$method);
@@ -440,7 +441,12 @@ class Report_to_variety extends Root_Controller
                             $prev_type_name=$variety['crop_type_name'];
                             $first_row=false;
                         }
-
+                        if($i>0)
+                        {
+                            $info['variety_name']='';
+                            $info['pack_size']='';
+                        }
+                        $i++;
                         $info['id']=$details['transfer_wo_id'];
                         $info['barcode']=Barcode_helper::get_barcode_transfer_warehouse_to_outlet($info['id']);
 
