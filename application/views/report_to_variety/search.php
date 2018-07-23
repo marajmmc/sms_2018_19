@@ -123,7 +123,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     </div>
                     <div class="col-xs-6">
                         <select id="report_name" name="report[report_name]" class="form-control">
-                            <!--<option value="quantity_wise">Quantity Wise</option>-->
+                            <option value="quantity_wise">Quantity Wise</option>
                             <option value="to_wise">TO Wise</option>
                         </select>
                     </div>

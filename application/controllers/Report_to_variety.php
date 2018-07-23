@@ -36,6 +36,10 @@ class Report_to_variety extends Root_Controller
         {
             $this->system_get_items_to();
         }
+        elseif($action=="get_items_quantity")
+        {
+            $this->system_get_items_quantity();
+        }
         elseif($action=="set_preference")
         {
             $this->system_set_preference($id);
@@ -62,7 +66,12 @@ class Report_to_variety extends Root_Controller
         $data['pack_size']= 1;
         if($method=='list_quantity_wise')
         {
-
+            $data['quantity_total_request_pkt']= 1;
+            $data['quantity_total_request_kg']= 1;
+            $data['quantity_total_approve_pkt']= 1;
+            $data['quantity_total_approve_kg']= 1;
+            $data['quantity_total_receive_pkt']= 1;
+            $data['quantity_total_receive_kg']= 1;
         }
         elseif($method=='list_to_wise')
         {
@@ -482,6 +491,274 @@ class Report_to_variety extends Root_Controller
 
                         $items[]=$info;
                     }
+                }
+            }
+        }
+        $items[]=$this->get_row($type_total);
+        $items[]=$this->get_row($crop_total);
+        $items[]=$this->get_row($grand_total);
+        $this->json_return($items);
+    }
+
+    private function system_get_items_quantity()
+    {
+        $date_start=$this->input->post('date_start');
+        $date_end=$this->input->post('date_end');
+        $date_type=$this->input->post('date_type');
+
+        $crop_id=$this->input->post('crop_id');
+        $crop_type_id=$this->input->post('crop_type_id');
+        $variety_id=$this->input->post('variety_id');
+        $pack_size_id=$this->input->post('pack_size_id');
+
+        $division_id=$this->input->post('division_id');
+        $zone_id=$this->input->post('zone_id');
+        $territory_id=$this->input->post('territory_id');
+        $district_id=$this->input->post('district_id');
+        $outlet_id=$this->input->post('outlet_id');
+
+        $status_request=$this->input->post('status_request');
+        $status_approve=$this->input->post('status_approve');
+        $status_delivery=$this->input->post('status_delivery');
+        $status_receive=$this->input->post('status_receive');
+        $status_receive_approve=$this->input->post('status_receive_approve');
+
+        $this->db->from($this->config->item('table_login_setup_classification_varieties').' v');
+        $this->db->select('v.id variety_id,v.name variety_name');
+        $this->db->join($this->config->item('table_login_setup_classification_crop_types').' crop_type','crop_type.id=v.crop_type_id','INNER');
+        $this->db->select('crop_type.id crop_type_id, crop_type.name crop_type_name');
+        $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id=crop_type.crop_id','INNER');
+        $this->db->select('crop.id crop_id, crop.name crop_name');
+        if($crop_id>0)
+        {
+            $this->db->where('crop.id',$crop_id);
+            if($crop_type_id>0)
+            {
+                $this->db->where('crop_type.id',$crop_type_id);
+                if($variety_id>0)
+                {
+                    $this->db->where('v.id',$variety_id);
+                }
+            }
+        }
+        $this->db->order_by('crop.ordering','ASC');
+        $this->db->order_by('crop.id','ASC');
+        $this->db->order_by('crop_type.ordering','ASC');
+        $this->db->order_by('crop_type.id','ASC');
+        $this->db->order_by('v.ordering','ASC');
+        $this->db->order_by('v.id','ASC');
+
+        $varieties=$this->db->get()->result_array();
+        $variety_ids=array();
+        $variety_ids[0]=0;
+        foreach($varieties as $result)
+        {
+            $variety_ids[$result['variety_id']]=$result['variety_id'];
+        }
+
+        $this->db->from($this->config->item('table_login_csetup_cus_info').' outlet_info');
+        $this->db->select('outlet_info.customer_id outlet_id, outlet_info.name outlet_name');
+        $this->db->join($this->config->item('table_login_setup_location_districts').' districts','districts.id = outlet_info.district_id','INNER');
+        $this->db->join($this->config->item('table_login_setup_location_territories').' territories','territories.id = districts.territory_id','INNER');
+        $this->db->join($this->config->item('table_login_setup_location_zones').' zones','zones.id = territories.zone_id','INNER');
+        $this->db->order_by('outlet_info.ordering');
+        $this->db->where('outlet_info.revision',1);
+        $this->db->where('outlet_info.type',$this->config->item('system_customer_type_outlet_id'));
+        if($division_id>0)
+        {
+            $this->db->where('zones.division_id',$division_id);
+            if($zone_id>0)
+            {
+                $this->db->where('zones.id',$zone_id);
+                if($territory_id>0)
+                {
+                    $this->db->where('territories.id',$territory_id);
+                    if($district_id>0)
+                    {
+                        $this->db->where('districts.id',$district_id);
+                        if($outlet_id>0)
+                        {
+                            $this->db->where('outlet_info.customer_id',$outlet_id);
+                        }
+                    }
+                }
+            }
+        }
+        $results=$this->db->get()->result_array();
+        $outlet_ids=array();
+        $outlet_ids[0]=0;
+        foreach($results as $result)
+        {
+            $outlet_ids[$result['outlet_id']]=$result['outlet_id'];
+        }
+
+
+        $this->db->from($this->config->item('table_sms_transfer_wo_details').' details');
+        $this->db->select('details.variety_id,details.pack_size_id,details.pack_size, details.transfer_wo_id');
+
+        $this->db->join($this->config->item('table_sms_transfer_wo').' transfer_wo','transfer_wo.id = details.transfer_wo_id','INNER');
+        $this->db->select('transfer_wo.date_request');
+        $this->db->select('transfer_wo.date_approve');
+        $this->db->select('transfer_wo.date_delivery');
+        $this->db->select('transfer_wo.date_receive');
+        $this->db->select('transfer_wo.status_approve');
+        $this->db->select('transfer_wo.status_delivery');
+        $this->db->select('transfer_wo.status_receive');
+        $this->db->select('SUM(details.quantity_request) quantity_request',false);
+        $this->db->select('SUM(details.quantity_approve) quantity_approve',false);
+        $this->db->select('SUM(details.quantity_receive) quantity_receive',false);
+        $this->db->where('transfer_wo.status !=',$this->config->item('system_status_delete'));
+        $this->db->where_in('transfer_wo.outlet_id',$outlet_ids);
+        $this->db->where('transfer_wo.'.$date_type.'>= ',$date_start);
+        $this->db->where('transfer_wo.'.$date_type.'<= ',$date_end);
+
+        if($status_request)
+        {
+            $this->db->where('transfer_wo.status_request',$status_request);
+        }
+        if($status_approve)
+        {
+            $this->db->where('transfer_wo.status_approve',$status_approve);
+        }
+        if($status_delivery)
+        {
+            $this->db->where('transfer_wo.status_delivery',$status_delivery);
+        }
+        if($status_receive)
+        {
+            if($status_receive==$this->config->item('system_status_forwarded'))
+            {
+                $this->db->where('transfer_wo.status_receive_forward',$status_receive);
+            }
+            else
+            {
+                $this->db->where('transfer_wo.status_receive',$status_receive);
+            }
+        }
+        if($status_receive_approve)
+        {
+            $this->db->where('transfer_wo.status_receive_approve',$status_receive_approve);
+        }
+        $this->db->where_in('details.variety_id',$variety_ids);
+        if($pack_size_id>0)
+        {
+            $this->db->where('details.pack_size_id',$pack_size_id);
+        }
+        $this->db->group_by('details.variety_id');
+        $this->db->group_by('details.pack_size_id');
+        $this->db->order_by('transfer_wo.id');
+        $results=$this->db->get()->result_array();
+
+        $varieties_to=array();
+        foreach($results as $result)
+        {
+            $varieties_to[$result['variety_id']][$result['pack_size_id']]=$result;
+        }
+
+        //final items
+        $method='list_to_wise';
+        $type_total=$this->initialize_row('','','Total Type','',$method);
+        $crop_total=$this->initialize_row('','Total Crop','','',$method);
+        $grand_total=$this->initialize_row('Grand Total','','','',$method);
+        $prev_crop_name='';
+        $prev_type_name='';
+        $first_row=true;
+        $items=array();
+        foreach($varieties as $variety)
+        {
+            if(isset($varieties_to[$variety['variety_id']]))
+            {
+                foreach($varieties_to[$variety['variety_id']] as $details)
+                {
+                    /*foreach($invoice_details as $details)
+                    {
+
+                    }*/
+                    $info=$this->initialize_row($variety['crop_name'],$variety['crop_type_name'],$variety['variety_name'],$details['pack_size'],$method);
+                    if(!$first_row)
+                    {
+                        if($prev_crop_name!=$variety['crop_name'])
+                        {
+                            $items[]=$this->get_row($type_total);
+                            $items[]=$this->get_row($crop_total);
+                            $type_total=$this->reset_row($type_total);
+                            $crop_total=$this->reset_row($crop_total);
+
+                            $prev_crop_name=$variety['crop_name'];
+                            $prev_type_name=$variety['crop_type_name'];
+
+
+                        }
+                        elseif($prev_type_name!=$variety['crop_type_name'])
+                        {
+                            $items[]=$this->get_row($type_total);
+                            $type_total=$this->reset_row($type_total);
+
+                            $info['crop_name']='';
+                            $prev_type_name=$variety['crop_type_name'];
+                        }
+                        else
+                        {
+                            $info['crop_name']='';
+                            $info['crop_type_name']='';
+                        }
+                    }
+                    else
+                    {
+                        $prev_crop_name=$variety['crop_name'];
+                        $prev_type_name=$variety['crop_type_name'];
+                        $first_row=false;
+                    }
+
+                    $info['id']=$details['transfer_wo_id'];
+                    $info['barcode']=Barcode_helper::get_barcode_transfer_warehouse_to_outlet($info['id']);
+
+                    $info['quantity_total_request_pkt']=$details['quantity_request'];
+                    $info['quantity_total_request_kg']=(($details['pack_size']*$details['quantity_request'])/1000);
+                    $info['quantity_total_approve_pkt']='';
+                    $info['quantity_total_approve_kg']='';
+                    $info['quantity_total_receive_pkt']='';
+                    $info['quantity_total_receive_kg']='';
+                    $info['date_request']=System_helper::display_date($details['date_request']);
+                    if($details['status_approve']==$this->config->item('system_status_approved'))
+                    {
+                        $info['quantity_total_approve_pkt']=$details['quantity_approve'];
+                        $info['quantity_total_approve_kg']=(($details['pack_size']*$details['quantity_approve'])/1000);
+                        $info['date_approve']=System_helper::display_date($details['date_approve']);
+                    }
+                    if($details['status_delivery']==$this->config->item('system_status_delivered'))
+                    {
+                        $info['date_delivery']=System_helper::display_date($details['date_delivery']);
+                    }
+                    if($details['status_receive']==$this->config->item('system_status_received'))
+                    {
+                        $info['quantity_total_receive_pkt']=$details['quantity_receive'];
+                        $info['quantity_total_receive_kg']=(($details['pack_size']*$details['quantity_receive'])/1000);
+                        $info['date_receive']=System_helper::display_date($details['date_receive']);
+                    }
+
+                    $type_total['quantity_total_request_pkt']+=$info['quantity_total_request_pkt'];
+                    $type_total['quantity_total_request_kg']+=$info['quantity_total_request_kg'];
+                    $type_total['quantity_total_approve_pkt']+=$info['quantity_total_approve_pkt'];
+                    $type_total['quantity_total_approve_kg']+=$info['quantity_total_approve_kg'];
+                    $type_total['quantity_total_receive_pkt']+=$info['quantity_total_receive_pkt'];
+                    $type_total['quantity_total_receive_kg']+=$info['quantity_total_receive_kg'];
+
+                    $crop_total['quantity_total_request_pkt']+=$info['quantity_total_request_pkt'];
+                    $crop_total['quantity_total_request_kg']+=$info['quantity_total_request_kg'];
+                    $crop_total['quantity_total_approve_pkt']+=$info['quantity_total_approve_pkt'];
+                    $crop_total['quantity_total_approve_kg']+=$info['quantity_total_approve_kg'];
+                    $crop_total['quantity_total_receive_pkt']+=$info['quantity_total_receive_pkt'];
+                    $crop_total['quantity_total_receive_kg']+=$info['quantity_total_receive_kg'];
+
+                    $grand_total['quantity_total_request_pkt']+=$info['quantity_total_request_pkt'];
+                    $grand_total['quantity_total_request_kg']+=$info['quantity_total_request_kg'];
+                    $grand_total['quantity_total_approve_pkt']+=$info['quantity_total_approve_pkt'];
+                    $grand_total['quantity_total_approve_kg']+=$info['quantity_total_approve_kg'];
+                    $grand_total['quantity_total_receive_pkt']+=$info['quantity_total_receive_pkt'];
+                    $grand_total['quantity_total_receive_kg']+=$info['quantity_total_receive_kg'];
+
+                    $items[]=$info;
                 }
             }
         }
