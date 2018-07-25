@@ -209,6 +209,7 @@ $lang['LABEL_TIME_APPROVED']='Approved Time';
 $lang['LABEL_DATE_DELIVERY']='Date for Delivery';
 $lang['LABEL_TIME_DELIVERY']='Delivery Time';
 $lang['LABEL_DATE_CHALLAN']='Date for Challan';
+$lang['LABEL_DATE_EXPENSE']='Date for Expense';
 
 //months array
 $lang['LABEL_MONTH'] = 'Month';
@@ -306,6 +307,7 @@ $lang['LABEL_PRICE_CURRENCY_TOTAL']='Total Price (Currency)';
 $lang['LABEL_GRAND_TOTAL_CURRENCY']='Grand Total (Currency)';
 $lang['LABEL_OTHER_COST_CURRENCY']='Others Cost (Currency)';
 $lang['LABEL_GRAND_TOTAL_CURRENCY']='Grand Total (Currency)';
+
 
 /* Taka */
 $lang['LABEL_TOTAL_TAKA']='Total (Taka)';
@@ -445,3 +447,6 @@ $lang['LABEL_STATUS_RECEIVE_APPROVE']='Indirect Receive Approve Status';
 $lang['LABEL_STATUS_SYSTEM_DELIVERY_RECEIVE']='Direct Receive';
 $lang['LABEL_STATUS_SOLVE']='Solve Status';
 
+// Expense
+$lang['LABEL_EXPENSE_ITEM']='Expense Items';
+$lang['LABEL_AMOUNT_EXPENSE']='Expense Amount';
