@@ -446,7 +446,3 @@ $lang['LABEL_STATUS_RECEIVE_FORWARD']='Indirect Receive Forward Status';
 $lang['LABEL_STATUS_RECEIVE_APPROVE']='Indirect Receive Approve Status';
 $lang['LABEL_STATUS_SYSTEM_DELIVERY_RECEIVE']='Direct Receive';
 $lang['LABEL_STATUS_SOLVE']='Solve Status';
-
-// Expense
-$lang['LABEL_EXPENSE_ITEM']='Expense Items';
-$lang['LABEL_AMOUNT_EXPENSE']='Expense Amount';
