@@ -71,6 +71,9 @@ class Report_stock_hq_outlet_courier extends Root_Controller
         $data['variety_name']= 1;
         $data['pack_size']= 1;
         $data['amount_price_unit']= 1;
+        $data['stock_total_pkt']= 1;
+        $data['stock_total_kg']= 1;
+        $data['amount_total']= 1;
         $data['stock_hq_pkt']= 1;
         $data['stock_hq_kg']= 1;
         $data['amount_hq']= 1;
@@ -86,9 +89,6 @@ class Report_stock_hq_outlet_courier extends Root_Controller
         $data['stock_ts_pkt']= 1;
         $data['stock_ts_kg']= 1;
         $data['amount_ts']= 1;
-        $data['stock_total_pkt']= 1;
-        $data['stock_total_kg']= 1;
-        $data['amount_total']= 1;
         return $data;
     }
     private function system_list()
@@ -443,8 +443,6 @@ class Report_stock_hq_outlet_courier extends Root_Controller
         $items=array();
         foreach($varieties as $variety)
         {
-            //$info=$this->initialize_row($variety['crop_name'],$variety['crop_type_name'],$variety['variety_name'],$variety['pack_size']);
-            //$info=$this->initialize_row($variety['crop_name'],$variety['crop_type_name'],$variety['variety_name'],'10');
             if(isset($stocks[$variety['variety_id']]))
             {
                 foreach($stocks[$variety['variety_id']] as $pack_size_id=>$info)
@@ -500,6 +498,8 @@ class Report_stock_hq_outlet_courier extends Root_Controller
                                 $info[$key]=0;
                             }
                         }
+                        $info['amount_hq']=$amount_price_unit*$info['stock_hq_kg'];
+
                     }
                     else
                     {
@@ -507,8 +507,10 @@ class Report_stock_hq_outlet_courier extends Root_Controller
                         {
                             $amount_price_unit=$price_units[$variety['variety_id']][$pack_size_id];
                         }
+                        $info['amount_hq']=$amount_price_unit*$info['stock_hq_pkt'];
                     }
                     $info['amount_price_unit']=$amount_price_unit;
+
                     foreach($info  as $key=>$r)
                     {
                         if(!(($key=='crop_name')||($key=='crop_type_name')||($key=='variety_name')||($key=='pack_size')||($key=='amount_price_unit')))
