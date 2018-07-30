@@ -219,7 +219,8 @@ class Sys_users extends Root_Controller
     private function check_validation()
     {
         $user_group=$this->input->post('user_group');
-        if($user_group==1)
+        $user = User_helper::get_user();
+        if($user_group==1 && $user->user_group!=1)
         {
             $this->message='Try again';
             return false;
