@@ -331,7 +331,6 @@ class Report_stock_hq_outlet_courier extends Root_Controller
         $this->db->group_by('details.variety_id');
         $this->db->group_by('details.pack_size_id');
         $results=$this->db->get()->result_array();
-
         foreach($results as $result)
         {
             $stocks[$result['variety_id']][$result['pack_size_id']]['stock_hq_pkt']-=$result['out_hq'];
@@ -379,13 +378,15 @@ class Report_stock_hq_outlet_courier extends Root_Controller
             $stocks[$result['variety_id']][$result['pack_size_id']]['stock_outlet_pkt']-=$result['out_outlet'];
             $stocks[$result['variety_id']][$result['pack_size_id']]['stock_outlet_kg']-=(($result['out_outlet']*$pack_sizes[$result['pack_size_id']])/1000);
         }
-        //TS outlets to outlet
-        /*$this->db->from($this->config->item('table_sms_transfer_oo_details').' details');
+        //TS
+        $this->db->from($this->config->item('table_sms_transfer_oo_details').' details');
         $this->db->select('details.variety_id,details.pack_size_id');
 
-        $this->db->select('SUM(CASE WHEN oo.date_delivery<'.$date_start.' then details.quantity_approve ELSE 0 END) out_oo_opening',false);
-
-        $this->db->select('SUM(CASE WHEN oo.date_delivery>='.$date_start.' and oo.date_delivery<='.$date_end.' then details.quantity_approve ELSE 0 END) out_oo',false);
+        //out outlet
+        $this->db->select('SUM(CASE WHEN oo.date_delivery <='.$date_end.' then details.quantity_approve ELSE 0 END) out_oo_opening',false);
+        //in outlet
+        $this->db->select('SUM(CASE WHEN oo.status_receive ="'.$this->config->item('system_status_received').'" and oo.date_receive <='.$date_end.' then details.quantity_receive ELSE 0 END) in_oo_opening',false);
+        //air
 
 
 
@@ -394,7 +395,6 @@ class Report_stock_hq_outlet_courier extends Root_Controller
         $this->db->where('details.status !=',$this->config->item('system_status_delete'));
         $this->db->where('oo.status_delivery',$this->config->item('system_status_delivered'));
         $this->db->where_in('details.variety_id',$variety_ids);
-        $this->db->where_in('oo.outlet_id_source',$outlet_ids);
         if($pack_size_id>0)
         {
             $this->db->where('details.pack_size_id',$pack_size_id);
@@ -402,12 +402,11 @@ class Report_stock_hq_outlet_courier extends Root_Controller
         $this->db->group_by('details.variety_id');
         $this->db->group_by('details.pack_size_id');
         $results=$this->db->get()->result_array();
-        $out_oo=array();
         foreach($results as $result)
         {
-            $out_oo[$result['variety_id']][$result['pack_size_id']]['out_oo_opening']=$result['out_oo_opening'];
-            $out_oo[$result['variety_id']][$result['pack_size_id']]['out_oo']=$result['out_oo'];
-        }*/
+            $stocks[$result['variety_id']][$result['pack_size_id']]['stock_outlet_pkt']+=($result['in_oo_opening']-$result['out_oo_opening']);
+            $stocks[$result['variety_id']][$result['pack_size_id']]['stock_outlet_kg']+=((($result['in_oo_opening']-$result['out_oo_opening'])*$pack_sizes[$result['pack_size_id']])/1000);
+        }
         //sales
         $this->db->from($this->config->item('table_pos_sale_details').' details');
         $this->db->select('details.variety_id,details.pack_size_id');
