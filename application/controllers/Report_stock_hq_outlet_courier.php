@@ -313,7 +313,8 @@ class Report_stock_hq_outlet_courier extends Root_Controller
         $this->db->select('SUM(CASE WHEN wo.date_delivery <='.$date_end.' then details.quantity_approve ELSE 0 END) out_hq',false);
         //outlet in
         $this->db->select('SUM(CASE WHEN wo.status_receive ="'.$this->config->item('system_status_received').'" and wo.date_receive <='.$date_end.' then details.quantity_receive ELSE 0 END) in_outlet',false);
-        //air
+        //air=out hq-expected_in outlet
+        $this->db->select('SUM(CASE WHEN wo.status_receive ="'.$this->config->item('system_status_received').'" and wo.date_receive <='.$date_end.' then details.quantity_approve ELSE 0 END) expected_in_outlet',false);
 
         $this->db->join($this->config->item('table_sms_transfer_wo').' wo','wo.id=details.transfer_wo_id','INNER');
         $this->db->where('wo.status !=',$this->config->item('system_status_delete'));
@@ -339,6 +340,9 @@ class Report_stock_hq_outlet_courier extends Root_Controller
             $stocks[$result['variety_id']][$result['pack_size_id']]['stock_outlet_pkt']+=$result['in_outlet'];
             $stocks[$result['variety_id']][$result['pack_size_id']]['stock_outlet_kg']+=(($result['in_outlet']*$pack_sizes[$result['pack_size_id']])/1000);
 
+            $stocks[$result['variety_id']][$result['pack_size_id']]['stock_to_pkt']+=($result['out_hq']-$result['expected_in_outlet']);
+            $stocks[$result['variety_id']][$result['pack_size_id']]['stock_to_kg']+=((($result['out_hq']-$result['expected_in_outlet'])*$pack_sizes[$result['pack_size_id']])/1000);
+
         }
         //TR
         $this->db->from($this->config->item('table_sms_transfer_ow_details').' details');
@@ -348,7 +352,8 @@ class Report_stock_hq_outlet_courier extends Root_Controller
         $this->db->select('SUM(CASE WHEN ow.status_receive ="'.$this->config->item('system_status_received').'" and ow.date_receive <='.$date_end.' then details.quantity_receive ELSE 0 END) in_hq',false);
         //outlet out
         $this->db->select('SUM(CASE WHEN ow.date_delivery <='.$date_end.' then details.quantity_approve ELSE 0 END) out_outlet',false);
-        //air
+        //air=out_outlet-expected in hq
+        $this->db->select('SUM(CASE WHEN ow.status_receive ="'.$this->config->item('system_status_received').'" and ow.date_receive <='.$date_end.' then details.quantity_approve ELSE 0 END) expected_in_hq',false);
 
         $this->db->join($this->config->item('table_sms_transfer_ow').' ow','ow.id=details.transfer_ow_id','INNER');
         $this->db->where('ow.status !=',$this->config->item('system_status_delete'));
@@ -377,6 +382,9 @@ class Report_stock_hq_outlet_courier extends Root_Controller
 
             $stocks[$result['variety_id']][$result['pack_size_id']]['stock_outlet_pkt']-=$result['out_outlet'];
             $stocks[$result['variety_id']][$result['pack_size_id']]['stock_outlet_kg']-=(($result['out_outlet']*$pack_sizes[$result['pack_size_id']])/1000);
+
+            $stocks[$result['variety_id']][$result['pack_size_id']]['stock_tr_pkt']+=($result['out_outlet']-$result['expected_in_hq']);
+            $stocks[$result['variety_id']][$result['pack_size_id']]['stock_tr_kg']+=((($result['out_outlet']-$result['expected_in_hq'])*$pack_sizes[$result['pack_size_id']])/1000);
         }
         //TS
         $this->db->from($this->config->item('table_sms_transfer_oo_details').' details');
@@ -386,8 +394,8 @@ class Report_stock_hq_outlet_courier extends Root_Controller
         $this->db->select('SUM(CASE WHEN oo.date_delivery <='.$date_end.' then details.quantity_approve ELSE 0 END) out_oo_opening',false);
         //in outlet
         $this->db->select('SUM(CASE WHEN oo.status_receive ="'.$this->config->item('system_status_received').'" and oo.date_receive <='.$date_end.' then details.quantity_receive ELSE 0 END) in_oo_opening',false);
-        //air
-
+        //air out_oo_opening-expected_in_oo_opening
+        $this->db->select('SUM(CASE WHEN oo.status_receive ="'.$this->config->item('system_status_received').'" and oo.date_receive <='.$date_end.' then details.quantity_approve ELSE 0 END) expected_in_oo_opening',false);
 
 
         $this->db->join($this->config->item('table_sms_transfer_oo').' oo','oo.id=details.transfer_oo_id','INNER');
@@ -406,6 +414,9 @@ class Report_stock_hq_outlet_courier extends Root_Controller
         {
             $stocks[$result['variety_id']][$result['pack_size_id']]['stock_outlet_pkt']+=($result['in_oo_opening']-$result['out_oo_opening']);
             $stocks[$result['variety_id']][$result['pack_size_id']]['stock_outlet_kg']+=((($result['in_oo_opening']-$result['out_oo_opening'])*$pack_sizes[$result['pack_size_id']])/1000);
+
+            $stocks[$result['variety_id']][$result['pack_size_id']]['stock_ts_pkt']+=($result['out_oo_opening']-$result['expected_in_oo_opening']);
+            $stocks[$result['variety_id']][$result['pack_size_id']]['stock_ts_kg']+=((($result['out_oo_opening']-$result['expected_in_oo_opening'])*$pack_sizes[$result['pack_size_id']])/1000);
         }
         //sales
         $this->db->from($this->config->item('table_pos_sale_details').' details');
@@ -507,7 +518,13 @@ class Report_stock_hq_outlet_courier extends Root_Controller
                     }
                     $info['amount_price_unit']=$amount_price_unit;
                     $info['amount_outlet']=$amount_price_unit*$info['stock_outlet_pkt'];
+                    $info['amount_to']=$amount_price_unit*$info['stock_to_pkt'];
+                    $info['amount_tr']=$amount_price_unit*$info['stock_tr_pkt'];
+                    $info['amount_ts']=$amount_price_unit*$info['stock_ts_pkt'];
 
+                    $info['stock_total_pkt']=$info['stock_hq_pkt']+$info['stock_outlet_pkt']+$info['stock_to_pkt']+$info['stock_tr_pkt']+$info['stock_ts_pkt'];
+                    $info['stock_total_kg']=$info['stock_hq_kg']+$info['stock_outlet_kg']+$info['stock_to_kg']+$info['stock_tr_kg']+$info['stock_ts_kg'];
+                    $info['amount_total']=$info['amount_hq']+$info['amount_outlet']+$info['amount_to']+$info['amount_tr']+$info['amount_ts'];
                     foreach($info  as $key=>$r)
                     {
                         if(!(($key=='crop_name')||($key=='crop_type_name')||($key=='variety_name')||($key=='pack_size')||($key=='amount_price_unit')))
