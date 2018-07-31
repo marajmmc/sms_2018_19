@@ -94,7 +94,7 @@ class Report_stock_hq_outlet_courier extends Root_Controller
     private function system_list()
     {
         $user = User_helper::get_user();
-        $method='list';
+        $method='search_list';
         if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
         {
             $reports=$this->input->post('report');
@@ -572,11 +572,11 @@ class Report_stock_hq_outlet_courier extends Root_Controller
     private function system_set_preference()
     {
         $user = User_helper::get_user();
-        $method='list';
+        $method='search_list';
         if(isset($this->permissions['action6']) && ($this->permissions['action6']==1))
         {
             $data['system_preference_items']=System_helper::get_preference($user->user_id,$this->controller_url,$method,$this->get_preference_headers());
-            $data['preference_method_name']='search';
+            $data['preference_method_name']=$method;
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("preference_add_edit",$data,true));
             $ajax['system_page_url']=site_url($this->controller_url.'/index/set_preference');
