@@ -329,7 +329,10 @@ class Report_stock_variety_details_analysis extends Root_Controller
         {
             if(!(isset($stocks[$result['variety_id']][$result['pack_size_id']])))
             {
-                $stocks[$result['variety_id']][$result['pack_size_id']]=$this->initialize_row('','','',$pack_sizes[$result['pack_size_id']]);
+                if($pack_size_id!=0)
+                {
+                    $stocks[$result['variety_id']][$result['pack_size_id']]=$this->initialize_row('','','',$pack_sizes[$result['pack_size_id']]);
+                }
             }
 
             if(($pack_size_id>0)||($pack_size_id==-2))
