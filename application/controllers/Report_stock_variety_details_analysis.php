@@ -416,9 +416,9 @@ class Report_stock_variety_details_analysis extends Root_Controller
         $this->db->from($this->config->item('table_sms_transfer_wo_details').' details');
         $this->db->select('details.variety_id,details.pack_size_id');
 
-        $this->db->select('SUM(CASE WHEN wo.date_updated_delivery_forward<'.$date_start.' then details.quantity_approve ELSE 0 END) out_opening',false);
+        $this->db->select('SUM(CASE WHEN wo.date_delivery<'.$date_start.' then details.quantity_approve ELSE 0 END) out_opening',false);
 
-        $this->db->select('SUM(CASE WHEN wo.date_updated_delivery_forward>='.$date_start.' and wo.date_updated_delivery_forward<='.$date_end.' then details.quantity_approve ELSE 0 END) out_wo',false);
+        $this->db->select('SUM(CASE WHEN wo.date_delivery>='.$date_start.' and wo.date_updated_delivery_forward<='.$date_end.' then details.quantity_approve ELSE 0 END) out_wo',false);
 
 
 
