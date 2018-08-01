@@ -403,9 +403,13 @@ class Report_stock_hq_outlet_courier extends Root_Controller
         $this->db->where('details.status !=',$this->config->item('system_status_delete'));
         $this->db->where('oo.status_delivery',$this->config->item('system_status_delivered'));
         $this->db->where_in('details.variety_id',$variety_ids);
-        if($pack_size_id>0)
+        if($pack_size_id>=0 && is_numeric($pack_size_id))
         {
             $this->db->where('details.pack_size_id',$pack_size_id);
+        }
+        elseif($pack_size_id ==-2)
+        {
+            $this->db->where('details.pack_size_id >',0);
         }
         $this->db->group_by('details.variety_id');
         $this->db->group_by('details.pack_size_id');
@@ -428,9 +432,13 @@ class Report_stock_hq_outlet_courier extends Root_Controller
         $this->db->join($this->config->item('table_pos_sale').' sale','sale.id=details.sale_id','INNER');
         $this->db->where('sale.status !=',$this->config->item('system_status_delete'));
         $this->db->where_in('details.variety_id',$variety_ids);
-        if($pack_size_id>0)
+        if($pack_size_id>=0 && is_numeric($pack_size_id))
         {
             $this->db->where('details.pack_size_id',$pack_size_id);
+        }
+        elseif($pack_size_id ==-2)
+        {
+            $this->db->where('details.pack_size_id >',0);
         }
         $this->db->group_by('details.variety_id');
         $this->db->group_by('details.pack_size_id');
