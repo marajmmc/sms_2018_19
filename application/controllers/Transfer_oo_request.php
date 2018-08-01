@@ -654,10 +654,17 @@ class Transfer_oo_request extends Root_Controller
             }
             $this->db->from($this->config->item('table_sms_transfer_oo').' transfer_oo');
             $this->db->select('transfer_oo.*');
+
             $this->db->join($this->config->item('table_pos_setup_user_info').' pos_setup_user_info','pos_setup_user_info.user_id=transfer_oo.user_updated_delivery','LEFT');
             $this->db->select('pos_setup_user_info.name full_name_delivery_edit');
             $this->db->join($this->config->item('table_pos_setup_user_info').' pos_setup_user_info_forward','pos_setup_user_info_forward.user_id=transfer_oo.user_updated_delivery_forward','LEFT');
             $this->db->select('pos_setup_user_info_forward.name full_name_delivery_forward');
+
+            $this->db->join($this->config->item('table_pos_setup_user_info').' pos_user_receive','pos_user_receive.user_id=transfer_oo.user_updated_receive','LEFT');
+            $this->db->select('pos_user_receive.name full_name_receive');
+            $this->db->join($this->config->item('table_pos_setup_user_info').' pos_user_receive_forward','pos_user_receive_forward.user_id=transfer_oo.user_updated_receive_forward','LEFT');
+            $this->db->select('pos_user_receive_forward.name full_name_receive_forward');
+
             $this->db->join($this->config->item('table_sms_transfer_oo_courier_details').' wo_courier_details','wo_courier_details.transfer_oo_id=transfer_oo.id','LEFT');
             $this->db->select('
                                 wo_courier_details.date_delivery courier_date_delivery,
