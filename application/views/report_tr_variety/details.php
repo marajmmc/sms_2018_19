@@ -189,8 +189,7 @@ $CI=& get_instance();
                     <tr>
                         <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_STATUS_DELIVERY');?></label></th>
                         <th class="warning header_value"><label class="control-label"><?php echo $item['status_delivery'];?></label></th>
-                        <th class="widget-header header_caption"><label class="control-label pull-right">`TO` (Delivery) Number of Edit</label></th>
-                        <th class="warning"><label class="control-label"><?php echo $item['revision_count_delivery'];?></label></th>
+                        <th colspan="2">&nbsp;</th>
                     </tr>
                     <?php
                     if($item['date_delivery'])
