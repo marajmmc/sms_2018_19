@@ -572,11 +572,3 @@ function get_dropdown_with_select(items,selected_value = '',select_label='Select
     }
     return dropdown_html;
 }
-function system_preset(params={})
-{
-    system_resized_image_files=[];
-    if(params.controller!==undefined)
-    {
-        // controller condition code
-    }
-}

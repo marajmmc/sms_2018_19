@@ -125,6 +125,7 @@ class Report_stock_hq_outlet_courier extends Root_Controller
         $variety_id=$this->input->post('variety_id');
         $date_end=$this->input->post('date_end');
         $pack_size_id=$this->input->post('pack_size_id');
+        $status_variety=$this->input->post('status_variety');
 
         $this->db->from($this->config->item('table_login_setup_classification_varieties').' v');
         $this->db->select('v.id variety_id,v.name variety_name,v.price_kg');
@@ -143,6 +144,10 @@ class Report_stock_hq_outlet_courier extends Root_Controller
                     $this->db->where('v.id',$variety_id);
                 }
             }
+        }
+        if(($status_variety==$this->config->item('system_status_active'))||($status_variety==$this->config->item('system_status_inactive')))
+        {
+            $this->db->where('v.status',$status_variety);
         }
         $this->db->order_by('crop.ordering','ASC');
         $this->db->order_by('crop.id','ASC');
