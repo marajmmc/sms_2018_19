@@ -219,6 +219,7 @@ class Report_stock_variety_available extends Root_Controller
                 }
             }
         }
+        $this->db->where('v.status',$this->config->item('system_status_active'));
         $results=$this->db->get()->result_array();
         $to_search=array();
         foreach($results as $result)
@@ -249,6 +250,7 @@ class Report_stock_variety_available extends Root_Controller
                 }
             }
         }
+        $this->db->where('v.status',$this->config->item('system_status_active'));
         $results=$this->db->get()->result_array();
         $to_all=array();
         foreach($results as $result)
@@ -289,6 +291,7 @@ class Report_stock_variety_available extends Root_Controller
                 }
             }
         }
+        $this->db->where('v.status',$this->config->item('system_status_active'));
         if($pack_size_id>0 && is_numeric($pack_size_id))
         {
             $this->db->where('stock_summary_variety.pack_size_id',$pack_size_id);
