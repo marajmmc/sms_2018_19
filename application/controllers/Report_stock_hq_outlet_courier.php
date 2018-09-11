@@ -261,14 +261,32 @@ class Report_stock_hq_outlet_courier extends Root_Controller
             {
                 if($pack_size_id!=0)
                 {
-                    $stocks[$result['variety_id']][$result['pack_size_id']]=$this->initialize_row('','','',$pack_sizes[$result['pack_size_id']]);
+                    if($pack_size_id>0)
+                    {
+                        if($pack_size_id==$result['pack_size_id'])
+                        {
+                            $stocks[$result['variety_id']][$result['pack_size_id']]=$this->initialize_row('','','',$pack_sizes[$result['pack_size_id']]);
+                        }
+                    }
+                    else
+                    {
+                        $stocks[$result['variety_id']][$result['pack_size_id']]=$this->initialize_row('','','',$pack_sizes[$result['pack_size_id']]);
+                    }
+
                 }
             }
-            if(($pack_size_id>0)||($pack_size_id==-2))
+            if($pack_size_id==-2)
             {
                 $stocks[$result['variety_id']][$result['pack_size_id']]['stock_hq_pkt']+=$result['in_convert_bulk_pack_opening'];
                 $stocks[$result['variety_id']][$result['pack_size_id']]['stock_hq_kg']+=(($result['in_convert_bulk_pack_opening']*$pack_sizes[$result['pack_size_id']])/1000);
-
+            }
+            elseif($pack_size_id>0)
+            {
+                if($pack_size_id==$result['pack_size_id'])
+                {
+                    $stocks[$result['variety_id']][$result['pack_size_id']]['stock_hq_pkt']+=$result['in_convert_bulk_pack_opening'];
+                    $stocks[$result['variety_id']][$result['pack_size_id']]['stock_hq_kg']+=(($result['in_convert_bulk_pack_opening']*$pack_sizes[$result['pack_size_id']])/1000);
+                }
             }
             else if($pack_size_id==0)
             {
