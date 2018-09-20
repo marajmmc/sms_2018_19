@@ -198,7 +198,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                                     <label class="control-label" id="quantity_request_kg_<?php echo $index+1;?>"> <?php echo number_format($quantity_request_kg,3,'.','');?> </label>
                                 </td>
                                 <td>
-                                    <input type="text" value="<?php echo $quantity_approve; ?>" id="quantity_approve_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][quantity_approve]" class="form-control float_type_positive quantity_approve" />
+                                    <input type="text" value="<?php echo $quantity_approve; ?>" id="quantity_approve_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][quantity_approve]" class="form-control integer_type_positive quantity_approve" />
                                 </td>
                                 <td class="text-right">
                                     <label class="control-label <?php echo $class_quantity_exist_warning;?>" id="quantity_approve_kg_<?php echo $index+1;?>"> <?php echo number_format($quantity_approve_kg,3,'.','');?> </label>
@@ -282,7 +282,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <label class="control-label quantity_request_kg"> </label>
             </td>
             <td class="text-right">
-                <input type="text" class="form-control float_type_positive quantity_approve" value="" style="display: none;" />
+                <input type="text" class="form-control integer_type_positive quantity_approve" value="" style="display: none;" />
             </td>
             <td class="text-right">
                 <label class="control-label quantity_approve_kg"> </label>

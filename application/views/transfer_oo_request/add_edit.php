@@ -174,7 +174,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                                     </label>
                                 </td>
                                 <td>
-                                    <input type="text" value="<?php echo System_helper::get_string_quantity($value['quantity_request']); ?>" class="form-control float_type_positive quantity_request" id="quantity_request_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][quantity_request]">
+                                    <input type="text" value="<?php echo System_helper::get_string_quantity($value['quantity_request']); ?>" class="form-control integer_type_positive quantity_request" id="quantity_request_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>" name="items[<?php echo $index+1;?>][quantity_request]">
                                 </td>
                                 <td class="text-right">
                                     <label id="quantity_request_kg_<?php echo $index+1;?>"> <?php echo System_helper::get_string_kg($quantity_request_kg);?> </label>
@@ -250,7 +250,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <label class="control-label stock_available_kg"> </label>
             </td>
             <td class="text-right">
-                <input type="text" class="form-control float_type_positive quantity_request" value="" style="display: none;" />
+                <input type="text" class="form-control integer_type_positive quantity_request" value="" style="display: none;" />
             </td>
             <td class="text-right">
                 <label class="control-label quantity_request_kg"> </label>
