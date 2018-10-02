@@ -388,11 +388,11 @@ class Transfer_oo_receive_solve extends Root_Controller
         }
 
         $path='images/transfer/oo_receive_solve/'.$id;
-        $dir=(FCPATH).$path;
-        if(!is_dir($dir))
-        {
-            mkdir($dir, 0777);
-        }
+//        $dir=(FCPATH).$path;
+//        if(!is_dir($dir))
+//        {
+//            mkdir($dir, 0777);
+//        }
         $uploaded_images = System_helper::upload_file($path);
         if(array_key_exists('image_name',$uploaded_images))
         {

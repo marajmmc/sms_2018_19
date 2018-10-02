@@ -69,7 +69,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             <label class="control-label pull-right">Header Image</label>
         </div>
         <div class="col-sm-8">
-            <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_picture_setup_print').$item['image_header_location']; ?>" alt="<?php echo $item['image_header_name']; ?>">
+            <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_picture').$item['image_header_location']; ?>" alt="<?php echo $item['image_header_name']; ?>">
         </div>
     </div>
     <div class="row show-grid">
@@ -77,7 +77,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             <label class="control-label pull-right">Footer Image</label>
         </div>
         <div class="col-sm-8">
-            <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_picture_setup_print').$item['image_footer_location']; ?>" alt="<?php echo $item['image_footer_name']; ?>">
+            <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_picture').$item['image_footer_location']; ?>" alt="<?php echo $item['image_footer_name']; ?>">
         </div>
     </div>
 

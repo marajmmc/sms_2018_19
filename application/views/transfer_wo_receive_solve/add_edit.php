@@ -314,7 +314,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <input type="file" class="browse_button" data-preview-container="#image_name" data-preview-width="300" name="image_name">
             </div>
             <div class="col-xs-4" id="image_name">
-                <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_picture_transfer').$item['image_location']; ?>" alt="">
+                <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_picture').$item['image_location']; ?>" alt="">
             </div>
         </div>
     </div>

@@ -40,30 +40,88 @@ class System_helper
     public static function upload_file($save_dir='images',$allowed_types='gif|jpg|png',$max_size=10240)
     {
         $CI= & get_instance();
-        $CI->load->library('upload');
-        $config=array();
-        $config['upload_path']=FCPATH.$save_dir;
-        $config['allowed_types']=$allowed_types;
-        $config['max_size']=$max_size;
-        $config['overwrite']=false;
-        $config['remove_spaces']=true;
-
         $uploaded_files=array();
-        foreach ($_FILES as $key=>$value)
+        if(sizeof($_FILES)>0)
         {
-            if(strlen($value['name'])>0)
+            $file_selected=false;
+            $file_size_ok=true;
+            foreach ($_FILES as $key=>$value)
             {
-                $CI->upload->initialize($config);
-                if($CI->upload->do_upload($key))
+                if(strlen($value['name'])>0)
                 {
-                    $uploaded_files[$key]=array('status'=>true,'info'=>$CI->upload->data());
+                    $file_selected=true;
+                    if ($value['size']>($max_size*1000))
+                    {
+                        $file_size_ok=false;
+                        $uploaded_files[$key]=array('status'=>false,'message'=>$value['name'].': File size is high');
+                    }
+                }
+            }
+            //upload to file server
+            if($file_selected && $file_size_ok)
+            {
+                // create curl resource
+                $ch = curl_init();
+                // set url
+                curl_setopt($ch, CURLOPT_URL, $CI->config->item('system_upload_api_url'));
+
+                //set to post data
+                curl_setopt($ch, CURLOPT_POST,TRUE);
+                $data = array();
+                $data['upload_site_root_dir']=$CI->config->item('system_site_root_folder');
+                $data['upload_auth_key']=$CI->config->item('system_upload_image_auth_key');
+                $data['save_dir']=$save_dir;
+                $data['allowed_types']=$allowed_types;
+                $data['max_size']=$max_size;
+                foreach ($_FILES as $key=>$value)
+                {
+                    if(strlen($value['name'])>0)
+                    {
+                        //also check max size here
+                        $data[$key] = new CURLFile($value['tmp_name'],$value['type'], $value['name']);
+                    }
+                }
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+
+                //return the transfer as a string
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER,TRUE);
+
+                // $output contains the output string
+                $response = curl_exec($ch);
+                $http_status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                if($http_status==200)
+                {
+                    $response_array=json_decode($response,true);
+                    if($response_array['status'])
+                    {
+                        $uploaded_files=$response_array['uploaded_files'];
+                    }
+                    else
+                    {
+                        foreach ($_FILES as $key=>$value)
+                        {
+                            if(strlen($value['name'])>0)
+                            {
+                                $uploaded_files[$key]=array('status'=>false,'message'=>$response_array['response_message']);
+                            }
+                        }
+                    }
                 }
                 else
                 {
-                    $uploaded_files[$key]=array('status'=>false,'message'=>$value['name'].': '.$CI->upload->display_errors());
+                    foreach ($_FILES as $key=>$value)
+                    {
+                        if(strlen($value['name'])>0)
+                        {
+                            $uploaded_files[$key]=array('status'=>false,'message'=>'Store Server unavailable.-'.$http_status);
+                        }
+                    }
                 }
+                // close curl resource to free up system resources
+                curl_close($ch);
             }
         }
+
         return $uploaded_files;
     }
     public static function invalid_try($action='',$action_id='',$other_info='')

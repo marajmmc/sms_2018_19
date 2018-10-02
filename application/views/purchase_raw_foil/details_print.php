@@ -27,8 +27,8 @@ if($result)
 {
     $width=$result['width']*100;
     $height=$result['height']*100;
-    $header_image=$CI->config->item('system_base_url_picture_setup_print').$result['image_header_location'];
-    $footer_image=$CI->config->item('system_base_url_picture_setup_print').$result['image_footer_location'];
+    $header_image=$CI->config->item('system_base_url_picture').$result['image_header_location'];
+    $footer_image=$CI->config->item('system_base_url_picture').$result['image_footer_location'];
 }
 ?>
 

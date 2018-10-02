@@ -6,6 +6,10 @@ $config['offline_controllers']=array('home','sys_site_offline');
 $config['external_controllers']=array('home');//user can use them without login
 $config['system_max_actions']=8;
 
+$config['system_site_root_folder']='sms_2018_19';
+$config['system_upload_image_auth_key']='ems_2018_19';
+$config['system_upload_api_url']='http://180.234.223.205/api_file_server/upload';
+
 $config['system_status_yes']='Yes';
 $config['system_status_no']='No';
 $config['system_status_active']='Active';
@@ -20,10 +24,8 @@ $config['system_status_delivered']='Delivered';
 $config['system_status_received']='Received';
 $config['system_status_rejected']='Rejected';
 
-$config['system_base_url_profile_picture']='http://50.116.76.180/login/';
-$config['system_base_url_picture_setup_print']='http://localhost/sms_2018_19/';
-$config['system_base_url_picture_transfer']='http://localhost/sms_2018_19/';
-
+$config['system_base_url_profile_picture']='http://180.234.223.205/login_2018_19/';
+$config['system_base_url_picture']='http://180.234.223.205/sms_2018_19/';
 //Stock
 $config['system_purpose_variety_stock_in']='Stock-In';
 $config['system_purpose_variety_excess']='Excess';
@@ -33,10 +35,6 @@ $config['system_purpose_variety_demonstration']='Demonstration';
 $config['system_purpose_variety_sample']='Sample Purpose';
 $config['system_purpose_variety_in_delivery_short']='Delivery Short';
 $config['system_purpose_variety_delivery_excess']='Deliver Excess';
-
-
-
-
 
 $config['system_customer_type_outlet_id']=1;
 $config['system_customer_type_customer_id']=2;
