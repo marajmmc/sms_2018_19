@@ -8,7 +8,7 @@ $config['system_max_actions']=8;
 
 $config['system_site_root_folder']='sms_2018_19';
 $config['system_upload_image_auth_key']='ems_2018_19';
-$config['system_upload_api_url']='http://180.234.223.205/api_file_server/upload';
+$config['system_upload_api_url']='http://45.251.59.5/api_file_server/upload';
 
 $config['system_status_yes']='Yes';
 $config['system_status_no']='No';
@@ -24,8 +24,8 @@ $config['system_status_delivered']='Delivered';
 $config['system_status_received']='Received';
 $config['system_status_rejected']='Rejected';
 
-$config['system_base_url_profile_picture']='http://180.234.223.205/login_2018_19/';
-$config['system_base_url_picture']='http://180.234.223.205/sms_2018_19/';
+$config['system_base_url_profile_picture']='http://45.251.59.5/login_2018_19/';
+$config['system_base_url_picture']='http://45.251.59.5/sms_2018_19/';
 //Stock
 $config['system_purpose_variety_stock_in']='Stock-In';
 $config['system_purpose_variety_excess']='Excess';
