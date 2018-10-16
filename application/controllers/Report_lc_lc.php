@@ -135,10 +135,6 @@ class Report_lc_lc extends Root_Controller
         $data['status_release']= 1;
         $data['status_received']= 1;
         $data['status_open']= 1;
-
-
-        
-        
         if($result)
         {
             if($result['preferences']!=null)
