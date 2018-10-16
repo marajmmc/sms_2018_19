@@ -121,20 +121,24 @@ class Report_lc_lc extends Root_Controller
         $data['fiscal_year']= 1;
         $data['month']= 1;
         $data['date_opening']= 1;
+        $data['principal_name']= 1;
+        $data['lc_number']= 1;
         $data['date_expected']= 1;
         $data['date_forwarded_time']= 1;
         $data['date_released_time']= 1;
         $data['date_receive']= 1;
         $data['date_received_time']= 1;
         $data['date_completed_time']= 1;
-        $data['principal_name']= 1;
         $data['currency_name']= 1;
-        $data['lc_number']= 1;
         $data['quantity_open_kg']= 1;
         $data['status_open_forward']= 1;
         $data['status_release']= 1;
         $data['status_received']= 1;
         $data['status_open']= 1;
+
+
+        
+        
         if($result)
         {
             if($result['preferences']!=null)
