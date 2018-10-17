@@ -25,7 +25,7 @@ if(isset($CI->permissions['action6']) && ($CI->permissions['action6']==1))
     $action_buttons[]=array
     (
         'label'=>'Preference',
-        'href'=>site_url($CI->controller_url.'/index/set_preference_lc')
+        'href'=>site_url($CI->controller_url.'/index/set_preference')
     );
 }
 $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
