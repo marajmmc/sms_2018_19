@@ -15,6 +15,17 @@ $CI = & get_instance();
     }
     ?>
     <?php
+    if($user->username_password_same)
+    {
+        ?>
+        <div class="col-sm-12 text-center">
+            <h3 class="alert alert-warning"><?php echo $CI->lang->line('MSG_USERNAME_PASSWORD_SAME');?></h3>
+
+        </div>
+    <?php
+    }
+    ?>
+    <?php
     if($CI->is_site_offline())
     {
         ?>

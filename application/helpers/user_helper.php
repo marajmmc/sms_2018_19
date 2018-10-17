@@ -7,19 +7,28 @@ class User_helper
     function __construct($id)
     {
         $CI = & get_instance();
-        $user = $CI->db->get_where($CI->config->item('table_login_setup_user_info'), array('user_id' => $id,'revision'=>1))->row();
-        if ($user)
+        $this->username_password_same=false;
+        //user
+        $result=Query_helper::get_info($CI->config->item('table_login_setup_user'),'*',array('id ='.$id),1);
+        if($result && (md5($result['user_name'])==$result['password']))
         {
-            foreach ($user as $key => $value)
+            $this->username_password_same=true;
+        }
+        //user info
+        $result=Query_helper::get_info($CI->config->item('table_login_setup_user_info'),'*',array('user_id ='.$id,'revision =1'),1);
+        if ($result)
+        {
+            foreach ($result as $key => $value)
             {
                 $this->$key = $value;
             }
         }
+        //user_group
         $this->user_group=0;
-        $assigned_group=$CI->db->get_where($CI->config->item('table_system_assigned_group'), array('user_id' => $id,'revision'=>1))->row();
-        if($assigned_group)
+        $result=Query_helper::get_info($CI->config->item('table_system_assigned_group'),'*',array('user_id ='.$id,'revision =1'),1);
+        if($result)
         {
-            $this->user_group=$assigned_group->user_group;
+            $this->user_group=$result['user_group'];
         }
     }
     public static function login($username, $password)

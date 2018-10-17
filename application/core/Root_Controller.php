@@ -24,6 +24,13 @@ abstract class Root_Controller extends CI_Controller
                         $this->dashboard_page();
                     }
                 }
+                if($user->username_password_same)
+                {
+                    if(!in_array(strtolower($this->router->class),array('profile_password','home')))
+                    {
+                        $this->dashboard_page();
+                    }
+                }
             }
         }
         else
