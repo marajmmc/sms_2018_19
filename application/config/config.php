@@ -379,9 +379,9 @@ $config['encryption_key'] = '';
 |
 */
 $config['sess_driver'] = 'database';
-$config['sess_cookie_name'] = 'arm_sms_2018_19';
+$config['sess_cookie_name'] = 'arm_login_2018_19';
 $config['sess_expiration'] = 7200;
-$config['sess_save_path'] = 'arm_sms_2018_19.system_session';
+$config['sess_save_path'] = 'arm_login_2018_19.system_session';
 $config['sess_match_ip'] = FALSE;
 $config['sess_time_to_update'] = 300;
 $config['sess_regenerate_destroy'] = FALSE;

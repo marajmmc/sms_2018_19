@@ -73,20 +73,19 @@ abstract class Root_Controller extends CI_Controller
         {
             $ajax['system_message']=$message;
         }
-        $ajax['system_page_url']=base_url()."home/login";
+        $ajax['system_page_url']=site_url("home/login");
         $this->json_return($ajax);
     }
     public function dashboard_page($message="")
     {
         $ajax['status']=true;
-        $data['test']='asdf';
-        $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("dashboard",$data,true));
-        $ajax['system_content'][]=array("id"=>"#system_menus","html"=>$this->load->view("menu",array(),true));
+        $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("dashboard",'',true));
+        $ajax['system_content'][]=array("id"=>"#system_menus","html"=>$this->load->view("menu",'',true));
         if($message)
         {
             $ajax['system_message']=$message;
         }
-        $ajax['system_page_url']=base_url()."home";
+        $ajax['system_page_url']=site_url();
         $this->json_return($ajax);
     }
 }
