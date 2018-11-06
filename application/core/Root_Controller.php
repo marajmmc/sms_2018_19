@@ -12,7 +12,7 @@ abstract class Root_Controller extends CI_Controller
             {
                 if(!in_array(strtolower($this->router->class),$this->config->item('external_controllers')))
                 {
-                    $this->login_page("Time out");
+                    $this->login_page($this->lang->line('MSG_SESSION_TIME_OUT'));
                 }
             }
             else
@@ -73,7 +73,7 @@ abstract class Root_Controller extends CI_Controller
         {
             $ajax['system_message']=$message;
         }
-        $ajax['system_page_url']=site_url("home/login");
+        $ajax['system_page_url']=site_url();
         $this->json_return($ajax);
     }
     public function dashboard_page($message="")
