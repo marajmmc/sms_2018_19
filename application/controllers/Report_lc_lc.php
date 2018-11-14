@@ -124,7 +124,9 @@ class Report_lc_lc extends Root_Controller
         $data['principal_name']= 1;
         $data['lc_number']= 1;
         $data['date_expected']= 1;
+        $data['date_awb']= 1;
         $data['date_forwarded_time']= 1;
+        $data['date_release']= 1;
         $data['date_released_time']= 1;
         $data['date_receive']= 1;
         $data['date_received_time']= 1;
@@ -177,7 +179,7 @@ class Report_lc_lc extends Root_Controller
         $this->db->select('principal.name principal_name');
         $this->db->join($this->config->item('table_login_setup_currency').' currency','currency.id = lc.currency_id','INNER');
         $this->db->select('currency.name currency_name');
-        $this->db->where('lc.status_open !=',$this->config->item('system_status_delete'));
+
         $this->db->group_by('lc.id');
         $this->db->order_by('lc.id','DESC');
 
@@ -199,6 +201,10 @@ class Report_lc_lc extends Root_Controller
         {
             $this->db->where('lc.status_open',$status_open);
         }
+        else
+        {
+            $this->db->where('lc.status_open !=',$this->config->item('system_status_delete'));
+        }
 
         if($principal_id)
         {
@@ -217,7 +223,9 @@ class Report_lc_lc extends Root_Controller
             $item['month']=$this->lang->line("LABEL_MONTH_$result[month_id]");
             $item['date_opening']=System_helper::display_date($result['date_opening']);
             $item['date_expected']=System_helper::display_date($result['date_expected']);
+            $item['date_awb']=System_helper::display_date($result['date_awb']);
             $item['date_forwarded_time']=System_helper::display_date_time($result['date_open_forward']);
+            $item['date_release']=System_helper::display_date_time($result['date_release']);
             $item['date_released_time']=System_helper::display_date_time($result['date_release_completed']);
             $item['date_receive']=System_helper::display_date($result['date_receive']);
             $item['date_received_time']=System_helper::display_date_time($result['date_receive_completed']);
@@ -289,7 +297,7 @@ class Report_lc_lc extends Root_Controller
             $this->db->join($this->config->item('table_login_setup_user_info').' ui_expense_completed','ui_expense_completed.user_id = lco.user_expense_completed','LEFT');
             $this->db->select('ui_expense_completed.name expense_completed_user_full_name');
             $this->db->where('lco.id',$item_id);
-            $this->db->where('lco.status_open !=',$this->config->item('system_status_delete'));
+            //$this->db->where('lco.status_open !=',$this->config->item('system_status_delete'));
             $data['item']=$this->db->get()->row_array();
 
             if(!$data['item'])

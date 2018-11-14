@@ -836,6 +836,12 @@ class Lc_release extends Root_Controller
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->json_return($ajax);
             }
+            if(!$item['date_release'])
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='Release Date is required.';
+                $this->json_return($ajax);
+            }
             if($item['status_release']!=$this->config->item('system_status_complete'))
             {
                 $ajax['status']=false;
@@ -872,6 +878,7 @@ class Lc_release extends Root_Controller
         }
 
         $this->db->trans_start();  //DB Transaction Handle START
+        $item['date_release']=System_helper::get_time($item['date_release']);
         $item['date_release_completed']=$time;
         $item['user_release_completed']=$user->user_id;
         Query_helper::update($this->config->item('table_sms_lc_open'),$item,array('id='.$id));

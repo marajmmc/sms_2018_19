@@ -126,7 +126,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <select id="date_type" name="report[date_type]" class="form-control">
                             <option value="date_opening">LC Opening Date</option>
                             <option value="date_expected"><?php echo $CI->lang->line('LABEL_DATE_EXPECTED');?></option>
+                            <option value="date_awb">LC AWB Date</option>
                             <option value="date_open_forward">LC Forward Time</option>
+                            <option value="date_release">LC Release Date</option>
                             <option value="date_release_completed">LC Released Time</option>
                             <option value="date_receive">LC Receive Date</option>
                             <option value="date_receive_completed">LC Received Time</option>

@@ -212,6 +212,8 @@ $lang['LABEL_DATE_DELIVERY']='Date for Delivery';
 $lang['LABEL_TIME_DELIVERY']='Delivery Time';
 $lang['LABEL_DATE_CHALLAN']='Date for Challan';
 $lang['LABEL_DATE_EXPENSE']='Date for Expense';
+$lang['LABEL_DATE_AWB']='Date for AWB';
+$lang['LABEL_DATE_RELEASE']='Date for Release';
 
 //months array
 $lang['LABEL_MONTH'] = 'Month';

@@ -287,6 +287,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 <script>
     $(document).ready(function()
     {
+        system_off_events();
         $(document).off('input','.quantity_release');
         $(document).on('input', '.quantity_release', function()
         {

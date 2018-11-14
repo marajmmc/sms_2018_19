@@ -1004,6 +1004,18 @@ class Lc_open extends Root_Controller
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->json_return($ajax);
             }
+            if(!$item_head['date_awb'])
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='AWB Date is required.';
+                $this->json_return($ajax);
+            }
+            if(!trim($item_head['awb_number']))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='AWB Number is required.';
+                $this->json_return($ajax);
+            }
             if($item_head['status_open_forward']!=$this->config->item('system_status_yes'))
             {
                 $ajax['status']=false;
@@ -1040,6 +1052,7 @@ class Lc_open extends Root_Controller
 
         $this->db->trans_start();  //DB Transaction Handle START
 
+        $item_head['date_awb']=System_helper::get_time($item_head['date_awb']);
         $item_head['date_open_forward']=$time;
         $item_head['user_open_forward']=$user->user_id;
         Query_helper::update($this->config->item('table_sms_lc_open'),$item_head,array('id='.$id));

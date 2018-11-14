@@ -168,7 +168,21 @@ if($item['status_receive']==$this->config->item('system_status_complete'))
             <?php
             }
             ?>
-
+            <?php
+            if($status_open_forward)
+            {
+                ?>
+                <tr>
+                    <th class="widget-header header_caption" style="vertical-align: top;"><label class="control-label pull-right">AWB Date</label></th>
+                    <th class=" header_value" colspan="3"><label class="control-label"><?php echo System_helper::display_date($item['date_awb']);?></label></th>
+                </tr>
+                <tr>
+                    <th class="widget-header header_caption" style="vertical-align: top;"><label class="control-label pull-right">AWB Number</label></th>
+                    <th class=" header_value" colspan="3"><label class="control-label"><?php echo $item['awb_number'];?></label></th>
+                </tr>
+            <?php
+            }
+            ?>
             <tr>
                 <th class="widget-header header_caption" style="vertical-align: top;"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS_LC_OPEN');?></label></th>
                 <th class=" header_value" colspan="3"><label class="control-label"><?php echo nl2br($item['remarks_open']);?></label></th>
@@ -177,6 +191,10 @@ if($item['status_receive']==$this->config->item('system_status_complete'))
             if($status_release)
             {
                 ?>
+                <tr>
+                    <th class="widget-header header_caption" style="vertical-align: top;"><label class="control-label pull-right">Release Date</label></th>
+                    <th class=" header_value" colspan="3"><label class="control-label"><?php echo System_helper::display_date($item['date_release']);?></label></th>
+                </tr>
                 <tr>
                     <th class="widget-header header_caption" style="vertical-align: top;"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS_LC_RELEASE');?></label></th>
                     <th class=" header_value" colspan="3"><label class="control-label"><?php echo nl2br($item['remarks_release']);?></label></th>

@@ -210,6 +210,14 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             </div>
             <div class="row show-grid">
                 <div class="col-xs-4">
+                    <label class="control-label pull-right">LC Release Date<span style="color:#FF0000">*</span></label>
+                </div>
+                <div class="col-sm-4 col-xs-8">
+                    <input type="text" name="item[date_release]" id="date_release" class="form-control datepicker date_large" value="" readonly/>
+                </div>
+            </div>
+            <div class="row show-grid">
+                <div class="col-xs-4">
                     <label class="control-label pull-right">LC Release<span style="color:#FF0000">*</span></label>
                 </div>
                 <div class="col-sm-4 col-xs-8">
@@ -236,3 +244,12 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
     </div>
     <div class="clearfix"></div>
 </form>
+<script>
+    $(document).ready(function()
+    {
+        system_off_events();
+        system_preset({controller:'<?php echo $CI->router->class; ?>'});
+        //$(".date_large").datepicker({dateFormat : display_date_format,changeMonth: true,changeYear: true,yearRange: "2015:+2"});
+        $(".date_large").datepicker({dateFormat : display_date_format});
+    });
+</script>
