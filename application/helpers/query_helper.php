@@ -13,6 +13,7 @@ class Query_helper
             if($save_history)
             {
                 $user = User_helper::get_user();
+                $time=time();
                 $historyData = Array(
                     'controller'=>$CI->router->class,
                     'table_id'=>$id,
@@ -20,7 +21,7 @@ class Query_helper
                     'data'=>json_encode($data),
                     'user_id'=>$user->user_id,
                     'action'=>'INSERT',
-                    'date'=>time()
+                    'date'=>$time
                 );
                 $CI->db->insert($CI->config->item('table_system_history'), $historyData);
             }
@@ -52,10 +53,10 @@ class Query_helper
 
         if($CI->db->affected_rows() >0)
         {
-            $user = User_helper::get_user();
-            $time=time();
             if($save_history)
             {
+                $user = User_helper::get_user();
+                $time=time();
                 foreach($rows as $row)
                 {
 
