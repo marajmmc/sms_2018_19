@@ -783,8 +783,22 @@ class Lc_receive extends Root_Controller
             $this->db->select('currency.name currency_name');
             $this->db->join($this->config->item('table_login_basic_setup_principal').' principal','principal.id = lco.principal_id','INNER');
             $this->db->select('principal.name principal_name');
+
+            $this->db->join($this->config->item('table_login_setup_user_info').' ui_forward','ui_forward.user_id = lco.user_open_forward','LEFT');
+            $this->db->select('ui_forward.name forward_user_full_name');
+
+            $this->db->join($this->config->item('table_login_setup_user_info').' ui_release_completed','ui_release_completed.user_id = lco.user_release_updated','LEFT');
+            $this->db->select('ui_release_completed.name release_completed_user_full_name');
+
+            $this->db->join($this->config->item('table_login_setup_user_info').' ui_receive_completed','ui_receive_completed.user_id = lco.user_receive_updated','LEFT');
+            $this->db->select('ui_receive_completed.name receive_completed_user_full_name');
+
+            /*$this->db->join($this->config->item('table_login_setup_user_info').' ui_expense_completed','ui_expense_completed.user_id = lco.user_expense_completed','LEFT');
+            $this->db->select('ui_expense_completed.name expense_completed_user_full_name');
+
             $this->db->join($this->config->item('table_login_setup_user_info').' ui','ui.user_id = lco.user_release_completed','LEFT');
-            $this->db->select('ui.name user_full_name');
+            $this->db->select('ui.name user_full_name');*/
+
             $this->db->where('lco.id',$item_id);
             $this->db->where('lco.status_open !=',$this->config->item('system_status_delete'));
             $data['item']=$this->db->get()->row_array();

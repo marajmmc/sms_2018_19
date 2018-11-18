@@ -83,7 +83,7 @@ if($item['status_receive']==$this->config->item('system_status_complete'))
                 ?>
                 <tr>
                     <th class="widget-header header_caption"><label class="control-label pull-right">LC Receive Completed By</label></th>
-                    <th class=" header_value"><label class="control-label"><?php echo $item['forward_user_full_name']?></label></th>
+                    <th class=" header_value"><label class="control-label"><?php echo $item['receive_completed_user_full_name']?></label></th>
                     <th class="widget-header header_caption"><label class="control-label pull-right">LC Receive Completed Time</label></th>
                     <th class=" header_value"><label class="control-label"><?php echo System_helper::display_date_time($item['date_receive_completed']);?></label></th>
                 </tr>

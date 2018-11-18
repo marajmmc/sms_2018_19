@@ -27,10 +27,22 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         <table class="table table-bordered table-responsive system_table_details_view">
             <thead>
             <tr>
-                <th class="widget-header header_caption"><label class="control-label pull-right">Release Completed By</label></th>
-                <th class="bg-danger header_value"><label class="control-label"><?php echo $item['user_full_name']?></label></th>
-                <th class="widget-header header_caption"><label class="control-label pull-right">Release Completed Time</label></th>
-                <th class="bg-danger header_value"><label class="control-label"><?php echo System_helper::display_date_time($item['date_release_completed']);?></label></th>
+                <th class="widget-header header_caption"><label class="control-label pull-right">LC Forwarded By</label></th>
+                <th class=" header_value"><label class="control-label"><?php echo $item['forward_user_full_name']?></label></th>
+                <th class="widget-header header_caption"><label class="control-label pull-right">LC Forwarded Time</label></th>
+                <th class=" header_value"><label class="control-label"><?php echo System_helper::display_date_time($item['date_open_forward']);?></label></th>
+            </tr>
+            <tr>
+                <th class="widget-header header_caption"><label class="control-label pull-right">LC Release Completed By</label></th>
+                <th class=" header_value"><label class="control-label"><?php echo $item['release_completed_user_full_name']?></label></th>
+                <th class="widget-header header_caption"><label class="control-label pull-right">LC Release Completed Time</label></th>
+                <th class=" header_value"><label class="control-label"><?php echo System_helper::display_date_time($item['date_release_completed']);?></label></th>
+            </tr>
+            <tr>
+                <th class="widget-header header_caption"><label class="control-label pull-right">LC Receive Completed By</label></th>
+                <th class=" header_value"><label class="control-label"><?php echo $item['receive_completed_user_full_name']?></label></th>
+                <th class="widget-header header_caption"><label class="control-label pull-right">LC Receive Completed Time</label></th>
+                <th class=" header_value"><label class="control-label"><?php echo System_helper::display_date_time($item['date_receive_completed']);?></label></th>
             </tr>
             </thead>
         </table>
