@@ -44,6 +44,19 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <th class="widget-header header_caption"><label class="control-label pull-right">LC Receive Completed Time</label></th>
                 <th class=" header_value"><label class="control-label"><?php echo System_helper::display_date_time($item['date_receive_completed']);?></label></th>
             </tr>
+            <?php
+            if($item['status_open']==$this->config->item('system_status_complete'))
+            {
+                ?>
+                <tr>
+                    <th class="widget-header header_caption"><label class="control-label pull-right">LC Closed/Completed By</label></th>
+                    <th class=" header_value"><label class="control-label"><?php echo $item['expense_completed_user_full_name']?></label></th>
+                    <th class="widget-header header_caption"><label class="control-label pull-right">LC Closed/Completed Time</label></th>
+                    <th class=" header_value"><label class="control-label"><?php echo System_helper::display_date_time($item['date_expense_completed']);?></label></th>
+                </tr>
+            <?php
+            }
+            ?>
             </thead>
         </table>
         <table class="table table-bordered table-responsive system_table_details_view">

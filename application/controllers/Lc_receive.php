@@ -793,10 +793,10 @@ class Lc_receive extends Root_Controller
             $this->db->join($this->config->item('table_login_setup_user_info').' ui_receive_completed','ui_receive_completed.user_id = lco.user_receive_updated','LEFT');
             $this->db->select('ui_receive_completed.name receive_completed_user_full_name');
 
-            /*$this->db->join($this->config->item('table_login_setup_user_info').' ui_expense_completed','ui_expense_completed.user_id = lco.user_expense_completed','LEFT');
+            $this->db->join($this->config->item('table_login_setup_user_info').' ui_expense_completed','ui_expense_completed.user_id = lco.user_expense_completed','LEFT');
             $this->db->select('ui_expense_completed.name expense_completed_user_full_name');
 
-            $this->db->join($this->config->item('table_login_setup_user_info').' ui','ui.user_id = lco.user_release_completed','LEFT');
+            /*$this->db->join($this->config->item('table_login_setup_user_info').' ui','ui.user_id = lco.user_release_completed','LEFT');
             $this->db->select('ui.name user_full_name');*/
 
             $this->db->where('lco.id',$item_id);
