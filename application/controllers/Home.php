@@ -16,17 +16,43 @@ class Home extends Root_controller
         }
         else
         {
-            if($this->input->post())
+            if(($this->input->post('username'))&&($this->input->post('password')))
             {
-                if(User_helper::login($this->input->post('username'),$this->input->post('password')))
+                $info=User_helper::login($this->input->post('username'),$this->input->post('password'));
+                if($info['status_code']=='111')
                 {
-                    $this->dashboard_page($this->lang->line('MSG_LOGIN_SUCCESS'));
+                    $this->dashboard_page($info['message']);
                 }
+                elseif($info['status_code']=='1101')//otp form
+                {
+                    $ajax['status']=true;
+                    $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("login_mobile_verification",$info,true));
+                    $ajax['system_content'][]=array("id"=>"#system_menus","html"=>'');
+                    $this->json_return($ajax);
+                }
+                //0,100,101,1100 wrong password
                 else
                 {
+                    $this->login_page($info['message'],$info['message_warning'],$this->input->post('username'));
+                }
+            }
+            else if($this->input->post('code_verification'))
+            {
+                $info=User_helper::login_mobile_verification($this->input->post('code_verification'));
+                if($info['status_code']=='1111')
+                {
+                    $this->dashboard_page($info['message']);
+                }
+                elseif($info['status_code']=='10')
+                {
                     $ajax['status']=false;
-                    $ajax['system_message']=$this->lang->line('MSG_USERNAME_PASSWORD_INVALID');
+                    $ajax['system_message']=$info['message'];
                     $this->json_return($ajax);
+                }
+                //0,110,1110
+                else
+                {
+                    $this->login_page($info['message']);
                 }
             }
             else
