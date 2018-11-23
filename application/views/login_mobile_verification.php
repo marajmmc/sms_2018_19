@@ -4,7 +4,7 @@ $CI = & get_instance();
 <div class="row widget">
     <div class="widget-header">
         <div class="title">
-            SMS Login
+            Stock Management System
         </div>
         <div class="clearfix"></div>
     </div>
