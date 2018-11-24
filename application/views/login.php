@@ -2,7 +2,7 @@
 <div class="row widget">
     <div class="widget-header">
         <div class="title">
-            Stock Management System
+            ..:: Stock Management System ::..
         </div>
         <div class="clearfix"></div>
     </div>

@@ -36,7 +36,6 @@ class User_helper
     }
     public static function login($username, $password)
     {
-        //also need to check if it has access to sms
         $CI = & get_instance();
         $time=time();
 
@@ -108,10 +107,7 @@ class User_helper
                             {
                                 if($verification_info['id']==$cookie_info)
                                 {
-                                    $cookie_expire_time=$time+User_helper::$mobile_verification_cookie_expires;
-                                    set_cookie(User_helper::$mobile_verification_cookie_prefix.$verification_info['user_id'],$verification_info['id'],$cookie_expire_time);
-
-                                    //set_cookie($CI->config->item('system_login_otp_session_prefix').$user['id'],$cookie_info,$cookie_expire_time);//increase time
+                                    set_cookie(User_helper::$mobile_verification_cookie_prefix.$verification_info['user_id'],$verification_info['id'],User_helper::$mobile_verification_cookie_expires);
                                     $mobile_verification_required=false;
                                     break;
                                 }
@@ -220,10 +216,8 @@ class User_helper
                         $data['status_used']=$CI->config->item('system_status_yes');
                         $data['date_updated']=$time;
                         Query_helper::update($CI->config->item('table_system_history_login_verification_code'),$data,array("id = ".$verification_id),false);
-
-                        $cookie_expire_time=$time+User_helper::$mobile_verification_cookie_expires;
-                        set_cookie(User_helper::$mobile_verification_cookie_prefix.$verification_info['user_id'],$verification_info['id'],$cookie_expire_time);
-
+                        
+                        set_cookie(User_helper::$mobile_verification_cookie_prefix.$verification_info['user_id'],$verification_info['id'],User_helper::$mobile_verification_cookie_expires);
                         $CI->session->set_userdata("user_id", $verification_info['user_id']);
                         $CI->session->set_userdata('login_mobile_verification_id','');//delete login_otp_id
                         return array('status_code'=>'1111','message'=>$CI->lang->line('MSG_LOGIN_SUCCESS'));
