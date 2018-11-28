@@ -185,7 +185,7 @@ if($result)
             <div id="popup_content" style="overflow: auto;">
             </div>
         </div>
-        <script type="text/javascript" src="<?php echo str_replace('sms_2018_19','login_2018_19',base_url('js/system_common.js?version=<?php echo time(); ?>')); ?>"></script>
-        <script type="text/javascript" src="<?php echo str_replace('sms_2018_19','login_2018_19',base_url('js/system_triggers.js?version=<?php echo time(); ?> ?>')); ?>"></script>
+        <script type="text/javascript" src="<?php echo str_replace('sms_2018_19','login_2018_19',base_url('js/system_common.js?version='.time())); ?>"></script>
+        <script type="text/javascript" src="<?php echo str_replace('sms_2018_19','login_2018_19',base_url('js/system_triggers.js?version='.time())); ?>"></script>
     </body>
 </html>
