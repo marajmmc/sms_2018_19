@@ -848,8 +848,12 @@ class Report_tr_variety extends Root_Controller
             $this->db->select('zones.id zone_id, zones.name zone_name');
             $this->db->join($this->config->item('table_login_setup_location_divisions').' divisions','divisions.id = zones.division_id','INNER');
             $this->db->select('divisions.id division_id, divisions.name division_name');
-            $this->db->join($this->config->item('table_pos_setup_user_info').' pos_setup_user_info','pos_setup_user_info.user_id=transfer_ow.user_updated_receive_forward','LEFT');
-            $this->db->select('pos_setup_user_info.name full_name_receive_forward');
+            /*$this->db->join($this->config->item('table_pos_setup_user_info').' pos_setup_user_info','pos_setup_user_info.user_id=transfer_ow.user_updated_receive_forward','LEFT');
+            $this->db->select('pos_setup_user_info.name full_name_receive_forward');*/
+            $this->db->join($this->config->item('table_pos_setup_user_info').' pos_setup_user_info','pos_setup_user_info.user_id=transfer_ow.user_updated_delivery','LEFT');
+            $this->db->select('pos_setup_user_info.name full_name_delivery_edit');
+            $this->db->join($this->config->item('table_pos_setup_user_info').' pos_setup_user_info_forward','pos_setup_user_info_forward.user_id=transfer_ow.user_updated_delivery_forward','LEFT');
+            $this->db->select('pos_setup_user_info_forward.name full_name_delivery_forward');
             $this->db->join($this->config->item('table_sms_transfer_ow_courier_details').' wo_courier_details','wo_courier_details.transfer_ow_id=transfer_ow.id','LEFT');
             $this->db->select('
                                 wo_courier_details.date_delivery courier_date_delivery,
@@ -892,7 +896,7 @@ class Report_tr_variety extends Root_Controller
                 $this->json_return($ajax);
             }
 
-            $user_ids=array();
+            /*$user_ids=array();
             $user_ids[$data['item']['user_created_request']]=$data['item']['user_created_request'];
             $user_ids[$data['item']['user_updated_request']]=$data['item']['user_updated_request'];
             $user_ids[$data['item']['user_updated_forward']]=$data['item']['user_updated_forward'];
@@ -901,6 +905,15 @@ class Report_tr_variety extends Root_Controller
             $user_ids[$data['item']['user_updated_delivery']]=$data['item']['user_updated_delivery'];
             $user_ids[$data['item']['user_updated_delivery_forward']]=$data['item']['user_updated_delivery_forward'];
             $user_ids[$data['item']['user_updated_receive_approve']]=$data['item']['user_updated_receive_approve'];
+            $data['users']=System_helper::get_users_info($user_ids);*/
+            $user_ids=array();
+            $user_ids[$data['item']['user_created_request']]=$data['item']['user_created_request'];
+            $user_ids[$data['item']['user_updated_request']]=$data['item']['user_updated_request'];
+            $user_ids[$data['item']['user_updated_forward']]=$data['item']['user_updated_forward'];
+            $user_ids[$data['item']['user_updated_approve']]=$data['item']['user_updated_approve'];
+            $user_ids[$data['item']['user_updated_approve_forward']]=$data['item']['user_updated_approve_forward'];
+            $user_ids[$data['item']['user_updated_receive']]=$data['item']['user_updated_receive'];
+            $user_ids[$data['item']['user_updated_receive_forward']]=$data['item']['user_updated_receive_forward'];
             $data['users']=System_helper::get_users_info($user_ids);
 
             $this->db->from($this->config->item('table_sms_transfer_ow_details').' transfer_ow_details');
