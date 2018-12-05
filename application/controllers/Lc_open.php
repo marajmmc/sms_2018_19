@@ -112,14 +112,13 @@ class Lc_open extends Root_Controller
         $this->db->select('fy.name fiscal_year');
         $this->db->select('principal.name principal_name');
         $this->db->select('currency.name currency_name');
-        $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.id = lc.fiscal_year_id','INNER');
+        $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.date_start <= lc.date_opening AND fy.date_end>lc.date_opening','INNER');
         $this->db->join($this->config->item('table_login_setup_currency').' currency','currency.id = lc.currency_id','INNER');
         $this->db->join($this->config->item('table_login_basic_setup_principal').' principal','principal.id = lc.principal_id','INNER');
         $this->db->where('lc.status_open_forward',$this->config->item('system_status_no'));
         $this->db->where('lc.status_open !=',$this->config->item('system_status_delete'));
         $this->db->order_by('lc.id','DESC');
         $results=$this->db->get()->result_array();
-
         $items=array();
         foreach($results as $result)
         {
@@ -179,7 +178,7 @@ class Lc_open extends Root_Controller
         $this->db->select('fy.name fiscal_year');
         $this->db->select('principal.name principal_name');
         $this->db->select('currency.name currency_name');
-        $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.id = lc.fiscal_year_id','INNER');
+        $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.date_start <= lc.date_opening AND fy.date_end>lc.date_opening','INNER');
         $this->db->join($this->config->item('table_login_setup_currency').' currency','currency.id = lc.currency_id','INNER');
         $this->db->join($this->config->item('table_login_basic_setup_principal').' principal','principal.id = lc.principal_id','INNER');
         $this->db->where('lc.status_open !=',$this->config->item('system_status_delete'));
@@ -217,8 +216,6 @@ class Lc_open extends Root_Controller
         {
             $data['title']="Create New LC";
             $data['item']['id']=0;
-            $data['item']['fiscal_year_id']=0;
-            $data['item']['month_id']=date('n');
             $data['item']['date_opening']=time();
             $data['item']['date_expected']='';
             $data['item']['principal_id']=0;
@@ -232,7 +229,6 @@ class Lc_open extends Root_Controller
             $data['item']['price_open_variety_currency']=0;
             $data['items']=array();
 
-            $data['fiscal_years']=Query_helper::get_info($this->config->item('table_login_basic_setup_fiscal_year'),array('id value','name text','date_start','date_end'),array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('id ASC'));
             $data['currencies']=Query_helper::get_info($this->config->item('table_login_setup_currency'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('ordering'));
             $data['principals']=Query_helper::get_info($this->config->item('table_login_basic_setup_principal'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('ordering'));
             $data['pack_sizes']=Query_helper::get_info($this->config->item('table_login_setup_classification_pack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('id ASC'));
@@ -277,8 +273,6 @@ class Lc_open extends Root_Controller
 
             $this->db->from($this->config->item('table_sms_lc_open').' lco');
             $this->db->select('lco.*');
-            $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.id = lco.fiscal_year_id','INNER');
-            $this->db->select('fy.name fiscal_year');
             $this->db->join($this->config->item('table_login_basic_setup_principal').' principal','principal.id = lco.principal_id','INNER');
             $this->db->select('principal.name principal_name');
             $this->db->where('lco.id',$item_id);
@@ -497,6 +491,7 @@ class Lc_open extends Root_Controller
             }
 
             $item_head['date_opening']=System_helper::get_time($item_head['date_opening']);
+            $item_head['month_id']=date('n',$item_head['date_opening']);
             $item_head['date_expected']=System_helper::get_time($item_head['date_expected']);
             $item_head['quantity_open_kg']=$quantity_open_kg;
             $item_head['price_open_variety_currency']=$price_open_variety_currency;
@@ -529,6 +524,7 @@ class Lc_open extends Root_Controller
             }
 
             $item_head['date_opening']=System_helper::get_time($item_head['date_opening']);
+            $item_head['month_id']=date('n',$item_head['date_opening']);
             $item_head['date_expected']=System_helper::get_time($item_head['date_expected']);
             $item_head['quantity_open_kg'] = $quantity_open_kg;
             $item_head['price_open_variety_currency'] = $price_open_variety_currency;
@@ -593,7 +589,7 @@ class Lc_open extends Root_Controller
             $this->db->select('fy.name fiscal_year');
             $this->db->select('currency.name currency_name');
             $this->db->select('principal.name principal_name');
-            $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.id = lco.fiscal_year_id','INNER');
+            $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.date_start <= lco.date_opening AND fy.date_end>lco.date_opening','INNER');
             $this->db->join($this->config->item('table_login_setup_currency').' currency','currency.id = lco.currency_id','INNER');
             $this->db->join($this->config->item('table_login_basic_setup_principal').' principal','principal.id = lco.principal_id','INNER');
             $this->db->join($this->config->item('table_login_setup_bank_account').' ba','ba.id = lco.bank_account_id','INNER');
@@ -684,7 +680,7 @@ class Lc_open extends Root_Controller
 
             $this->db->from($this->config->item('table_sms_lc_open').' lco');
             $this->db->select('lco.*');
-            $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.id = lco.fiscal_year_id','INNER');
+            $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.date_start <= lco.date_opening AND fy.date_end>lco.date_opening','INNER');
             $this->db->select('fy.name fiscal_year');
             $this->db->join($this->config->item('table_login_setup_currency').' currency','currency.id = lco.currency_id','INNER');
             $this->db->select('currency.name currency_name');
@@ -778,7 +774,7 @@ class Lc_open extends Root_Controller
             }
             $this->db->from($this->config->item('table_sms_lc_open').' lco');
             $this->db->select('lco.*');
-            $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.id = lco.fiscal_year_id','INNER');
+            $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.date_start <= lco.date_opening AND fy.date_end>lco.date_opening','INNER');
             $this->db->select('fy.name fiscal_year');
             $this->db->join($this->config->item('table_login_setup_currency').' currency','currency.id = lco.currency_id','INNER');
             $this->db->select('currency.name currency_name');
@@ -927,7 +923,7 @@ class Lc_open extends Root_Controller
             $this->db->select('fy.name fiscal_year');
             $this->db->select('currency.name currency_name');
             $this->db->select('principal.name principal_name');
-            $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.id = lco.fiscal_year_id','INNER');
+            $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.date_start <= lco.date_opening AND fy.date_end>lco.date_opening','INNER');
             $this->db->join($this->config->item('table_login_setup_currency').' currency','currency.id = lco.currency_id','INNER');
             $this->db->join($this->config->item('table_login_basic_setup_principal').' principal','principal.id = lco.principal_id','INNER');
             $this->db->join($this->config->item('table_login_setup_bank_account').' ba','ba.id = lco.bank_account_id','INNER');
@@ -1077,16 +1073,6 @@ class Lc_open extends Root_Controller
         $item = $this->input->post("item");
         if($id==0)
         {
-            if(!isset($item['fiscal_year_id']) || !is_numeric($item['fiscal_year_id']))
-            {
-                $this->message=$this->lang->line('LABEL_FISCAL_YEAR').' field is required.';
-                return false;
-            }
-            if(!isset($item['month_id']) || !is_numeric($item['month_id']))
-            {
-                $this->message=$this->lang->line('LABEL_MONTH').' field is required.';
-                return false;
-            }
             if(!isset($item['date_opening']) || !strtotime($item['date_opening']))
             {
                 $this->message=$this->lang->line('LABEL_DATE_OPENING'). ' field is required.';

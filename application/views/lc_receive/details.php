@@ -34,7 +34,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             </tr>
             <tr>
                 <th class="widget-header header_caption"><label class="control-label pull-right">Release Completed By</label></th>
-                <th class="bg-danger header_value"><label class="control-label"><?php echo $item['user_full_name']?></label></th>
+                <th class="bg-danger header_value"><label class="control-label"><?php echo $item['release_completed_user_full_name']?></label></th>
                 <th class="widget-header header_caption"><label class="control-label pull-right">Release Completed Time</label></th>
                 <th class="bg-danger header_value"><label class="control-label"><?php echo System_helper::display_date_time($item['date_release_completed']);?></label></th>
             </tr>
