@@ -13,7 +13,7 @@ if(isset($CI->permissions['action0']) && ($CI->permissions['action0']==1))
         'type'=>'button',
         'label'=>$CI->lang->line('ACTION_DETAILS'),
         'class'=>'button_jqx_action',
-        'data-action-link'=>site_url($CI->controller_url.'/index/details_all_lc')
+        'data-action-link'=>site_url($CI->controller_url.'/index/details')
     );
 }
 if(isset($CI->permissions['action4']) && ($CI->permissions['action4']==1))
@@ -138,7 +138,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         { text: '<?php echo $CI->lang->line('LABEL_CURRENCY_NAME'); ?>', dataField: 'currency_name', width:80,filtertype: 'list', hidden: <?php echo $system_preference_items['currency_name']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_LC_NUMBER'); ?>', dataField: 'lc_number', hidden: <?php echo $system_preference_items['lc_number']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_OPEN_KG'); ?>', dataField: 'quantity_open_kg', width:100, cellsalign: 'right', hidden: <?php echo $system_preference_items['quantity_open_kg']?0:1;?>},
-                        { text: '<?php echo $CI->lang->line('LABEL_STATUS_OPEN_FORWARD');?>', dataField: 'status_open_forward', width:30,filtertype: 'list',cellsalign: 'center', hidden: <?php echo $system_preference_items['status_open_forward']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_STATUS_OPEN_FORWARD');?>', dataField: 'status_open_forward', width:70,filtertype: 'list',cellsalign: 'center', hidden: <?php echo $system_preference_items['status_open_forward']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_STATUS_RELEASE');?>', dataField: 'status_release', width:70,filtertype: 'list',cellsalign: 'center', hidden: <?php echo $system_preference_items['status_release']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_STATUS_RECEIVED');?>', dataField: 'status_received', width:70,filtertype: 'list',cellsalign: 'center', hidden: <?php echo $system_preference_items['status_received']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_STATUS_OPEN');?>', dataField: 'status_open', width:70,filtertype: 'list',cellsalign: 'center', hidden: <?php echo $system_preference_items['status_open']?0:1;?>}

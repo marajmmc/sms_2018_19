@@ -9,8 +9,9 @@ class Lc_open extends Root_Controller
     {
         parent::__construct();
         $this->message="";
-        $this->permissions=User_helper::get_permission('Lc_open');
-        $this->controller_url='lc_open';
+        $this->permissions=User_helper::get_permission(get_class());
+        $this->controller_url=strtolower(get_class());
+        $this->load->helper('lc');
     }
     public function index($action="list",$id=0)
     {
@@ -49,10 +50,6 @@ class Lc_open extends Root_Controller
         elseif($action=="details")
         {
             $this->system_details($id);
-        }
-        elseif($action=="details_all_lc")
-        {
-            $this->system_details_all_lc($id);
         }
         elseif($action=="details_print_all_lc")
         {
@@ -109,12 +106,13 @@ class Lc_open extends Root_Controller
     {
         $this->db->from($this->config->item('table_sms_lc_open').' lc');
         $this->db->select('lc.*');
-        $this->db->select('fy.name fiscal_year');
-        $this->db->select('principal.name principal_name');
-        $this->db->select('currency.name currency_name');
         $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.date_start <= lc.date_opening AND fy.date_end>lc.date_opening','INNER');
-        $this->db->join($this->config->item('table_login_setup_currency').' currency','currency.id = lc.currency_id','INNER');
+        $this->db->select('fy.name fiscal_year');
         $this->db->join($this->config->item('table_login_basic_setup_principal').' principal','principal.id = lc.principal_id','INNER');
+        $this->db->select('principal.name principal_name');
+        $this->db->join($this->config->item('table_login_setup_currency').' currency','currency.id = lc.currency_id','INNER');
+        $this->db->select('currency.name currency_name');
+
         $this->db->where('lc.status_open_forward',$this->config->item('system_status_no'));
         $this->db->where('lc.status_open !=',$this->config->item('system_status_delete'));
         $this->db->order_by('lc.id','DESC');
@@ -175,12 +173,12 @@ class Lc_open extends Root_Controller
         }
         $this->db->from($this->config->item('table_sms_lc_open').' lc');
         $this->db->select('lc.*');
-        $this->db->select('fy.name fiscal_year');
-        $this->db->select('principal.name principal_name');
-        $this->db->select('currency.name currency_name');
         $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.date_start <= lc.date_opening AND fy.date_end>lc.date_opening','INNER');
-        $this->db->join($this->config->item('table_login_setup_currency').' currency','currency.id = lc.currency_id','INNER');
+        $this->db->select('fy.name fiscal_year');
         $this->db->join($this->config->item('table_login_basic_setup_principal').' principal','principal.id = lc.principal_id','INNER');
+        $this->db->select('principal.name principal_name');
+        $this->db->join($this->config->item('table_login_setup_currency').' currency','currency.id = lc.currency_id','INNER');
+        $this->db->select('currency.name currency_name');
         $this->db->where('lc.status_open !=',$this->config->item('system_status_delete'));
         $this->db->order_by('lc.id','DESC');
         $this->db->limit($pagesize,$current_records);
@@ -586,26 +584,21 @@ class Lc_open extends Root_Controller
 
             $this->db->from($this->config->item('table_sms_lc_open').' lco');
             $this->db->select('lco.*');
-            $this->db->select('fy.name fiscal_year');
-            $this->db->select('currency.name currency_name');
-            $this->db->select('principal.name principal_name');
             $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.date_start <= lco.date_opening AND fy.date_end>lco.date_opening','INNER');
+            $this->db->select('fy.name fiscal_year');
             $this->db->join($this->config->item('table_login_setup_currency').' currency','currency.id = lco.currency_id','INNER');
+            $this->db->select('currency.name currency_name');
             $this->db->join($this->config->item('table_login_basic_setup_principal').' principal','principal.id = lco.principal_id','INNER');
+            $this->db->select('principal.name principal_name');
+
             $this->db->join($this->config->item('table_login_setup_bank_account').' ba','ba.id = lco.bank_account_id','INNER');
             $this->db->join($this->config->item('table_login_setup_bank').' bank','bank.id = ba.bank_id','INNER');
             $this->db->select("CONCAT_WS(' ( ',ba.account_number,  CONCAT_WS('', bank.name,' - ',ba.branch_name,')')) bank_account_number");
-            $this->db->join($this->config->item('table_login_setup_user_info').' ui_forward','ui_forward.user_id = lco.user_open_forward','LEFT');
-            $this->db->select('ui_forward.name forward_user_full_name');
-            $this->db->join($this->config->item('table_login_setup_user_info').' ui_release_completed','ui_release_completed.user_id = lco.user_release_updated','LEFT');
-            $this->db->select('ui_release_completed.name release_completed_user_full_name');
-            $this->db->join($this->config->item('table_login_setup_user_info').' ui_receive_completed','ui_receive_completed.user_id = lco.user_receive_updated','LEFT');
-            $this->db->select('ui_receive_completed.name receive_completed_user_full_name');
-            $this->db->join($this->config->item('table_login_setup_user_info').' ui_expense_completed','ui_expense_completed.user_id = lco.user_expense_completed','LEFT');
-            $this->db->select('ui_expense_completed.name expense_completed_user_full_name');
+
             $this->db->where('lco.id',$item_id);
             $this->db->where('lco.status_open !=',$this->config->item('system_status_delete'));
             $data['item']=$this->db->get()->row_array();
+
             if(!$data['item'])
             {
                 System_helper::invalid_try('View Non Exists',$item_id);
@@ -613,15 +606,17 @@ class Lc_open extends Root_Controller
                 $ajax['system_message']='Invalid LC.';
                 $this->json_return($ajax);
             }
+            $data['info_basic']=Lc_helper::get_view_info_basic($data['item']);
+            $data['info_lc']=$this->get_view_info_lc($data['item']);
 
             $this->db->from($this->config->item('table_sms_lc_details').' lcd');
             $this->db->select('lcd.*');
+            $this->db->select('pack.name pack_size');
             $this->db->join($this->config->item('table_login_setup_classification_varieties').' v','v.id = lcd.variety_id','INNER');
             $this->db->select('v.id variety_id, v.name variety_name');
             $this->db->join($this->config->item('table_login_setup_classification_variety_principals').' vp','vp.variety_id = v.id AND vp.principal_id = '.$data['item']['principal_id'].' AND vp.revision = 1','INNER');
             $this->db->select('vp.name_import variety_name_import');
             $this->db->join($this->config->item('table_login_setup_classification_pack_size').' pack','pack.id = lcd.pack_size_id','LEFT');
-            $this->db->select('pack.name pack_size');
             $this->db->join($this->config->item('table_login_setup_classification_crop_types').' crop_type','crop_type.id = v.crop_type_id','LEFT');
             $this->db->select('crop_type.name crop_type_name');
             $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = crop_type.crop_id','LEFT');
@@ -656,101 +651,6 @@ class Lc_open extends Root_Controller
                 $ajax['system_message']=$this->message;
             }
             $ajax['system_page_url']=site_url($this->controller_url.'/index/details/'.$item_id);
-            $this->json_return($ajax);
-        }
-        else
-        {
-            $ajax['status']=false;
-            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
-            $this->json_return($ajax);
-        }
-    }
-    private function system_details_all_lc($id)
-    {
-        if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
-        {
-            if($id>0)
-            {
-                $item_id=$id;
-            }
-            else
-            {
-                $item_id=$this->input->post('id');
-            }
-
-            $this->db->from($this->config->item('table_sms_lc_open').' lco');
-            $this->db->select('lco.*');
-            $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.date_start <= lco.date_opening AND fy.date_end>lco.date_opening','INNER');
-            $this->db->select('fy.name fiscal_year');
-            $this->db->join($this->config->item('table_login_setup_currency').' currency','currency.id = lco.currency_id','INNER');
-            $this->db->select('currency.name currency_name');
-            $this->db->join($this->config->item('table_login_basic_setup_principal').' principal','principal.id = lco.principal_id','INNER');
-            $this->db->select('principal.name principal_name');
-            $this->db->join($this->config->item('table_login_setup_bank_account').' ba','ba.id = lco.bank_account_id','INNER');
-            $this->db->join($this->config->item('table_login_setup_bank').' bank','bank.id = ba.bank_id','INNER');
-            $this->db->select("CONCAT_WS(' ( ',ba.account_number,  CONCAT_WS('', bank.name,' - ',ba.branch_name,')')) bank_account_number");
-            $this->db->join($this->config->item('table_login_setup_user_info').' ui_forward','ui_forward.user_id = lco.user_open_forward','LEFT');
-            $this->db->select('ui_forward.name forward_user_full_name');
-            $this->db->join($this->config->item('table_login_setup_user_info').' ui_release_completed','ui_release_completed.user_id = lco.user_release_updated','LEFT');
-            $this->db->select('ui_release_completed.name release_completed_user_full_name');
-            $this->db->join($this->config->item('table_login_setup_user_info').' ui_receive_completed','ui_receive_completed.user_id = lco.user_receive_updated','LEFT');
-            $this->db->select('ui_receive_completed.name receive_completed_user_full_name');
-            $this->db->join($this->config->item('table_login_setup_user_info').' ui_expense_completed','ui_expense_completed.user_id = lco.user_expense_completed','LEFT');
-            $this->db->select('ui_expense_completed.name expense_completed_user_full_name');
-            $this->db->where('lco.id',$item_id);
-            $this->db->where('lco.status_open !=',$this->config->item('system_status_delete'));
-            $data['item']=$this->db->get()->row_array();
-
-            if(!$data['item'])
-            {
-                System_helper::invalid_try('View Non Exists',$item_id);
-                $ajax['status']=false;
-                $ajax['system_message']='Invalid LC.';
-                $this->json_return($ajax);
-            }
-
-            $this->db->from($this->config->item('table_sms_lc_details').' lcd');
-            $this->db->select('lcd.*');
-            $this->db->select('pack.name pack_size');
-            $this->db->join($this->config->item('table_login_setup_classification_varieties').' v','v.id = lcd.variety_id','INNER');
-            $this->db->select('v.id variety_id, v.name variety_name');
-            $this->db->join($this->config->item('table_login_setup_classification_variety_principals').' vp','vp.variety_id = v.id AND vp.principal_id = '.$data['item']['principal_id'].' AND vp.revision = 1','INNER');
-            $this->db->select('vp.name_import variety_name_import');
-            $this->db->join($this->config->item('table_login_setup_classification_pack_size').' pack','pack.id = lcd.pack_size_id','LEFT');
-            $this->db->join($this->config->item('table_login_setup_classification_crop_types').' crop_type','crop_type.id = v.crop_type_id','LEFT');
-            $this->db->select('crop_type.name crop_type_name');
-            $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = crop_type.crop_id','LEFT');
-            $this->db->select('crop.name crop_name');
-            $this->db->join($this->config->item('table_login_basic_setup_warehouse').' warehouse','warehouse.id = lcd.receive_warehouse_id','LEFT');
-            $this->db->select('warehouse.name warehouse_name');
-            $this->db->where('lcd.lc_id',$item_id);
-            $this->db->where('lcd.quantity_open >0');
-            $this->db->order_by('lcd.id ASC');
-            $data['items']=$this->db->get()->result_array();
-
-            $this->db->from($this->config->item('table_sms_lc_expense').' lce');
-            $this->db->select('lce.*');
-            $this->db->join($this->config->item('table_login_setup_direct_cost_items').' dci','dci.id=lce.dc_id','INNER');
-            $this->db->select('dci.name dc_name');
-            $this->db->where('lce.lc_id',$item_id);
-            $data['dc_items']=$this->db->get()->result_array();
-
-            $results=Query_helper::get_info($this->config->item('table_sms_lc_expense_varieties'),'*',array('lc_id ='.$item_id),0,0,array(''));
-            $dc_expenses_varieties=array();
-            foreach($results as $result)
-            {
-                $dc_expenses_varieties[$result['variety_id']][$result['pack_size_id']][$result['dc_id']]=$result;
-            }
-            $data['dc_expense_varieties']=$dc_expenses_varieties;
-
-            $data['title']="LC Details :: ".Barcode_helper::get_barcode_lc($item_id);
-            $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/details_all_lc",$data,true));
-            if($this->message)
-            {
-                $ajax['system_message']=$this->message;
-            }
-            $ajax['system_page_url']=site_url($this->controller_url.'/index/details_all_lc/'.$item_id);
             $this->json_return($ajax);
         }
         else
@@ -792,24 +692,6 @@ class Lc_open extends Root_Controller
                 $ajax['system_message']='Invalid LC.';
                 $this->json_return($ajax);
             }
-            /*if($data['item']['status_release']!=$this->config->item('system_status_complete'))
-            {
-                $ajax['status']=false;
-                $ajax['system_message']='LC release pending.';
-                $this->json_return($ajax);
-            }
-            if($data['item']['status_receive']!=$this->config->item('system_status_complete'))
-            {
-                $ajax['status']=false;
-                $ajax['system_message']='LC receive pending.';
-                $this->json_return($ajax);
-            }*/
-            /*if($data['item']['status_open']==$this->config->item('system_status_complete'))
-            {
-                $ajax['status']=false;
-                $ajax['system_message']='LC Already Completed.';
-                $this->json_return($ajax);
-            }*/
 
             $this->db->from($this->config->item('table_sms_lc_details').' lcd');
             $this->db->select('lcd.*');
@@ -920,12 +802,12 @@ class Lc_open extends Root_Controller
 
             $this->db->from($this->config->item('table_sms_lc_open').' lco');
             $this->db->select('lco.*');
-            $this->db->select('fy.name fiscal_year');
-            $this->db->select('currency.name currency_name');
-            $this->db->select('principal.name principal_name');
             $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.date_start <= lco.date_opening AND fy.date_end>lco.date_opening','INNER');
+            $this->db->select('fy.name fiscal_year');
             $this->db->join($this->config->item('table_login_setup_currency').' currency','currency.id = lco.currency_id','INNER');
+            $this->db->select('currency.name currency_name');
             $this->db->join($this->config->item('table_login_basic_setup_principal').' principal','principal.id = lco.principal_id','INNER');
+            $this->db->select('principal.name principal_name');
             $this->db->join($this->config->item('table_login_setup_bank_account').' ba','ba.id = lco.bank_account_id','INNER');
             $this->db->join($this->config->item('table_login_setup_bank').' bank','bank.id = ba.bank_id','INNER');
             $this->db->select("CONCAT_WS(' ( ',ba.account_number,  CONCAT_WS('', bank.name,' - ',ba.branch_name,')')) bank_account_number");
@@ -951,6 +833,8 @@ class Lc_open extends Root_Controller
                 $ajax['system_message']='Already completed this LC :: '. Barcode_helper::get_barcode_lc($item_id);
                 $this->json_return($ajax);
             }
+            $data['info_basic']=Lc_helper::get_view_info_basic($data['item']);
+            $data['info_lc']=$this->get_view_info_lc($data['item']);
 
             $this->db->from($this->config->item('table_sms_lc_details').' lcd');
             $this->db->select('lcd.*');
@@ -1279,5 +1163,87 @@ class Lc_open extends Root_Controller
             }
         }
         return $data;
+    }
+    private function get_view_info_lc($lc_info)
+    {
+        $info_basic=array();
+
+        $result=array();
+        $result['label_1']=$this->lang->line('LABEL_FISCAL_YEAR');
+        $result['value_1']=$lc_info['fiscal_year'];
+        $result['label_2']=$this->lang->line('LABEL_MONTH');
+        $result['value_2']=date("F", mktime(0, 0, 0,  $lc_info['month_id'],1, 2000));
+        $info_basic[]=$result;
+        $result=array();
+        $result['label_1']=$this->lang->line('LABEL_PRINCIPAL_NAME');
+        $result['value_1']=$lc_info['principal_name'];
+        $result['label_2']=$this->lang->line('LABEL_LC_NUMBER');
+        $result['value_2']=$lc_info['lc_number'];
+        $info_basic[]=$result;
+        $result=array();
+        $result['label_1']=$this->lang->line('LABEL_DATE_OPENING');
+        $result['value_1']=System_helper::display_date($lc_info['date_opening']);
+        $result['label_2']=$this->lang->line('LABEL_CONSIGNMENT_NAME');
+        $result['value_2']=$lc_info['consignment_name'];
+        $info_basic[]=$result;
+        $result=array();
+        $result['label_1']=$this->lang->line('LABEL_DATE_EXPECTED');
+        $result['value_1']=System_helper::display_date($lc_info['date_expected']);
+        $result['label_2']=$this->lang->line('LABEL_BANK_ACCOUNT_NUMBER');
+        $result['value_2']=$lc_info['bank_account_number'];
+        $info_basic[]=$result;
+        //hidden in receive task
+        $result=array();
+        $result['label_1']=$this->lang->line('LABEL_CURRENCY_NAME');
+        $result['value_1']=$lc_info['currency_name'];
+        if($lc_info['status_open']==$this->config->item('system_status_complete'))
+        {
+            $result['label_2']=$this->lang->line('LABEL_CURRENCY_RATE');
+            $result['value_2']=number_format($lc_info['rate_currency'],2);;
+        }
+        $info_basic[]=$result;
+        //hidden in receive task
+        $result=array();
+        $result['label_1']=$this->lang->line('LABEL_PRICE_OPEN_OTHER_CURRENCY');
+        $result['value_1']=number_format($lc_info['price_open_other_currency'],2);;
+        if($lc_info['status_release']==$this->config->item('system_status_complete'))
+        {
+            $result['label_2']=$this->lang->line('LABEL_PRICE_RELEASE_OTHER_CURRENCY');
+            $result['value_2']=number_format($lc_info['price_release_other_currency'],2);;
+        }
+        $info_basic[]=$result;
+        //hidden in receive task
+        if($lc_info['status_open_forward']==$this->config->item('system_status_yes'))
+        {
+            $result=array();
+            $result['label_1']='AWB Date';
+            $result['value_1']=System_helper::display_date($lc_info['date_awb']);
+            $result['label_2']='AWB Number';
+            $result['value_2']=$lc_info['awb_number'];
+            $info_basic[]=$result;
+        }
+        if($lc_info['status_release']==$this->config->item('system_status_complete'))
+        {
+            $result=array();
+            $result['label_1']='Release Date';
+            $result['value_1']=System_helper::display_date($lc_info['date_release']);
+            $info_basic[]=$result;
+        }
+        if($lc_info['status_receive']==$this->config->item('system_status_complete'))
+        {
+            $result=array();
+            $result['label_1']=$this->lang->line('LABEL_DATE_PACKING_LIST');
+            $result['value_1']=System_helper::display_date($lc_info['date_packing_list']);
+            $result['label_2']=$this->lang->line('LABEL_NUMBER_PACKING_LIST');
+            $result['value_2']=$lc_info['packing_list_number'];
+            $info_basic[]=$result;
+            $result=array();
+            $result['label_1']=$this->lang->line('LABEL_DATE_RECEIVE');
+            $result['value_1']=System_helper::display_date($lc_info['date_packing_list']);
+            $result['label_2']=$this->lang->line('date_receive');
+            $result['value_2']=$lc_info['lot_number'];
+            $info_basic[]=$result;
+        }
+        return $info_basic;
     }
 }
