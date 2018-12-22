@@ -1240,7 +1240,7 @@ class Lc_open extends Root_Controller
             $result=array();
             $result['label_1']=$this->lang->line('LABEL_DATE_RECEIVE');
             $result['value_1']=System_helper::display_date($lc_info['date_packing_list']);
-            $result['label_2']=$this->lang->line('date_receive');
+            $result['label_2']=$this->lang->line('LABEL_NUMBER_LOT');
             $result['value_2']=$lc_info['lot_number'];
             $info_basic[]=$result;
         }
