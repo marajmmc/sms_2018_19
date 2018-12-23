@@ -112,6 +112,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 columnsreorder: true,
                 columns:
                 [
+                    { text: 'ID', dataField: 'id',width:50,cellsalign: 'right'},
                     { text: 'Purpose', dataField: 'purpose'},
                     { text: 'Controller', dataField: 'controller', width:250},
                     { text: 'Method', dataField: 'method', width:100},

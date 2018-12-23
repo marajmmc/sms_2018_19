@@ -7,16 +7,11 @@ $action_buttons[]=array
     'label'=>$CI->lang->line("ACTION_BACK"),
     'href'=>site_url($CI->controller_url)
 );
-/*if((isset($CI->permissions['action7']) && ($CI->permissions['action7']==1)))
-{
-    $action_buttons[]=array
-    (
-        'type'=>'button',
-        'label'=>$CI->lang->line("ACTION_SAVE"),
-        'id'=>'button_action_save',
-        'data-form'=>'#save_form'
-    );
-}*/
+
+$action_buttons[]=array(
+    'label'=>$CI->lang->line("ACTION_REFRESH"),
+    'href'=>site_url($CI->controller_url.'/index/forward/'.$item['id'])
+);
 $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
 
