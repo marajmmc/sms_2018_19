@@ -21,8 +21,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 $width=8.27*100;
 $height=11.69*100/2;
 $row_per_page=20;
-$header_image=base_url('images/print/header.jpg');
-$footer_image=base_url('images/print/footer.jpg');
+$header_image=$CI->config->item('system_base_url_picture').'images/print/header.jpg';
+$footer_image=$CI->config->item('system_base_url_picture').'images/print/footer.jpg';
 $result=Query_helper::get_info($CI->config->item('table_system_setup_print'),'*',array('controller ="' .$this->controller_url.'"','method ="details_print"'),1);
 if($result)
 {

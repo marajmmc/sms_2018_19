@@ -2,10 +2,13 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 $CI=& get_instance();
 $action_buttons=array();
-$action_buttons[]=array
-(
-    'label'=>$CI->lang->line("ACTION_BACK"),
+$action_buttons[]=array(
+    'label'=>$CI->lang->line("ACTION_BACK").' to Pending List',
     'href'=>site_url($CI->controller_url)
+);
+$action_buttons[]=array(
+    'label'=>$CI->lang->line("ACTION_BACK").' to All list',
+    'href'=>site_url($CI->controller_url.'/index/list_all')
 );
 if((isset($CI->permissions['action1']) && ($CI->permissions['action1']==1)) || (isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)))
 {
@@ -37,58 +40,10 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             </div>
             <div class="clearfix"></div>
         </div>
-
-        <div class="col-md-12">
-            <table class="table table-bordered table-responsive system_table_details_view">
-                <thead>
-                <tr>
-                    <th class="widget-header header_caption"><label class="control-label pull-right">Release Completed By</label></th>
-                    <th class="bg-danger header_value"><label class="control-label"><?php echo $item['user_full_name']?></label></th>
-                    <th class="widget-header header_caption"><label class="control-label pull-right">Release Completed Time</label></th>
-                    <th class="bg-danger header_value"><label class="control-label"><?php echo System_helper::display_date_time($item['date_release_completed']);?></label></th>
-                </tr>
-                </thead>
-            </table>
-            <table class="table table-bordered table-responsive system_table_details_view">
-                <thead>
-                <tr>
-                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_FISCAL_YEAR');?></label></th>
-                    <th class=" header_value"><label class="control-label"><?php echo $item['fiscal_year']?></label></th>
-                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PRINCIPAL_NAME');?></label></th>
-                    <th class="bg-danger"><label class="control-label"><?php echo $item['principal_name'];?></label></th>
-                </tr>
-                <tr>
-                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_MONTH');?></label></th>
-                    <th class=" header_value"><label class="control-label"><?php echo date("F", mktime(0, 0, 0,  $item['month_id'],1, 2000));?></label></th>
-                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_LC_NUMBER');?></label></th>
-                    <th class="bg-danger"><label class="control-label"><?php echo $item['lc_number'];?></label></th>
-                </tr>
-                <tr>
-                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_OPENING');?></label></th>
-                    <th class=" header_value"><label class="control-label"><?php echo System_helper::display_date($item['date_opening']);?></label></th>
-                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CONSIGNMENT_NAME');?></label></th>
-                    <th class=" header_value" colspan="3"><label class="control-label"><?php echo $item['consignment_name'];?></label></th>
-                </tr>
-                <tr>
-                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_EXPECTED');?></label></th>
-                    <th class=" header_value"><label class="control-label"><?php echo System_helper::display_date($item['date_expected']);?></label></th>
-
-                </tr>
-                <tr>
-                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS_LC_OPEN');?></label></th>
-                    <th class=" header_value" colspan="3"><label class="control-label"><?php echo nl2br($item['remarks_open']);?></label></th>
-                </tr>
-                <tr>
-                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS_LC_RELEASE');?></label></th>
-                    <th class=" header_value" colspan="3"><label class="control-label"><?php echo nl2br($item['remarks_release']);?></label></th>
-                </tr>
-                <tr>
-                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_NUMBER_LOT');?></label></th>
-                    <th class="bg-danger header_value" colspan="3"><label class="control-label"><?php echo $item['lot_number'];?></label></th>
-                </tr>
-                </thead>
-            </table>
-        </div>
+        <?php
+        echo $CI->load->view("info_basic",'',true);
+        echo $CI->load->view("info_basic",array('accordion'=>array('header'=>'+LC Info','div_id'=>'accordion_lc_info','collapse'=>'in','data'=>$info_lc)),true);
+        ?>
         <div class="clearfix"></div>
         <div class="row show-grid">
             <div style="overflow-x: auto;" class="row show-grid">
