@@ -341,5 +341,121 @@ if($item['status_receive']==$this->config->item('system_status_complete'))
             ?>
         </table>
     </div>
+    <?php
+    if($status_completed)
+    {
+        ?>
+        <div style="overflow-x: auto;" class="row show-grid">
+            <table class="table table-bordered table-responsive">
+                <thead>
+                    <tr>
+                        <th colspan="21" class="text-center">Expense Details Information</th>
+                    </tr>
+                    <tr>
+                        <th style="width: 5px;"><?php echo $CI->lang->line('LABEL_SL_NO');?></th>
+                        <th>Expense Head</th>
+                        <th class="text-right"><?php echo $CI->lang->line('LABEL_TOTAL_TAKA');?></th>
+                        <?php
+                        foreach($items as $data)
+                        {
+                            ?>
+                            <th class="text-right"><?php echo $data['variety_name']?> ( <?php echo $data['pack_size']?$data['pack_size']:"Bulk"?> )</th>
+                        <?php
+                        }
+                        ?>
+                        <th class="text-right"><?php echo $CI->lang->line('LABEL_TOTAL_TAKA');?></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    $serial=0;
+                    $amount_total_dc_amount=0;
+                    $amount_total_variety=array();
+                    foreach($dc_items as $dc_item)
+                    {
+                        ++$serial;
+                        $amount_total_dc_amount+=$dc_item['amount'];
+                        ?>
+                        <tr>
+                            <td><?php echo $serial;?></td>
+                            <td><?php echo $dc_item['dc_name'];?></td>
+                            <td class="text-right"><?php echo number_format($dc_item['amount'],2);?></td>
+                            <?php
+                            $amount_expense_variety=0;
+                            $amount_total_expense_variety=0;
+                            foreach($items as $data)
+                            {
+                                if(isset($dc_expense_varieties[$data['variety_id']][$data['pack_size_id']][$dc_item['dc_id']]))
+                                {
+                                    $amount_expense_variety = $dc_expense_varieties[$data['variety_id']][$data['pack_size_id']][$dc_item['dc_id']]['amount'];
+                                }
+                                else
+                                {
+                                    $amount_expense_variety = 0;
+                                }
+                                $amount_total_expense_variety+=$amount_expense_variety;
+                                if(isset($amount_total_variety[$data['variety_id']][$data['pack_size_id']]))
+                                {
+                                    $amount_total_variety[$data['variety_id']][$data['pack_size_id']]+=$amount_expense_variety;
+                                }
+                                else
+                                {
+                                    $amount_total_variety[$data['variety_id']][$data['pack_size_id']]=$amount_expense_variety;
+                                }
+                                ?>
+                                <td class="text-right">
+                                    <?php
+                                    echo number_format($amount_expense_variety,2);
+                                    ?>
+                                </td>
+                            <?php
+                            }
+                            ?>
+                            <td class="text-right">
+                                <?php
+                                echo number_format($amount_total_expense_variety,2);
+                                ?>
+                            </td>
+                        </tr>
+                    <?php
+                    }
+                    ?>
+                </tbody>
+                <tfoot>
+                <tr>
+                    <th colspan="2" class="text-right"><?php echo $CI->lang->line('LABEL_TOTAL_TAKA');?></th>
+                    <th class="text-right"><?php echo number_format($amount_total_dc_amount,2);?></th>
+                    <?php
+                    $amount_expense_variety=0;
+                    $amount_total_expense_variety=0;
+                    foreach($items as $data)
+                    {
+                        if(isset($amount_total_variety[$data['variety_id']][$data['pack_size_id']]))
+                        {
+
+                            $amount_expense_variety = $amount_total_variety[$data['variety_id']][$data['pack_size_id']];
+                        }
+                        else
+                        {
+                            $amount_expense_variety = 0;
+                        }
+                        $amount_total_expense_variety+=$amount_expense_variety;
+                        ?>
+                        <th class="text-right">
+                            <?php
+                            echo number_format($amount_expense_variety,2);
+                            ?>
+                        </th>
+                    <?php
+                    }
+                    ?>
+                    <th class="text-right"><?php echo number_format($amount_total_expense_variety,2);?></th>
+                </tr>
+                </tfoot>
+            </table>
+        </div>
+    <?php
+    }
+    ?>
 </div>
 <div class="clearfix"></div>

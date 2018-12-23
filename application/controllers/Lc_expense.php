@@ -9,8 +9,9 @@ class Lc_expense extends Root_Controller
     {
         parent::__construct();
         $this->message="";
-        $this->permissions=User_helper::get_permission('Lc_expense');
-        $this->controller_url='lc_expense';
+        $this->permissions=User_helper::get_permission(get_class());
+        $this->controller_url=strtolower(get_class());
+        $this->load->helper('lc');
     }
 
     public function index($action="list",$id=0)
@@ -39,9 +40,9 @@ class Lc_expense extends Root_Controller
         {
             $this->system_save();
         }
-        elseif($action=="details_all_lc")
+        elseif($action=="details")
         {
-            $this->system_details_all_lc($id);
+            $this->system_details($id);
         }
         elseif($action=="details_print_all_lc")
         {
@@ -77,7 +78,7 @@ class Lc_expense extends Root_Controller
         if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
         {
             $data['system_preference_items']=$this->get_preference();
-            $data['title']="LC Expense List";
+            $data['title']="Pending List";
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/list",$data,true));
             if($this->message)
@@ -96,18 +97,18 @@ class Lc_expense extends Root_Controller
     }
     private function system_get_items()
     {
-        $this->db->from($this->config->item('table_sms_lc_open').' lco');
-        $this->db->select('lco.*');
+        $this->db->from($this->config->item('table_sms_lc_open').' lc');
+        $this->db->select('lc.*');
+        $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.date_start <= lc.date_opening AND fy.date_end>lc.date_opening','INNER');
         $this->db->select('fy.name fiscal_year');
+        $this->db->join($this->config->item('table_login_basic_setup_principal').' principal','principal.id = lc.principal_id','INNER');
         $this->db->select('principal.name principal_name');
+        $this->db->join($this->config->item('table_login_setup_currency').' currency','currency.id = lc.currency_id','INNER');
         $this->db->select('currency.name currency_name');
-        $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.date_start <= lco.date_opening AND fy.date_end>lco.date_opening','INNER');
-        //$this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.id = lco.fiscal_year_id','INNER');
-        $this->db->join($this->config->item('table_login_setup_currency').' currency','currency.id = lco.currency_id','INNER');
-        $this->db->join($this->config->item('table_login_basic_setup_principal').' principal','principal.id = lco.principal_id','INNER');
-        $this->db->where('lco.status_open_forward',$this->config->item('system_status_yes'));
-        $this->db->where('lco.status_open =',$this->config->item('system_status_active'));
-        $this->db->order_by('lco.id','DESC');
+
+        $this->db->where('lc.status_open_forward',$this->config->item('system_status_yes'));
+        $this->db->where('lc.status_open =',$this->config->item('system_status_active'));
+        $this->db->order_by('lc.id','DESC');
         $results=$this->db->get()->result_array();
         $items=array();
         foreach($results as $result)
@@ -122,6 +123,8 @@ class Lc_expense extends Root_Controller
             $item['currency_name']=$result['currency_name'];
             $item['lc_number']=$result['lc_number'];
             $item['quantity_open_kg']=number_format($result['quantity_open_kg'],3,'.','');
+            $item['status_release']=$result['status_release'];
+            $item['status_received']=$result['status_receive'];
             $items[]=$item;
         }
         $this->json_return($items);
@@ -165,12 +168,12 @@ class Lc_expense extends Root_Controller
         }
         $this->db->from($this->config->item('table_sms_lc_open').' lc');
         $this->db->select('lc.*');
-        $this->db->select('fy.name fiscal_year');
-        $this->db->select('principal.name principal_name');
-        $this->db->select('currency.name currency_name');
         $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.date_start <= lc.date_opening AND fy.date_end>lc.date_opening','INNER');
-        $this->db->join($this->config->item('table_login_setup_currency').' currency','currency.id = lc.currency_id','INNER');
+        $this->db->select('fy.name fiscal_year');
         $this->db->join($this->config->item('table_login_basic_setup_principal').' principal','principal.id = lc.principal_id','INNER');
+        $this->db->select('principal.name principal_name');
+        $this->db->join($this->config->item('table_login_setup_currency').' currency','currency.id = lc.currency_id','INNER');
+        $this->db->select('currency.name currency_name');
         $this->db->where('lc.status_open !=',$this->config->item('system_status_delete'));
         $this->db->where('lc.status_open_forward',$this->config->item('system_status_yes'));
         $this->db->order_by('lc.id','DESC');
@@ -226,15 +229,23 @@ class Lc_expense extends Root_Controller
             $this->db->join($this->config->item('table_login_setup_bank').' bank','bank.id = ba.bank_id','INNER');
             $this->db->select("CONCAT_WS(' ( ',ba.account_number,  CONCAT_WS('', bank.name,' - ',ba.branch_name,')')) bank_account_number");
             $this->db->where('lco.id',$item_id);
-            $this->db->where('lco.status_open =',$this->config->item('system_status_active'));
+            $this->db->where('lco.status_open !=',$this->config->item('system_status_delete'));
             $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
             {
-                System_helper::invalid_try('Edit Expense Non Exists',$item_id);
+                System_helper::invalid_try(__FUNCTION__,$item_id,'Non Exists');
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid LC.';
                 $this->json_return($ajax);
             }
+            if($data['item']['status_open']==$this->config->item('system_status_complete'))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='LC Already Completed.';
+                $this->json_return($ajax);
+            }
+            $data['info_basic']=Lc_helper::get_view_info_basic($data['item']);
+            $data['info_lc']=$this->get_view_info_lc($data['item']);
 
             $data['items']=Query_helper::get_info($this->config->item('table_login_setup_direct_cost_items'),'*',array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('ordering ASC'));
             $results=Query_helper::get_info($this->config->item('table_sms_lc_expense'),'*',array('lc_id ='.$item_id),0,0,array(''));
@@ -279,7 +290,7 @@ class Lc_expense extends Root_Controller
             $result=Query_helper::get_info($this->config->item('table_sms_lc_open'),'*',array('id ='.$id, 'status_open = "'.$this->config->item('system_status_active').'"'),1);
             if(!$result)
             {
-                System_helper::invalid_try('Update Expense Non Exists',$id);
+                System_helper::invalid_try(__FUNCTION__,$id,'Non Exists');
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid LC.';
                 $this->json_return($ajax);
@@ -349,7 +360,9 @@ class Lc_expense extends Root_Controller
             $this->json_return($ajax);
         }
     }
-    private function system_details_all_lc($id)
+    //Function= Lc_open details same
+    //view =Lc_open details +additional view if lc completed
+    private function system_details($id)
     {
         if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
         {
@@ -370,17 +383,11 @@ class Lc_expense extends Root_Controller
             $this->db->select('currency.name currency_name');
             $this->db->join($this->config->item('table_login_basic_setup_principal').' principal','principal.id = lco.principal_id','INNER');
             $this->db->select('principal.name principal_name');
+
             $this->db->join($this->config->item('table_login_setup_bank_account').' ba','ba.id = lco.bank_account_id','INNER');
             $this->db->join($this->config->item('table_login_setup_bank').' bank','bank.id = ba.bank_id','INNER');
             $this->db->select("CONCAT_WS(' ( ',ba.account_number,  CONCAT_WS('', bank.name,' - ',ba.branch_name,')')) bank_account_number");
-            $this->db->join($this->config->item('table_login_setup_user_info').' ui_forward','ui_forward.user_id = lco.user_open_forward','LEFT');
-            $this->db->select('ui_forward.name forward_user_full_name');
-            $this->db->join($this->config->item('table_login_setup_user_info').' ui_release_completed','ui_release_completed.user_id = lco.user_release_updated','LEFT');
-            $this->db->select('ui_release_completed.name release_completed_user_full_name');
-            $this->db->join($this->config->item('table_login_setup_user_info').' ui_receive_completed','ui_receive_completed.user_id = lco.user_receive_updated','LEFT');
-            $this->db->select('ui_receive_completed.name receive_completed_user_full_name');
-            $this->db->join($this->config->item('table_login_setup_user_info').' ui_expense_completed','ui_expense_completed.user_id = lco.user_expense_completed','LEFT');
-            $this->db->select('ui_expense_completed.name expense_completed_user_full_name');
+
             $this->db->where('lco.id',$item_id);
             $this->db->where('lco.status_open !=',$this->config->item('system_status_delete'));
             $data['item']=$this->db->get()->row_array();
@@ -392,6 +399,8 @@ class Lc_expense extends Root_Controller
                 $ajax['system_message']='Invalid LC.';
                 $this->json_return($ajax);
             }
+            $data['info_basic']=Lc_helper::get_view_info_basic($data['item']);
+            $data['info_lc']=$this->get_view_info_lc($data['item']);
 
             $this->db->from($this->config->item('table_sms_lc_details').' lcd');
             $this->db->select('lcd.*');
@@ -429,12 +438,12 @@ class Lc_expense extends Root_Controller
 
             $data['title']="LC Details :: ".Barcode_helper::get_barcode_lc($item_id);
             $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/details_all_lc",$data,true));
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/details",$data,true));
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
             }
-            $ajax['system_page_url']=site_url($this->controller_url.'/index/details_all_lc/'.$item_id);
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/details/'.$item_id);
             $this->json_return($ajax);
         }
         else
@@ -471,7 +480,7 @@ class Lc_expense extends Root_Controller
             $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
             {
-                System_helper::invalid_try('View Receive Non Exists',$item_id);
+                System_helper::invalid_try(__FUNCTION__,$item_id,'Non Exists');
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid LC.';
                 $this->json_return($ajax);
@@ -562,7 +571,7 @@ class Lc_expense extends Root_Controller
             $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
             {
-                System_helper::invalid_try('Edit Expense Complete Non Exists',$item_id);
+                System_helper::invalid_try(__FUNCTION__,$item_id,'Non Exists');
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid LC.';
                 $this->json_return($ajax);
@@ -585,6 +594,8 @@ class Lc_expense extends Root_Controller
                 $ajax['system_message']='LC already completed.';
                 $this->json_return($ajax);
             }
+            $data['info_basic']=Lc_helper::get_view_info_basic($data['item']);
+            $data['info_lc']=$this->get_view_info_lc($data['item']);
 
 
             $data['items']=Query_helper::get_info($this->config->item('table_login_setup_direct_cost_items'),'*',array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('ordering ASC'));
@@ -761,6 +772,8 @@ class Lc_expense extends Root_Controller
         $data['currency_name']= 1;
         $data['lc_number']= 1;
         $data['quantity_open_kg']= 1;
+        $data['status_release']= 1;
+        $data['status_received']= 1;
         if($result)
         {
             if($result['preferences']!=null)
@@ -835,5 +848,88 @@ class Lc_expense extends Root_Controller
             }
         }
         return $data;
+    }
+    //same as Lc_Open
+    private function get_view_info_lc($lc_info)
+    {
+        $info_basic=array();
+
+        $result=array();
+        $result['label_1']=$this->lang->line('LABEL_FISCAL_YEAR');
+        $result['value_1']=$lc_info['fiscal_year'];
+        $result['label_2']=$this->lang->line('LABEL_MONTH');
+        $result['value_2']=date("F", mktime(0, 0, 0,  $lc_info['month_id'],1, 2000));
+        $info_basic[]=$result;
+        $result=array();
+        $result['label_1']=$this->lang->line('LABEL_PRINCIPAL_NAME');
+        $result['value_1']=$lc_info['principal_name'];
+        $result['label_2']=$this->lang->line('LABEL_LC_NUMBER');
+        $result['value_2']=$lc_info['lc_number'];
+        $info_basic[]=$result;
+        $result=array();
+        $result['label_1']=$this->lang->line('LABEL_DATE_OPENING');
+        $result['value_1']=System_helper::display_date($lc_info['date_opening']);
+        $result['label_2']=$this->lang->line('LABEL_CONSIGNMENT_NAME');
+        $result['value_2']=$lc_info['consignment_name'];
+        $info_basic[]=$result;
+        $result=array();
+        $result['label_1']=$this->lang->line('LABEL_DATE_EXPECTED');
+        $result['value_1']=System_helper::display_date($lc_info['date_expected']);
+        $result['label_2']=$this->lang->line('LABEL_BANK_ACCOUNT_NUMBER');
+        $result['value_2']=$lc_info['bank_account_number'];
+        $info_basic[]=$result;
+        //hidden in receive task
+        $result=array();
+        $result['label_1']=$this->lang->line('LABEL_CURRENCY_NAME');
+        $result['value_1']=$lc_info['currency_name'];
+        if($lc_info['status_open']==$this->config->item('system_status_complete'))
+        {
+            $result['label_2']=$this->lang->line('LABEL_CURRENCY_RATE');
+            $result['value_2']=number_format($lc_info['rate_currency'],2);;
+        }
+        $info_basic[]=$result;
+        //hidden in receive task
+        $result=array();
+        $result['label_1']=$this->lang->line('LABEL_PRICE_OPEN_OTHER_CURRENCY');
+        $result['value_1']=number_format($lc_info['price_open_other_currency'],2);;
+        if($lc_info['status_release']==$this->config->item('system_status_complete'))
+        {
+            $result['label_2']=$this->lang->line('LABEL_PRICE_RELEASE_OTHER_CURRENCY');
+            $result['value_2']=number_format($lc_info['price_release_other_currency'],2);;
+        }
+        $info_basic[]=$result;
+        //hidden in receive task
+        if($lc_info['status_open_forward']==$this->config->item('system_status_yes'))
+        {
+            $result=array();
+            $result['label_1']='AWB Date';
+            $result['value_1']=System_helper::display_date($lc_info['date_awb']);
+            $result['label_2']='AWB Number';
+            $result['value_2']=$lc_info['awb_number'];
+            $info_basic[]=$result;
+        }
+        if($lc_info['status_release']==$this->config->item('system_status_complete'))
+        {
+            $result=array();
+            $result['label_1']='Release Date';
+            $result['value_1']=System_helper::display_date($lc_info['date_release']);
+            $info_basic[]=$result;
+        }
+        if($lc_info['status_receive']==$this->config->item('system_status_complete'))
+        {
+            $result=array();
+            $result['label_1']=$this->lang->line('LABEL_DATE_PACKING_LIST');
+            $result['value_1']=System_helper::display_date($lc_info['date_packing_list']);
+            $result['label_2']=$this->lang->line('LABEL_NUMBER_PACKING_LIST');
+            $result['value_2']=$lc_info['packing_list_number'];
+            $info_basic[]=$result;
+            $result=array();
+            $result['label_1']=$this->lang->line('LABEL_DATE_RECEIVE');
+            $result['value_1']=System_helper::display_date($lc_info['date_packing_list']);
+            $result['label_2']=$this->lang->line('LABEL_NUMBER_LOT');
+            $result['value_2']=$lc_info['lot_number'];
+            $info_basic[]=$result;
+        }
+        return $info_basic;
     }
 }

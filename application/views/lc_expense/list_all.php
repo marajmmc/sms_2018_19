@@ -5,7 +5,7 @@ $action_buttons=array();
 if(isset($CI->permissions['action0']) && ($CI->permissions['action0']==1))
 {
     $action_buttons[]=array(
-        'label'=>'Pending LC',
+        'label'=>'Pending List',
         'href'=>site_url($CI->controller_url.'/index/list')
     );
     $action_buttons[]=array
@@ -13,7 +13,7 @@ if(isset($CI->permissions['action0']) && ($CI->permissions['action0']==1))
         'type'=>'button',
         'label'=>$CI->lang->line('ACTION_DETAILS'),
         'class'=>'button_jqx_action',
-        'data-action-link'=>site_url($CI->controller_url.'/index/details_all_lc')
+        'data-action-link'=>site_url($CI->controller_url.'/index/details')
     );
 }
 if(isset($CI->permissions['action4']) && ($CI->permissions['action4']==1))
