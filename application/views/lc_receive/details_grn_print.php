@@ -3,8 +3,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $CI=& get_instance();
 $action_buttons=array();
 $action_buttons[]=array(
-    'label'=>$CI->lang->line("ACTION_BACK"),
+    'label'=>$CI->lang->line("ACTION_BACK").' to Pending List',
     'href'=>site_url($CI->controller_url)
+);
+$action_buttons[]=array(
+    'label'=>$CI->lang->line("ACTION_BACK").' to All list',
+    'href'=>site_url($CI->controller_url.'/index/list_all')
 );
 if(isset($CI->permissions['action4']) && ($CI->permissions['action4']==1))
 {
@@ -15,6 +19,10 @@ if(isset($CI->permissions['action4']) && ($CI->permissions['action4']==1))
     );
 }
 
+$action_buttons[]=array(
+    'label'=>$CI->lang->line("ACTION_REFRESH"),
+    'href'=>site_url($CI->controller_url.'/index/details_grn_print/'.$item['id'])
+);
 $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 ?>
 <?php
@@ -23,7 +31,7 @@ $height=11.69*100/2;
 $row_per_page=20;
 $header_image=$CI->config->item('system_base_url_picture').'images/print/header.jpg';
 $footer_image=$CI->config->item('system_base_url_picture').'images/print/footer.jpg';
-$result=Query_helper::get_info($CI->config->item('table_system_setup_print'),'*',array('controller ="' .$this->controller_url.'"','method ="details_print"'),1);
+$result=Query_helper::get_info($CI->config->item('table_system_setup_print'),'*',array('controller ="' .$this->controller_url.'"','method ="details_grn_print"'),1);
 if($result)
 {
     $width=$result['width']*100;

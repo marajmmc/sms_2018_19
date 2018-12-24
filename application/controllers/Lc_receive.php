@@ -52,17 +52,9 @@ class Lc_receive extends Root_Controller
         {
             $this->system_details($id);
         }
-        elseif($action=="details_all_lc")
+        elseif($action=="details_grn_print")
         {
-            $this->system_details_all_lc($id);
-        }
-        elseif($action=="details_print")
-        {
-            $this->system_details_print($id);
-        }
-        elseif($action=="details_print_all_lc")
-        {
-            $this->system_details_print_all_lc($id);
+            $this->system_details_grn_print($id);
         }
         elseif($action=="receive_complete")
         {
@@ -579,14 +571,6 @@ class Lc_receive extends Root_Controller
             $this->json_return($ajax);
         }
 
-        /*if(!$this->check_validation())
-        {
-            $ajax['status']=false;
-            $ajax['system_message']=$this->message;
-            $this->json_return($ajax);
-        }*/
-
-
         $results=Query_helper::get_info($this->config->item('table_sms_lc_details'),'*',array('lc_id='.$id,'quantity_open > 0'));
         $lot_numbers=array();
 
@@ -729,7 +713,9 @@ class Lc_receive extends Root_Controller
             $this->json_return($ajax);
         }
     }
-    private function system_details_print($id)
+    //open,release,expense grn print task same but receive has extra condition
+    //open,release,expense,receive details_grn_print view is same
+    private function system_details_grn_print($id)
     {
         if((isset($this->permissions['action4']) && ($this->permissions['action4']==1)))
         {
@@ -750,106 +736,10 @@ class Lc_receive extends Root_Controller
             $this->db->select('currency.name currency_name');
             $this->db->join($this->config->item('table_login_basic_setup_principal').' principal','principal.id = lco.principal_id','INNER');
             $this->db->select('principal.name principal_name');
-            $this->db->join($this->config->item('table_login_setup_user_info').' ui','ui.user_id = lco.user_release_completed','INNER');
-            $this->db->select('ui.name user_full_name');
             $this->db->where('lco.id',$item_id);
             $this->db->where('lco.status_open !=',$this->config->item('system_status_delete'));
             $data['item']=$this->db->get()->row_array();
-            if(!$data['item'])
-            {
-                System_helper::invalid_try(__FUNCTION__,$item_id,'Non Exists');
-                $ajax['status']=false;
-                $ajax['system_message']='Invalid LC.';
-                $this->json_return($ajax);
-            }
-            if($data['item']['revision_receive_count']==0)
-            {
-                $ajax['status']=false;
-                $ajax['system_message']='You have to complete your (LC) edit receive.';
-                $this->json_return($ajax);
-            }
-            if($data['item']['status_open_forward']!=$this->config->item('system_status_yes'))
-            {
-                $ajax['status']=false;
-                $ajax['system_message']='You can not see this LC. LC not forwarded.';
-                $this->json_return($ajax);
-            }
-            if($data['item']['status_release']!=$this->config->item('system_status_complete'))
-            {
-                $ajax['status']=false;
-                $ajax['system_message']='You can not open this LC. LC release pending.';
-                $this->json_return($ajax);
-            }
-            if($data['item']['status_open']==$this->config->item('system_status_complete'))
-            {
-                $ajax['status']=false;
-                $ajax['system_message']='LC Already Completed.';
-                $this->json_return($ajax);
-            }
 
-            $this->db->from($this->config->item('table_sms_lc_details').' lcd');
-            $this->db->select('lcd.*');
-            $this->db->join($this->config->item('table_login_setup_classification_varieties').' v','v.id = lcd.variety_id','INNER');
-            $this->db->select('v.id variety_id, v.name variety_name');
-            $this->db->join($this->config->item('table_login_setup_classification_variety_principals').' vp','vp.variety_id = v.id AND vp.principal_id = '.$data['item']['principal_id'].' AND vp.revision = 1','INNER');
-            $this->db->select('vp.name_import variety_name_import');
-            $this->db->join($this->config->item('table_login_setup_classification_pack_size').' pack','pack.id = lcd.pack_size_id','LEFT');
-            $this->db->select('pack.name pack_size');
-            $this->db->join($this->config->item('table_login_setup_classification_crop_types').' crop_type','crop_type.id = v.crop_type_id','LEFT');
-            $this->db->select('crop_type.name crop_type_name');
-            $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = crop_type.crop_id','LEFT');
-            $this->db->select('crop.name crop_name');
-            $this->db->join($this->config->item('table_login_basic_setup_warehouse').' warehouse','warehouse.id = lcd.receive_warehouse_id','LEFT');
-            $this->db->select('warehouse.name warehouse_name');
-            $this->db->where('lcd.lc_id',$item_id);
-            $this->db->where('lcd.quantity_open >0');
-            $this->db->order_by('lcd.id','ASC');
-            $data['items']=$this->db->get()->result_array();
-            $data['warehouses']=Query_helper::get_info($this->config->item('table_login_basic_setup_warehouse'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
-
-            $data['title']="LC Receive :: ".Barcode_helper::get_barcode_lc($item_id);
-            $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/details_print",$data,true));
-            if($this->message)
-            {
-                $ajax['system_message']=$this->message;
-            }
-            $ajax['system_page_url']=site_url($this->controller_url.'/index/details_print/'.$item_id);
-            $this->json_return($ajax);
-        }
-        else
-        {
-            $ajax['status']=false;
-            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
-            $this->json_return($ajax);
-        }
-    }
-    private function system_details_print_all_lc($id)
-    {
-        if((isset($this->permissions['action4']) && ($this->permissions['action4']==1)))
-        {
-            if($id>0)
-            {
-                $item_id=$id;
-            }
-            else
-            {
-                $item_id=$this->input->post('id');
-            }
-
-            $this->db->from($this->config->item('table_sms_lc_open').' lco');
-            $this->db->select('lco.*');
-            $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.date_start <= lco.date_opening AND fy.date_end>lco.date_opening','INNER');
-            $this->db->select('fy.name fiscal_year');
-            $this->db->join($this->config->item('table_login_setup_currency').' currency','currency.id = lco.currency_id','INNER');
-            $this->db->select('currency.name currency_name');
-            $this->db->join($this->config->item('table_login_basic_setup_principal').' principal','principal.id = lco.principal_id','INNER');
-            $this->db->select('principal.name principal_name');
-            $this->db->join($this->config->item('table_login_setup_user_info').' ui','ui.user_id = lco.user_release_completed','LEFT');
-            $this->db->select('ui.name user_full_name');
-            $this->db->where('lco.id',$item_id);
-            $this->db->where('lco.status_open !=',$this->config->item('system_status_delete'));
-            $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
             {
                 System_helper::invalid_try(__FUNCTION__,$item_id,'Non Exists');
@@ -875,13 +765,6 @@ class Lc_receive extends Root_Controller
                 $ajax['system_message']='You have to complete your (LC) edit receive.';
                 $this->json_return($ajax);
             }
-            /*if($data['item']['status_open']==$this->config->item('system_status_complete'))
-            {
-                $ajax['status']=false;
-                $ajax['system_message']='LC Already Completed.';
-                $this->json_return($ajax);
-            }*/
-
             $this->db->from($this->config->item('table_sms_lc_details').' lcd');
             $this->db->select('lcd.*');
             $this->db->join($this->config->item('table_login_setup_classification_varieties').' v','v.id = lcd.variety_id','INNER');
@@ -900,16 +783,15 @@ class Lc_receive extends Root_Controller
             $this->db->where('lcd.quantity_open >0');
             $this->db->order_by('lcd.id','ASC');
             $data['items']=$this->db->get()->result_array();
-            $data['warehouses']=Query_helper::get_info($this->config->item('table_login_basic_setup_warehouse'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
 
             $data['title']="LC Receive :: ".Barcode_helper::get_barcode_lc($item_id);
             $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/details_print_all_lc",$data,true));
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/details_grn_print",$data,true));
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
             }
-            $ajax['system_page_url']=site_url($this->controller_url.'/index/details_print_all_lc/'.$item_id);
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/details_grn_print/'.$item_id);
             $this->json_return($ajax);
         }
         else
