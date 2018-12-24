@@ -110,12 +110,13 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 autoheight: true,
                 autorowheight: true,
                 columnsreorder: true,
+                enablebrowserselection: true,
                 columns:
                 [
                     { text: 'ID', dataField: 'id',width:50,cellsalign: 'right'},
                     { text: 'Purpose', dataField: 'purpose'},
                     { text: 'Controller', dataField: 'controller', width:250},
-                    { text: 'Method', dataField: 'method', width:100},
+                    { text: 'Method', dataField: 'method', width:200},
                     { text: 'Width', dataField: 'width', width:100},
                     { text: 'Height', dataField: 'height', width:100},
                     { text: 'Row Per Page', dataField: 'row_per_page', width:100}
