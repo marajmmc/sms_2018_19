@@ -95,7 +95,7 @@ if($item['status_receive']==$this->config->item('system_status_complete'))
                     if($status_receive)
                     {
                         ?>
-                        <th class="label-success text-center" colspan="<?php echo $number_th_td_colspan;?>"><?php echo $CI->lang->line('LABEL_QUANTITY_RECEIVE');?></th>
+                        <th class="label-success text-center" colspan="2"><?php echo $CI->lang->line('LABEL_QUANTITY_RECEIVE');?></th>
                         <th class="label-danger text-center" colspan="2"><?php echo $CI->lang->line('LABEL_QUANTITY_DIFFERENCE');?></th>
                     <?php
                     }
@@ -147,14 +147,7 @@ if($item['status_receive']==$this->config->item('system_status_complete'))
                         ?>
                         <th class="label-success text-center"><?php echo $CI->lang->line('LABEL_PACK'); ?>/<?php echo $CI->lang->line('LABEL_KG');?></th>
                         <th class="label-success text-center"><?php echo $CI->lang->line('KG');?></th>
-                        <?php
-                        if($permission_delete)
-                        {
-                            ?>
-                            <th class="label-success text-right"><?php echo $CI->lang->line('LABEL_PRICE_CURRENCY_TOTAL'); ?></th>
-                        <?php
-                        }
-                        ?>
+
                         <th class="label-danger text-center"><?php echo $CI->lang->line('LABEL_PACK'); ?>/<?php echo $CI->lang->line('LABEL_KG');?></th>
                         <th class="label-danger text-center"><?php echo $CI->lang->line('KG');?></th>
                     <?php
@@ -305,14 +298,7 @@ if($item['status_receive']==$this->config->item('system_status_complete'))
                                 ?>
                                 <td class="text-right"><label class="control-label" for=""><?php echo $data['quantity_receive']; ?></label></td>
                                 <td class="text-right" ><label class="control-label "><?php echo number_format($quantity_receive_kg,3,'.',''); ?></label></td>
-                                <?php
-                                if($permission_delete)
-                                {
-                                    ?>
-                                    <td class="text-right" ><label class="control-label "><?php echo number_format($price_receive_currency,2); ?></label></td>
-                                <?php
-                                }
-                                ?>
+
                                 <td class="text-right"><label class="control-label"><?php echo ($data['quantity_receive']-$data['quantity_release'])?></label></td>
                                 <td class="text-right"><label class="control-label"><?php echo number_format(($quantity_receive_kg-$quantity_release_kg),3,'.','')?></label></td>
                             <?php
@@ -378,14 +364,7 @@ if($item['status_receive']==$this->config->item('system_status_complete'))
                             ?>
                             <th class="text-right"><label class="control-label"><?php echo $quantity_total_receive;?></label></th>
                             <th class="text-right"><label class="control-label"><?php echo number_format($quantity_total_receive_kg,3,'.','');?></label></th>
-                            <?php
-                            if($permission_delete)
-                            {
-                                ?>
-                                <th class="text-right"><label class="control-label"><?php echo number_format($price_total_receive_currency,2);?></label></th>
-                            <?php
-                            }
-                            ?>
+                            
                             <th class="text-right"><label class="control-label"><?php echo ($quantity_total_receive-$quantity_total_release);?></label></th>
                             <th class="text-right"><label class="control-label"><?php echo number_format(($quantity_total_receive_kg-$quantity_total_release_kg),3,'.','');?></label></th>
                         <?php
