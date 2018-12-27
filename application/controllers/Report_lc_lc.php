@@ -296,7 +296,7 @@ class Report_lc_lc extends Root_Controller
 
             if(!$data['item'])
             {
-                System_helper::invalid_try('View Non Exists',$item_id);
+                System_helper::invalid_try(__FUNCTION__,$item_id,'Non Exists');
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid LC.';
                 $this->json_return($ajax);

@@ -364,7 +364,7 @@ if($item['status_receive']==$this->config->item('system_status_complete'))
                             ?>
                             <th class="text-right"><label class="control-label"><?php echo $quantity_total_receive;?></label></th>
                             <th class="text-right"><label class="control-label"><?php echo number_format($quantity_total_receive_kg,3,'.','');?></label></th>
-                            
+
                             <th class="text-right"><label class="control-label"><?php echo ($quantity_total_receive-$quantity_total_release);?></label></th>
                             <th class="text-right"><label class="control-label"><?php echo number_format(($quantity_total_receive_kg-$quantity_total_release_kg),3,'.','');?></label></th>
                         <?php
