@@ -949,7 +949,7 @@ class Lc_receive extends Root_Controller
             $this->json_return($ajax);
         }
 
-        $results=Query_helper::get_info($this->config->item('table_sms_lc_details'),'*',array('lc_id='.$id,'quantity_receive > 0'));
+        $results=Query_helper::get_info($this->config->item('table_sms_lc_details'),'*',array('lc_id='.$id,'quantity_receive > 0','quantity_open > 0'));
 
 
         $this->db->trans_start();  //DB Transaction Handle START
