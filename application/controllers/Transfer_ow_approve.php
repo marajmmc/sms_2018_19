@@ -920,9 +920,9 @@ class Transfer_ow_approve extends Root_Controller
 
                 $quantity_total_approve=(($item['pack_size']*$item['quantity_approve'])/1000);
                 $quantity_total_approve_kg+=$quantity_total_approve;
-                if($quantity_total_approve>$tow_variety_info[$item['variety_id']][$item['pack_size_id']]['stock_available'])
+                $stock_available_excess=($quantity_total_approve-$tow_variety_info[$item['variety_id']][$item['pack_size_id']]['stock_available']);
+                if($stock_available_excess>EPSILON)
                 {
-                    $stock_available_excess=($quantity_total_approve-$tow_variety_info[$item['variety_id']][$item['pack_size_id']]['stock_available']);
                     $ajax['status']=false;
                     $ajax['system_message']='Available quantity already exist. ( Excess approve quantity: '.$stock_available_excess.' kg.)';
                     $this->json_return($ajax);
