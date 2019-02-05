@@ -153,6 +153,31 @@ $controller_folder->close();
                 </select>
             </div>
         </div>
+        <div style="" class="row show-grid">
+            <div class="col-xs-4">
+                <label for="status" class="control-label pull-right">App Notification<span style="color:#FF0000">*</span></label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <select id="status_notification" name="item[status_notification]" class="form-control" tabindex="-1">
+                    <option value="<?php echo $CI->config->item('system_status_no'); ?>"
+                        <?php
+                        if($item['status_notification']==$CI->config->item('system_status_no'))
+                        {
+                            echo ' selected';
+                        }
+                        ?> ><?php echo $CI->lang->line('LABEL_NO') ?>
+                    </option>
+                    <option value="<?php echo $CI->config->item('system_status_yes'); ?>"
+                        <?php
+                        if($item['status_notification']==$CI->config->item('system_status_yes'))
+                        {
+                            echo ' selected';
+                        }
+                        ?> ><?php echo $CI->lang->line('LABEL_YES') ?>
+                    </option>
+                </select>
+            </div>
+        </div>
     </div>
     <div class="clearfix"></div>
 </form>
