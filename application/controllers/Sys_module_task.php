@@ -75,7 +75,8 @@ class Sys_module_task extends Root_Controller
                 'controller' => '',
                 'ordering' => 99,
                 'icon' => 'menu.png',
-                'status' => $this->config->item('system_status_active')
+                'status' => $this->config->item('system_status_active'),
+                'status_notification' => '',
             );
             $ajax['system_page_url']=site_url($this->controller_url."/index/add");
             //$data['crops'] = System_helper::get_ordered_crops();
