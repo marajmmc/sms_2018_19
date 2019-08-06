@@ -90,13 +90,7 @@ $num_pages=ceil($total_records/$row_per_page);
                         </div>
                         <div class="col-xs-9">
                             <?php echo $item['outlet_source_name']; ?><br/>
-                            <small><?php
-                            if($item['place_destination'])
-                            {
-                                echo $item['place_destination'].'<br />';
-                            }
-                            ?>
-                            <?php echo $item['outlet_source_phone']; ?></small>
+                            <small><?php echo $item['outlet_source_phone']; ?></small>
                         </div>
                     </div>
                 </div>
@@ -107,7 +101,15 @@ $num_pages=ceil($total_records/$row_per_page);
                         </div>
                         <div class="col-xs-9">
                             <?php echo $item['outlet_name_destination']; ?><br/>
-                            <small><?php echo $item['outlet_phone_destination']; ?></small>
+                            <small>
+                                <?php
+                                if($item['place_destination'])
+                                {
+                                    echo $item['place_destination'].'<br />';
+                                }
+                                ?>
+                                <?php echo $item['outlet_phone_destination']; ?>
+                            </small>
                         </div>
                     </div>
                 </div>
