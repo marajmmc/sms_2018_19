@@ -100,7 +100,7 @@ $num_pages=ceil($total_records/$row_per_page);
                             <label class="control-label pull-right">To <?php echo $CI->lang->line('LABEL_OUTLET_NAME');?>: </label>
                         </div>
                         <div class="col-xs-9">
-                            <?php echo $item['outlet_name_destination']; ?><br/>
+                            <?php echo $item['outlet_destination_name']; ?><br/>
                             <small>
                                 <?php
                                 if($item['place_destination'])
@@ -108,7 +108,7 @@ $num_pages=ceil($total_records/$row_per_page);
                                     echo $item['place_destination'].'<br />';
                                 }
                                 ?>
-                                <?php echo $item['outlet_phone_destination']; ?>
+                                <?php echo $item['outlet_destination_phone']; ?>
                             </small>
                         </div>
                     </div>

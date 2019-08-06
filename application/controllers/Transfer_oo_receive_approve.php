@@ -688,8 +688,8 @@ class Transfer_oo_receive_approve extends Root_Controller
             $this->db->join($this->config->item('table_login_csetup_cus_info').' outlet_info_destination','outlet_info_destination.customer_id=transfer_oo.outlet_id_destination AND outlet_info_destination.type="'.$this->config->item('system_customer_type_outlet_id').'"','INNER');
             $this->db->select(
                 '
-                outlet_info_destination.name outlet_name_destination,
-                outlet_info_destination.phone outlet_phone_destination
+                outlet_info_destination.name outlet_destination_name,
+                outlet_info_destination.phone outlet_destination_phone
                 ');
             /*$this->db->join($this->config->item('table_login_setup_location_districts').' districts','districts.id = outlet_info.district_id','INNER');
             $this->db->select('districts.id district_id, districts.name district_name');
