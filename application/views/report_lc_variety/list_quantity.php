@@ -161,6 +161,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 selectionmode: 'singlerow',
                 showaggregates: true,
                 showstatusbar: true,
+                pageable: true,
+                pagesize:100,
+                pagesizeoptions: ['100', '200', '300'],
                 altrows: true,
                 /* rowsheight: 35,
                  columnsheight: 40,*/

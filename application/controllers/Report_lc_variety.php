@@ -529,66 +529,70 @@ class Report_lc_variety extends Root_Controller
             {
                 foreach($variety_lc[$variety['variety_id']] as $details)
                 {
-                    $info=$this->initialize_row($variety['crop_name'],$variety['crop_type_name'],$variety['variety_name'],$details['pack_size'],$method);
-                    if(!$first_row)
-                    {
-                        if($prev_crop_name!=$variety['crop_name'])
-                        {
-                            /*$items[]=$this->get_row($type_total);
-                            $items[]=$this->get_row($crop_total);
-                            $type_total=$this->reset_row($type_total);
-                            $crop_total=$this->reset_row($crop_total);*/
-
-                            $prev_crop_name=$variety['crop_name'];
-                            $prev_type_name=$variety['crop_type_name'];
-                            $prev_variety_name=$variety['variety_name'];
-                            $prev_pack_size=$details['pack_size'];
-                        }
-                        elseif($prev_type_name!=$variety['crop_type_name'])
-                        {
-                            /*$items[]=$this->get_row($type_total);
-                            $type_total=$this->reset_row($type_total);*/
-
-                            $info['crop_name']='';
-                            $prev_type_name=$variety['crop_type_name'];
-                            $prev_variety_name=$variety['variety_name'];
-                            $prev_pack_size=$details['pack_size'];
-                        }
-                        elseif($prev_variety_name!=$variety['variety_name'])
-                        {
-                            /*$items[]=$this->get_row($type_total);
-                            $type_total=$this->reset_row($type_total);*/
-
-                            $info['crop_name']='';
-                            $info['crop_type_name']='';
-                            $prev_variety_name=$variety['variety_name'];
-                            $prev_pack_size=$details['pack_size'];
-                        }
-                        elseif($prev_pack_size!=$details['pack_size'])
-                        {
-                            /*$items[]=$this->get_row($type_total);
-                            $type_total=$this->reset_row($type_total);*/
-
-                            $info['crop_name']='';
-                            $info['crop_type_name']='';
-                            $info['variety_name']='';
-                            $prev_pack_size=$details['pack_size'];
-                        }
-                        else
-                        {
-                            $info['crop_name']='';
-                            $info['crop_type_name']='';
-                            $info['variety_name']='';
-                            $info['pack_size']='';
-                        }
-                    }
-                    else
-                    {
-                        $prev_crop_name=$variety['crop_name'];
-                        $prev_type_name=$variety['crop_type_name'];
-                        $first_row=false;
-                    }
+                    //$info=$this->initialize_row($variety['crop_name'],$variety['crop_type_name'],$variety['variety_name'],$details['pack_size'],$method);
+//                    if(!$first_row)
+//                    {
+//                        if($prev_crop_name!=$variety['crop_name'])
+//                        {
+//                            /*$items[]=$this->get_row($type_total);
+//                            $items[]=$this->get_row($crop_total);
+//                            $type_total=$this->reset_row($type_total);
+//                            $crop_total=$this->reset_row($crop_total);*/
+//
+//                            $prev_crop_name=$variety['crop_name'];
+//                            $prev_type_name=$variety['crop_type_name'];
+//                            $prev_variety_name=$variety['variety_name'];
+//                            $prev_pack_size=$details['pack_size'];
+//                        }
+//                        elseif($prev_type_name!=$variety['crop_type_name'])
+//                        {
+//                            /*$items[]=$this->get_row($type_total);
+//                            $type_total=$this->reset_row($type_total);*/
+//
+//                            $info['crop_name']='';
+//                            $prev_type_name=$variety['crop_type_name'];
+//                            $prev_variety_name=$variety['variety_name'];
+//                            $prev_pack_size=$details['pack_size'];
+//                        }
+//                        elseif($prev_variety_name!=$variety['variety_name'])
+//                        {
+//                            /*$items[]=$this->get_row($type_total);
+//                            $type_total=$this->reset_row($type_total);*/
+//
+//                            $info['crop_name']='';
+//                            $info['crop_type_name']='';
+//                            $prev_variety_name=$variety['variety_name'];
+//                            $prev_pack_size=$details['pack_size'];
+//                        }
+//                        elseif($prev_pack_size!=$details['pack_size'])
+//                        {
+//                            /*$items[]=$this->get_row($type_total);
+//                            $type_total=$this->reset_row($type_total);*/
+//
+//                            $info['crop_name']='';
+//                            $info['crop_type_name']='';
+//                            $info['variety_name']='';
+//                            $prev_pack_size=$details['pack_size'];
+//                        }
+//                        else
+//                        {
+//                            $info['crop_name']='';
+//                            $info['crop_type_name']='';
+//                            $info['variety_name']='';
+//                            $info['pack_size']='';
+//                        }
+//                    }
+//                    else
+//                    {
+//                        $prev_crop_name=$variety['crop_name'];
+//                        $prev_type_name=$variety['crop_type_name'];
+//                        $first_row=false;
+//                    }
                     //$info['lc_last_barcode']=isset($variety_lc[$variety['variety_id']][$details['pack_size_id']])?$variety_lc[$variety['variety_id']][$details['pack_size_id']]['id']:'';
+                    $info['crop_name']=$variety['crop_name'];
+                    $info['crop_type_name']=$variety['crop_type_name'];
+                    $info['variety_name']=$variety['variety_name'];
+                    $info['pack_size']=$details['pack_size'];
                     $info['id']=$details['id'];
                     //$info['lc_barcode']=Barcode_helper::get_barcode_lc($details['id']);
                     if($details['pack_size_id']==0)
