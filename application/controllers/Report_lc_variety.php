@@ -256,12 +256,10 @@ class Report_lc_variety extends Root_Controller
         $this->db->join($this->config->item('table_login_setup_currency').' currency','currency.id = lc.currency_id','INNER');
         $this->db->select('currency.name currency_name');
 
-        $this->db->group_by('lc.id');
         $this->db->where_in('details.variety_id',$variety_ids);
         $this->db->where('details.quantity_open >0');
         $this->db->where('lc.status_open_forward',$this->config->item('system_status_yes'));
         $this->db->where('lc.status_release',$this->config->item('system_status_complete'));
-        $this->db->where('lc.status_open !=',$this->config->item('system_status_delete'));
         $this->db->where('lc.'.$date_type.'>='.$date_start.' and lc.'.$date_type.'<='.$date_end);
         if($pack_size_id>0)
         {
@@ -284,7 +282,10 @@ class Report_lc_variety extends Root_Controller
         {
             $this->db->where('lc.principal_id',$principal_id);
         }
+        //$this->db->group_by('lc.id');
+        $this->db->group_by('lc.id,details.variety_id,details.pack_size_id');
         $results=$this->db->get()->result_array();
+
         $variety_lc=array();
         $variety_lc_info=array();
         foreach($results as $result)
@@ -292,6 +293,7 @@ class Report_lc_variety extends Root_Controller
             $variety_lc[$result['variety_id']][$result['pack_size_id']]=$result;
             $variety_lc_info[$result['variety_id']][$result['pack_size_id']][]=$result;
         }
+
         $method='list_variety';
         $items=array();
         foreach($varieties as $variety)
@@ -408,7 +410,6 @@ class Report_lc_variety extends Root_Controller
         $this->db->where('details.quantity_open >0');
         $this->db->where('lc.status_open_forward',$this->config->item('system_status_yes'));
         $this->db->where('lc.status_release',$this->config->item('system_status_complete'));
-        $this->db->where('lc.status_open !=',$this->config->item('system_status_delete'));
         $this->db->where('lc.'.$date_type.'>='.$date_start.' and lc.'.$date_type.'<='.$date_end);
         if($pack_size_id>0)
         {
