@@ -258,6 +258,9 @@ class Report_lc_variety extends Root_Controller
 
         $this->db->group_by('lc.id');
         $this->db->where_in('details.variety_id',$variety_ids);
+        $this->db->where('lc.status_open_forward',$this->config->item('system_status_yes'));
+        $this->db->where('lc.status_release',$this->config->item('system_status_complete'));
+        $this->db->where('lc.status_open !=',$this->config->item('system_status_delete'));
         $this->db->where('lc.'.$date_type.'>='.$date_start.' and lc.'.$date_type.'<='.$date_end);
         if($pack_size_id>0)
         {
@@ -401,6 +404,9 @@ class Report_lc_variety extends Root_Controller
         $this->db->group_by('details.variety_id,details.pack_size_id');
 
         $this->db->where_in('details.variety_id',$variety_ids);
+        $this->db->where('lc.status_open_forward',$this->config->item('system_status_yes'));
+        $this->db->where('lc.status_release',$this->config->item('system_status_complete'));
+        $this->db->where('lc.status_open !=',$this->config->item('system_status_delete'));
         $this->db->where('lc.'.$date_type.'>='.$date_start.' and lc.'.$date_type.'<='.$date_end);
         if($pack_size_id>0)
         {
