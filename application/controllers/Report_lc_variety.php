@@ -44,7 +44,11 @@ class Report_lc_variety extends Root_Controller
         }
         elseif($action=="set_preference_lc")
         {
-            $this->system_set_preference($id);
+            $this->system_set_preference('list_variety');
+        }
+        elseif($action=="set_preference_quantity")
+        {
+            $this->system_set_preference('list_quantity');
         }
         elseif($action=="details")
         {
@@ -90,7 +94,7 @@ class Report_lc_variety extends Root_Controller
             $data['preference_method_name']=$method;
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("preference_add_edit",$data,true));
-            $ajax['system_page_url']=site_url($this->controller_url.'/index/set_preference');
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/set_preference_'.$method);
             $this->json_return($ajax);
         }
         else
@@ -197,8 +201,6 @@ class Report_lc_variety extends Root_Controller
         $variety_id=$this->input->post('variety_id');
         $pack_size_id=$this->input->post('pack_size_id');
 
-        /*$status_open_forward=$this->input->post('status_open_forward');
-        $status_release=$this->input->post('status_release');*/
         $status_received=$this->input->post('status_receive');
         $status_open=$this->input->post('status_open');
 
@@ -255,22 +257,12 @@ class Report_lc_variety extends Root_Controller
         $this->db->select('currency.name currency_name');
 
         $this->db->group_by('lc.id');
-        //$this->db->order_by('lc.id','DESC');
-
         $this->db->where_in('details.variety_id',$variety_ids);
         $this->db->where('lc.'.$date_type.'>='.$date_start.' and lc.'.$date_type.'<='.$date_end);
         if($pack_size_id>0)
         {
             $this->db->where('details.pack_size_id',$pack_size_id);
         }
-        /*if($status_open_forward)
-        {
-            $this->db->where('lc.status_open_forward',$status_open_forward);
-        }
-        if($status_release)
-        {
-            $this->db->where('lc.status_release',$status_release);
-        }*/
         if($status_received)
         {
             $this->db->where('lc.status_receive',$status_received);
@@ -289,7 +281,6 @@ class Report_lc_variety extends Root_Controller
             $this->db->where('lc.principal_id',$principal_id);
         }
         $results=$this->db->get()->result_array();
-        //echo $this->db->last_query();
         $variety_lc=array();
         $variety_lc_info=array();
         foreach($results as $result)
@@ -297,17 +288,7 @@ class Report_lc_variety extends Root_Controller
             $variety_lc[$result['variety_id']][$result['pack_size_id']]=$result;
             $variety_lc_info[$result['variety_id']][$result['pack_size_id']][]=$result;
         }
-
-        //echo $this->db->last_query();
         $method='list_variety';
-        /*$type_total=$this->initialize_row('','','Total Type','',$method);
-        $crop_total=$this->initialize_row('','Total Crop','','',$method);
-        $grand_total=$this->initialize_row('Grand Total','','','',$method);*/
-        $prev_crop_name='';
-        $prev_type_name='';
-        $prev_variety_name='';
-        $prev_pack_size='';
-        $first_row=true;
         $items=array();
         foreach($varieties as $variety)
         {
@@ -321,65 +302,10 @@ class Report_lc_variety extends Root_Controller
                         for($i=0; $i<sizeof($lc_info); $i++)
                         {
                             $info=$this->initialize_row($variety['crop_name'],$variety['crop_type_name'],$variety['variety_name'],$details['pack_size'],$method);
-                            if(!$first_row)
-                            {
-                                if($prev_crop_name!=$variety['crop_name'])
-                                {
-                                    /*$items[]=$this->get_row($type_total);
-                                    $items[]=$this->get_row($crop_total);
-                                    $type_total=$this->reset_row($type_total);
-                                    $crop_total=$this->reset_row($crop_total);*/
-
-                                    $prev_crop_name=$variety['crop_name'];
-                                    $prev_type_name=$variety['crop_type_name'];
-                                    $prev_variety_name=$variety['variety_name'];
-                                    $prev_pack_size=$details['pack_size'];
-                                }
-                                elseif($prev_type_name!=$variety['crop_type_name'])
-                                {
-                                    /*$items[]=$this->get_row($type_total);
-                                    $type_total=$this->reset_row($type_total);*/
-
-                                    $info['crop_name']='';
-                                    $prev_type_name=$variety['crop_type_name'];
-                                    $prev_variety_name=$variety['variety_name'];
-                                    $prev_pack_size=$details['pack_size'];
-                                }
-                                elseif($prev_variety_name!=$variety['variety_name'])
-                                {
-                                    /*$items[]=$this->get_row($type_total);
-                                    $type_total=$this->reset_row($type_total);*/
-
-                                    $info['crop_name']='';
-                                    $info['crop_type_name']='';
-                                    $prev_variety_name=$variety['variety_name'];
-                                    $prev_pack_size=$details['pack_size'];
-                                }
-                                elseif($prev_pack_size!=$details['pack_size'])
-                                {
-                                    /*$items[]=$this->get_row($type_total);
-                                    $type_total=$this->reset_row($type_total);*/
-
-                                    $info['crop_name']='';
-                                    $info['crop_type_name']='';
-                                    $info['variety_name']='';
-                                    $prev_pack_size=$details['pack_size'];
-                                }
-                                else
-                                {
-                                    $info['crop_name']='';
-                                    $info['crop_type_name']='';
-                                    $info['variety_name']='';
-                                    $info['pack_size']='';
-                                }
-                            }
-                            else
-                            {
-                                $prev_crop_name=$variety['crop_name'];
-                                $prev_type_name=$variety['crop_type_name'];
-                                $first_row=false;
-                            }
-                            //$info['lc_last_barcode']=isset($variety_lc[$variety['variety_id']][$details['pack_size_id']])?$variety_lc[$variety['variety_id']][$details['pack_size_id']]['id']:'';
+                            $info['crop_name']=$variety['crop_name'];
+                            $info['crop_type_name']=$variety['crop_type_name'];
+                            $info['variety_name']=$variety['variety_name'];
+                            $info['pack_size']=$details['pack_size'];
                             $info['id']=$lc_info[$i]['id'];
                             $info['lc_barcode']=Barcode_helper::get_barcode_lc($lc_info[$i]['id']);
                             if($details['pack_size_id']==0)
@@ -397,15 +323,9 @@ class Report_lc_variety extends Root_Controller
                             $items[]=$info;
                         }
                     }
-                    //$info['lc_barcode']=isset($variety_lc_ids[$variety['variety_id']][$details['pack_size_id']])?$variety_lc_ids[$variety['variety_id']][$details['pack_size_id']]:'';
-
-
                 }
             }
         }
-        /*$items[]=$this->get_row($type_total);
-        $items[]=$this->get_row($crop_total);
-        $items[]=$this->get_row($grand_total);*/
         $this->json_return($items);
     }
     private function system_get_items_quantity()
@@ -423,8 +343,6 @@ class Report_lc_variety extends Root_Controller
         $variety_id=$this->input->post('variety_id');
         $pack_size_id=$this->input->post('pack_size_id');
 
-        /*$status_open_forward=$this->input->post('status_open_forward');
-        $status_release=$this->input->post('status_release');*/
         $status_received=$this->input->post('status_receive');
         $status_open=$this->input->post('status_open');
 
@@ -481,7 +399,6 @@ class Report_lc_variety extends Root_Controller
         $this->db->select('currency.name currency_name');
 
         $this->db->group_by('details.variety_id,details.pack_size_id');
-        //$this->db->order_by('lc.id','DESC');
 
         $this->db->where_in('details.variety_id',$variety_ids);
         $this->db->where('lc.'.$date_type.'>='.$date_start.' and lc.'.$date_type.'<='.$date_end);
@@ -507,21 +424,11 @@ class Report_lc_variety extends Root_Controller
             $this->db->where('lc.principal_id',$principal_id);
         }
         $results=$this->db->get()->result_array();
-        //echo $this->db->last_query();
         $variety_lc=array();
         foreach($results as $result)
         {
             $variety_lc[$result['variety_id']][$result['pack_size_id']]=$result;
         }
-        $method='list_quantity';
-        /*$type_total=$this->initialize_row('','','Total Type','',$method);
-        $crop_total=$this->initialize_row('','Total Crop','','',$method);
-        $grand_total=$this->initialize_row('Grand Total','','','',$method);*/
-        $prev_crop_name='';
-        $prev_type_name='';
-        $prev_variety_name='';
-        $prev_pack_size='';
-        $first_row=true;
         $items=array();
         foreach($varieties as $variety)
         {
@@ -529,72 +436,11 @@ class Report_lc_variety extends Root_Controller
             {
                 foreach($variety_lc[$variety['variety_id']] as $details)
                 {
-                    //$info=$this->initialize_row($variety['crop_name'],$variety['crop_type_name'],$variety['variety_name'],$details['pack_size'],$method);
-//                    if(!$first_row)
-//                    {
-//                        if($prev_crop_name!=$variety['crop_name'])
-//                        {
-//                            /*$items[]=$this->get_row($type_total);
-//                            $items[]=$this->get_row($crop_total);
-//                            $type_total=$this->reset_row($type_total);
-//                            $crop_total=$this->reset_row($crop_total);*/
-//
-//                            $prev_crop_name=$variety['crop_name'];
-//                            $prev_type_name=$variety['crop_type_name'];
-//                            $prev_variety_name=$variety['variety_name'];
-//                            $prev_pack_size=$details['pack_size'];
-//                        }
-//                        elseif($prev_type_name!=$variety['crop_type_name'])
-//                        {
-//                            /*$items[]=$this->get_row($type_total);
-//                            $type_total=$this->reset_row($type_total);*/
-//
-//                            $info['crop_name']='';
-//                            $prev_type_name=$variety['crop_type_name'];
-//                            $prev_variety_name=$variety['variety_name'];
-//                            $prev_pack_size=$details['pack_size'];
-//                        }
-//                        elseif($prev_variety_name!=$variety['variety_name'])
-//                        {
-//                            /*$items[]=$this->get_row($type_total);
-//                            $type_total=$this->reset_row($type_total);*/
-//
-//                            $info['crop_name']='';
-//                            $info['crop_type_name']='';
-//                            $prev_variety_name=$variety['variety_name'];
-//                            $prev_pack_size=$details['pack_size'];
-//                        }
-//                        elseif($prev_pack_size!=$details['pack_size'])
-//                        {
-//                            /*$items[]=$this->get_row($type_total);
-//                            $type_total=$this->reset_row($type_total);*/
-//
-//                            $info['crop_name']='';
-//                            $info['crop_type_name']='';
-//                            $info['variety_name']='';
-//                            $prev_pack_size=$details['pack_size'];
-//                        }
-//                        else
-//                        {
-//                            $info['crop_name']='';
-//                            $info['crop_type_name']='';
-//                            $info['variety_name']='';
-//                            $info['pack_size']='';
-//                        }
-//                    }
-//                    else
-//                    {
-//                        $prev_crop_name=$variety['crop_name'];
-//                        $prev_type_name=$variety['crop_type_name'];
-//                        $first_row=false;
-//                    }
-                    //$info['lc_last_barcode']=isset($variety_lc[$variety['variety_id']][$details['pack_size_id']])?$variety_lc[$variety['variety_id']][$details['pack_size_id']]['id']:'';
                     $info['crop_name']=$variety['crop_name'];
                     $info['crop_type_name']=$variety['crop_type_name'];
                     $info['variety_name']=$variety['variety_name'];
                     $info['pack_size']=$details['pack_size'];
                     $info['id']=$details['id'];
-                    //$info['lc_barcode']=Barcode_helper::get_barcode_lc($details['id']);
                     if($details['pack_size_id']==0)
                     {
                         $info['quantity_pkt']='';
@@ -610,9 +456,6 @@ class Report_lc_variety extends Root_Controller
                 }
             }
         }
-        /*$items[]=$this->get_row($type_total);
-        $items[]=$this->get_row($crop_total);
-        $items[]=$this->get_row($grand_total);*/
         $this->json_return($items);
     }
     private function reset_row($info)
