@@ -188,19 +188,14 @@ class Report_lc_variety extends Root_Controller
     }
     private function system_get_items_variety()
     {
-
         $date_type=$this->input->post('date_type');
-
         $date_start=$this->input->post('date_start');
         $date_end=$this->input->post('date_end');
-
         $principal_id=$this->input->post('principal_id');
-
         $crop_id=$this->input->post('crop_id');
         $crop_type_id=$this->input->post('crop_type_id');
         $variety_id=$this->input->post('variety_id');
         $pack_size_id=$this->input->post('pack_size_id');
-
         $status_received=$this->input->post('status_receive');
         $status_open=$this->input->post('status_open');
 
@@ -404,13 +399,13 @@ class Report_lc_variety extends Root_Controller
         $this->db->join($this->config->item('table_login_setup_currency').' currency','currency.id = lc.currency_id','INNER');
         $this->db->select('currency.name currency_name');
 
-        $this->db->group_by('details.variety_id,details.pack_size_id');
 
         $this->db->where_in('details.variety_id',$variety_ids);
         $this->db->where('details.quantity_open >0');
         $this->db->where('lc.status_open_forward',$this->config->item('system_status_yes'));
         $this->db->where('lc.status_release',$this->config->item('system_status_complete'));
         $this->db->where('lc.'.$date_type.'>='.$date_start.' and lc.'.$date_type.'<='.$date_end);
+        $this->db->group_by('details.variety_id,details.pack_size_id');
         if($pack_size_id>0)
         {
             $this->db->where('details.pack_size_id',$pack_size_id);
