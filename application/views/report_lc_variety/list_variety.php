@@ -19,20 +19,9 @@ if(isset($CI->permissions['action5'])&&($CI->permissions['action5']==1))
         'class'=>'button_action_download',
         'data-title'=>"Download"
     );
-    $crop_id=$options['crop_id']?$options['crop_id']:0;
-    $type_id=$options['crop_type_id']?$options['crop_type_id']:0;
-    $variety_id=$options['variety_id']?$options['variety_id']:0;
-    $pack_size_id=$options['pack_size_id']?$options['pack_size_id']:0;
-    $status_receive=$options['status_receive']?$options['status_receive']:0;
-    $status_open=$options['status_open']?$options['status_open']:0;
-    $principal_id=$options['principal_id']?$options['principal_id']:0;
-    $date_start=$options['date_start']?$options['date_start']:0;
-    $date_end=$options['date_end']?$options['date_end']:0;
-    $date_type=$options['date_type']?$options['date_type']:0;
-    $report_type=$options['report_type']?$options['report_type']:0;
     $action_buttons[]=array(
         'label'=>$CI->lang->line("ACTION_CSV"),
-        'href'=>site_url($CI->controller_url.'_csv/system_list/'.$crop_id.'/'.$type_id.'/'.$variety_id.'/'.$pack_size_id.'/'.$status_receive.'/'.$status_open.'/'.$principal_id.'/'.$date_start.'/'.$date_end.'/'.$date_type.'/'.$report_type),
+        'href'=>site_url($CI->controller_url.'_csv/system_list/'.urlencode(json_encode($options))),
         'class'=>'external',
         'target'=>'_blank'
     );

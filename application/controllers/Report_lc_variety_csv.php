@@ -24,8 +24,21 @@ class Report_lc_variety_csv extends CI_Controller
         $this->lang->language['LABEL_QUANTITY_KG']='Quantity (kg)';
     }
 
-    public function system_list($crop_id=0,$crop_type_id=0,$variety_id=0,$pack_size_id=0,$status_received='',$status_open='',$principal_id=0,$date_start=0,$date_end=0,$date_type='',$report_type='')
+    public function system_list($options)
     {
+        $post=json_decode(urldecode($options),1);
+        $crop_id=isset($post['crop_id'])?$post['crop_id']:0;
+        $crop_type_id=isset($post['crop_type_id'])?$post['crop_type_id']:0;
+        $variety_id=isset($post['variety_id'])?$post['variety_id']:0;
+        $pack_size_id=isset($post['pack_size_id'])?$post['pack_size_id']:0;
+        $status_received=isset($post['status_received'])?$post['status_received']:'';
+        $status_open=isset($post['status_open'])?$post['status_open']:'';
+        $principal_id=isset($post['principal_id'])?$post['principal_id']:0;
+        $date_start=isset($post['date_start'])?$post['date_start']:0;
+        $date_end=isset($post['date_end'])?$post['date_end']:0;
+        $date_type=isset($post['date_type'])?$post['date_type']:'';
+        $report_type=isset($post['report_type'])?$post['report_type']:'';
+
         $user=User_helper::get_user();
         $method='';
         $preference_headers=array();
@@ -95,7 +108,6 @@ class Report_lc_variety_csv extends CI_Controller
             $this->db->order_by('crop_type.id','ASC');
             $this->db->order_by('v.ordering','ASC');
             $this->db->order_by('v.id','ASC');
-
             $varieties=$this->db->get()->result_array();
             $variety_ids=array();
             $variety_ids[0]=0;
