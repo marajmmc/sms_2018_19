@@ -462,26 +462,6 @@ class Report_lc_variety extends Root_Controller
         }
         $this->json_return($items);
     }
-    private function reset_row($info)
-    {
-        foreach($info  as $key=>$r)
-        {
-            if(!(($key=='crop_name')||($key=='crop_type_name')||($key=='variety_name')||($key=='pack_size')))
-            {
-                $info[$key]='';
-            }
-        }
-        return $info;
-    }
-    private function get_row($info)
-    {
-        $row=array();
-        foreach($info  as $key=>$r)
-        {
-            $row[$key]=$info[$key];
-        }
-        return $row;
-    }
     private function initialize_row($crop_name,$crop_type_name,$variety_name,$pack_size,$method)
     {
         $row=$this->get_preference_headers($method);

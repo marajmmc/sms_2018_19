@@ -19,6 +19,7 @@ if(isset($CI->permissions['action5'])&&($CI->permissions['action5']==1))
         'class'=>'button_action_download',
         'data-title'=>"Download"
     );
+    unset($options['fiscal_year_id']);
     $action_buttons[]=array(
         'label'=>$CI->lang->line("ACTION_CSV"),
         'href'=>site_url($CI->controller_url.'_csv/system_list/'.urlencode(json_encode($options))),
