@@ -3,6 +3,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Lc_helper
 {
+    public static $LC_DATE_INITIAL_AVERAGE_RATE='01-01-2019';
     public static function get_view_info_basic($lc_info)
     {
         $CI =& get_instance();
