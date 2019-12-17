@@ -68,10 +68,10 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <th class="label-info" rowspan="2">Created Time</th>
             </tr>
             <tr>
+                <th class="label-success text-center">Old</th>
                 <th class="label-success text-center">Current</th>
-                <th class="label-success text-center">New</th>
+                <th class="label-success text-center">Old</th>
                 <th class="label-success text-center">Current</th>
-                <th class="label-success text-center">New</th>
             </tr>
             </thead>
             <tbody>
@@ -86,11 +86,11 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <td>
                         <?php echo System_helper::display_date($lc['date_receive'])?>
                     </td>
-                    <td><?php echo $lc['pack_size']?></td>
-                    <td class="text-right"><?php echo $lc['rate_weighted_receive_old']?></td>
-                    <td class="text-right"><?php echo $lc['rate_weighted_receive']?></td>
-                    <td class="text-right"><?php echo $lc['rate_weighted_complete_old']?></td>
-                    <td class="text-right"><?php echo $lc['rate_weighted_complete']?></td>
+                    <td><?php echo $lc['pack_size']?$lc['pack_size']:'Bulk';?></td>
+                    <td class="text-right"><?php echo System_helper::get_string_amount($lc['rate_weighted_receive_old'])?></td>
+                    <td class="text-right"><?php echo System_helper::get_string_amount($lc['rate_weighted_receive'])?></td>
+                    <td class="text-right"><?php echo System_helper::get_string_amount($lc['rate_weighted_complete_old'])?></td>
+                    <td class="text-right"><?php echo System_helper::get_string_amount($lc['rate_weighted_complete'])?></td>
                     <td><?php echo $lc['created_by']?></td>
                     <td><?php echo System_helper::display_date_time($lc['date_created'])?></td>
                 </tr>

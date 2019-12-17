@@ -91,7 +91,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <td>
                             <?php echo System_helper::display_date($lc['date_receive'])?>
                         </td>
-                        <td><?php echo $lc['pack_size']?></td>
+                        <td><?php echo $lc['pack_size']?$lc['pack_size']:'Bulk';?></td>
                         <td class="text-right"><?php echo $lc['rate_weighted_receive']?></td>
                         <td>
                             <input type="text" name="items[<?php echo $lc['id']?>][rate_weighted_receive]" class="form-control float_type_positive" value="<?php echo $lc['rate_weighted_receive']?>"/>

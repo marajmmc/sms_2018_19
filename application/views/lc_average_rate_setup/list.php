@@ -115,6 +115,10 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             {
                 element.css({'margin': '0px','width': '100%', 'height': '100%',padding:'5px',background:'#F99797'});
             }
+            else
+            {
+                element.css({'margin': '0px','width': '100%', 'height': '100%',padding:'5px'});
+            }
 
             return element[0].outerHTML;
 

@@ -99,7 +99,7 @@ class Lc_average_rate_setup extends Root_Controller
         if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
         {
             $data['system_preference_items']= System_helper::get_preference($user->user_id, $this->controller_url, $method, $this->get_preference_headers($method));
-            $data['title']="LC Initial Average Rate Setup Variety List";
+            $data['title']="LC Average Rate Setup Variety List";
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/list",$data,true));
             if($this->message)
@@ -124,7 +124,6 @@ class Lc_average_rate_setup extends Root_Controller
         $this->db->select('COUNT(CASE WHEN details.rate_weighted_receive > 0 THEN rate_weighted_receive END) as number_of_lc_rate_receive');
         $this->db->join($this->config->item('table_sms_lc_open').' lc','lc.id = details.lc_id','INNER');
         $this->db->where('lc.status_receive', $this->config->item('system_status_complete'));
-        $this->db->where('lc.date_receive < ', System_helper::get_time(Lc_helper::$LC_DATE_INITIAL_AVERAGE_RATE));
         $this->db->where('details.quantity_open >0');
         $this->db->group_by('details.variety_id, details.pack_size_id');
         $results=$this->db->get()->result_array();
@@ -195,19 +194,14 @@ class Lc_average_rate_setup extends Root_Controller
             $this->db->join($this->config->item('table_login_setup_classification_varieties').' v','v.id = details.variety_id','INNER');
             $this->db->select('v.id variety_id, v.name variety_name');
             $this->db->join($this->config->item('table_login_setup_classification_pack_size').' pack','pack.id = details.pack_size_id','LEFT');
-            $this->db->select('(CASE WHEN details.pack_size_id = 0 THEN "Bulk" ELSE pack.name END) as pack_size');
-            $this->db->join($this->config->item('table_login_setup_classification_crop_types').' crop_type','crop_type.id = v.crop_type_id','LEFT');
-            $this->db->select('crop_type.name crop_type_name');
-            $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = crop_type.crop_id','LEFT');
-            $this->db->select('crop.name crop_name');
+            $this->db->select('pack.name as pack_size');
             $this->db->where('details.variety_id',$variety_id);
             $this->db->where('lc.status_receive', $this->config->item('system_status_complete'));
-            $this->db->where('lc.date_receive < ', System_helper::get_time(Lc_helper::$LC_DATE_INITIAL_AVERAGE_RATE));
             $this->db->where('details.quantity_open >0');
             $this->db->order_by('details.id ASC');
             $data['items']=$this->db->get()->result_array();
 
-            $data['title']="LC Initial Average Rate Set (Add/Edit)";
+            $data['title']="LC Average Rate Set (Add/Edit)";
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/edit",$data,true));
             if($this->message)
@@ -252,7 +246,6 @@ class Lc_average_rate_setup extends Root_Controller
         $this->db->select('lc.date_receive');
         $this->db->where('details.variety_id',$variety_id);
         $this->db->where('lc.status_receive', $this->config->item('system_status_complete'));
-        $this->db->where('lc.date_receive < ', System_helper::get_time(Lc_helper::$LC_DATE_INITIAL_AVERAGE_RATE));
         $this->db->where('details.quantity_open >0');
         $this->db->order_by('details.id ASC');
         $results=$this->db->get()->result_array();
@@ -262,10 +255,10 @@ class Lc_average_rate_setup extends Root_Controller
             {
                 if(isset($items[$result['id']]))
                 {
-                    $rate_weighted_receive_old=$result['rate_weighted_receive']?$result['rate_weighted_receive']:'';
-                    $rate_weighted_receive=$items[$result['id']]['rate_weighted_receive']?$items[$result['id']]['rate_weighted_receive']:'';
-                    $rate_weighted_complete_old=$result['rate_weighted_complete']?$result['rate_weighted_complete']:'';
-                    $rate_weighted_complete=$items[$result['id']]['rate_weighted_complete']?$items[$result['id']]['rate_weighted_complete']:'';
+                    $rate_weighted_receive_old=$result['rate_weighted_receive'];
+                    $rate_weighted_receive=$items[$result['id']]['rate_weighted_receive']?$items[$result['id']]['rate_weighted_receive']:0;
+                    $rate_weighted_complete_old=$result['rate_weighted_complete'];
+                    $rate_weighted_complete=$items[$result['id']]['rate_weighted_complete']?$items[$result['id']]['rate_weighted_complete']:0;
                     if(($rate_weighted_receive_old!=$rate_weighted_receive) || ($rate_weighted_complete_old!=$rate_weighted_complete))
                     {
                         $data=array();
@@ -332,51 +325,17 @@ class Lc_average_rate_setup extends Root_Controller
             $this->db->order_by('v.id','ASC');
             $data['item']=$this->db->get()->row_array();
 
-            /*$this->db->from($this->config->item('table_sms_lc_details').' details');
-            $this->db->select('details.*');
-            $this->db->join($this->config->item('table_sms_lc_open').' lc','lc.id = details.lc_id','INNER');
-            $this->db->select('lc.date_receive');
-            $this->db->join($this->config->item('table_login_setup_classification_varieties').' v','v.id = details.variety_id','INNER');
-            $this->db->select('v.id variety_id, v.name variety_name');
-            $this->db->join($this->config->item('table_login_setup_classification_pack_size').' pack','pack.id = details.pack_size_id','LEFT');
-            $this->db->select('(CASE WHEN details.pack_size_id = 0 THEN "Bulk" ELSE pack.name END) as pack_size');
-            $this->db->join($this->config->item('table_login_setup_classification_crop_types').' crop_type','crop_type.id = v.crop_type_id','LEFT');
-            $this->db->select('crop_type.name crop_type_name');
-            $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = crop_type.crop_id','LEFT');
-            $this->db->select('crop.name crop_name');
-            $this->db->where('details.variety_id',$variety_id);
-            $this->db->where('lc.status_receive', $this->config->item('system_status_complete'));
-            $this->db->where('lc.date_receive < ', System_helper::get_time(Lc_helper::$LC_DATE_INITIAL_AVERAGE_RATE));
-            $this->db->where('details.quantity_open >0');
-            $this->db->order_by('details.id ASC');
-            $data['items']=$this->db->get()->result_array();*/
-
-            //$results=Query_helper::get_info($this->config->item('table_sms_lc_variety_average_rates_histories'),'*',array('variety_id ='.$variety_id));
             $this->db->from($this->config->item('table_sms_lc_variety_average_rates_histories').' details');
             $this->db->select('details.*');
             $this->db->join($this->config->item('table_sms_lc_details').' lc_details','lc_details.id = details.lc_details_id','INNER');
-            //$this->db->select('v.id variety_id, v.name variety_name');
             $this->db->join($this->config->item('table_login_setup_user_info').' user_info','user_info.user_id = details.user_created AND user_info.revision=1','INNER');
             $this->db->select('user_info.name as created_by');
-            $this->db->join($this->config->item('table_login_setup_classification_varieties').' v','v.id = details.variety_id','INNER');
-            $this->db->select('v.id variety_id, v.name variety_name');
             $this->db->join($this->config->item('table_login_setup_classification_pack_size').' pack','pack.id = lc_details.pack_size_id','LEFT');
-            $this->db->select('(CASE WHEN lc_details.pack_size_id = 0 THEN "Bulk" ELSE pack.name END) as pack_size');
-            $this->db->join($this->config->item('table_login_setup_classification_crop_types').' crop_type','crop_type.id = v.crop_type_id','LEFT');
-            $this->db->select('crop_type.name crop_type_name');
-            $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = crop_type.crop_id','LEFT');
-            $this->db->select('crop.name crop_name');
+            $this->db->select('pack.name as pack_size');
             $this->db->where('details.variety_id',$variety_id);
             $data['items']=$this->db->get()->result_array();
-            /*$histories=array();
-            foreach($results as $result)
-            {
-                $histories[$result['lc_details_id']][]=$result;
-            }
-            $data['histories']=$histories;*/
 
-
-            $data['title']="LC Details";
+            $data['title']="LC Average Rate Setup Details";
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/details",$data,true));
             if($this->message)
