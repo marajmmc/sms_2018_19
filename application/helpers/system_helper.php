@@ -154,7 +154,8 @@ class System_helper
                 {
                     if(isset($preferences[$key]))
                     {
-                        $data[$key]=$value;
+                        //$data[$key]=$value;
+                        $data[$key]=$preferences[$key];//should be value of set
                     }
                     else
                     {
