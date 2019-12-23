@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Lc_purchase_product_update_price extends Root_Controller
+class Lc_average_rate_calculation extends Root_Controller
 {
     public $message;
     public $permissions;
