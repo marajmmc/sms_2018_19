@@ -191,6 +191,14 @@ $price_complete_total_taka=$item['price_complete_total_taka'];
             foreach($items as $index=>$value)
             {
                 $rate_receive=isset($receive_rates[$value['variety_id']][$value['pack_size_id']])?$receive_rates[$value['variety_id']][$value['pack_size_id']]:0;
+                $rate_previous_receive=0;
+                $rate_previous_complete=0;
+                if(isset($previous_rates[$value['variety_id']][$value['pack_size_id']]))
+                {
+                    $rate_previous=$previous_rates[$value['variety_id']][$value['pack_size_id']];
+                    $rate_previous_receive=$rate_previous['rate_weighted_receive'];
+                    $rate_previous_complete=$rate_previous['rate_weighted_complete'];
+                }
                 if($value['pack_size_id']==0)
                 {
                     $quantity_kg_receive=$value['quantity_receive'];
@@ -210,32 +218,22 @@ $price_complete_total_taka=$item['price_complete_total_taka'];
                     $total_amount_complete=($value['quantity_receive']*$rate_complete);
                 }
 
-
-
-
-                $stock_total_opening=0;
+                $quantity_kg_opening=0;
                 if(isset($stock_opening[$value['variety_id']][$value['pack_size_id']]))
                 {
                     $stock=$stock_opening[$value['variety_id']][$value['pack_size_id']];
-                    $stock_total_opening=$stock['stock_hq_kg']+$stock['stock_outlet_kg']+$stock['stock_to_kg']+$stock['stock_tr_kg']+$stock['stock_ts_kg'];
+                    $quantity_kg_opening=$stock['stock_hq_kg']+$stock['stock_outlet_kg']+$stock['stock_to_kg']+$stock['stock_tr_kg']+$stock['stock_ts_kg'];
                 }
-                $rate_previous_receive=0;
-                $rate_previous_complete=0;
-                if(isset($previous_rates[$value['variety_id']][$value['pack_size_id']]))
-                {
-                    $rate_previous=$previous_rates[$value['variety_id']][$value['pack_size_id']];
-                    $rate_previous_receive=$rate_previous['rate_weighted_receive'];
-                    $rate_previous_complete=$rate_previous['rate_weighted_complete'];
-                }
-                $total_amount_opening_receive=($stock_total_opening*$rate_previous_receive);
-                $total_amount_opening_complete=($stock_total_opening*$rate_previous_complete);
 
-                $quantity_kg_total_receive_total=($stock_total_opening+$quantity_kg_receive);
-                //$rate_total_receive_total=($rate_previous_receive+$rate_receive);
-                $rate_total_receive_total=($rate_previous_receive+$rate_receive);
-                $amount_total_receive_total=($quantity_kg_total_receive_total*$rate_total_receive_total);
-                //$rate_complete=($value['price_total_taka']/$quantity_kg_receive);
-                //$total_amount_complete=($quantity_kg_receive*$rate_complete);
+                $total_amount_opening_receive=($quantity_kg_opening*$rate_previous_receive);
+                $quantity_kg_total_receive_total=($quantity_kg_opening+$quantity_kg_receive);
+                $amount_total_receive_total=($total_amount_opening_receive+$total_amount_receive);
+                $rate_total_receive_total=$quantity_kg_total_receive_total?($amount_total_receive_total/$quantity_kg_total_receive_total):0;
+
+                $total_amount_opening_complete=($quantity_kg_opening*$rate_previous_complete);
+                $quantity_kg_total_complete_total=($quantity_kg_opening+$quantity_kg_receive);
+                $amount_total_complete_total=($total_amount_opening_complete+$total_amount_complete);
+                $rate_total_complete_total=$quantity_kg_total_complete_total?($amount_total_complete_total/$quantity_kg_total_complete_total):0;
                 ?>
                 <tr>
                     <td><label><?php echo $value['crop_name'];?></label></td>
@@ -243,7 +241,7 @@ $price_complete_total_taka=$item['price_complete_total_taka'];
                     <td><label><?php echo $value['variety_name']; ?> (<?php echo $value['variety_name_import']; ?>)</label></td>
                     <td class="text-center"> <label><?php if($value['pack_size_id']==0){echo 'Bulk';}else{echo $value['pack_size'];} ?></label></td>
 
-                    <td class="text-right"><?php echo System_helper::get_string_kg($stock_total_opening);?></td>
+                    <td class="text-right"><?php echo System_helper::get_string_kg($quantity_kg_opening);?></td>
                     <td class="text-right"><?php echo System_helper::get_string_amount($rate_previous_receive);?></td>
                     <td class="text-right <?php if(!$total_amount_opening_receive){echo 'bg-danger';}?>"><?php echo System_helper::get_string_amount($total_amount_opening_receive);?></td>
 
@@ -255,13 +253,17 @@ $price_complete_total_taka=$item['price_complete_total_taka'];
                     <td class="text-right"><?php echo System_helper::get_string_amount($rate_total_receive_total);?></td>
                     <td class="text-right <?php if(!$amount_total_receive_total){echo 'bg-danger';}?>"><?php echo System_helper::get_string_amount($amount_total_receive_total);?></td>
 
-                    <td class="text-right"><?php echo System_helper::get_string_kg($stock_total_opening);?></td>
+                    <td class="text-right"><?php echo System_helper::get_string_kg($quantity_kg_opening);?></td>
                     <td class="text-right"><?php echo System_helper::get_string_amount($rate_previous_complete);?></td>
                     <td class="text-right <?php if(!$total_amount_opening_complete){echo 'bg-danger';}?>"><?php echo System_helper::get_string_amount($total_amount_opening_complete);?></td>
 
                     <td class="text-right"><?php echo System_helper::get_string_kg($quantity_kg_receive);?></td>
                     <td class="text-right"><?php echo System_helper::get_string_amount($rate_complete);?></td>
                     <td class="text-right <?php if(!$total_amount_complete){echo 'bg-danger';}?>"><?php echo System_helper::get_string_amount($total_amount_complete);?></td>
+
+                    <td class="text-right"><?php echo System_helper::get_string_kg($quantity_kg_total_complete_total);?></td>
+                    <td class="text-right"><?php echo System_helper::get_string_amount($rate_total_complete_total);?></td>
+                    <td class="text-right <?php if(!$amount_total_receive_total){echo 'bg-danger';}?>"><?php echo System_helper::get_string_amount($amount_total_complete_total);?></td>
                 </tr>
             <?php
             }

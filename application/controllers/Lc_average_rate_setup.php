@@ -125,7 +125,8 @@ class Lc_average_rate_setup extends Root_Controller
         $this->db->join($this->config->item('table_sms_lc_open').' lc','lc.id = details.lc_id','INNER');
         $this->db->where('lc.status_receive', $this->config->item('system_status_complete'));
         $this->db->where('details.quantity_open >0');
-        $this->db->group_by('details.variety_id, details.pack_size_id');
+        $this->db->group_by('details.variety_id');
+        //$this->db->group_by('details.variety_id, details.pack_size_id');
         $results=$this->db->get()->result_array();
         $info_lc=array();
         foreach($results as $result)

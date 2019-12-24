@@ -164,13 +164,17 @@ class Lc_average_rate_calculation extends Root_Controller
             $data['items']=$this->db->get()->result_array();
             $variety_ids=array();
             $variety_ids[0]=0;
-            $pack_sizes=array();
             foreach($data['items'] as $result)
             {
                 $variety_ids[$result['variety_id']]=$result['variety_id'];
-                $pack_sizes[$result['pack_size_id']]=$result['pack_size'];
             }
-            $pack_sizes[0]=1000;
+            $pack_sizes=array();
+            $results=Query_helper::get_info($this->config->item('table_login_setup_classification_pack_size'),array('id value','name text'),array());
+            foreach($results as $result)
+            {
+                $pack_sizes[$result['value']]=$result['text'];
+            }
+            $pack_sizes['0']=1000;
             $date_end=$data['item']['date_receive'];
             $lc_id=$data['item']['id'];
 
@@ -411,10 +415,6 @@ class Lc_average_rate_calculation extends Root_Controller
         $this->db->group_by('details.variety_id');
         $this->db->group_by('details.pack_size_id');
         $results=$this->db->get()->result_array();
-        /*echo '<pre>';
-        print_r($results);
-        echo '</pre>';*/
-
         foreach($results as $result)
         {
             if(!(isset($stocks[$result['variety_id']][$result['pack_size_id']])))
@@ -438,6 +438,8 @@ class Lc_average_rate_calculation extends Root_Controller
         $this->db->group_by('details.variety_id');
         $this->db->group_by('details.pack_size_id');
         $results=$this->db->get()->result_array();
+        //echo $this->db->last_query();
+
         foreach($results as $result)
         {
             if(!(isset($stocks[$result['variety_id']][$result['pack_size_id']])))
@@ -446,6 +448,7 @@ class Lc_average_rate_calculation extends Root_Controller
             }
             $stocks[$result['variety_id']][$result['pack_size_id']]['stock_hq_kg']+=(($result['in_opening']*$pack_sizes[$result['pack_size_id']])/1000);
         }
+
         //convert bulk to pack in out
         $this->db->from($this->config->item('table_sms_convert_bulk_to_pack').' details');
         $this->db->select('details.variety_id,details.pack_size_id');
@@ -595,6 +598,7 @@ class Lc_average_rate_calculation extends Root_Controller
         $row['crop_type_name']=$crop_type_name;
         $row['variety_name']=$variety_name;
         $row['pack_size']=$pack_size;
+        //$row['stock_total_kg']=0;
         //$row['stock_total_pkt']=0;
         $row['stock_total_kg']=0;
         //$row['stock_hq_pkt']=0;
@@ -627,8 +631,10 @@ class Lc_average_rate_calculation extends Root_Controller
         $this->db->from($this->config->item('table_sms_lc_details') . ' details');
         $this->db->select('details.*');
         $this->db->join($this->config->item('table_sms_lc_open') . ' lc','lc.id=details.lc_id','INNER');
-        $this->db->join('('.$sub_query.') details_max','details_max.variety_id = details.variety_id AND details_max.pack_size_id = details.pack_size_id AND details_max.date_receive= lc.date_receive','INNER');
+        //$this->db->join('('.$sub_query.') details_max','details_max.variety_id = details.variety_id AND details_max.pack_size_id = details.pack_size_id AND details_max.date_receive= lc.date_receive','INNER');
+        $this->db->join('('.$sub_query.') details_max','details_max.id = details.id','INNER');
         $results=$this->db->get()->result_array();
+        //echo $this->db->last_query();
         $rates=array();
         foreach($results as $result)
         {
