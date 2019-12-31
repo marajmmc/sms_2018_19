@@ -53,6 +53,7 @@ $action_buttons[]=array(
     'href'=>site_url($CI->controller_url.'/index/list')
 );
 $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
+
 ?>
 
 <div class="row widget">
@@ -89,22 +90,35 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 { name: 'fiscal_year', type: 'string' },
                 { name: 'month', type: 'string' },
                 { name: 'date_opening', type: 'string' },
+                { name: 'date_receive', type: 'string' },
                 { name: 'principal_name', type: 'string' },
                 { name: 'currency_name', type: 'string' },
                 { name: 'lc_number', type: 'string' },
-                { name: 'quantity_open_kg', type: 'string' }
-                /*,
-                { name: 'status_release', type: 'string' },
-                { name: 'status_received', type: 'string' }*/
+                { name: 'quantity_open_kg', type: 'number' },
+                { name: 'number_of_variety', type: 'number' },
+                { name: 'number_of_lc_rate_receive', type: 'number' },
             ],
             id: 'id',
             type: 'POST',
             url: url
-            /*,
-            sortcolumn: 'id',
-            sortdirection: 'asc'*/
         };
 
+        var cellsrenderer = function(row, column, value, defaultHtml, columnSettings, record)
+        {
+            var element = $(defaultHtml);
+            //element.css({'margin': '0px','width': '100%', 'height': '100%',padding:'5px'});
+            if(record.number_of_variety!=record.number_of_lc_rate_receive)
+            {
+                element.css({'margin': '0px','width': '100%', 'height': '100%',padding:'5px',background:'#F99797'});
+            }
+            else
+            {
+                element.css({'margin': '0px','width': '100%', 'height': '100%',padding:'5px'});
+            }
+
+            return element[0].outerHTML;
+
+        };
         var dataAdapter = new $.jqx.dataAdapter(source);
         // create jqxgrid.
         $("#system_jqx_container").jqxGrid(
@@ -129,10 +143,13 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         { text: '<?php echo $CI->lang->line('LABEL_FISCAL_YEAR'); ?>', dataField: 'fiscal_year',filtertype: 'list', width:65, hidden: <?php echo $system_preference_items['fiscal_year']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_MONTH'); ?>', dataField: 'month',filtertype: 'list', width:80, hidden: <?php echo $system_preference_items['month']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_DATE_OPENING'); ?>', dataField: 'date_opening', width:100, hidden: <?php echo $system_preference_items['date_opening']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_DATE_RECEIVE'); ?>', dataField: 'date_receive', width:100, hidden: <?php echo $system_preference_items['date_receive']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_PRINCIPAL_NAME'); ?>', dataField: 'principal_name',filtertype: 'list', width:180, hidden: <?php echo $system_preference_items['principal_name']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_CURRENCY_NAME'); ?>', dataField: 'currency_name',filtertype: 'list', width:80, hidden: <?php echo $system_preference_items['currency_name']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_LC_NUMBER'); ?>', dataField: 'lc_number', hidden: <?php echo $system_preference_items['lc_number']?0:1;?>},
-                        { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_OPEN_KG'); ?>', dataField: 'quantity_open_kg', cellsalign: 'right', width:100, hidden: <?php echo $system_preference_items['quantity_open_kg']?0:1;?>}
+                        { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_OPEN_KG'); ?>', dataField: 'quantity_open_kg', cellsalign: 'right', width:100, hidden: <?php echo $system_preference_items['quantity_open_kg']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_NUMBER_OF_VARIETY'); ?>', dataField: 'number_of_variety', cellsalign: 'right', width:100,cellsrenderer: cellsrenderer, hidden: <?php echo $system_preference_items['number_of_variety']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_NUMBER_OF_LC_RATE_RECEIVE'); ?>', dataField: 'number_of_lc_rate_receive', cellsalign: 'right', width:100,cellsrenderer: cellsrenderer, hidden: <?php echo $system_preference_items['number_of_lc_rate_receive']?0:1;?>}
                         /*,
                         { text: '<?php echo $CI->lang->line('LABEL_STATUS_RELEASE');?>', dataField: 'status_release', width:70,filtertype: 'list',cellsalign: 'center', hidden: <?php echo $system_preference_items['status_release']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_STATUS_RECEIVED');?>', dataField: 'status_received', width:70,filtertype: 'list',cellsalign: 'center', hidden: <?php echo $system_preference_items['status_received']?0:1;?>}*/

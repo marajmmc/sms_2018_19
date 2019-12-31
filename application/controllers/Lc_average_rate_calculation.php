@@ -12,6 +12,12 @@ class Lc_average_rate_calculation extends Root_Controller
         $this->permissions=User_helper::get_permission(get_class());
         $this->controller_url=strtolower(get_class());
         $this->load->helper('lc');
+        $this->language_labels();
+    }
+    private function language_labels()
+    {
+        $this->lang->language['LABEL_NUMBER_OF_VARIETY']='Number of Variety';
+        $this->lang->language['LABEL_NUMBER_OF_LC_RATE_RECEIVE']='Number of (Rate Receive) LC';
     }
     public function index($action="list",$id=0)
     {
@@ -31,10 +37,6 @@ class Lc_average_rate_calculation extends Root_Controller
         {
             $this->system_set_preference();
         }
-        elseif($action=="set_preference_all_lc")
-        {
-            $this->system_set_preference_all_lc();
-        }
         elseif($action=="save_preference")
         {
             System_helper::save_preference();
@@ -49,7 +51,7 @@ class Lc_average_rate_calculation extends Root_Controller
         if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
         {
             $data['system_preference_items']= $this->get_preference();
-            $data['title']="Pending List :: Setup Purchase Product Update Price";
+            $data['title']="Receive LC List (Average Rate Calculator)";
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/list",$data,true));
             if($this->message)
@@ -68,6 +70,22 @@ class Lc_average_rate_calculation extends Root_Controller
     }
     private function system_get_items()
     {
+        $this->db->from($this->config->item('table_sms_lc_details').' details');
+        $this->db->select('details.*');
+        $this->db->select('COUNT(details.variety_id) as number_of_variety');
+        $this->db->select('COUNT(CASE WHEN details.rate_weighted_receive > 0 THEN rate_weighted_receive END) as number_of_lc_rate_receive');
+        $this->db->join($this->config->item('table_sms_lc_open').' lc','lc.id = details.lc_id','INNER');
+        $this->db->where('lc.status_receive', $this->config->item('system_status_complete'));
+        $this->db->where('details.quantity_open >0');
+        $this->db->group_by('details.lc_id');
+        //$this->db->group_by('details.variety_id, details.pack_size_id');
+        $results=$this->db->get()->result_array();
+        $info_lc=array();
+        foreach($results as $result)
+        {
+            $info_lc[$result['lc_id']]['number_of_variety']=$result['number_of_variety'];
+            $info_lc[$result['lc_id']]['number_of_lc_rate_receive']=$result['number_of_lc_rate_receive'];
+        }
         //$config_date_start=$data['item']['date']=System_helper::get_time(Lc_helper::$LC_DATE_INITIAL_AVERAGE_RATE);
         $this->db->from($this->config->item('table_sms_lc_open').' lc');
         $this->db->select('lc.*');
@@ -93,12 +111,15 @@ class Lc_average_rate_calculation extends Root_Controller
             $item['fiscal_year']=$result['fiscal_year'];
             $item['month']=$this->lang->line("LABEL_MONTH_$result[month_id]");
             $item['date_opening']=System_helper::display_date($result['date_opening']);
+            $item['date_receive']=System_helper::display_date($result['date_receive']);
             $item['principal_name']=$result['principal_name'];
             $item['currency_name']=$result['currency_name'];
             $item['lc_number']=$result['lc_number'];
             $item['quantity_open_kg']=number_format($result['quantity_open_kg'],3,'.','');
             $item['status_release']=$result['status_release'];
             $item['status_received']=$result['status_receive'];
+            $item['number_of_variety']=isset($info_lc[$result['id']])?$info_lc[$result['id']]['number_of_variety']:0;
+            $item['number_of_lc_rate_receive']=isset($info_lc[$result['id']])?$info_lc[$result['id']]['number_of_lc_rate_receive']:0;
             $items[]=$item;
         }
         $this->json_return($items);
@@ -186,7 +207,7 @@ class Lc_average_rate_calculation extends Root_Controller
             print_r($data['receive_rates']);
             echo '</pre>';*/
 
-            $data['title']="LC Details :: ".Barcode_helper::get_barcode_lc($item_id);
+            $data['title']="LC Details & LC Average Rate Calculation :: ".Barcode_helper::get_barcode_lc($item_id);
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/details",$data,true));
             if($this->message)
@@ -230,66 +251,15 @@ class Lc_average_rate_calculation extends Root_Controller
         $data['fiscal_year']= 1;
         $data['month']= 1;
         $data['date_opening']= 1;
+        $data['date_receive']= 1;
         $data['principal_name']= 1;
         $data['currency_name']= 1;
         $data['lc_number']= 1;
         $data['quantity_open_kg']= 1;
+        $data['number_of_variety']= 1;
+        $data['number_of_lc_rate_receive']= 1;
         /*$data['status_release']= 1;
         $data['status_received']= 1;*/
-        if($result)
-        {
-            if($result['preferences']!=null)
-            {
-                $preferences=json_decode($result['preferences'],true);
-                foreach($data as $key=>$value)
-                {
-
-                    if(isset($preferences[$key]))
-                    {
-                        $data[$key]=$value;
-                    }
-                    else
-                    {
-                        $data[$key]=0;
-                    }
-                }
-            }
-        }
-        return $data;
-    }
-    private function system_set_preference_all_lc()
-    {
-        if(isset($this->permissions['action6']) && ($this->permissions['action6']==1))
-        {
-            $data['system_preference_items']=$this->get_preference_all_lc();
-            $data['preference_method_name']='list_all';
-            $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("preference_add_edit",$data,true));
-            $ajax['system_page_url']=site_url($this->controller_url.'/index/set_preference_all_lc');
-            $this->json_return($ajax);
-        }
-        else
-        {
-            $ajax['status']=false;
-            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
-            $this->json_return($ajax);
-        }
-    }
-    private function get_preference_all_lc()
-    {
-        $user = User_helper::get_user();
-        $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list_all"'),1);
-        $data['barcode']= 1;
-        $data['fiscal_year']= 1;
-        $data['month']= 1;
-        $data['date_opening']= 1;
-        $data['principal_name']= 1;
-        $data['currency_name']= 1;
-        $data['lc_number']= 1;
-        $data['quantity_open_kg']= 1;
-        /*$data['status_release']= 1;
-        $data['status_received']= 1;
-        $data['status_open']= 1;*/
         if($result)
         {
             if($result['preferences']!=null)
