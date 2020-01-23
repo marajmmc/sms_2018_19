@@ -389,7 +389,7 @@ class Lc_average_rate_calculation extends Root_Controller
         {
             if(!(isset($stocks[$result['variety_id']][$result['pack_size_id']])))
             {
-                $stocks[$result['variety_id']][$result['pack_size_id']]=$this->initialize_row('','','',$pack_sizes[$result['pack_size_id']]);
+                $stocks[$result['variety_id']][$result['pack_size_id']]=$this->initialize_stock_row('','','',$pack_sizes[$result['pack_size_id']]);
             }
             $stocks[$result['variety_id']][$result['pack_size_id']]['stock_hq_kg']+=(($result['stock_in']*$pack_sizes[$result['pack_size_id']])/1000);
         }
@@ -414,7 +414,7 @@ class Lc_average_rate_calculation extends Root_Controller
         {
             if(!(isset($stocks[$result['variety_id']][$result['pack_size_id']])))
             {
-                $stocks[$result['variety_id']][$result['pack_size_id']]=$this->initialize_row('','','',$pack_sizes[$result['pack_size_id']]);
+                $stocks[$result['variety_id']][$result['pack_size_id']]=$this->initialize_stock_row('','','',$pack_sizes[$result['pack_size_id']]);
             }
             $stocks[$result['variety_id']][$result['pack_size_id']]['stock_hq_kg']+=(($result['in_opening']*$pack_sizes[$result['pack_size_id']])/1000);
         }
@@ -435,7 +435,7 @@ class Lc_average_rate_calculation extends Root_Controller
         {
             if(!(isset($stocks[$result['variety_id']][$result['pack_size_id']])))
             {
-                $stocks[$result['variety_id']][$result['pack_size_id']]=$this->initialize_row('','','',$pack_sizes[$result['pack_size_id']]);
+                $stocks[$result['variety_id']][$result['pack_size_id']]=$this->initialize_stock_row('','','',$pack_sizes[$result['pack_size_id']]);
             }
             $stocks[$result['variety_id']][$result['pack_size_id']]['stock_hq_kg']+=(($result['in_convert_bulk_pack_opening']*$pack_sizes[$result['pack_size_id']])/1000);
         }
@@ -509,7 +509,7 @@ class Lc_average_rate_calculation extends Root_Controller
         {
             if(!(isset($stocks[$result['variety_id']][$result['pack_size_id']])))
             {
-                $stocks[$result['variety_id']][$result['pack_size_id']]=$this->initialize_row('','','',$pack_sizes[$result['pack_size_id']]);
+                $stocks[$result['variety_id']][$result['pack_size_id']]=$this->initialize_stock_row('','','',$pack_sizes[$result['pack_size_id']]);
             }
             $stocks[$result['variety_id']][$result['pack_size_id']]['stock_hq_kg']+=(($result['in_hq']*$pack_sizes[$result['pack_size_id']])/1000);
 
@@ -562,7 +562,7 @@ class Lc_average_rate_calculation extends Root_Controller
 
         return $stocks;
     }
-    private function initialize_row($crop_name,$crop_type_name,$variety_name,$pack_size)
+    private function initialize_stock_row($crop_name,$crop_type_name,$variety_name,$pack_size)
     {
         $row['crop_name']=$crop_name;
         $row['crop_type_name']=$crop_type_name;
