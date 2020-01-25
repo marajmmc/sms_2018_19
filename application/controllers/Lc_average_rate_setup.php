@@ -66,6 +66,7 @@ class Lc_average_rate_setup extends Root_Controller
             $data['variety_name']= 1;
             $data['number_of_lc']= 1;
             $data['number_of_lc_rate_receive']= 1;
+            $data['status']= 1;
         }
         else
         {
@@ -136,12 +137,12 @@ class Lc_average_rate_setup extends Root_Controller
         }
 
         $this->db->from($this->config->item('table_login_setup_classification_varieties').' v');
-        $this->db->select('v.id variety_id,v.name variety_name');
+        $this->db->select('v.id variety_id,v.name variety_name,v.status');
         $this->db->join($this->config->item('table_login_setup_classification_crop_types').' crop_type','crop_type.id = v.crop_type_id','INNER');
         $this->db->select('crop_type.id crop_type_id, crop_type.name crop_type_name');
         $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = crop_type.crop_id','INNER');
         $this->db->select('crop.id crop_id,crop.name crop_name');
-        $this->db->where('v.status',$this->config->item('system_status_active'));
+        //$this->db->where('v.status',$this->config->item('system_status_active'));
         $this->db->where('v.whose','ARM');
         $this->db->order_by('crop.ordering','ASC');
         $this->db->order_by('crop.id','ASC');
@@ -177,7 +178,7 @@ class Lc_average_rate_setup extends Root_Controller
             $this->db->select('crop_type.id crop_type_id, crop_type.name crop_type_name');
             $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = crop_type.crop_id','INNER');
             $this->db->select('crop.id crop_id,crop.name crop_name');
-            $this->db->where('v.status',$this->config->item('system_status_active'));
+            //$this->db->where('v.status',$this->config->item('system_status_active'));
             $this->db->where('v.whose','ARM');
             $this->db->where('v.id',$variety_id);
             $this->db->order_by('crop.ordering','ASC');
@@ -315,7 +316,7 @@ class Lc_average_rate_setup extends Root_Controller
             $this->db->select('crop_type.id crop_type_id, crop_type.name crop_type_name');
             $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = crop_type.crop_id','INNER');
             $this->db->select('crop.id crop_id,crop.name crop_name');
-            $this->db->where('v.status',$this->config->item('system_status_active'));
+            //$this->db->where('v.status',$this->config->item('system_status_active'));
             $this->db->where('v.whose','ARM');
             $this->db->where('v.id',$variety_id);
             $this->db->order_by('crop.ordering','ASC');

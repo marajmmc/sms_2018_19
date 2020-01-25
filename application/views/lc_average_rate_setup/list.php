@@ -149,7 +149,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         { text: '<?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?>', dataField: 'crop_type_name', width:150, hidden: <?php echo $system_preference_items['crop_type_name']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?>', dataField: 'variety_name', width:150, hidden: <?php echo $system_preference_items['variety_name']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_NUMBER_OF_LC'); ?>', dataField: 'number_of_lc', cellsalign: 'right', width:100,cellsrenderer: cellsrenderer, hidden: <?php echo $system_preference_items['number_of_lc']?0:1;?>},
-                        { text: '<?php echo $CI->lang->line('LABEL_NUMBER_OF_LC_RATE_RECEIVE'); ?>', dataField: 'number_of_lc_rate_receive', cellsalign: 'right', width:100,cellsrenderer: cellsrenderer, hidden: <?php echo $system_preference_items['number_of_lc_rate_receive']?0:1;?>}
+                        { text: '<?php echo $CI->lang->line('LABEL_NUMBER_OF_LC_RATE_RECEIVE'); ?>', dataField: 'number_of_lc_rate_receive', cellsalign: 'right', width:100,cellsrenderer: cellsrenderer, hidden: <?php echo $system_preference_items['number_of_lc_rate_receive']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_STATUS'); ?>', dataField: 'status',filtertype: 'list',width:'150',cellsalign: 'right', hidden: <?php echo $system_preference_items['status']?0:1;?>}
                     ]
             });
     });
