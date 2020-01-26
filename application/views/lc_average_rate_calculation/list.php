@@ -22,6 +22,16 @@ if(isset($CI->permissions['action0']) && ($CI->permissions['action0']==1))
         'data-action-link'=>site_url($CI->controller_url.'/index/details')
     );
 }
+if(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1))
+{
+    $action_buttons[]=array
+    (
+        'type'=>'button',
+        'label'=>$CI->lang->line('ACTION_EDIT'),
+        'class'=>'button_jqx_action',
+        'data-action-link'=>site_url($CI->controller_url.'/index/edit')
+    );
+}
 if(isset($CI->permissions['action4']) && ($CI->permissions['action4']==1))
 {
     $action_buttons[]=array(
@@ -97,6 +107,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 { name: 'quantity_open_kg', type: 'number' },
                 { name: 'number_of_variety', type: 'number' },
                 { name: 'number_of_lc_rate_receive', type: 'number' },
+                { name: 'number_of_lc_rate_receive_deference', type: 'number' },
+                { name: 'number_of_lc_rate_complete', type: 'number' },
+                { name: 'number_of_lc_rate_complete_deference', type: 'number' },
             ],
             id: 'id',
             type: 'POST',
@@ -149,7 +162,10 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         { text: '<?php echo $CI->lang->line('LABEL_LC_NUMBER'); ?>', dataField: 'lc_number', hidden: <?php echo $system_preference_items['lc_number']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_OPEN_KG'); ?>', dataField: 'quantity_open_kg', cellsalign: 'right', width:100, hidden: <?php echo $system_preference_items['quantity_open_kg']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_NUMBER_OF_VARIETY'); ?>', dataField: 'number_of_variety', cellsalign: 'right', width:100,cellsrenderer: cellsrenderer, hidden: <?php echo $system_preference_items['number_of_variety']?0:1;?>},
-                        { text: '<?php echo $CI->lang->line('LABEL_NUMBER_OF_LC_RATE_RECEIVE'); ?>', dataField: 'number_of_lc_rate_receive', cellsalign: 'right', width:100,cellsrenderer: cellsrenderer, hidden: <?php echo $system_preference_items['number_of_lc_rate_receive']?0:1;?>}
+                        { text: '<?php echo $CI->lang->line('LABEL_NUMBER_OF_LC_RATE_RECEIVE'); ?>', dataField: 'number_of_lc_rate_receive', cellsalign: 'right', width:100,cellsrenderer: cellsrenderer, hidden: <?php echo $system_preference_items['number_of_lc_rate_receive']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_NUMBER_OF_LC_RATE_RECEIVE_DEFERENCE'); ?>', dataField: 'number_of_lc_rate_receive_deference', cellsalign: 'right', width:100,cellsrenderer: cellsrenderer, hidden: <?php echo $system_preference_items['number_of_lc_rate_receive_deference']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_NUMBER_OF_LC_RATE_COMPLETE'); ?>', dataField: 'number_of_lc_rate_complete', cellsalign: 'right', width:100,cellsrenderer: cellsrenderer, hidden: <?php echo $system_preference_items['number_of_lc_rate_complete']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_NUMBER_OF_LC_RATE_COMPLETE_DEFERENCE'); ?>', dataField: 'number_of_lc_rate_complete_deference', cellsalign: 'right', width:100,cellsrenderer: cellsrenderer, hidden: <?php echo $system_preference_items['number_of_lc_rate_complete_deference']?0:1;?>}
                         /*,
                         { text: '<?php echo $CI->lang->line('LABEL_STATUS_RELEASE');?>', dataField: 'status_release', width:70,filtertype: 'list',cellsalign: 'center', hidden: <?php echo $system_preference_items['status_release']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_STATUS_RECEIVED');?>', dataField: 'status_received', width:70,filtertype: 'list',cellsalign: 'center', hidden: <?php echo $system_preference_items['status_received']?0:1;?>}*/

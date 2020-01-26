@@ -17,7 +17,10 @@ class Lc_average_rate_calculation extends Root_Controller
     private function language_labels()
     {
         $this->lang->language['LABEL_NUMBER_OF_VARIETY']='Number of Variety';
-        $this->lang->language['LABEL_NUMBER_OF_LC_RATE_RECEIVE']='Number of (Rate Receive) LC';
+        $this->lang->language['LABEL_NUMBER_OF_LC_RATE_RECEIVE']='Number of Receive Variety';
+        $this->lang->language['LABEL_NUMBER_OF_LC_RATE_RECEIVE_DEFERENCE']='Deference of Receive Variety';
+        $this->lang->language['LABEL_NUMBER_OF_LC_RATE_COMPLETE']='Number of Complete Variety';
+        $this->lang->language['LABEL_NUMBER_OF_LC_RATE_COMPLETE_DEFERENCE']='Deference of Complete Variety';
     }
     public function index($action="list",$id=0)
     {
@@ -258,6 +261,9 @@ class Lc_average_rate_calculation extends Root_Controller
         $data['quantity_open_kg']= 1;
         $data['number_of_variety']= 1;
         $data['number_of_lc_rate_receive']= 1;
+        $data['number_of_lc_rate_receive_deference']= 1;
+        $data['number_of_lc_rate_complete']= 1;
+        $data['number_of_lc_rate_complete_deference']= 1;
         /*$data['status_release']= 1;
         $data['status_received']= 1;*/
         if($result)
