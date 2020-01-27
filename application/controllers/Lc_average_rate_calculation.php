@@ -32,6 +32,22 @@ class Lc_average_rate_calculation extends Root_Controller
         {
             $this->system_get_items();
         }
+        elseif($action=="edit_rate_receive")
+        {
+            $this->system_edit_rate_receive($id);
+        }
+        elseif($action=="save_rate_receive")
+        {
+            $this->system_save_rate_receive();
+        }
+        elseif($action=="edit_rate_complete")
+        {
+            $this->system_edit_rate_complete($id);
+        }
+        elseif($action=="save_rate_complete")
+        {
+            $this->system_save_rate_complete();
+        }
         elseif($action=="details")
         {
             $this->system_details($id);
@@ -77,6 +93,7 @@ class Lc_average_rate_calculation extends Root_Controller
         $this->db->select('details.*');
         $this->db->select('COUNT(details.variety_id) as number_of_variety');
         $this->db->select('COUNT(CASE WHEN details.rate_weighted_receive > 0 THEN rate_weighted_receive END) as number_of_lc_rate_receive');
+        $this->db->select('COUNT(CASE WHEN details.rate_weighted_complete > 0 THEN rate_weighted_complete END) as number_of_lc_rate_complete');
         $this->db->join($this->config->item('table_sms_lc_open').' lc','lc.id = details.lc_id','INNER');
         $this->db->where('lc.status_receive', $this->config->item('system_status_complete'));
         $this->db->where('details.quantity_open >0');
@@ -88,6 +105,7 @@ class Lc_average_rate_calculation extends Root_Controller
         {
             $info_lc[$result['lc_id']]['number_of_variety']=$result['number_of_variety'];
             $info_lc[$result['lc_id']]['number_of_lc_rate_receive']=$result['number_of_lc_rate_receive'];
+            $info_lc[$result['lc_id']]['number_of_lc_rate_complete']=$result['number_of_lc_rate_complete'];
         }
         //$config_date_start=$data['item']['date']=System_helper::get_time(Lc_helper::$LC_DATE_INITIAL_AVERAGE_RATE);
         $this->db->from($this->config->item('table_sms_lc_open').' lc');
@@ -119,13 +137,375 @@ class Lc_average_rate_calculation extends Root_Controller
             $item['currency_name']=$result['currency_name'];
             $item['lc_number']=$result['lc_number'];
             $item['quantity_open_kg']=number_format($result['quantity_open_kg'],3,'.','');
+            $item['status_open']=$result['status_open'];
             $item['status_release']=$result['status_release'];
             $item['status_received']=$result['status_receive'];
             $item['number_of_variety']=isset($info_lc[$result['id']])?$info_lc[$result['id']]['number_of_variety']:0;
             $item['number_of_lc_rate_receive']=isset($info_lc[$result['id']])?$info_lc[$result['id']]['number_of_lc_rate_receive']:0;
+            $item['number_of_lc_rate_receive_deference']=($item['number_of_variety']-$item['number_of_lc_rate_receive']);
+            $item['number_of_lc_rate_complete']=isset($info_lc[$result['id']])?$info_lc[$result['id']]['number_of_lc_rate_complete']:0;
+            $item['number_of_lc_rate_complete_deference']=($item['number_of_variety']-$item['number_of_lc_rate_complete']);
             $items[]=$item;
         }
         $this->json_return($items);
+    }
+    private function system_edit_rate_receive($id)
+    {
+        if(isset($this->permissions['action2'])&&($this->permissions['action2']==1))
+        {
+            if($id>0)
+            {
+                $item_id=$id;
+            }
+            else
+            {
+                $item_id=$this->input->post('id');
+            }
+
+            $this->db->from($this->config->item('table_sms_lc_open').' lco');
+            $this->db->select('lco.*');
+            $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.date_start <= lco.date_opening AND fy.date_end>lco.date_opening','INNER');
+            $this->db->select('fy.name fiscal_year');
+            $this->db->join($this->config->item('table_login_setup_currency').' currency','currency.id = lco.currency_id','INNER');
+            $this->db->select('currency.name currency_name');
+            $this->db->join($this->config->item('table_login_basic_setup_principal').' principal','principal.id = lco.principal_id','INNER');
+            $this->db->select('principal.name principal_name');
+            $this->db->join($this->config->item('table_login_setup_bank_account').' ba','ba.id = lco.bank_account_id','INNER');
+            $this->db->join($this->config->item('table_login_setup_bank').' bank','bank.id = ba.bank_id','INNER');
+            $this->db->select("CONCAT_WS(' ( ',ba.account_number,  CONCAT_WS('', bank.name,' - ',ba.branch_name,')')) bank_account_number");
+            $this->db->where('lco.id',$item_id);
+            $data['item']=$this->db->get()->row_array();
+            if(!$data['item'])
+            {
+                System_helper::invalid_try(__FUNCTION__,$item_id,'Non Exists');
+                $ajax['status']=false;
+                $ajax['system_message']='Invalid LC.';
+                $this->json_return($ajax);
+            }
+            if($data['item']['status_receive']!=$this->config->item('system_status_complete'))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='LC receive not completed.';
+                $this->json_return($ajax);
+            }
+
+            $data['info_basic']=Lc_helper::get_view_info_basic($data['item']);
+            $data['info_lc']=$this->get_view_info_lc($data['item']);
+
+            $this->db->from($this->config->item('table_sms_lc_details').' details');
+            $this->db->select('details.*');
+            $this->db->join($this->config->item('table_login_setup_classification_varieties').' v','v.id = details.variety_id','INNER');
+            $this->db->select('v.id variety_id, v.name variety_name');
+            $this->db->join($this->config->item('table_login_setup_classification_variety_principals').' vp','vp.variety_id = v.id AND vp.principal_id = '.$data['item']['principal_id'].' AND vp.revision = 1','INNER');
+            $this->db->select('vp.name_import variety_name_import');
+            $this->db->join($this->config->item('table_login_setup_classification_pack_size').' pack','pack.id = details.pack_size_id','LEFT');
+            $this->db->select('pack.name pack_size');
+            $this->db->join($this->config->item('table_login_setup_classification_crop_types').' crop_type','crop_type.id = v.crop_type_id','LEFT');
+            $this->db->select('crop_type.name crop_type_name');
+            $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = crop_type.crop_id','LEFT');
+            $this->db->select('crop.name crop_name');
+            $this->db->where('details.lc_id',$item_id);
+            $this->db->where('details.quantity_open >0');
+            $this->db->order_by('details.id ASC');
+            $data['items']=$this->db->get()->result_array();
+
+            $data['title']="Update Receive Rate ( LC: ". Barcode_helper::get_barcode_lc($item_id).' )';
+            $ajax['status']=true;
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/edit_rate_receive",$data,true));
+            if($this->message)
+            {
+                $ajax['system_message']=$this->message;
+            }
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/edit_rate_receive/'.$item_id);
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+    }
+    private function system_save_rate_receive()
+    {
+        $id = $this->input->post("id");
+        $user = User_helper::get_user();
+        $time=time();
+        $items=$this->input->post('items');
+        if($id>0)
+        {
+            if(!(isset($this->permissions['action2']) && ($this->permissions['action2']==1)))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+                $this->json_return($ajax);
+            }
+
+            $result=Query_helper::get_info($this->config->item('table_sms_lc_open'),'*',array('id ='.$id, 'status_open != "'.$this->config->item('system_status_delete').'"'),1);
+            if(!$result)
+            {
+                System_helper::invalid_try(__FUNCTION__,$id,'Non Exists');
+                $ajax['status']=false;
+                $ajax['system_message']='Invalid LC.';
+                $this->json_return($ajax);
+            }
+            if($result['status_receive']!=$this->config->item('system_status_complete'))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='LC receive not completed.';
+                $this->json_return($ajax);
+            }
+        }
+        else
+        {
+            if(!(isset($this->permissions['action1']) && ($this->permissions['action1']==1)))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+                $this->json_return($ajax);
+            }
+        }
+
+        /*$results=Query_helper::get_info($this->config->item('table_sms_lc_details'),'*',array('lc_id='.$id));
+        $old_varieties=array();
+        if($results)
+        {
+            foreach($results as $result)
+            {
+                $old_varieties[$result['variety_id']][$result['pack_size_id']]=$result;
+            }
+        }*/
+        $this->db->trans_start();  //DB Transaction Handle START
+
+        $results=Query_helper::get_info($this->config->item('table_sms_lc_details'),'*',array('lc_id='.$id));
+        if($results)
+        {
+            /*$data=array();
+            $data['rate_weighted_receive'] = $time;
+            $data['date_updated'] = $time;
+            $data['user_updated'] = $user->user_id;
+            Query_helper::update($this->config->item('table_sms_lc_open_histories'),$data, array('lc_id='.$id,'revision=1'), false);
+
+            $this->db->where('lc_id',$id);
+            $this->db->set('revision', 'revision+1', FALSE);
+            $this->db->update($this->config->item('table_sms_lc_open_histories'));
+            */
+            foreach($results as $result)
+            {
+
+                $rate_weighted_receive=0;
+                if(isset($items[$result['id']]['rate_weighted_receive']))
+                {
+                    $rate_weighted_receive=$items[$result['id']]['rate_weighted_receive'];
+                }
+                $data=array();
+                $data['rate_weighted_receive'] = $rate_weighted_receive;
+                /*$data['date_updated'] = $time;
+                $data['user_updated'] = $user->user_id;*/
+                Query_helper::update($this->config->item('table_sms_lc_details'),$data, array('id='.$result['id']), false);
+                /*$data=array();
+                $data['lc_id']=$id;
+                $data['variety_id']=$result['variety_id'];
+                $data['pack_size_id']=$result['pack_size_id'];
+                $data['quantity']=$rate_receive;
+                $data['revision'] = 1;
+                $data['date_created'] = $time;
+                $data['user_created'] = $user->user_id;
+                Query_helper::add($this->config->item('table_sms_lc_open_histories'),$data, false);*/
+            }
+        }
+
+        $this->db->trans_complete();   //DB Transaction Handle END
+        if ($this->db->trans_status() === TRUE)
+        {
+            $this->message=$this->lang->line("MSG_SAVED_SUCCESS");
+            $this->system_list();
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("MSG_SAVED_FAIL");
+            $this->json_return($ajax);
+        }
+    }
+    private function system_edit_rate_complete($id)
+    {
+        if(isset($this->permissions['action2'])&&($this->permissions['action2']==1))
+        {
+            if($id>0)
+            {
+                $item_id=$id;
+            }
+            else
+            {
+                $item_id=$this->input->post('id');
+            }
+
+            $this->db->from($this->config->item('table_sms_lc_open').' lco');
+            $this->db->select('lco.*');
+            $this->db->join($this->config->item('table_login_basic_setup_fiscal_year').' fy','fy.date_start <= lco.date_opening AND fy.date_end>lco.date_opening','INNER');
+            $this->db->select('fy.name fiscal_year');
+            $this->db->join($this->config->item('table_login_setup_currency').' currency','currency.id = lco.currency_id','INNER');
+            $this->db->select('currency.name currency_name');
+            $this->db->join($this->config->item('table_login_basic_setup_principal').' principal','principal.id = lco.principal_id','INNER');
+            $this->db->select('principal.name principal_name');
+            $this->db->join($this->config->item('table_login_setup_bank_account').' ba','ba.id = lco.bank_account_id','INNER');
+            $this->db->join($this->config->item('table_login_setup_bank').' bank','bank.id = ba.bank_id','INNER');
+            $this->db->select("CONCAT_WS(' ( ',ba.account_number,  CONCAT_WS('', bank.name,' - ',ba.branch_name,')')) bank_account_number");
+            $this->db->where('lco.id',$item_id);
+            $data['item']=$this->db->get()->row_array();
+            if(!$data['item'])
+            {
+                System_helper::invalid_try(__FUNCTION__,$item_id,'Non Exists');
+                $ajax['status']=false;
+                $ajax['system_message']='Invalid LC.';
+                $this->json_return($ajax);
+            }
+            if($data['item']['status_open']!=$this->config->item('system_status_complete'))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='LC not completed.';
+                $this->json_return($ajax);
+            }
+
+            $data['info_basic']=Lc_helper::get_view_info_basic($data['item']);
+            $data['info_lc']=$this->get_view_info_lc($data['item']);
+
+            $this->db->from($this->config->item('table_sms_lc_details').' details');
+            $this->db->select('details.*');
+            $this->db->join($this->config->item('table_login_setup_classification_varieties').' v','v.id = details.variety_id','INNER');
+            $this->db->select('v.id variety_id, v.name variety_name');
+            $this->db->join($this->config->item('table_login_setup_classification_variety_principals').' vp','vp.variety_id = v.id AND vp.principal_id = '.$data['item']['principal_id'].' AND vp.revision = 1','INNER');
+            $this->db->select('vp.name_import variety_name_import');
+            $this->db->join($this->config->item('table_login_setup_classification_pack_size').' pack','pack.id = details.pack_size_id','LEFT');
+            $this->db->select('pack.name pack_size');
+            $this->db->join($this->config->item('table_login_setup_classification_crop_types').' crop_type','crop_type.id = v.crop_type_id','LEFT');
+            $this->db->select('crop_type.name crop_type_name');
+            $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = crop_type.crop_id','LEFT');
+            $this->db->select('crop.name crop_name');
+            $this->db->where('details.lc_id',$item_id);
+            $this->db->where('details.quantity_open >0');
+            $this->db->order_by('details.id ASC');
+            $data['items']=$this->db->get()->result_array();
+
+            $data['title']="Update LC Complete Rate ( LC: ". Barcode_helper::get_barcode_lc($item_id).' )';
+            $ajax['status']=true;
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/edit_rate_complete",$data,true));
+            if($this->message)
+            {
+                $ajax['system_message']=$this->message;
+            }
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/edit_rate_complete/'.$item_id);
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+    }
+    private function system_save_rate_complete()
+    {
+        $id = $this->input->post("id");
+        $user = User_helper::get_user();
+        $time=time();
+        $items=$this->input->post('items');
+        if($id>0)
+        {
+            if(!(isset($this->permissions['action2']) && ($this->permissions['action2']==1)))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+                $this->json_return($ajax);
+            }
+
+            $result=Query_helper::get_info($this->config->item('table_sms_lc_open'),'*',array('id ='.$id, 'status_open != "'.$this->config->item('system_status_delete').'"'),1);
+            if(!$result)
+            {
+                System_helper::invalid_try(__FUNCTION__,$id,'Non Exists');
+                $ajax['status']=false;
+                $ajax['system_message']='Invalid LC.';
+                $this->json_return($ajax);
+            }
+            if($result['status_receive']!=$this->config->item('system_status_complete'))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='LC receive not completed.';
+                $this->json_return($ajax);
+            }
+        }
+        else
+        {
+            if(!(isset($this->permissions['action1']) && ($this->permissions['action1']==1)))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+                $this->json_return($ajax);
+            }
+        }
+
+        /*$results=Query_helper::get_info($this->config->item('table_sms_lc_details'),'*',array('lc_id='.$id));
+        $old_varieties=array();
+        if($results)
+        {
+            foreach($results as $result)
+            {
+                $old_varieties[$result['variety_id']][$result['pack_size_id']]=$result;
+            }
+        }*/
+        $this->db->trans_start();  //DB Transaction Handle START
+
+        $results=Query_helper::get_info($this->config->item('table_sms_lc_details'),'*',array('lc_id='.$id));
+        if($results)
+        {
+            /*$data=array();
+            $data['rate_weighted_receive'] = $time;
+            $data['date_updated'] = $time;
+            $data['user_updated'] = $user->user_id;
+            Query_helper::update($this->config->item('table_sms_lc_open_histories'),$data, array('lc_id='.$id,'revision=1'), false);
+
+            $this->db->where('lc_id',$id);
+            $this->db->set('revision', 'revision+1', FALSE);
+            $this->db->update($this->config->item('table_sms_lc_open_histories'));
+            */
+            foreach($results as $result)
+            {
+
+                $rate_weighted_complete=0;
+                if(isset($items[$result['id']]['rate_weighted_complete']))
+                {
+                    $rate_weighted_complete=$items[$result['id']]['rate_weighted_complete'];
+                }
+                $data=array();
+                $data['rate_weighted_complete'] = $rate_weighted_complete;
+                /*$data['date_updated'] = $time;
+                $data['user_updated'] = $user->user_id;*/
+                Query_helper::update($this->config->item('table_sms_lc_details'),$data, array('id='.$result['id']), false);
+                /*$data=array();
+                $data['lc_id']=$id;
+                $data['variety_id']=$result['variety_id'];
+                $data['pack_size_id']=$result['pack_size_id'];
+                $data['quantity']=$rate_receive;
+                $data['revision'] = 1;
+                $data['date_created'] = $time;
+                $data['user_created'] = $user->user_id;
+                Query_helper::add($this->config->item('table_sms_lc_open_histories'),$data, false);*/
+            }
+        }
+
+        $this->db->trans_complete();   //DB Transaction Handle END
+        if ($this->db->trans_status() === TRUE)
+        {
+            $this->message=$this->lang->line("MSG_SAVED_SUCCESS");
+            $this->system_list();
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("MSG_SAVED_FAIL");
+            $this->json_return($ajax);
+        }
     }
     private function system_details($id)
     {

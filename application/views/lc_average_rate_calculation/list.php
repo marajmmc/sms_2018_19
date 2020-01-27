@@ -27,9 +27,16 @@ if(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1))
     $action_buttons[]=array
     (
         'type'=>'button',
-        'label'=>$CI->lang->line('ACTION_EDIT'),
+        'label'=>'Update Rate Receive',
         'class'=>'button_jqx_action',
-        'data-action-link'=>site_url($CI->controller_url.'/index/edit')
+        'data-action-link'=>site_url($CI->controller_url.'/index/edit_rate_receive')
+    );
+    $action_buttons[]=array
+    (
+        'type'=>'button',
+        'label'=>'Update Rate Complete',
+        'class'=>'button_jqx_action',
+        'data-action-link'=>site_url($CI->controller_url.'/index/edit_rate_complete')
     );
 }
 if(isset($CI->permissions['action4']) && ($CI->permissions['action4']==1))
@@ -105,6 +112,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 { name: 'currency_name', type: 'string' },
                 { name: 'lc_number', type: 'string' },
                 { name: 'quantity_open_kg', type: 'number' },
+                { name: 'status_open', type: 'string' },
                 { name: 'number_of_variety', type: 'number' },
                 { name: 'number_of_lc_rate_receive', type: 'number' },
                 { name: 'number_of_lc_rate_receive_deference', type: 'number' },
@@ -120,13 +128,26 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         {
             var element = $(defaultHtml);
             //element.css({'margin': '0px','width': '100%', 'height': '100%',padding:'5px'});
-            if(record.number_of_variety!=record.number_of_lc_rate_receive)
+            if((column=='number_of_lc_rate_receive'))
             {
-                element.css({'margin': '0px','width': '100%', 'height': '100%',padding:'5px',background:'#F99797'});
+                if(record.number_of_variety!=record.number_of_lc_rate_receive)
+                {
+                    element.css({'margin': '0px','width': '100%', 'height': '100%',padding:'5px',background:'#F99797'});
+                }
             }
-            else
+            if((column=='number_of_lc_rate_complete'))
             {
-                element.css({'margin': '0px','width': '100%', 'height': '100%',padding:'5px'});
+                if(record.status_open=="<?php echo $this->config->item('system_status_complete')?>")
+                {
+                    if(record.number_of_variety!=record.number_of_lc_rate_complete)
+                    {
+                        element.css({'margin': '0px','width': '100%', 'height': '100%',padding:'5px',background:'#F99797'});
+                    }
+                }
+                else
+                {
+                    element.css({'margin': '0px','width': '100%', 'height': '100%',padding:'5px',background:'yellow'});
+                }
             }
 
             return element[0].outerHTML;
