@@ -2,16 +2,6 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 $CI=& get_instance();
 $action_buttons=array();
-/*if((isset($CI->permissions['action1']) && ($CI->permissions['action1']==1)) || (isset($CI->permissions['action2']) && ($CI->permissions['action2']==1)))
-{
-    $action_buttons[]=array
-    (
-        'type'=>'button',
-        'label'=>'Calculate Average Rate',
-        'class'=>'button_jqx_action',
-        'data-action-link'=>site_url($CI->controller_url.'/index/edit_price')
-    );
-}*/
 if(isset($CI->permissions['action0']) && ($CI->permissions['action0']==1))
 {
     $action_buttons[]=array
@@ -114,10 +104,10 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 { name: 'quantity_open_kg', type: 'number' },
                 { name: 'status_open', type: 'string' },
                 { name: 'number_of_variety', type: 'number' },
-                { name: 'number_of_lc_rate_receive', type: 'number' },
-                { name: 'number_of_lc_rate_receive_deference', type: 'number' },
-                { name: 'number_of_lc_rate_complete', type: 'number' },
-                { name: 'number_of_lc_rate_complete_deference', type: 'number' },
+                { name: 'number_of_variety_rate_receive', type: 'number' },
+                { name: 'number_of_variety_rate_receive_difference', type: 'number' },
+                { name: 'number_of_variety_rate_complete', type: 'number' },
+                { name: 'number_of_variety_rate_complete_difference', type: 'number' }
             ],
             id: 'id',
             type: 'POST',
@@ -127,26 +117,31 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         var cellsrenderer = function(row, column, value, defaultHtml, columnSettings, record)
         {
             var element = $(defaultHtml);
-            //element.css({'margin': '0px','width': '100%', 'height': '100%',padding:'5px'});
-            if((column=='number_of_lc_rate_receive'))
+            if(column.substr(-2)=='kg')
             {
-                if(record.number_of_variety!=record.number_of_lc_rate_receive)
+                if(value==0)
+                {
+                    element.html('');
+                }
+                else
+                {
+                    element.html(number_format(value,3,'.',''));
+                }
+            }
+            //element.css({'margin': '0px','width': '100%', 'height': '100%',padding:'5px'});
+            if((column=='number_of_variety_rate_receive'))
+            {
+                if(record.number_of_variety_rate_receive_difference!=0)
                 {
                     element.css({'margin': '0px','width': '100%', 'height': '100%',padding:'5px',background:'#F99797'});
                 }
             }
-            if((column=='number_of_lc_rate_complete'))
+            if((column=='number_of_variety_rate_complete'))
             {
-                if(record.status_open=="<?php echo $this->config->item('system_status_complete')?>")
+                if((record.status_open!="<?php echo $this->config->item('system_status_complete')?>")||(record.number_of_variety_rate_complete_difference!=0))
                 {
-                    if(record.number_of_variety!=record.number_of_lc_rate_complete)
-                    {
                         element.css({'margin': '0px','width': '100%', 'height': '100%',padding:'5px',background:'#F99797'});
-                    }
-                }
-                else
-                {
-                    element.css({'margin': '0px','width': '100%', 'height': '100%',padding:'5px',background:'yellow'});
+
                 }
             }
 
@@ -180,13 +175,13 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         { text: '<?php echo $CI->lang->line('LABEL_DATE_RECEIVE'); ?>', dataField: 'date_receive', width:100, hidden: <?php echo $system_preference_items['date_receive']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_PRINCIPAL_NAME'); ?>', dataField: 'principal_name',filtertype: 'list', width:180, hidden: <?php echo $system_preference_items['principal_name']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_CURRENCY_NAME'); ?>', dataField: 'currency_name',filtertype: 'list', width:80, hidden: <?php echo $system_preference_items['currency_name']?0:1;?>},
-                        { text: '<?php echo $CI->lang->line('LABEL_LC_NUMBER'); ?>', dataField: 'lc_number', hidden: <?php echo $system_preference_items['lc_number']?0:1;?>},
-                        { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_OPEN_KG'); ?>', dataField: 'quantity_open_kg', cellsalign: 'right', width:100, hidden: <?php echo $system_preference_items['quantity_open_kg']?0:1;?>},
-                        { text: '<?php echo $CI->lang->line('LABEL_NUMBER_OF_VARIETY'); ?>', dataField: 'number_of_variety', cellsalign: 'right', width:100,cellsrenderer: cellsrenderer, hidden: <?php echo $system_preference_items['number_of_variety']?0:1;?>},
-                        { text: '<?php echo $CI->lang->line('LABEL_NUMBER_OF_LC_RATE_RECEIVE'); ?>', dataField: 'number_of_lc_rate_receive', cellsalign: 'right', width:100,cellsrenderer: cellsrenderer, hidden: <?php echo $system_preference_items['number_of_lc_rate_receive']?0:1;?>},
-                        { text: '<?php echo $CI->lang->line('LABEL_NUMBER_OF_LC_RATE_RECEIVE_DEFERENCE'); ?>', dataField: 'number_of_lc_rate_receive_deference', cellsalign: 'right', width:100,cellsrenderer: cellsrenderer, hidden: <?php echo $system_preference_items['number_of_lc_rate_receive_deference']?0:1;?>},
-                        { text: '<?php echo $CI->lang->line('LABEL_NUMBER_OF_LC_RATE_COMPLETE'); ?>', dataField: 'number_of_lc_rate_complete', cellsalign: 'right', width:100,cellsrenderer: cellsrenderer, hidden: <?php echo $system_preference_items['number_of_lc_rate_complete']?0:1;?>},
-                        { text: '<?php echo $CI->lang->line('LABEL_NUMBER_OF_LC_RATE_COMPLETE_DEFERENCE'); ?>', dataField: 'number_of_lc_rate_complete_deference', cellsalign: 'right', width:100,cellsrenderer: cellsrenderer, hidden: <?php echo $system_preference_items['number_of_lc_rate_complete_deference']?0:1;?>}
+                        { text: '<?php echo $CI->lang->line('LABEL_LC_NUMBER'); ?>', dataField: 'lc_number',width:120,hidden: <?php echo $system_preference_items['lc_number']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_OPEN_KG'); ?>', dataField: 'quantity_open_kg', cellsalign: 'right',cellsrenderer: cellsrenderer, width:100, hidden: <?php echo $system_preference_items['quantity_open_kg']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_NUMBER_OF_VARIETY'); ?>', dataField: 'number_of_variety', cellsalign: 'right', width:140,cellsrenderer: cellsrenderer, hidden: <?php echo $system_preference_items['number_of_variety']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_NUMBER_OF_VARIETY_RATE_RECEIVE'); ?>', dataField: 'number_of_variety_rate_receive', cellsalign: 'right', width:140,cellsrenderer: cellsrenderer, hidden: <?php echo $system_preference_items['number_of_variety_rate_receive']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_NUMBER_OF_VARIETY_RATE_RECEIVE_DIFFERENCE'); ?>', dataField: 'number_of_variety_rate_receive_difference', cellsalign: 'right', width:140,cellsrenderer: cellsrenderer, hidden: <?php echo $system_preference_items['number_of_variety_rate_receive_difference']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_NUMBER_OF_VARIETY_RATE_COMPLETE'); ?>', dataField: 'number_of_variety_rate_complete', cellsalign: 'right', width:140,cellsrenderer: cellsrenderer, hidden: <?php echo $system_preference_items['number_of_variety_rate_complete']?0:1;?>},
+                        { text: '<?php echo $CI->lang->line('LABEL_NUMBER_OF_VARIETY_RATE_COMPLETE_DIFFERENCE'); ?>', dataField: 'number_of_variety_rate_complete_difference', cellsalign: 'right', width:140,cellsrenderer: cellsrenderer, hidden: <?php echo $system_preference_items['number_of_variety_rate_complete_difference']?0:1;?>}
                         /*,
                         { text: '<?php echo $CI->lang->line('LABEL_STATUS_RELEASE');?>', dataField: 'status_release', width:70,filtertype: 'list',cellsalign: 'center', hidden: <?php echo $system_preference_items['status_release']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_STATUS_RECEIVED');?>', dataField: 'status_received', width:70,filtertype: 'list',cellsalign: 'center', hidden: <?php echo $system_preference_items['status_received']?0:1;?>}*/

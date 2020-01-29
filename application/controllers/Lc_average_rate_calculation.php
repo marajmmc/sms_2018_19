@@ -17,10 +17,10 @@ class Lc_average_rate_calculation extends Root_Controller
     private function language_labels()
     {
         $this->lang->language['LABEL_NUMBER_OF_VARIETY']='Number of Variety';
-        $this->lang->language['LABEL_NUMBER_OF_LC_RATE_RECEIVE']='Number of Receive Variety';
-        $this->lang->language['LABEL_NUMBER_OF_LC_RATE_RECEIVE_DEFERENCE']='Deference of Receive Variety';
-        $this->lang->language['LABEL_NUMBER_OF_LC_RATE_COMPLETE']='Number of Complete Variety';
-        $this->lang->language['LABEL_NUMBER_OF_LC_RATE_COMPLETE_DEFERENCE']='Deference of Complete Variety';
+        $this->lang->language['LABEL_NUMBER_OF_VARIETY_RATE_RECEIVE']='R.Receive(num variety)';
+        $this->lang->language['LABEL_NUMBER_OF_VARIETY_RATE_RECEIVE_DIFFERENCE']='R.Receive(Diff)';
+        $this->lang->language['LABEL_NUMBER_OF_VARIETY_RATE_COMPLETE']='R.Complete(num variety)';
+        $this->lang->language['LABEL_NUMBER_OF_VARIETY_RATE_COMPLETE_DIFFERENCE']='R.Complete(Diff)';
     }
     public function index($action="list",$id=0)
     {
@@ -32,7 +32,7 @@ class Lc_average_rate_calculation extends Root_Controller
         {
             $this->system_get_items();
         }
-        elseif($action=="edit_rate_receive")
+        /*elseif($action=="edit_rate_receive")
         {
             $this->system_edit_rate_receive($id);
         }
@@ -52,9 +52,11 @@ class Lc_average_rate_calculation extends Root_Controller
         {
             $this->system_details($id);
         }
+
+        */
         elseif($action=="set_preference")
         {
-            $this->system_set_preference();
+            $this->system_set_preference('list');
         }
         elseif($action=="save_preference")
         {
@@ -65,12 +67,55 @@ class Lc_average_rate_calculation extends Root_Controller
             $this->system_list();
         }
     }
+    private function get_preference_headers($method)
+    {
+        $data = array();
+        if($method == 'list')
+        {
+            $data['barcode']= 1;
+            $data['fiscal_year']= 0;
+            $data['month']= 0;
+            $data['date_opening']= 1;
+            $data['date_receive']= 1;
+            $data['principal_name']= 0;
+            $data['currency_name']= 0;
+            $data['lc_number']= 1;
+            $data['quantity_open_kg']= 0;
+            $data['number_of_variety']= 1;
+            $data['number_of_variety_rate_receive']= 1;
+            $data['number_of_variety_rate_receive_difference']= 1;
+            $data['number_of_variety_rate_complete']= 1;
+            $data['number_of_variety_rate_complete_difference']= 1;
+        }
+        return $data;
+    }
+    private function system_set_preference($method)
+    {
+        $user = User_helper::get_user();
+        if(isset($this->permissions['action6']) && ($this->permissions['action6']==1))
+        {
+            $data['system_preference_items']=System_helper::get_preference($user->user_id,$this->controller_url,$method,$this->get_preference_headers($method));
+            $data['preference_method_name']=$method;
+            $ajax['status']=true;
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("preference_add_edit",$data,true));
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/set_preference_'.$method);
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+    }
     private function system_list()
     {
+        $user = User_helper::get_user();
+        $method='list';
         if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
         {
-            $data['system_preference_items']= $this->get_preference();
-            $data['title']="Receive LC List (Average Rate Calculator)";
+            $data['system_preference_items']= System_helper::get_preference($user->user_id, $this->controller_url, $method, $this->get_preference_headers($method));
+            $data['title']="LC List";
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/list",$data,true));
             if($this->message)
@@ -92,8 +137,8 @@ class Lc_average_rate_calculation extends Root_Controller
         $this->db->from($this->config->item('table_sms_lc_details').' details');
         $this->db->select('details.*');
         $this->db->select('COUNT(details.variety_id) as number_of_variety');
-        $this->db->select('COUNT(CASE WHEN details.rate_weighted_receive > 0 THEN rate_weighted_receive END) as number_of_lc_rate_receive');
-        $this->db->select('COUNT(CASE WHEN details.rate_weighted_complete > 0 THEN rate_weighted_complete END) as number_of_lc_rate_complete');
+        $this->db->select('COUNT(CASE WHEN details.rate_weighted_receive > 0 THEN rate_weighted_receive END) as number_of_variety_rate_receive');
+        $this->db->select('COUNT(CASE WHEN details.rate_weighted_complete > 0 THEN rate_weighted_complete END) as number_of_variety_rate_complete');
         $this->db->join($this->config->item('table_sms_lc_open').' lc','lc.id = details.lc_id','INNER');
         $this->db->where('lc.status_receive', $this->config->item('system_status_complete'));
         $this->db->where('details.quantity_open >0');
@@ -104,8 +149,8 @@ class Lc_average_rate_calculation extends Root_Controller
         foreach($results as $result)
         {
             $info_lc[$result['lc_id']]['number_of_variety']=$result['number_of_variety'];
-            $info_lc[$result['lc_id']]['number_of_lc_rate_receive']=$result['number_of_lc_rate_receive'];
-            $info_lc[$result['lc_id']]['number_of_lc_rate_complete']=$result['number_of_lc_rate_complete'];
+            $info_lc[$result['lc_id']]['number_of_variety_rate_receive']=$result['number_of_variety_rate_receive'];
+            $info_lc[$result['lc_id']]['number_of_variety_rate_complete']=$result['number_of_variety_rate_complete'];
         }
         //$config_date_start=$data['item']['date']=System_helper::get_time(Lc_helper::$LC_DATE_INITIAL_AVERAGE_RATE);
         $this->db->from($this->config->item('table_sms_lc_open').' lc');
@@ -136,15 +181,16 @@ class Lc_average_rate_calculation extends Root_Controller
             $item['principal_name']=$result['principal_name'];
             $item['currency_name']=$result['currency_name'];
             $item['lc_number']=$result['lc_number'];
-            $item['quantity_open_kg']=number_format($result['quantity_open_kg'],3,'.','');
+            $item['quantity_open_kg']=$result['quantity_open_kg'];
             $item['status_open']=$result['status_open'];
             $item['status_release']=$result['status_release'];
             $item['status_received']=$result['status_receive'];
+            $item['status_received']=$result['status_receive'];
             $item['number_of_variety']=isset($info_lc[$result['id']])?$info_lc[$result['id']]['number_of_variety']:0;
-            $item['number_of_lc_rate_receive']=isset($info_lc[$result['id']])?$info_lc[$result['id']]['number_of_lc_rate_receive']:0;
-            $item['number_of_lc_rate_receive_deference']=($item['number_of_variety']-$item['number_of_lc_rate_receive']);
-            $item['number_of_lc_rate_complete']=isset($info_lc[$result['id']])?$info_lc[$result['id']]['number_of_lc_rate_complete']:0;
-            $item['number_of_lc_rate_complete_deference']=($item['number_of_variety']-$item['number_of_lc_rate_complete']);
+            $item['number_of_variety_rate_receive']=isset($info_lc[$result['id']])?$info_lc[$result['id']]['number_of_variety_rate_receive']:0;
+            $item['number_of_variety_rate_receive_difference']=($item['number_of_variety']-$item['number_of_variety_rate_receive']);
+            $item['number_of_variety_rate_complete']=isset($info_lc[$result['id']])?$info_lc[$result['id']]['number_of_variety_rate_complete']:0;
+            $item['number_of_variety_rate_complete_difference']=($item['number_of_variety']-$item['number_of_variety_rate_complete']);
             $items[]=$item;
         }
         $this->json_return($items);
@@ -607,66 +653,8 @@ class Lc_average_rate_calculation extends Root_Controller
             $this->json_return($ajax);
         }
     }
-    private function system_set_preference()
-    {
-        if(isset($this->permissions['action6']) && ($this->permissions['action6']==1))
-        {
-            $data['system_preference_items']= $this->get_preference();
-            $data['preference_method_name']='list';
-            $data['title']="Set Preference";
-            $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("preference_add_edit",$data,true));
-            $ajax['system_page_url']=site_url($this->controller_url.'/index/set_preference');
-            $this->json_return($ajax);
-        }
-        else
-        {
-            $ajax['status']=false;
-            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
-            $this->json_return($ajax);
-        }
-    }
-    private function get_preference()
-    {
-        $user = User_helper::get_user();
-        $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
-        $data['barcode']= 1;
-        $data['fiscal_year']= 1;
-        $data['month']= 1;
-        $data['date_opening']= 1;
-        $data['date_receive']= 1;
-        $data['principal_name']= 1;
-        $data['currency_name']= 1;
-        $data['lc_number']= 1;
-        $data['quantity_open_kg']= 1;
-        $data['number_of_variety']= 1;
-        $data['number_of_lc_rate_receive']= 1;
-        $data['number_of_lc_rate_receive_deference']= 1;
-        $data['number_of_lc_rate_complete']= 1;
-        $data['number_of_lc_rate_complete_deference']= 1;
-        /*$data['status_release']= 1;
-        $data['status_received']= 1;*/
-        if($result)
-        {
-            if($result['preferences']!=null)
-            {
-                $preferences=json_decode($result['preferences'],true);
-                foreach($data as $key=>$value)
-                {
 
-                    if(isset($preferences[$key]))
-                    {
-                        $data[$key]=$value;
-                    }
-                    else
-                    {
-                        $data[$key]=0;
-                    }
-                }
-            }
-        }
-        return $data;
-    }
+
     private function get_view_info_lc($lc_info)
     {
         $info_basic=array();
