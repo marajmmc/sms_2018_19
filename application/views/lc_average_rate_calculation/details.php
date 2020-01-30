@@ -19,16 +19,9 @@ $action_buttons[]=array(
     'href'=>site_url($CI->controller_url.'/index/details/'.$item['id'])
 );
 $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
-
-$total_currency=$item['price_release_other_currency']+$item['price_release_variety_currency'];
-$currency_bdt_rate_release=($item['price_release_other_variety_taka']/$total_currency);
-$price_airfare_tk=($item['price_release_other_currency']*$currency_bdt_rate_release);
-$quantity_total_kg_open=$item['quantity_open_kg'];
-$price_total_tk_open=($item['price_open_other_currency']+$item['price_open_variety_currency']);
-$currency_bdt_rate_complete=$item['rate_currency'];
-$price_complete_total_taka=$item['price_complete_total_taka'];
-
-
+//echo '<pre>';
+//print_r($item);
+//echo '</pre>';
 ?>
 <div class="row widget">
     <div class="widget-header">
@@ -42,234 +35,111 @@ $price_complete_total_taka=$item['price_complete_total_taka'];
     echo $CI->load->view("info_basic",array('accordion'=>array('header'=>'+LC Info','div_id'=>'accordion_lc_info','data'=>$info_lc)),true);
     ?>
     <div class="clearfix"></div>
-    <div class="row widget">
-        <table class="table table-bordered">
-            <thead>
-            <tr>
-                <th class="widget-header text-center" colspan="21">LC Release Price Details</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td class="widget-header header_caption"><label class="control-label pull-right">Air Freight & Docs (Currency)</label></td>
-                <td class="warning header_value"><label class="control-label"><?php echo number_format($item['price_release_other_currency'],2);?></label></td>
-                <td class="widget-header header_caption"><label class="control-label pull-right">LC Received Time</label></td>
-                <td class="warning header_value"><label class="control-label"><?php echo System_helper::display_date_time($item['date_receive_completed']);?></label></td>
-            </tr>
-            <tr>
-                <td class="widget-header header_caption"><label class="control-label pull-right">Total Variety (Currency)</label></td>
-                <td class="warning header_value"><label class="control-label"><?php echo number_format($item['price_release_variety_currency'],2);?></label></td>
-                <td class="widget-header header_caption"><label class="control-label pull-right">Current Rate (BDT) [Release]</label></td>
-                <td class="warning header_value"><label class="control-label"><?php echo $currency_bdt_rate_release;//echo number_format($currency_bdt_rate,2)?></label></td>
-            </tr>
-            <tr>
-                <td class="widget-header header_caption"><label class="control-label pull-right">Total Currency</label></td>
-                <td class="warning header_value"><label class="control-label"><?php echo number_format($total_currency,2)?></label></td>
-                <td class="widget-header header_caption"><label class="control-label pull-right"><?php echo $this->lang->line('LABEL_PRICE_RELEASE_OTHER_VARIETY_TAKA');?></label></td>
-                <td class="warning header_value"><label class="control-label"><?php echo number_format($item['price_release_other_variety_taka'],2);?></label></td>
-            </tr>
-            <tr>
-                <td class="widget-header header_caption" colspan="3"><label class="control-label pull-right">Current Rate (BDT) [Complete]</label></td>
-                <td class="warning header_value"><label class="control-label"><?php echo $currency_bdt_rate_complete;//echo number_format($currency_bdt_rate,2)?></label></td>
-            </tr>
-            <tr>
-                <td class="widget-header header_caption" colspan="3"><label class="control-label pull-right">LC Complete Total (Taka)</label></td>
-                <td class="warning header_value"><label class="control-label"><?php echo $price_complete_total_taka;//echo number_format($currency_bdt_rate,2)?></label></td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
-    <div class="clearfix"></div>
     <div style="overflow-x: auto;" class="row show-grid">
         <table class="table table-bordered">
             <thead>
-            <tr>
-                <th>crop</th>
-                <th>type</th>
-                <th>variety</th>
-                <th>pack size</th>
-                <th>Opening quantity</th>
-                <th>Release quantity</th>
-                <th>Receive quantity</th>
-                <th>Unit price currency</th>
-                <th>price variety taka</th>
-                <th>other taka</th>
-            </tr>
-            </thead>
-            <tbody>
-            <?php
-            foreach($items as $index=>$value)
-            {
-                if($value['pack_size_id']==0)
-                {
-                    $quantity_kg_open=$value['quantity_open'];
-                    $quantity_kg_release=$value['quantity_release'];
-                    $quantity_kg_receive=$value['quantity_receive'];
 
-                    $price_variety_taka = ($value['quantity_release'] * $value['price_unit_currency']) * $currency_bdt_rate_release;
-                }
-                else
-                {
-                    $quantity_kg_open=(($value['quantity_open']*$value['pack_size'])/1000);
-                    $quantity_kg_release=(($value['quantity_release']*$value['pack_size'])/1000);
-                    $quantity_kg_receive=(($value['quantity_receive']*$value['pack_size'])/1000);
-
-                    $price_variety_taka = ($value['quantity_release'] * $value['price_unit_currency']) * $currency_bdt_rate_release;
-                }
-
-                $price_other_taka = ($item['price_release_other_currency']/$item['price_release_variety_currency'])*$price_variety_taka; //(air fright)
-                ?>
-                <tr>
-                    <td><label><?php echo $value['crop_name'];?></label></td>
-                    <td><label><?php echo $value['crop_type_name'];?></label></td>
-                    <td><label><?php echo $value['variety_name']; ?> (<?php echo $value['variety_name_import']; ?>)</label></td>
-                    <td class="text-center"> <label><?php if($value['pack_size_id']==0){echo 'Bulk';}else{echo $value['pack_size'];} ?></label></td>
-                    <td class="text-right"><?php echo System_helper::get_string_kg($quantity_kg_open);?></td>
-                    <td class="text-right"><?php echo System_helper::get_string_kg($quantity_kg_release);?></td>
-                    <td class="text-right"><?php echo System_helper::get_string_kg($quantity_kg_receive);?></td>
-                    <td class="text-right"><?php echo System_helper::get_string_amount($value['price_unit_currency']);?></td>
-                    <td class="text-right"><?php echo System_helper::get_string_amount($price_variety_taka);?></td>
-                    <td class="text-right"><?php echo System_helper::get_string_amount($price_other_taka);?></td>
-                </tr>
-            <?php
-            }
-            ?>
-            </tbody>
-        </table>
-    </div>
-    <div class="clearfix"></div>
-    <div style="overflow-x: auto;" class="row show-grid">
-        <table class="table table-bordered">
-            <thead>
             <tr>
-                <th class="widget-header text-center" colspan="29">LC (<?php echo Barcode_helper::get_barcode_lc($item['id']);?>) Product & Price Details</th>
-            </tr>
-            <tr>
-                <th class="label-info" rowspan="4"><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></th>
-                <th class="label-info" rowspan="4"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?></th>
-                <th class="label-info" rowspan="4"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
-                <th class="label-info" rowspan="4"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
-                <th class="label-info text-center" colspan="22">Price & Stock</th>
-            </tr>
-            <tr>
-                <th class="label-success text-center" colspan="9">LC Receive Info</th>
-                <th class="label-warning text-center" colspan="9">LC Complete Info</th>
-            </tr>
-            <tr>
+                <th class="label-info" rowspan="2"><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></th>
+                <th class="label-info" rowspan="2"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?></th>
+                <th class="label-info" rowspan="2"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
+                <th class="label-info" rowspan="2"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
+                <th class="label-success text-center" colspan="4">Total</th>
+                <th class="label-success text-center" colspan="8">Receive</th>
                 <th class="label-success text-center" colspan="3" >Opening</th>
-                <th class="label-success text-center" colspan="3">Receive</th>
-                <th class="label-success text-center" colspan="3">Total</th>
-
-                <th class="label-warning text-center" colspan="3">Opening</th>
-                <th class="label-warning text-center" colspan="3">Complete</th>
-                <th class="label-warning text-center" colspan="3">Total</th>
             </tr>
             <tr>
-                <td class="label-success text-center">Opening Stock</td>
-                <td class="label-success text-center">Previous Rate Ave.</td>
-                <td class="label-success text-center">Total Amount</td>
-                <td class="label-success text-center">Receive Qty</td>
-                <td class="label-success text-center">Rate</td>
-                <td class="label-success text-center">Total Amount</td>
-                <td class="label-success text-center">Total Qty</td>
-                <td class="label-success text-center">Ave. Rate</td>
-                <td class="label-success text-center">Total Amount</td>
+                <th class="label-success text-center">Quantity(kg)</th>
+                <th class="label-success text-center">Amount</th>
+                <th class="label-success text-center">Rate/kg(calculated)</th>
+                <th class="label-success text-center">Rate/kg(saved)</th>
 
-                <td class="label-warning text-center">Opening Stock</td>
-                <td class="label-warning text-center">Previous Rate Ave.</td>
-                <td class="label-warning text-center">Total Amount</td>
-                <td class="label-warning text-center">Complete Qty</td>
-                <td class="label-warning text-center">Rate</td>
-                <td class="label-warning text-center">Total Amount</td>
-                <td class="label-warning text-center">Total Qty</td>
-                <td class="label-warning text-center">Ave. Rate</td>
-                <td class="label-warning text-center">Total Amount</td>
+                <th class="label-success text-center">Quantity(Kg) (received)</th>
+
+                <th class="label-success text-center">Quantity(released)</th>
+                <th class="label-success text-center">Unit price(currency)</th>
+                <th class="label-success text-center">price(currency)</th>
+                <th class="label-success text-center">price(taka)</th>
+
+                <th class="label-success text-center">air(currency)</th>
+                <th class="label-success text-center">air(taka)</th>
+                <th class="label-success text-center">Total(taka)</th>
+
+                <th class="label-success text-center">Stock(kg)</th>
+                <th class="label-success text-center">rate/kg</th>
+                <th class="label-success text-center">Total amount</th>
             </tr>
             </thead>
             <tbody>
             <?php
-            foreach($items as $index=>$value)
+            $total_receive_price_variety_currency=0;
+            $total_receive_price_variety_taka=0;
+            $total_receive_price_other_currency=0;
+            $total_receive_price_other_taka=0;
+            $total_receive_price_total_taka=0;
+            foreach($items as $variety_ifo)
             {
-                $rate_receive=isset($receive_rates[$value['variety_id']][$value['pack_size_id']])?$receive_rates[$value['variety_id']][$value['pack_size_id']]:0;
-                $rate_previous_receive=0;
-                $rate_previous_complete=0;
-                if(isset($previous_rates[$value['variety_id']][$value['pack_size_id']]))
-                {
-                    $rate_previous=$previous_rates[$value['variety_id']][$value['pack_size_id']];
-                    $rate_previous_receive=$rate_previous['rate_weighted_receive'];
-                    $rate_previous_complete=$rate_previous['rate_weighted_complete'];
-                }
-                if($value['pack_size_id']==0)
-                {
-                    $quantity_kg_receive=$value['quantity_receive'];
+                $total_receive_price_variety_currency+=$rates[$variety_ifo['variety_id']][$variety_ifo['pack_size_id']]['receive_price_variety_currency'];
+                $total_receive_price_variety_taka+=$rates[$variety_ifo['variety_id']][$variety_ifo['pack_size_id']]['receive_price_variety_taka'];
+                $total_receive_price_other_currency+=$rates[$variety_ifo['variety_id']][$variety_ifo['pack_size_id']]['receive_price_other_currency'];
+                $total_receive_price_other_taka+=$rates[$variety_ifo['variety_id']][$variety_ifo['pack_size_id']]['receive_price_other_taka'];
+                $total_receive_price_total_taka+=$rates[$variety_ifo['variety_id']][$variety_ifo['pack_size_id']]['receive_price_total_taka'];
 
-                    $total_amount_receive=($value['quantity_receive']*$rate_receive);
-                    // rate complete
-                    $rate_complete=($value['price_total_taka']/$value['quantity_receive']);
-                    $total_amount_complete=($value['quantity_receive']*$rate_complete);
-                }
-                else
-                {
-                    $quantity_kg_receive=(($value['quantity_receive']*$value['pack_size'])/1000);
-
-                    $total_amount_receive=($value['quantity_receive']*$rate_receive);
-                    // rate complete
-                    $rate_complete=($value['price_total_taka']/$value['quantity_receive']);
-                    $total_amount_complete=($value['quantity_receive']*$rate_complete);
-                }
-
-                $quantity_kg_opening=0;
-                if(isset($stock_opening[$value['variety_id']][$value['pack_size_id']]))
-                {
-                    $stock=$stock_opening[$value['variety_id']][$value['pack_size_id']];
-                    $quantity_kg_opening=$stock['stock_hq_kg']+$stock['stock_outlet_kg']+$stock['stock_to_kg']+$stock['stock_tr_kg']+$stock['stock_ts_kg'];
-                }
-
-                $total_amount_opening_receive=($quantity_kg_opening*$rate_previous_receive);
-                $quantity_kg_total_receive_total=($quantity_kg_opening+$quantity_kg_receive);
-                $amount_total_receive_total=($total_amount_opening_receive+$total_amount_receive);
-                $rate_total_receive_total=$quantity_kg_total_receive_total?($amount_total_receive_total/$quantity_kg_total_receive_total):0;
-
-                $total_amount_opening_complete=($quantity_kg_opening*$rate_previous_complete);
-                $quantity_kg_total_complete_total=($quantity_kg_opening+$quantity_kg_receive);
-                $amount_total_complete_total=($total_amount_opening_complete+$total_amount_complete);
-                $rate_total_complete_total=$quantity_kg_total_complete_total?($amount_total_complete_total/$quantity_kg_total_complete_total):0;
                 ?>
                 <tr>
-                    <td><label><?php echo $value['crop_name'];?></label></td>
-                    <td><label><?php echo $value['crop_type_name'];?></label></td>
-                    <td><label><?php echo $value['variety_name']; ?> (<?php echo $value['variety_name_import']; ?>)</label></td>
-                    <td class="text-center"> <label><?php if($value['pack_size_id']==0){echo 'Bulk';}else{echo $value['pack_size'];} ?></label></td>
+                    <td><label><?php echo $variety_ifo['crop_name'];?></label></td>
+                    <td><label><?php echo $variety_ifo['crop_type_name'];?></label></td>
+                    <td><label><?php echo $variety_ifo['variety_name']; ?> (<?php echo $variety_ifo['variety_name_import']; ?>)</label></td>
+                    <td class="text-center"> <label><?php if($variety_ifo['pack_size_id']==0){echo 'Bulk';}else{echo $variety_ifo['pack_size'];} ?></label></td>
+                    <td class="text-center"> <label><?php echo $rates[$variety_ifo['variety_id']][$variety_ifo['pack_size_id']]['receive_total_quantity_kg']; ?></label></td>
+                    <td class="text-center"> <label><?php echo $rates[$variety_ifo['variety_id']][$variety_ifo['pack_size_id']]['receive_total_total_amount']; ?></label></td>
+                    <td class="text-center"> <label><?php echo $rates[$variety_ifo['variety_id']][$variety_ifo['pack_size_id']]['receive_total_rate_weighted_receive_calculated'];?></label></td>
+                    <td class="text-center"> <label><?php echo $rates[$variety_ifo['variety_id']][$variety_ifo['pack_size_id']]['receive_total_rate_weighted_receive']; ?></label></td>
 
-                    <td class="text-right"><?php echo System_helper::get_string_kg($quantity_kg_opening);?></td>
-                    <td class="text-right"><?php echo System_helper::get_string_amount($rate_previous_receive);?></td>
-                    <td class="text-right <?php if(!$total_amount_opening_receive){echo 'bg-danger';}?>"><?php echo System_helper::get_string_amount($total_amount_opening_receive);?></td>
+                    <td class="text-center"> <label><?php echo $rates[$variety_ifo['variety_id']][$variety_ifo['pack_size_id']]['quantity_receive_kg']; ?></label></td>
 
-                    <td class="text-right"><?php echo System_helper::get_string_kg($quantity_kg_receive);?></td>
-                    <td class="text-right"><?php echo System_helper::get_string_amount($rate_receive);?></td>
-                    <td class="text-right <?php if(!$total_amount_receive){echo 'bg-danger';}?>"><?php echo System_helper::get_string_amount($total_amount_receive);?></td>
+                    <td class="text-center"> <label><?php echo $rates[$variety_ifo['variety_id']][$variety_ifo['pack_size_id']]['quantity_release']; ?></label></td>
+                    <td class="text-center"> <label><?php echo $rates[$variety_ifo['variety_id']][$variety_ifo['pack_size_id']]['receive_rate_variety_currency']; ?></label></td>
+                    <td class="text-center"> <label><?php echo $rates[$variety_ifo['variety_id']][$variety_ifo['pack_size_id']]['receive_price_variety_currency']; ?></label></td>
+                    <td class="text-center"> <label><?php echo $rates[$variety_ifo['variety_id']][$variety_ifo['pack_size_id']]['receive_price_variety_taka']; ?></label></td>
 
-                    <td class="text-right"><?php echo System_helper::get_string_kg($quantity_kg_total_receive_total);?></td>
-                    <td class="text-right"><?php echo System_helper::get_string_amount($rate_total_receive_total);?></td>
-                    <td class="text-right <?php if(!$amount_total_receive_total){echo 'bg-danger';}?>"><?php echo System_helper::get_string_amount($amount_total_receive_total);?></td>
+                    <td class="text-center"> <label><?php echo $rates[$variety_ifo['variety_id']][$variety_ifo['pack_size_id']]['receive_price_other_currency']; ?></label></td>
+                    <td class="text-center"> <label><?php echo $rates[$variety_ifo['variety_id']][$variety_ifo['pack_size_id']]['receive_price_other_taka']; ?></label></td>
+                    <td class="text-center"> <label><?php echo $rates[$variety_ifo['variety_id']][$variety_ifo['pack_size_id']]['receive_price_total_taka']; ?></label></td>
 
-                    <td class="text-right"><?php echo System_helper::get_string_kg($quantity_kg_opening);?></td>
-                    <td class="text-right"><?php echo System_helper::get_string_amount($rate_previous_complete);?></td>
-                    <td class="text-right <?php if(!$total_amount_opening_complete){echo 'bg-danger';}?>"><?php echo System_helper::get_string_amount($total_amount_opening_complete);?></td>
+                    <td class="text-center"> <label><?php echo $rates[$variety_ifo['variety_id']][$variety_ifo['pack_size_id']]['receive_opening_stock_kg']; ?></label></td>
+                    <td class="text-center"> <label><?php echo $rates[$variety_ifo['variety_id']][$variety_ifo['pack_size_id']]['receive_opening_rate_weighted_receive']; ?></label></td>
+                    <td class="text-center"> <label><?php echo $rates[$variety_ifo['variety_id']][$variety_ifo['pack_size_id']]['receive_opening_total_amount']; ?></label></td>
 
-                    <td class="text-right"><?php echo System_helper::get_string_kg($quantity_kg_receive);?></td>
-                    <td class="text-right"><?php echo System_helper::get_string_amount($rate_complete);?></td>
-                    <td class="text-right <?php if(!$total_amount_complete){echo 'bg-danger';}?>"><?php echo System_helper::get_string_amount($total_amount_complete);?></td>
-
-                    <td class="text-right"><?php echo System_helper::get_string_kg($quantity_kg_total_complete_total);?></td>
-                    <td class="text-right"><?php echo System_helper::get_string_amount($rate_total_complete_total);?></td>
-                    <td class="text-right <?php if(!$amount_total_receive_total){echo 'bg-danger';}?>"><?php echo System_helper::get_string_amount($amount_total_complete_total);?></td>
                 </tr>
             <?php
             }
             ?>
             </tbody>
+            <tfoot>
+            <tr>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+                <td class="text-center"><?php echo $total_receive_price_variety_currency; ?></td>
+                <td class="text-center"><?php echo $total_receive_price_variety_taka; ?></td>
+                <td class="text-center"><?php echo $total_receive_price_other_currency; ?></td>
+                <td class="text-center"><?php echo $total_receive_price_other_taka; ?></td>
+                <td class="text-center"><?php echo $total_receive_price_total_taka; ?></td>
+
+            </tr>
+
+            </tfoot>
         </table>
     </div>
+
 </div>
 <div class="clearfix"></div>

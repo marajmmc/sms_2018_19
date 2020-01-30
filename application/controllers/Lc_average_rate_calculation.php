@@ -47,13 +47,11 @@ class Lc_average_rate_calculation extends Root_Controller
         elseif($action=="save_rate_complete")
         {
             $this->system_save_rate_complete();
-        }
+        }*/
         elseif($action=="details")
         {
             $this->system_details($id);
         }
-
-        */
         elseif($action=="set_preference")
         {
             $this->system_set_preference('list');
@@ -592,6 +590,7 @@ class Lc_average_rate_calculation extends Root_Controller
                 $ajax['system_message']='LC receive not completed.';
                 $this->json_return($ajax);
             }
+            $data['item']['rate_currency_receive']=$data['item']['price_release_other_variety_taka']/($data['item']['price_release_other_currency']+$data['item']['price_release_variety_currency']);
 
             $data['info_basic']=Lc_helper::get_view_info_basic($data['item']);
             $data['info_lc']=$this->get_view_info_lc($data['item']);
@@ -612,21 +611,24 @@ class Lc_average_rate_calculation extends Root_Controller
             $this->db->where('details.quantity_open >0');
             $this->db->order_by('details.id ASC');
             $data['items']=$this->db->get()->result_array();
-            $variety_ids=array();
+            /*$variety_ids=array();
             $variety_ids[0]=0;
             foreach($data['items'] as $result)
             {
                 $variety_ids[$result['variety_id']]=$result['variety_id'];
-            }
-            $pack_sizes=array();
+            }*/
+            /*$pack_sizes=array();
             $results=Query_helper::get_info($this->config->item('table_login_setup_classification_pack_size'),array('id value','name text'),array());
             foreach($results as $result)
             {
                 $pack_sizes[$result['value']]=$result['text'];
             }
-            $pack_sizes['0']=1000;
-            $date_end=$data['item']['date_receive'];
-            $lc_id=$data['item']['id'];
+            $pack_sizes['0']=1000;*/
+            $date_receive=$data['item']['date_receive'];
+            $data['rates']=$this->get_rates($data['item'],$data['items'],$date_receive);
+
+
+            /*$lc_id=$data['item']['id'];
 
             $data['stock_opening']=$this->get_opening_stock($date_end, $variety_ids, $pack_sizes);
             $data['previous_rates']=$this->get_previous_rates($date_end,$variety_ids);
@@ -636,7 +638,7 @@ class Lc_average_rate_calculation extends Root_Controller
             print_r($data['receive_rates']);
             echo '</pre>';*/
 
-            $data['title']="LC Details & LC Average Rate Calculation :: ".Barcode_helper::get_barcode_lc($item_id);
+            $data['title']="LC Average Rate Details :: ".Barcode_helper::get_barcode_lc($item_id);
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/details",$data,true));
             if($this->message)
@@ -653,94 +655,141 @@ class Lc_average_rate_calculation extends Root_Controller
             $this->json_return($ajax);
         }
     }
+    private function get_rates($lc_info,$lc_varieties,$date_receive)
+    {
+        $rates=array();
+        $date_end=$date_receive-1;
+        $pack_sizes=array();
+        $results=Query_helper::get_info($this->config->item('table_login_setup_classification_pack_size'),array('id value','name text'),array());
+        foreach($results as $result)
+        {
+            $pack_sizes[$result['value']]=$result['text'];
+        }
+        $pack_sizes['0']=1000;
+
+        $variety_ids=array();
+        $variety_ids[0]=0;
+        foreach($lc_varieties as $result)
+        {
+            $variety_ids[$result['variety_id']]=$result['variety_id'];
+
+            //receive section
+                //total
+            $rates[$result['variety_id']][$result['pack_size_id']]['receive_total_quantity_kg']=0;
+            $rates[$result['variety_id']][$result['pack_size_id']]['receive_total_total_amount']=0;
+            $rates[$result['variety_id']][$result['pack_size_id']]['receive_total_rate_weighted_receive_calculated']=0;
+            $rates[$result['variety_id']][$result['pack_size_id']]['receive_total_rate_weighted_receive']=$result['rate_weighted_receive'];
+                //common
+            $rates[$result['variety_id']][$result['pack_size_id']]['quantity_release']=$result['quantity_release'];
+            $rates[$result['variety_id']][$result['pack_size_id']]['quantity_receive']=$result['quantity_receive'];
+            $rates[$result['variety_id']][$result['pack_size_id']]['quantity_receive_kg']=$result['quantity_receive']*$pack_sizes[$result['pack_size_id']]/1000;
+                //receive
+                    //variety
+            $rates[$result['variety_id']][$result['pack_size_id']]['receive_rate_variety_currency']=$result['price_unit_currency'];
+            $rates[$result['variety_id']][$result['pack_size_id']]['receive_price_variety_currency']=($result['quantity_release'] * $result['price_unit_currency']);
+            $rates[$result['variety_id']][$result['pack_size_id']]['receive_price_variety_taka']=($result['quantity_release'] * $result['price_unit_currency']*$lc_info['rate_currency_receive']);
+                    //receive air= (lc_air_currency/lc_variety_currency)*variety_currency
+            $receive_air_currency_percentage=($lc_info['price_release_other_currency']/$lc_info['price_release_variety_currency']);
+            $rates[$result['variety_id']][$result['pack_size_id']]['receive_price_other_currency'] = $receive_air_currency_percentage*$rates[$result['variety_id']][$result['pack_size_id']]['receive_price_variety_currency'];
+            $rates[$result['variety_id']][$result['pack_size_id']]['receive_price_other_taka'] = $receive_air_currency_percentage*$rates[$result['variety_id']][$result['pack_size_id']]['receive_price_variety_taka'];
+                    //total
+            $rates[$result['variety_id']][$result['pack_size_id']]['receive_price_total_taka'] = $rates[$result['variety_id']][$result['pack_size_id']]['receive_price_variety_taka']+$rates[$result['variety_id']][$result['pack_size_id']]['receive_price_other_taka'];
+
+                //opening
+            $rates[$result['variety_id']][$result['pack_size_id']]['receive_opening_stock_kg']=0;
+            $rates[$result['variety_id']][$result['pack_size_id']]['receive_opening_rate_weighted_receive']=0;
+            $rates[$result['variety_id']][$result['pack_size_id']]['receive_opening_total_amount']=0;
 
 
+            //complete section
+                //opening
+            $rates[$result['variety_id']][$result['pack_size_id']]['complete_opening_stock_kg']=0;
+            $rates[$result['variety_id']][$result['pack_size_id']]['complete_opening_rate_weighted_complete']=0;
+            $rates[$result['variety_id']][$result['pack_size_id']]['complete_opening_total_amount']=0;
+
+        }
+
+
+
+        $opening_stock=$this->get_opening_stock($date_end,$variety_ids,$pack_sizes);
+        $opening_rates=$this->get_previous_rates($date_receive,$variety_ids);
+        foreach($lc_varieties as $result)
+        {
+            if(isset($opening_rates[$result['variety_id']]))
+            {
+                $rates[$result['variety_id']][$result['pack_size_id']]['receive_opening_rate_weighted_receive']=$opening_rates[$result['variety_id']]['rate_weighted_receive'];
+                $rates[$result['variety_id']][$result['pack_size_id']]['complete_opening_rate_weighted_complete']=$opening_rates[$result['variety_id']]['rate_weighted_complete'];
+            }
+
+            if(isset($opening_stock[$result['variety_id']][$result['pack_size_id']]))
+            {
+                $rates[$result['variety_id']][$result['pack_size_id']]['receive_opening_stock_kg']=$opening_stock[$result['variety_id']][$result['pack_size_id']]['stock_total_kg'];
+                $rates[$result['variety_id']][$result['pack_size_id']]['complete_opening_stock_kg']=$rates[$result['variety_id']][$result['pack_size_id']]['receive_opening_stock_kg'];
+            }
+
+            $rates[$result['variety_id']][$result['pack_size_id']]['receive_opening_total_amount']=$rates[$result['variety_id']][$result['pack_size_id']]['receive_opening_stock_kg']*$rates[$result['variety_id']][$result['pack_size_id']]['receive_opening_rate_weighted_receive'];
+            $rates[$result['variety_id']][$result['pack_size_id']]['complete_opening_total_amount']=$rates[$result['variety_id']][$result['pack_size_id']]['complete_opening_stock_kg']*$rates[$result['variety_id']][$result['pack_size_id']]['complete_opening_rate_weighted_complete'];
+
+
+            $rates[$result['variety_id']][$result['pack_size_id']]['receive_total_quantity_kg']=$rates[$result['variety_id']][$result['pack_size_id']]['quantity_receive_kg']+$rates[$result['variety_id']][$result['pack_size_id']]['receive_opening_stock_kg'];
+            $rates[$result['variety_id']][$result['pack_size_id']]['receive_total_total_amount']=$rates[$result['variety_id']][$result['pack_size_id']]['receive_price_total_taka']+$rates[$result['variety_id']][$result['pack_size_id']]['complete_opening_total_amount'];
+            $rates[$result['variety_id']][$result['pack_size_id']]['receive_total_rate_weighted_receive_calculated']=$rates[$result['variety_id']][$result['pack_size_id']]['receive_total_total_amount']/$rates[$result['variety_id']][$result['pack_size_id']]['receive_total_quantity_kg'];
+
+        }
+
+        return $rates;
+
+    }
     private function get_view_info_lc($lc_info)
     {
         $info_basic=array();
+        $result=array();
+        $result['label_1']='Receive';
+        $result['value_1']='';
+        $result['label_2']='Complete';
+        //$result['value_2']='';
+        $info_basic[]=$result;
 
         $result=array();
-        $result['label_1']=$this->lang->line('LABEL_FISCAL_YEAR');
-        $result['value_1']=$lc_info['fiscal_year'];
-        $result['label_2']=$this->lang->line('LABEL_MONTH');
-        $result['value_2']=date("F", mktime(0, 0, 0,  $lc_info['month_id'],1, 2000));
+        $result['label_1']='Total Taka(Air+variety )';
+        $result['value_1']=System_helper::get_string_amount($lc_info['price_release_other_variety_taka']);
+        $result['label_2']='Total Taka(Air+variety )';
+        $result['value_2']=System_helper::get_string_amount($lc_info['price_complete_other_variety_taka']);
+        $info_basic[]=$result;
+
+        $result=array();
+        $result['label_1']='Air Currency';
+        $result['value_1']=System_helper::get_string_amount($lc_info['price_release_other_currency']);
+        $result['label_2']='Air Currency';
+        $result['value_2']=System_helper::get_string_amount($lc_info['price_release_other_currency']);
+        $info_basic[]=$result;
+
+        $result=array();
+        $result['label_1']='Variety Currency';
+        $result['value_1']=System_helper::get_string_amount($lc_info['price_release_variety_currency']);
+        $result['label_2']='Variety Currency';
+        $result['value_2']=System_helper::get_string_amount($lc_info['price_release_variety_currency']);
         $info_basic[]=$result;
         $result=array();
-        $result['label_1']=$this->lang->line('LABEL_PRINCIPAL_NAME');
-        $result['value_1']=$lc_info['principal_name'];
-        $result['label_2']=$this->lang->line('LABEL_LC_NUMBER');
-        $result['value_2']=$lc_info['lc_number'];
+        $result['label_1']='Currency Rate';
+        $result['value_1']=($lc_info['rate_currency_receive']);
+        $result['label_2']='Currency Rate';
+        $result['value_2']=($lc_info['rate_currency']);
         $info_basic[]=$result;
+
         $result=array();
-        $result['label_1']=$this->lang->line('LABEL_DATE_OPENING');
-        $result['value_1']=System_helper::display_date($lc_info['date_opening']);
-        $result['label_2']=$this->lang->line('LABEL_CONSIGNMENT_NAME');
-        $result['value_2']=$lc_info['consignment_name'];
+        $result['label_1']='Air Taka';
+        $result['value_1']=System_helper::get_string_amount($lc_info['price_release_other_currency']*$lc_info['rate_currency_receive']);
+        $result['label_2']='Air Taka';
+        $result['value_2']=System_helper::get_string_amount($lc_info['price_release_other_currency']*$lc_info['rate_currency']);
         $info_basic[]=$result;
+
         $result=array();
-        $result['label_1']=$this->lang->line('LABEL_DATE_EXPECTED');
-        $result['value_1']=System_helper::display_date($lc_info['date_expected']);
-        $result['label_2']=$this->lang->line('LABEL_BANK_ACCOUNT_NUMBER');
-        $result['value_2']=$lc_info['bank_account_number'];
+        $result['label_1']='Variety Taka';
+        $result['value_1']=System_helper::get_string_amount($lc_info['price_release_variety_currency']*$lc_info['rate_currency_receive']);
+        $result['label_2']='Variety Taka';
+        $result['value_2']=System_helper::get_string_amount($lc_info['price_release_variety_currency']*$lc_info['rate_currency']);
         $info_basic[]=$result;
-        //hidden in open complete task
-        $result=array();
-        $result['label_1']=$this->lang->line('LABEL_CURRENCY_NAME');
-        $result['value_1']=$lc_info['currency_name'];
-        if($lc_info['status_open']==$this->config->item('system_status_complete'))
-        {
-            $result['label_2']=$this->lang->line('LABEL_CURRENCY_RATE');
-            $result['value_2']=number_format($lc_info['rate_currency'],2);;
-        }
-        $info_basic[]=$result;
-        //hidden in release task
-        $result=array();
-        $result['label_1']=$this->lang->line('LABEL_PRICE_OPEN_OTHER_CURRENCY');
-        $result['value_1']=number_format($lc_info['price_open_other_currency'],2);
-        /*if($lc_info['status_release']==$this->config->item('system_status_complete'))
-        {
-            $result['label_2']=$this->lang->line('LABEL_PRICE_RELEASE_OTHER_CURRENCY');
-            $result['value_2']=number_format($lc_info['price_release_other_currency'],2);
-        }*/
-        $info_basic[]=$result;
-        //hidden in receive task
-        if($lc_info['status_open_forward']==$this->config->item('system_status_yes'))
-        {
-            $result=array();
-            $result['label_1']='AWB Date';
-            $result['value_1']=System_helper::display_date($lc_info['date_awb']);
-            $result['label_2']='AWB Number';
-            $result['value_2']=$lc_info['awb_number'];
-            $info_basic[]=$result;
-        }
-        if($lc_info['status_release']==$this->config->item('system_status_complete'))
-        {
-            $result=array();
-            $result['label_1']='Release Date';
-            $result['value_1']=System_helper::display_date($lc_info['date_release']);
-            $info_basic[]=$result;
-        }
-        if($lc_info['status_receive']==$this->config->item('system_status_complete'))
-        {
-            $result=array();
-            $result['label_1']=$this->lang->line('LABEL_DATE_PACKING_LIST');
-            $result['value_1']=System_helper::display_date($lc_info['date_packing_list']);
-            $result['label_2']=$this->lang->line('LABEL_NUMBER_PACKING_LIST');
-            $result['value_2']=$lc_info['packing_list_number'];
-            $info_basic[]=$result;
-            $result=array();
-            $result['label_1']=$this->lang->line('LABEL_DATE_RECEIVE');
-            $result['value_1']=System_helper::display_date($lc_info['date_receive']);
-            $result['label_2']=$this->lang->line('LABEL_NUMBER_LOT');
-            $result['value_2']=$lc_info['lot_number'];
-            $info_basic[]=$result;
-            $result=array();
-            $result['label_1']=$this->lang->line('LABEL_PRICE_RELEASE_OTHER_CURRENCY');
-            $result['value_1']=number_format($lc_info['price_release_other_currency'],2);
-            $result['label_2']=$this->lang->line('LABEL_PRICE_RELEASE_VARIETY_CURRENCY');
-            $result['value_2']=number_format($lc_info['price_release_variety_currency'],2);
-            $info_basic[]=$result;
-        }
         return $info_basic;
     }
     private function get_opening_stock($date_end, $variety_ids, $pack_sizes)
@@ -755,44 +804,42 @@ class Lc_average_rate_calculation extends Root_Controller
         $this->db->where('stock_in.status !=',$this->config->item('system_status_delete'));
         $this->db->where('details.revision',1);
         $this->db->where_in('details.variety_id',$variety_ids);
-        //$this->db->where_in('details.pack_size_id',$pack_sizes);
         $this->db->group_by('details.variety_id');
         $this->db->group_by('details.pack_size_id');
         $results=$this->db->get()->result_array();
+
         foreach($results as $result)
         {
             if(!(isset($stocks[$result['variety_id']][$result['pack_size_id']])))
             {
-                $stocks[$result['variety_id']][$result['pack_size_id']]=$this->initialize_stock_row('','','',$pack_sizes[$result['pack_size_id']]);
+                $stocks[$result['variety_id']][$result['pack_size_id']]=$this->initialize_opening_stock('','','',$pack_sizes[$result['pack_size_id']]);
             }
+            $stocks[$result['variety_id']][$result['pack_size_id']]['stock_hq_pkt']+=$result['stock_in'];
             $stocks[$result['variety_id']][$result['pack_size_id']]['stock_hq_kg']+=(($result['stock_in']*$pack_sizes[$result['pack_size_id']])/1000);
         }
-
         //lc calculation
         $this->db->from($this->config->item('table_sms_lc_details').' details');
         $this->db->select('details.variety_id,details.pack_size_id');
         $this->db->select('SUM(CASE WHEN lco.date_receive <='.$date_end.' then details.quantity_receive ELSE 0 END) in_opening',false);
 
+
         $this->db->join($this->config->item('table_sms_lc_open').' lco','lco.id=details.lc_id','INNER');
         $this->db->where('lco.status_open !=',$this->config->item('system_status_delete'));
         $this->db->where('lco.status_receive',$this->config->item('system_status_complete'));
         $this->db->where_in('details.variety_id',$variety_ids);
-        //$this->db->or_where_in('details.pack_size_id',$pack_sizes);
         $this->db->where('details.quantity_open >',0);
         $this->db->group_by('details.variety_id');
         $this->db->group_by('details.pack_size_id');
         $results=$this->db->get()->result_array();
-        //echo $this->db->last_query();
-
         foreach($results as $result)
         {
             if(!(isset($stocks[$result['variety_id']][$result['pack_size_id']])))
             {
-                $stocks[$result['variety_id']][$result['pack_size_id']]=$this->initialize_stock_row('','','',$pack_sizes[$result['pack_size_id']]);
+                $stocks[$result['variety_id']][$result['pack_size_id']]=$this->initialize_opening_stock('','','',$pack_sizes[$result['pack_size_id']]);
             }
+            $stocks[$result['variety_id']][$result['pack_size_id']]['stock_hq_pkt']+=$result['in_opening'];
             $stocks[$result['variety_id']][$result['pack_size_id']]['stock_hq_kg']+=(($result['in_opening']*$pack_sizes[$result['pack_size_id']])/1000);
         }
-
         //convert bulk to pack in out
         $this->db->from($this->config->item('table_sms_convert_bulk_to_pack').' details');
         $this->db->select('details.variety_id,details.pack_size_id');
@@ -801,7 +848,6 @@ class Lc_average_rate_calculation extends Root_Controller
 
         $this->db->where('details.status !=',$this->config->item('system_status_delete'));
         $this->db->where_in('details.variety_id',$variety_ids);
-        //$this->db->or_where_in('details.pack_size_id',$pack_sizes);
         $this->db->group_by('details.variety_id');
         $this->db->group_by('details.pack_size_id');
         $results=$this->db->get()->result_array();
@@ -809,27 +855,35 @@ class Lc_average_rate_calculation extends Root_Controller
         {
             if(!(isset($stocks[$result['variety_id']][$result['pack_size_id']])))
             {
-                $stocks[$result['variety_id']][$result['pack_size_id']]=$this->initialize_stock_row('','','',$pack_sizes[$result['pack_size_id']]);
+                $stocks[$result['variety_id']][$result['pack_size_id']]=$this->initialize_opening_stock('','','',$pack_sizes[$result['pack_size_id']]);
             }
-            $stocks[$result['variety_id']][$result['pack_size_id']]['stock_hq_kg']+=(($result['in_convert_bulk_pack_opening']*$pack_sizes[$result['pack_size_id']])/1000);
+
+            {
+                $stocks[$result['variety_id']][0]['stock_hq_kg']-=$result['out_convert_bulk_pack_opening'];
+                $stocks[$result['variety_id']][$result['pack_size_id']]['stock_hq_pkt']+=$result['in_convert_bulk_pack_opening'];
+                $stocks[$result['variety_id']][$result['pack_size_id']]['stock_hq_kg']+=(($result['in_convert_bulk_pack_opening']*$pack_sizes[$result['pack_size_id']])/1000);
+            }
         }
         //transfer ww in and out no need to calculate
         //out stock sample,rnd,demonstration, short
+
         $this->db->from($this->config->item('table_sms_stock_out_variety_details').' details');
         $this->db->select('details.variety_id,details.pack_size_id');
         $this->db->select('SUM(CASE WHEN stock_out.date_stock_out <='.$date_end.' then details.quantity ELSE 0 END) out_opening',false);
+
 
         $this->db->join($this->config->item('table_sms_stock_out_variety').' stock_out','stock_out.id=details.stock_out_id','INNER');
         $this->db->where('stock_out.status !=',$this->config->item('system_status_delete'));
         $this->db->where('details.revision',1);
         $this->db->where_in('details.variety_id',$variety_ids);
-        //$this->db->or_where_in('details.pack_size_id',$pack_sizes);
         $this->db->group_by('details.variety_id');
         $this->db->group_by('details.pack_size_id');
         $results=$this->db->get()->result_array();
         foreach($results as $result)
         {
+            $stocks[$result['variety_id']][$result['pack_size_id']]['stock_hq_pkt']-=$result['out_opening'];
             $stocks[$result['variety_id']][$result['pack_size_id']]['stock_hq_kg']-=(($result['out_opening']*$pack_sizes[$result['pack_size_id']])/1000);
+
         }
         //TO
         //out transfer to outlet
@@ -847,22 +901,25 @@ class Lc_average_rate_calculation extends Root_Controller
         $this->db->where('details.status !=',$this->config->item('system_status_delete'));
         $this->db->where('wo.status_delivery',$this->config->item('system_status_delivered'));
         $this->db->where_in('details.variety_id',$variety_ids);
-        //$this->db->or_where_in('details.pack_size_id',$pack_sizes);
         $this->db->group_by('details.variety_id');
         $this->db->group_by('details.pack_size_id');
         $results=$this->db->get()->result_array();
         foreach($results as $result)
         {
+            $stocks[$result['variety_id']][$result['pack_size_id']]['stock_hq_pkt']-=$result['out_hq'];
             $stocks[$result['variety_id']][$result['pack_size_id']]['stock_hq_kg']-=(($result['out_hq']*$pack_sizes[$result['pack_size_id']])/1000);
 
+            $stocks[$result['variety_id']][$result['pack_size_id']]['stock_outlet_pkt']+=$result['in_outlet'];
             $stocks[$result['variety_id']][$result['pack_size_id']]['stock_outlet_kg']+=(($result['in_outlet']*$pack_sizes[$result['pack_size_id']])/1000);
 
+            $stocks[$result['variety_id']][$result['pack_size_id']]['stock_to_pkt']+=($result['out_hq']-$result['expected_in_outlet']);
             $stocks[$result['variety_id']][$result['pack_size_id']]['stock_to_kg']+=((($result['out_hq']-$result['expected_in_outlet'])*$pack_sizes[$result['pack_size_id']])/1000);
 
         }
         //TR
         $this->db->from($this->config->item('table_sms_transfer_ow_details').' details');
         $this->db->select('details.variety_id,details.pack_size_id');
+
         //hq in
         $this->db->select('SUM(CASE WHEN ow.status_receive ="'.$this->config->item('system_status_received').'" and ow.date_receive <='.$date_end.' then details.quantity_receive ELSE 0 END) in_hq',false);
         //outlet out
@@ -875,7 +932,6 @@ class Lc_average_rate_calculation extends Root_Controller
         $this->db->where('details.status !=',$this->config->item('system_status_delete'));
         $this->db->where('ow.status_delivery',$this->config->item('system_status_delivered'));
         $this->db->where_in('details.variety_id',$variety_ids);
-        //$this->db->or_where_in('details.pack_size_id',$pack_sizes);
         $this->db->group_by('details.variety_id');
         $this->db->group_by('details.pack_size_id');
         $results=$this->db->get()->result_array();
@@ -883,36 +939,45 @@ class Lc_average_rate_calculation extends Root_Controller
         {
             if(!(isset($stocks[$result['variety_id']][$result['pack_size_id']])))
             {
-                $stocks[$result['variety_id']][$result['pack_size_id']]=$this->initialize_stock_row('','','',$pack_sizes[$result['pack_size_id']]);
+                $stocks[$result['variety_id']][$result['pack_size_id']]=$this->initialize_opening_stock('','','',$pack_sizes[$result['pack_size_id']]);
             }
+            $stocks[$result['variety_id']][$result['pack_size_id']]['stock_hq_pkt']+=$result['in_hq'];
             $stocks[$result['variety_id']][$result['pack_size_id']]['stock_hq_kg']+=(($result['in_hq']*$pack_sizes[$result['pack_size_id']])/1000);
 
+            $stocks[$result['variety_id']][$result['pack_size_id']]['stock_outlet_pkt']-=$result['out_outlet'];
             $stocks[$result['variety_id']][$result['pack_size_id']]['stock_outlet_kg']-=(($result['out_outlet']*$pack_sizes[$result['pack_size_id']])/1000);
 
+            $stocks[$result['variety_id']][$result['pack_size_id']]['stock_tr_pkt']+=($result['out_outlet']-$result['expected_in_hq']);
             $stocks[$result['variety_id']][$result['pack_size_id']]['stock_tr_kg']+=((($result['out_outlet']-$result['expected_in_hq'])*$pack_sizes[$result['pack_size_id']])/1000);
         }
+
         //TS
         $this->db->from($this->config->item('table_sms_transfer_oo_details').' details');
         $this->db->select('details.variety_id,details.pack_size_id');
+
         //out outlet
         $this->db->select('SUM(CASE WHEN oo.date_delivery <='.$date_end.' then details.quantity_approve ELSE 0 END) out_oo_opening',false);
         //in outlet
         $this->db->select('SUM(CASE WHEN oo.status_receive ="'.$this->config->item('system_status_received').'" and oo.date_receive <='.$date_end.' then details.quantity_receive ELSE 0 END) in_oo_opening',false);
         //air out_oo_opening-expected_in_oo_opening
         $this->db->select('SUM(CASE WHEN oo.status_receive ="'.$this->config->item('system_status_received').'" and oo.date_receive <='.$date_end.' then details.quantity_approve ELSE 0 END) expected_in_oo_opening',false);
+
+
         $this->db->join($this->config->item('table_sms_transfer_oo').' oo','oo.id=details.transfer_oo_id','INNER');
         $this->db->where('oo.status !=',$this->config->item('system_status_delete'));
         $this->db->where('details.status !=',$this->config->item('system_status_delete'));
         $this->db->where('oo.status_delivery',$this->config->item('system_status_delivered'));
         $this->db->where_in('details.variety_id',$variety_ids);
-        //$this->db->or_where_in('details.pack_size_id',$pack_sizes);
+
         $this->db->group_by('details.variety_id');
         $this->db->group_by('details.pack_size_id');
         $results=$this->db->get()->result_array();
         foreach($results as $result)
         {
+            $stocks[$result['variety_id']][$result['pack_size_id']]['stock_outlet_pkt']+=($result['in_oo_opening']-$result['out_oo_opening']);
             $stocks[$result['variety_id']][$result['pack_size_id']]['stock_outlet_kg']+=((($result['in_oo_opening']-$result['out_oo_opening'])*$pack_sizes[$result['pack_size_id']])/1000);
 
+            $stocks[$result['variety_id']][$result['pack_size_id']]['stock_ts_pkt']+=($result['out_oo_opening']-$result['expected_in_oo_opening']);
             $stocks[$result['variety_id']][$result['pack_size_id']]['stock_ts_kg']+=((($result['out_oo_opening']-$result['expected_in_oo_opening'])*$pack_sizes[$result['pack_size_id']])/1000);
         }
         //sales
@@ -925,35 +990,51 @@ class Lc_average_rate_calculation extends Root_Controller
         $this->db->join($this->config->item('table_pos_sale').' sale','sale.id=details.sale_id','INNER');
         $this->db->where('sale.status !=',$this->config->item('system_status_delete'));
         $this->db->where_in('details.variety_id',$variety_ids);
-        //$this->db->or_where_in('details.pack_size_id',$pack_sizes);
+
         $this->db->group_by('details.variety_id');
         $this->db->group_by('details.pack_size_id');
         $results=$this->db->get()->result_array();
         foreach($results as $result)
         {
+            $stocks[$result['variety_id']][$result['pack_size_id']]['stock_outlet_pkt']-=($result['sale_opening']-$result['sale_cancel_opening']);
             $stocks[$result['variety_id']][$result['pack_size_id']]['stock_outlet_kg']-=((($result['sale_opening']-$result['sale_cancel_opening'])*$pack_sizes[$result['pack_size_id']])/1000);
+        }
+        foreach($stocks as &$variety_info)
+        {
+            foreach($variety_info as &$info)
+            {
+                $info['stock_total_pkt']=$info['stock_hq_pkt']+$info['stock_outlet_pkt']+$info['stock_to_pkt']+$info['stock_tr_pkt']+$info['stock_ts_pkt'];
+                $info['stock_total_kg']=$info['stock_hq_kg']+$info['stock_outlet_kg']+$info['stock_to_kg']+$info['stock_tr_kg']+$info['stock_ts_kg'];
+            }
+
         }
 
         return $stocks;
     }
-    private function initialize_stock_row($crop_name,$crop_type_name,$variety_name,$pack_size)
+    private function initialize_opening_stock($crop_name,$crop_type_name,$variety_name,$pack_size)
     {
+        $row=array();
         $row['crop_name']=$crop_name;
         $row['crop_type_name']=$crop_type_name;
         $row['variety_name']=$variety_name;
         $row['pack_size']=$pack_size;
-        //$row['stock_total_kg']=0;
-        //$row['stock_total_pkt']=0;
+
+        $row['stock_total_pkt']=0;
         $row['stock_total_kg']=0;
-        //$row['stock_hq_pkt']=0;
+
+        $row['stock_hq_pkt']=0;
         $row['stock_hq_kg']=0;
-        //$row['stock_outlet_pkt']=0;
+
+        $row['stock_outlet_pkt']=0;
         $row['stock_outlet_kg']=0;
-        //$row['stock_to_pkt']=0;
+
+        $row['stock_to_pkt']=0;
         $row['stock_to_kg']=0;
-        //$row['stock_tr_pkt']=0;
+
+        $row['stock_tr_pkt']=0;
         $row['stock_tr_kg']=0;
-        //$row['stock_ts_pkt']=0;
+
+        $row['stock_ts_pkt']=0;
         $row['stock_ts_kg']=0;
         return $row;
     }
@@ -969,49 +1050,27 @@ class Lc_average_rate_calculation extends Root_Controller
         $this->db->where('lc.date_receive < '.$date_receive);
         $this->db->where('lc.status_open !=',$this->config->item('system_status_delete'));
         $this->db->where('lc.status_receive',$this->config->item('system_status_complete'));
-        $this->db->group_by('details.variety_id, details.pack_size_id');
-        $sub_query=$this->db->get_compiled_select();
-
+        $this->db->group_by('details.variety_id');
+        //$this->db->group_by('details.pack_size_id'); //ignore pack sizes
+        $results=$this->db->get()->result_array();
+        $details_ids=array();
+        $details_ids[0]=0;
+        foreach($results as $result)
+        {
+            $details_ids[$result['id']]=$result['id'];
+        }
         $this->db->from($this->config->item('table_sms_lc_details') . ' details');
-        $this->db->select('details.*');
-        $this->db->join($this->config->item('table_sms_lc_open') . ' lc','lc.id=details.lc_id','INNER');
-        //$this->db->join('('.$sub_query.') details_max','details_max.variety_id = details.variety_id AND details_max.pack_size_id = details.pack_size_id AND details_max.date_receive= lc.date_receive','INNER');
-        $this->db->join('('.$sub_query.') details_max','details_max.id = details.id','INNER');
+        $this->db->select('details.variety_id,details.rate_weighted_receive,details.rate_weighted_complete');
+        $this->db->where_in('id',$details_ids);
         $results=$this->db->get()->result_array();
         //echo $this->db->last_query();
         $rates=array();
         foreach($results as $result)
         {
-            $rates[$result['variety_id']][$result['pack_size_id']]=$result;
+            //$rates[$result['variety_id']][$result['pack_size_id']]=$result;// ignore pack sizes
+            $rates[$result['variety_id']]=$result;
         }
 
         return $rates;
-    }
-    private function get_receive_rates($lc_info, $lc_details)
-    {
-        $variety_rates=array();
-        $rate_currency=$lc_info['price_complete_other_variety_taka']/($lc_info['price_release_other_currency']+$lc_info['price_release_variety_currency']);
-        foreach($lc_details as $result)
-        {
-            /*if($result['pack_size_id']==0)
-            {
-                $price_variety_taka = ($result['quantity_release'] * $result['price_unit_currency']) * $rate_currency;
-                $price_other_taka = ($lc_info['price_release_other_currency']/$lc_info['price_release_variety_currency'])*$price_variety_taka; //(air fright)
-                $total_taka = ($price_variety_taka+$price_other_taka);
-                $variety_rates[$result['variety_id']][$result['pack_size_id']] = $total_taka/$result['quantity_receive'];
-            }
-            else
-            {
-                $price_variety_taka = ($result['quantity_release'] * $result['price_unit_currency']) * $rate_currency;
-                $price_other_taka = ($lc_info['price_release_other_currency']/$lc_info['price_release_variety_currency'])*$price_variety_taka; //(air fright)
-                $total_taka = ($price_variety_taka+$price_other_taka);
-                $variety_rates[$result['variety_id']][$result['pack_size_id']] = $total_taka/$result['quantity_receive'];
-            }*/
-            $price_variety_taka = ($result['quantity_release'] * $result['price_unit_currency']) * $rate_currency;
-            $price_other_taka = ($lc_info['price_release_other_currency']/$lc_info['price_release_variety_currency'])*$price_variety_taka; //(air fright)
-            $total_taka = ($price_variety_taka+$price_other_taka);
-            $variety_rates[$result['variety_id']][$result['pack_size_id']] = $total_taka/$result['quantity_receive'];
-        }
-        return $variety_rates;
     }
 }
