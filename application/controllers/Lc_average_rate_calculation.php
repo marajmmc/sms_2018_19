@@ -702,6 +702,26 @@ class Lc_average_rate_calculation extends Root_Controller
 
 
             //complete section
+                //total
+            $rates[$result['variety_id']][$result['pack_size_id']]['complete_total_quantity_kg']=0;
+            $rates[$result['variety_id']][$result['pack_size_id']]['complete_total_total_amount']=0;
+            $rates[$result['variety_id']][$result['pack_size_id']]['complete_total_rate_weighted_complete_calculated']=0;
+            $rates[$result['variety_id']][$result['pack_size_id']]['complete_total_rate_weighted_complete']=$result['rate_weighted_complete'];
+                //common
+
+            $rates[$result['variety_id']][$result['pack_size_id']]['quantity_complete_kg']=$result['quantity_receive']*$pack_sizes[$result['pack_size_id']]/1000;
+                //complete
+                    //variety
+            $rates[$result['variety_id']][$result['pack_size_id']]['complete_rate_variety_currency']=$result['price_unit_complete_currency'];
+            $rates[$result['variety_id']][$result['pack_size_id']]['complete_price_variety_currency']=($result['quantity_receive'] * $result['price_unit_complete_currency']);
+            $rates[$result['variety_id']][$result['pack_size_id']]['complete_price_variety_taka']=($result['quantity_receive'] * $result['price_unit_complete_currency']*$lc_info['rate_currency']);
+                    //complete air= (lc_air_currency/lc_variety_currency)*variety_currency
+            $rates[$result['variety_id']][$result['pack_size_id']]['complete_price_other_taka'] = $result['price_complete_other_taka'];
+            $rates[$result['variety_id']][$result['pack_size_id']]['complete_price_other_currency'] = $result['price_complete_other_taka']/$lc_info['rate_currency'];
+            $rates[$result['variety_id']][$result['pack_size_id']]['complete_price_dc_expense_taka'] = $result['price_dc_expense_taka'];
+                    //total
+            $rates[$result['variety_id']][$result['pack_size_id']]['complete_price_total_taka'] = $rates[$result['variety_id']][$result['pack_size_id']]['complete_price_variety_taka']+$rates[$result['variety_id']][$result['pack_size_id']]['complete_price_other_taka']+$rates[$result['variety_id']][$result['pack_size_id']]['complete_price_dc_expense_taka'];
+
                 //opening
             $rates[$result['variety_id']][$result['pack_size_id']]['complete_opening_stock_kg']=0;
             $rates[$result['variety_id']][$result['pack_size_id']]['complete_opening_rate_weighted_complete']=0;
@@ -720,20 +740,27 @@ class Lc_average_rate_calculation extends Root_Controller
                 $rates[$result['variety_id']][$result['pack_size_id']]['receive_opening_rate_weighted_receive']=$opening_rates[$result['variety_id']]['rate_weighted_receive'];
                 $rates[$result['variety_id']][$result['pack_size_id']]['complete_opening_rate_weighted_complete']=$opening_rates[$result['variety_id']]['rate_weighted_complete'];
             }
-
             if(isset($opening_stock[$result['variety_id']][$result['pack_size_id']]))
             {
                 $rates[$result['variety_id']][$result['pack_size_id']]['receive_opening_stock_kg']=$opening_stock[$result['variety_id']][$result['pack_size_id']]['stock_total_kg'];
                 $rates[$result['variety_id']][$result['pack_size_id']]['complete_opening_stock_kg']=$rates[$result['variety_id']][$result['pack_size_id']]['receive_opening_stock_kg'];
             }
 
+
             $rates[$result['variety_id']][$result['pack_size_id']]['receive_opening_total_amount']=$rates[$result['variety_id']][$result['pack_size_id']]['receive_opening_stock_kg']*$rates[$result['variety_id']][$result['pack_size_id']]['receive_opening_rate_weighted_receive'];
             $rates[$result['variety_id']][$result['pack_size_id']]['complete_opening_total_amount']=$rates[$result['variety_id']][$result['pack_size_id']]['complete_opening_stock_kg']*$rates[$result['variety_id']][$result['pack_size_id']]['complete_opening_rate_weighted_complete'];
 
 
             $rates[$result['variety_id']][$result['pack_size_id']]['receive_total_quantity_kg']=$rates[$result['variety_id']][$result['pack_size_id']]['quantity_receive_kg']+$rates[$result['variety_id']][$result['pack_size_id']]['receive_opening_stock_kg'];
-            $rates[$result['variety_id']][$result['pack_size_id']]['receive_total_total_amount']=$rates[$result['variety_id']][$result['pack_size_id']]['receive_price_total_taka']+$rates[$result['variety_id']][$result['pack_size_id']]['complete_opening_total_amount'];
+            $rates[$result['variety_id']][$result['pack_size_id']]['receive_total_total_amount']=$rates[$result['variety_id']][$result['pack_size_id']]['receive_price_total_taka']+$rates[$result['variety_id']][$result['pack_size_id']]['receive_opening_total_amount'];
             $rates[$result['variety_id']][$result['pack_size_id']]['receive_total_rate_weighted_receive_calculated']=$rates[$result['variety_id']][$result['pack_size_id']]['receive_total_total_amount']/$rates[$result['variety_id']][$result['pack_size_id']]['receive_total_quantity_kg'];
+
+            $rates[$result['variety_id']][$result['pack_size_id']]['complete_total_quantity_kg']=$rates[$result['variety_id']][$result['pack_size_id']]['quantity_complete_kg']+$rates[$result['variety_id']][$result['pack_size_id']]['complete_opening_stock_kg'];
+            $rates[$result['variety_id']][$result['pack_size_id']]['complete_total_total_amount']=$rates[$result['variety_id']][$result['pack_size_id']]['complete_price_total_taka']+$rates[$result['variety_id']][$result['pack_size_id']]['complete_opening_total_amount'];
+            $rates[$result['variety_id']][$result['pack_size_id']]['complete_total_rate_weighted_complete_calculated']=$rates[$result['variety_id']][$result['pack_size_id']]['complete_total_total_amount']/$rates[$result['variety_id']][$result['pack_size_id']]['complete_total_quantity_kg'];
+
+
+
 
         }
 
@@ -789,6 +816,20 @@ class Lc_average_rate_calculation extends Root_Controller
         $result['value_1']=System_helper::get_string_amount($lc_info['price_release_variety_currency']*$lc_info['rate_currency_receive']);
         $result['label_2']='Variety Taka';
         $result['value_2']=System_helper::get_string_amount($lc_info['price_release_variety_currency']*$lc_info['rate_currency']);
+        $info_basic[]=$result;
+
+        $result=array();
+        $result['label_1']='';
+        $result['value_1']='';
+        $result['label_2']='Dc Expense';
+        $result['value_2']=$lc_info['price_complete_dc_taka'];
+        $info_basic[]=$result;
+
+        $result=array();
+        $result['label_1']='';
+        $result['value_1']='';
+        $result['label_2']='Total Taka';
+        $result['value_2']=$lc_info['price_complete_total_taka'];
         $info_basic[]=$result;
         return $info_basic;
     }
