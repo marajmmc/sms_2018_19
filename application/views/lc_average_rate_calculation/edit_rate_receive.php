@@ -52,45 +52,32 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <table class="table table-bordered">
                     <thead>
                     <tr>
-                        <th class="label-info" rowspan="2"><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></th>
-                        <th class="label-info" rowspan="2"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?></th>
-                        <th class="label-info" rowspan="2"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
-                        <th class="label-info" rowspan="2"><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
-                        <th class="label-warning text-center" colspan="2">Receive Quantity</th>
-                        <th class="label-success text-center" rowspan="2">Probable Rate</th>
-                        <th class="label-success text-center" rowspan="2">Editable Rate</th>
+                        <th class="label-info" ><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></th>
+                        <th class="label-info" ><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?></th>
+                        <th class="label-info" ><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
+                        <th class="label-info" ><?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?></th>
+                        <th class="label-info" >Rate(saved)</th>
+                        <th class="label-info" >Rate(Calculated)</th>
+                        <th class="label-info" >Rate(new)</th>
+
                     </tr>
-                    <tr>
-                        <th class="label-warning text-center"><?php echo $CI->lang->line('LABEL_PACK'); ?>/<?php echo $CI->lang->line('LABEL_KG');?></th>
-                        <th class="label-warning text-center"><?php echo $CI->lang->line('KG');?></th>
-                    </tr>
+
                     </thead>
                     <tbody id="items_container">
                     <?php
-                    $rate_probable_receive=0;
-                    $quantity_total_receive_kg=0;
-                    foreach($items as $index=>$value)
+
+                    foreach($items as $variety_ifo)
                     {
-                        if($value['pack_size_id']==0)
-                        {
-                            $quantity_receive_kg=$value['quantity_receive'];
-                        }
-                        else
-                        {
-                            $quantity_receive_kg=(($value['pack_size']*$value['quantity_receive'])/1000);
-                        }
-                        $quantity_total_receive_kg+=$quantity_receive_kg;
                         ?>
                         <tr>
-                            <td><label><?php echo $value['crop_name'];?></label></td>
-                            <td><label><?php echo $value['crop_type_name'];?></label></td>
-                            <td><label><?php echo $value['variety_name']; ?> (<?php echo $value['variety_name_import']; ?>)</label></td>
-                            <td class="text-center"> <label><?php if($value['pack_size_id']==0){echo 'Bulk';}else{echo $value['pack_size'];} ?></label></td>
-                            <td class="text-right"><label><?php echo $value['quantity_receive'];?></label></td>
-                            <td class="text-right"><label><?php echo System_helper::get_string_kg($quantity_receive_kg)?></label></td>
-                            <td class="text-right"><label><?php echo System_helper::get_string_amount($rate_probable_receive);?></label></td>
+                            <td><label><?php echo $variety_ifo['crop_name'];?></label></td>
+                            <td><label><?php echo $variety_ifo['crop_type_name'];?></label></td>
+                            <td><label><?php echo $variety_ifo['variety_name']; ?> (<?php echo $variety_ifo['variety_name_import']; ?>)</label></td>
+                            <td class="text-center"> <label><?php if($variety_ifo['pack_size_id']==0){echo 'Bulk';}else{echo $variety_ifo['pack_size'];} ?></label></td>
+                            <td class="text-center"> <label><?php echo System_helper::get_string_amount($rates[$variety_ifo['variety_id']][$variety_ifo['pack_size_id']]['receive_total_rate_weighted_receive']); ?></label></td>
+                            <td class="text-center"> <label><?php echo System_helper::get_string_amount($rates[$variety_ifo['variety_id']][$variety_ifo['pack_size_id']]['receive_total_rate_weighted_receive_calculated']);?></label></td>
                             <td>
-                                <input type="text" name="items[<?php echo $value['id'];?>][rate_weighted_receive]" class="form-control float_type_positive" value="<?php echo $value['rate_weighted_receive']?$value['rate_weighted_receive']:$rate_probable_receive;?>" />
+                                <input type="text" name="items[<?php echo $variety_ifo['id'];?>][rate_weighted_receive]" class="form-control float_type_positive" value="" />
                             </td>
                         </tr>
                     <?php

@@ -32,7 +32,7 @@ class Lc_average_rate_calculation extends Root_Controller
         {
             $this->system_get_items();
         }
-        /*elseif($action=="edit_rate_receive")
+        elseif($action=="edit_rate_receive")
         {
             $this->system_edit_rate_receive($id);
         }
@@ -47,7 +47,7 @@ class Lc_average_rate_calculation extends Root_Controller
         elseif($action=="save_rate_complete")
         {
             $this->system_save_rate_complete();
-        }*/
+        }
         elseif($action=="details")
         {
             $this->system_details($id);
@@ -232,6 +232,7 @@ class Lc_average_rate_calculation extends Root_Controller
                 $ajax['system_message']='LC receive not completed.';
                 $this->json_return($ajax);
             }
+            $data['item']['rate_currency_receive']=$data['item']['price_release_other_variety_taka']/($data['item']['price_release_other_currency']+$data['item']['price_release_variety_currency']);
 
             $data['info_basic']=Lc_helper::get_view_info_basic($data['item']);
             $data['info_lc']=$this->get_view_info_lc($data['item']);
@@ -252,6 +253,9 @@ class Lc_average_rate_calculation extends Root_Controller
             $this->db->where('details.quantity_open >0');
             $this->db->order_by('details.id ASC');
             $data['items']=$this->db->get()->result_array();
+
+            $date_receive=$data['item']['date_receive'];
+            $data['rates']=$this->get_rates($data['item'],$data['items'],$date_receive);
 
             $data['title']="Update Receive Rate ( LC: ". Barcode_helper::get_barcode_lc($item_id).' )';
             $ajax['status']=true;
@@ -302,38 +306,15 @@ class Lc_average_rate_calculation extends Root_Controller
         }
         else
         {
-            if(!(isset($this->permissions['action1']) && ($this->permissions['action1']==1)))
-            {
-                $ajax['status']=false;
-                $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
-                $this->json_return($ajax);
-            }
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
         }
-
-        /*$results=Query_helper::get_info($this->config->item('table_sms_lc_details'),'*',array('lc_id='.$id));
-        $old_varieties=array();
-        if($results)
-        {
-            foreach($results as $result)
-            {
-                $old_varieties[$result['variety_id']][$result['pack_size_id']]=$result;
-            }
-        }*/
         $this->db->trans_start();  //DB Transaction Handle START
 
         $results=Query_helper::get_info($this->config->item('table_sms_lc_details'),'*',array('lc_id='.$id));
         if($results)
         {
-            /*$data=array();
-            $data['rate_weighted_receive'] = $time;
-            $data['date_updated'] = $time;
-            $data['user_updated'] = $user->user_id;
-            Query_helper::update($this->config->item('table_sms_lc_open_histories'),$data, array('lc_id='.$id,'revision=1'), false);
-
-            $this->db->where('lc_id',$id);
-            $this->db->set('revision', 'revision+1', FALSE);
-            $this->db->update($this->config->item('table_sms_lc_open_histories'));
-            */
             foreach($results as $result)
             {
 
@@ -344,18 +325,7 @@ class Lc_average_rate_calculation extends Root_Controller
                 }
                 $data=array();
                 $data['rate_weighted_receive'] = $rate_weighted_receive;
-                /*$data['date_updated'] = $time;
-                $data['user_updated'] = $user->user_id;*/
-                Query_helper::update($this->config->item('table_sms_lc_details'),$data, array('id='.$result['id']), false);
-                /*$data=array();
-                $data['lc_id']=$id;
-                $data['variety_id']=$result['variety_id'];
-                $data['pack_size_id']=$result['pack_size_id'];
-                $data['quantity']=$rate_receive;
-                $data['revision'] = 1;
-                $data['date_created'] = $time;
-                $data['user_created'] = $user->user_id;
-                Query_helper::add($this->config->item('table_sms_lc_open_histories'),$data, false);*/
+                Query_helper::update($this->config->item('table_sms_lc_details'),$data, array('id='.$result['id']));
             }
         }
 
@@ -411,6 +381,7 @@ class Lc_average_rate_calculation extends Root_Controller
                 $ajax['system_message']='LC not completed.';
                 $this->json_return($ajax);
             }
+            $data['item']['rate_currency_receive']=$data['item']['price_release_other_variety_taka']/($data['item']['price_release_other_currency']+$data['item']['price_release_variety_currency']);
 
             $data['info_basic']=Lc_helper::get_view_info_basic($data['item']);
             $data['info_lc']=$this->get_view_info_lc($data['item']);
@@ -431,6 +402,9 @@ class Lc_average_rate_calculation extends Root_Controller
             $this->db->where('details.quantity_open >0');
             $this->db->order_by('details.id ASC');
             $data['items']=$this->db->get()->result_array();
+
+            $date_receive=$data['item']['date_receive'];
+            $data['rates']=$this->get_rates($data['item'],$data['items'],$date_receive);
 
             $data['title']="Update LC Complete Rate ( LC: ". Barcode_helper::get_barcode_lc($item_id).' )';
             $ajax['status']=true;
@@ -472,47 +446,24 @@ class Lc_average_rate_calculation extends Root_Controller
                 $ajax['system_message']='Invalid LC.';
                 $this->json_return($ajax);
             }
-            if($result['status_receive']!=$this->config->item('system_status_complete'))
+            if($result['status_open']!=$this->config->item('system_status_complete'))
             {
                 $ajax['status']=false;
-                $ajax['system_message']='LC receive not completed.';
+                $ajax['system_message']='LC not completed.';
                 $this->json_return($ajax);
             }
         }
         else
         {
-            if(!(isset($this->permissions['action1']) && ($this->permissions['action1']==1)))
-            {
-                $ajax['status']=false;
-                $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
-                $this->json_return($ajax);
-            }
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
         }
-
-        /*$results=Query_helper::get_info($this->config->item('table_sms_lc_details'),'*',array('lc_id='.$id));
-        $old_varieties=array();
-        if($results)
-        {
-            foreach($results as $result)
-            {
-                $old_varieties[$result['variety_id']][$result['pack_size_id']]=$result;
-            }
-        }*/
         $this->db->trans_start();  //DB Transaction Handle START
 
         $results=Query_helper::get_info($this->config->item('table_sms_lc_details'),'*',array('lc_id='.$id));
         if($results)
         {
-            /*$data=array();
-            $data['rate_weighted_receive'] = $time;
-            $data['date_updated'] = $time;
-            $data['user_updated'] = $user->user_id;
-            Query_helper::update($this->config->item('table_sms_lc_open_histories'),$data, array('lc_id='.$id,'revision=1'), false);
-
-            $this->db->where('lc_id',$id);
-            $this->db->set('revision', 'revision+1', FALSE);
-            $this->db->update($this->config->item('table_sms_lc_open_histories'));
-            */
             foreach($results as $result)
             {
 
@@ -523,18 +474,7 @@ class Lc_average_rate_calculation extends Root_Controller
                 }
                 $data=array();
                 $data['rate_weighted_complete'] = $rate_weighted_complete;
-                /*$data['date_updated'] = $time;
-                $data['user_updated'] = $user->user_id;*/
-                Query_helper::update($this->config->item('table_sms_lc_details'),$data, array('id='.$result['id']), false);
-                /*$data=array();
-                $data['lc_id']=$id;
-                $data['variety_id']=$result['variety_id'];
-                $data['pack_size_id']=$result['pack_size_id'];
-                $data['quantity']=$rate_receive;
-                $data['revision'] = 1;
-                $data['date_created'] = $time;
-                $data['user_created'] = $user->user_id;
-                Query_helper::add($this->config->item('table_sms_lc_open_histories'),$data, false);*/
+                Query_helper::update($this->config->item('table_sms_lc_details'),$data, array('id='.$result['id']));
             }
         }
 
@@ -611,32 +551,9 @@ class Lc_average_rate_calculation extends Root_Controller
             $this->db->where('details.quantity_open >0');
             $this->db->order_by('details.id ASC');
             $data['items']=$this->db->get()->result_array();
-            /*$variety_ids=array();
-            $variety_ids[0]=0;
-            foreach($data['items'] as $result)
-            {
-                $variety_ids[$result['variety_id']]=$result['variety_id'];
-            }*/
-            /*$pack_sizes=array();
-            $results=Query_helper::get_info($this->config->item('table_login_setup_classification_pack_size'),array('id value','name text'),array());
-            foreach($results as $result)
-            {
-                $pack_sizes[$result['value']]=$result['text'];
-            }
-            $pack_sizes['0']=1000;*/
+
             $date_receive=$data['item']['date_receive'];
             $data['rates']=$this->get_rates($data['item'],$data['items'],$date_receive);
-
-
-            /*$lc_id=$data['item']['id'];
-
-            $data['stock_opening']=$this->get_opening_stock($date_end, $variety_ids, $pack_sizes);
-            $data['previous_rates']=$this->get_previous_rates($date_end,$variety_ids);
-            $data['receive_rates']=$this->get_receive_rates($data['item'],$data['items']);
-
-            /*echo '<pre>';
-            print_r($data['receive_rates']);
-            echo '</pre>';*/
 
             $data['title']="LC Average Rate Details :: ".Barcode_helper::get_barcode_lc($item_id);
             $ajax['status']=true;
@@ -717,7 +634,12 @@ class Lc_average_rate_calculation extends Root_Controller
             $rates[$result['variety_id']][$result['pack_size_id']]['complete_price_variety_taka']=($result['quantity_receive'] * $result['price_unit_complete_currency']*$lc_info['rate_currency']);
                     //complete air= (lc_air_currency/lc_variety_currency)*variety_currency
             $rates[$result['variety_id']][$result['pack_size_id']]['complete_price_other_taka'] = $result['price_complete_other_taka'];
-            $rates[$result['variety_id']][$result['pack_size_id']]['complete_price_other_currency'] = $result['price_complete_other_taka']/$lc_info['rate_currency'];
+            $rates[$result['variety_id']][$result['pack_size_id']]['complete_price_other_currency'] = 0;
+            if($lc_info['rate_currency']>0)
+            {
+                $rates[$result['variety_id']][$result['pack_size_id']]['complete_price_other_currency'] = $result['price_complete_other_taka']/$lc_info['rate_currency'];
+            }
+
             $rates[$result['variety_id']][$result['pack_size_id']]['complete_price_dc_expense_taka'] = $result['price_dc_expense_taka'];
                     //total
             $rates[$result['variety_id']][$result['pack_size_id']]['complete_price_total_taka'] = $rates[$result['variety_id']][$result['pack_size_id']]['complete_price_variety_taka']+$rates[$result['variety_id']][$result['pack_size_id']]['complete_price_other_taka']+$rates[$result['variety_id']][$result['pack_size_id']]['complete_price_dc_expense_taka'];
