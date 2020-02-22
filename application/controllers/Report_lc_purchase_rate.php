@@ -551,12 +551,25 @@ class Report_lc_purchase_rate extends Root_Controller
                     $info['amount_tr']=$amount_price_unit*$info['stock_tr_pkt'];
                     $info['amount_ts']=$amount_price_unit*$info['stock_ts_pkt'];*/
 
+                    if($pack_size_id==0)
+                    {
+                        $info['pack_size']='Bulk';
+                        foreach($info  as $key=>$r)
+                        {
+                            if(substr($key,-3)=='pkt')
+                            {
+                                $info[$key]=0;
+                            }
+                        }
+                    }
                     $info['stock_total_pkt']=$info['stock_hq_pkt']+$info['stock_outlet_pkt']+$info['stock_to_pkt']+$info['stock_tr_pkt']+$info['stock_ts_pkt'];
                     $info['stock_total_kg']=$info['stock_hq_kg']+$info['stock_outlet_kg']+$info['stock_to_kg']+$info['stock_tr_kg']+$info['stock_ts_kg'];
                     //$info['amount_total']=$info['amount_hq']+$info['amount_outlet']+$info['amount_to']+$info['amount_tr']+$info['amount_ts'];
 
-                    $info['rate_weighted_receive']=isset($lc_purchase_variety_rates[$variety['variety_id']][$pack_size_id])?$lc_purchase_variety_rates[$variety['variety_id']][$pack_size_id]['rate_weighted_receive']:0;
-                    $info['rate_weighted_complete']=isset($lc_purchase_variety_rates[$variety['variety_id']][$pack_size_id])?$lc_purchase_variety_rates[$variety['variety_id']][$pack_size_id]['rate_weighted_complete']:0;
+                    /*$info['rate_weighted_receive']=isset($lc_purchase_variety_rates[$variety['variety_id']][$pack_size_id])?$lc_purchase_variety_rates[$variety['variety_id']][$pack_size_id]['rate_weighted_receive']:0;
+                    $info['rate_weighted_complete']=isset($lc_purchase_variety_rates[$variety['variety_id']][$pack_size_id])?$lc_purchase_variety_rates[$variety['variety_id']][$pack_size_id]['rate_weighted_complete']:0;*/
+                    $info['rate_weighted_receive']=isset($lc_purchase_variety_rates[$variety['variety_id']])?$lc_purchase_variety_rates[$variety['variety_id']]['rate_weighted_receive']:0;
+                    $info['rate_weighted_complete']=isset($lc_purchase_variety_rates[$variety['variety_id']])?$lc_purchase_variety_rates[$variety['variety_id']]['rate_weighted_complete']:0;
                     $info['amount_total_rate_receive']=($info['rate_weighted_receive']*$info['stock_total_kg']);
                     $info['amount_total_rate_complete']=($info['rate_weighted_complete']*$info['stock_total_kg']);
                     foreach($info  as $key=>$r)
@@ -624,7 +637,8 @@ class Report_lc_purchase_rate extends Root_Controller
         $this->db->where('lc.date_receive <= '.$date_receive);
         $this->db->where('lc.status_open !=',$this->config->item('system_status_delete'));
         $this->db->where('lc.status_receive',$this->config->item('system_status_complete'));
-        $this->db->group_by('details.variety_id, details.pack_size_id');
+        //$this->db->group_by('details.variety_id, details.pack_size_id');
+        $this->db->group_by('details.variety_id');
         $results=$this->db->get()->result_array();
         $lc_detail_ids=array();
         $lc_detail_ids[0]=0;
@@ -640,7 +654,8 @@ class Report_lc_purchase_rate extends Root_Controller
         $rates=array();
         foreach($results as $result)
         {
-            $rates[$result['variety_id']][$result['pack_size_id']]=$result;
+            //$rates[$result['variety_id']][$result['pack_size_id']]=$result;
+            $rates[$result['variety_id']]=$result;
         }
 
         return $rates;
