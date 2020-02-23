@@ -1003,6 +1003,21 @@ class Lc_average_rate_calculation extends Root_Controller
     }
     private function get_previous_rates($date_receive,$variety_ids)
     {
+        //default values
+        $rates=array();
+        $this->db->from($this->config->item('table_sms_lc_variety_initial_average_rate_setup').' setup');
+        $this->db->select('setup.variety_id, setup.rate_average');
+        $this->db->where_in('setup.variety_id', $variety_ids);
+        $results=$this->db->get()->result_array();
+        foreach($results as $result)
+        {
+            $data=array();
+            $data['variety_id']=$result['variety_id'];
+            $data['rate_weighted_receive']=$result['rate_average'];
+            $data['rate_weighted_complete']=$result['rate_average'];
+            $rates[$result['variety_id']]=$data;
+        }
+        //previous lc
         $this->db->from($this->config->item('table_sms_lc_details') . ' details');
         $this->db->select('MAX( details.id ) AS id');
         $this->db->select('details.variety_id, details.pack_size_id');
@@ -1026,8 +1041,6 @@ class Lc_average_rate_calculation extends Root_Controller
         $this->db->select('details.variety_id,details.rate_weighted_receive,details.rate_weighted_complete');
         $this->db->where_in('id',$details_ids);
         $results=$this->db->get()->result_array();
-        //echo $this->db->last_query();
-        $rates=array();
         foreach($results as $result)
         {
             //$rates[$result['variety_id']][$result['pack_size_id']]=$result;// ignore pack sizes
